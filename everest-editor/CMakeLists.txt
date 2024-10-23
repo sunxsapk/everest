@@ -1,0 +1,43 @@
+cmake_minimum_required(VERSION 3.16)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+project(editor VERSION 1.0 LANGUAGES CXX)
+
+# Set the C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# source files
+file(GLOB_RECURSE SRC_FILES
+    "src/*.cpp"
+    "src/*.c"
+)
+file(GLOB_RECURSE EXTERNALS
+    "externals/*.c"
+    "externals/*.cpp"
+)
+
+add_executable(${PROJECT_NAME} ${SRC_FILES} ${EXTERNALS})
+
+# include directories
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${PROJECT_BINARY_DIR}
+    include
+)
+
+# libraries
+target_link_libraries(${PROJECT_NAME}
+    everest
+)
+target_link_directories(${PROJECT_NAME} PUBLIC
+    ${ENGINE_BDIR}
+)
+
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    $<$<CONFIG:Debug>:DEBUG;ASSERT_ON>
+    $<$<CONFIG:Release>:RELEASE;ASSERT_ON>
+    $<$<CONFIG:Dist>:DIST>
+)
+
+
