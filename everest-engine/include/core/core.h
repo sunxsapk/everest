@@ -22,7 +22,7 @@
     #define ASSERT(exp) if(!(exp)){\
     TRLog_Err(\
 "Assertion Failed: %s \n\
-                  ^~~~~\n\
+                   ^~~~~\n\
                   === %s, line %d ===", #exp, __FILE__, __LINE__);\
         exit(1);\
 }

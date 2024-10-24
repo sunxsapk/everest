@@ -18,7 +18,7 @@ file(MAKE_DIRECTORY ${ENGINE_BDIR})
 add_subdirectory(everest-engine ${ENGINE_BDIR})
 
 # Set build directory for everest-editor project
-set(Editor "Editor")
-set(EDITOR_BDIR "${OUT_dir}/${Editor}")
-file(MAKE_DIRECTORY ${EDITOR_BDIR})
-add_subdirectory(everest-editor ${EDITOR_BDIR})
+set(towerdef "towerdefense")
+set(GAME_BDIR "${OUT_dir}/${towerdef}")
+file(MAKE_DIRECTORY ${GAME_BDIR})
+add_subdirectory(tower-defense ${GAME_BDIR})

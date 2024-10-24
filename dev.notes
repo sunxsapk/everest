@@ -1,0 +1,27 @@
+# Developer Notes
+
+Building a game engine froms scratch is a huge task in hand. So, I have a plan
+to put everything together in a very easy way for development purpose. Things
+will proceed in following sequence :-
+
+    - Project will have a master builder which will build 2 subprojects.
+    - First project it will build is everest-engine.
+    - Then, it will build the game.
+
+    When will the scene/level-editor be built then?
+    - Immediately after the scene is made serializable.
+
+Now, let's talk about the milestones of the project:
+
+- First target is making a Event-System which will be used by the GLFW window,
+    to dispatch some events to the Application layers.
+    Components: Debug-Logger, Key-Events, Mouse-Events, Window-Events,
+                Window, Application, Layer
+    Target: Log each events on the console with detail info
+
+- Establish  a rendering system with movable camera system, that can draw basic
+    shapes on the window.
+    Components: Camera(Main-Camera), Renderer, Rectangle, Circle, Line, Triangle
+    Target: Move a object(Shape) around screen, using key-inputs, mouse-inputs
+        and if possible with window-move events too.
+

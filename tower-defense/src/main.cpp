@@ -1,9 +1,8 @@
 #include <stdio.h>
-#include <window.h>
-#include <core/log.h>
+#include <everest.h>
 
 int main(){
-    test();
+    // test();
     Everest::Debug::Log("logging in logging out");
     printf("Hello world");
     return 0;
