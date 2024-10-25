@@ -1,9 +1,9 @@
-#include <stdio.h>
 #include <everest.h>
 
 int main(){
-    // test();
-    Everest::Debug::Log("logging in logging out");
-    printf("Hello world");
+    Everest::Core core;
+    Everest::Application app;
+    app.run();
+
     return 0;
 }

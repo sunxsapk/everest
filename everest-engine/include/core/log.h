@@ -13,13 +13,13 @@
 #include "math/types.h"
 
 #ifdef DEBUG
-    #define TRLog_Msg(...) Debug::Log(__VA_ARGS__)
-    #define TRLog_Wrn(...) Debug::Warn(__VA_ARGS__)
-    #define TRLog_Err(...) Debug::Error(__VA_ARGS__)
+    #define EVLog_Msg(...) Debug::Log(__VA_ARGS__)
+    #define EVLog_Wrn(...) Debug::Warn(__VA_ARGS__)
+    #define EVLog_Err(...) Debug::Error(__VA_ARGS__)
 #else
-    #define TRLog_Msg(...)
-    #define TRLog_Wrn(...)
-    #define TRLog_Err(...)
+    #define EVLog_Msg(...)
+    #define EVLog_Wrn(...)
+    #define EVLog_Err(...)
 #endif
 
 namespace Everest {

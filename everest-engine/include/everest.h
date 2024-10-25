@@ -9,6 +9,9 @@
 
 #include "core/core.h"
 #include "core/log.h"
+#include "core/application.h"
+#include "core/dbghelper.h"
+#include "core/window.h"
 
 #include "events/event.h"
 #include "events/keyevent.h"

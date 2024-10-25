@@ -18,6 +18,7 @@
 
 #include "core/core.h"
 #include "core/log.h"
+#include "core/dbghelper.h"
 
 #ifdef WIN32
 #include <Windows.h>
