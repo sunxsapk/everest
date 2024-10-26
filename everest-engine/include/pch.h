@@ -5,6 +5,7 @@
 #include "math/types.h"
 
 #include <iostream>
+#include <sstream>
 #include <memory>
 #include <stdio.h>
 #include <string>

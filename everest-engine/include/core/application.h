@@ -12,10 +12,12 @@
 namespace Everest {
     class Application {
         public:
-            Application(const char* name = "Everest-App");
+            Application(const char *name = "Everest-App");
             ~Application();
             virtual void run();
+
+            static void onEvent(Event& event);
         protected:
-            Window* window;
+            Window *_window; 
     };
 }

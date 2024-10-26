@@ -1,6 +1,6 @@
-# Developer Notes
+============ Developer Notes =================
 
-Building a game engine froms scratch is a huge task in hand. So, I have a plan
+Building a game engine from scratch is a huge task in hand. So, I have a plan
 to put everything together in a very easy way for development purpose. Things
 will proceed in following sequence :-
 
@@ -11,17 +11,30 @@ will proceed in following sequence :-
     When will the scene/level-editor be built then?
     - Immediately after the scene is made serializable.
 
-Now, let's talk about the milestones of the project:
+=============== Current Activity =============
+
+- Next thing to do is, research some more about the event dispatcher and also
+    buffering the events, so that they can be used in the scripts and other
+    places at any time after it is being created in the current frame.
+- Also, the logging system has its faults due to it been using c's printf for
+    for writing on console. So, develop a new logging system for cpp, so that
+    user can effectively use overridden '<<' operator for logging the objects too.
+- Then, I can introduce layer system on the application class and then go on to
+    do main engine things.
+
+=============== Milestones ===================
+
+Now, let's talk about the current milestones of the project:
 
 - First target is making a Event-System which will be used by the GLFW window,
     to dispatch some events to the Application layers.
-    Components: Debug-Logger, Key-Events, Mouse-Events, Window-Events,
+    ; Components: Debug-Logger, Key-Events, Mouse-Events, Window-Events,
                 Window, Application, Layer
-    Target: Log each events on the console with detail info
+    ; Target: Log each events on the console with detail info
 
 - Establish  a rendering system with movable camera system, that can draw basic
     shapes on the window.
-    Components: Camera(Main-Camera), Renderer, Rectangle, Circle, Line, Triangle
-    Target: Move a object(Shape) around screen, using key-inputs, mouse-inputs
+    ; Components: Camera(Main-Camera), Renderer, Rectangle, Circle, Line, Triangle
+    ; Target: Move a object(Shape) around screen, using key-inputs, mouse-inputs
         and if possible with window-move events too.
 

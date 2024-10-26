@@ -9,10 +9,14 @@
 #include "math/utils.h"
 
 namespace Everest {
+    #define BIND_EVENT_CB(fn) [this](auto&&... args) -> decltype(auto) {\
+        return this->fn(std::forward<decltype(args)>(args)...);\
+    }
+
     enum class EventType{
         None=0,
         WindowClose, WindowResize, WindowMoved,
-        KeyDown, KeyUp,
+        KeyDown, KeyRepeat, KeyUp,
         MouseButtonDown, MouseButtonUp,
         MouseMoved, MouseScrolled
     };

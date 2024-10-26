@@ -1,8 +1,13 @@
 #include "core/window.h"
+#include "events/keyevent.h"
+#include "events/mouseevent.h"
+#include "events/windowevent.h"
 
 namespace Everest{
-    Window::Window(i32 width, i32 height, const char* title){
-        this->_title = title;
+    Window::Window(i32 width, i32 height, std::string title){
+        this->_winData.position = {0, 0};
+        this->_winData.size = {width, height};
+        this->_winData.title = title;
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -14,56 +19,121 @@ namespace Everest{
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
         glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 
-        this->_window = glfwCreateWindow(width, height, title, NULL, NULL);
+        this->_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
         ASSERT(this->_window != NULL);
 
         glfwMakeContextCurrent(this->_window);
 
-        int _glLoaded = gladLoadGL(glfwGetProcAddress);
+        i32 _glLoaded = gladLoadGL(glfwGetProcAddress);
         ASSERT(_glLoaded);
 
-        glfwGetWindowPos(this->_window, &this->_position.x, &this->_position.y);
-        glfwGetWindowSize(this->_window, &this->_size.x, &this->_size.y);
         glfwSwapInterval(1);
+        glfwSetWindowUserPointer(this->_window, &this->_winData);
 
         glfwSetFramebufferSizeCallback(this->_window, Window::onFBResize);
+        glfwSetWindowSizeCallback(this->_window, [](GLFWwindow* window, i32 width, i32 height){
+                WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
+                _data.size = {width, height};
+                WindowResizeEvent evt(width, height);
+                _data.eventCallback(evt);
+            });
+
+        glfwSetWindowPosCallback(this->_window, [](GLFWwindow* window, i32 x, i32 y){
+                WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
+                _data.size = {x, y};
+                WindowMovedEvent evt(x, y);
+                _data.eventCallback(evt);
+            });
+
+        glfwSetWindowCloseCallback(this->_window, [](GLFWwindow *window){
+                WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
+                WindowCloseEvent evt;
+                _data.eventCallback(evt);
+            });
+
+        glfwSetMouseButtonCallback(this->_window,
+            [](GLFWwindow* window, i32 button, i32 action, i32 mods){
+                WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
+                if(action == GLFW_PRESS){
+                    MouseButtonDownEvent evt(button);
+                    _data.eventCallback(evt);
+                }else {
+                    MouseButtonUpEvent evt(button);
+                    _data.eventCallback(evt);
+                }
+            });
+
+        glfwSetCursorPosCallback(this->_window,
+            [](GLFWwindow* window, f64 x, f64 y){
+                WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
+                MouseMovedEvent evt(x, y);
+                _data.eventCallback(evt);
+            });
+
+        glfwSetScrollCallback(this->_window,
+            [](GLFWwindow* window, f64 dx, f64 dy){
+                WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
+                MouseScrolledEvent evt(dx, dy);
+                _data.eventCallback(evt);
+            });
+
+        glfwSetKeyCallback(this->_window,
+            [](GLFWwindow *window, i32 key, i32 scancode, i32 action, i32 mods){
+                WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
+                if(action == GLFW_PRESS){
+                    KeyDownEvent evt(key);
+                    _data.eventCallback(evt);
+                } else if(action == GLFW_REPEAT){
+                    KeyRepeatEvent evt(key);
+                    _data.eventCallback(evt);
+                } else {
+                    KeyUpEvent evt(key);
+                    _data.eventCallback(evt);
+                }
+            });
     }
 
     Window::~Window(){
-        ASSERT(this->_window);
+        ASSERT(this->_window != NULL);
         glfwDestroyWindow(this->_window);
-        EVLog_Msg("Window destroyed");
     }
 
-    void Window::onFBResize(GLFWwindow* window, int width, int height){
+    void Window::onFBResize(GLFWwindow* window, i32 width, i32 height){
         glViewport(0, 0, width, height);
     }
 
     void Window::convertFullScreen(){
-        ASSERT(this->_window);
+        ASSERT(this->_window != NULL);
         GLFWmonitor* monitor = this->getCurrentMonitor();
         const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-        ASSERT(mode);
+        ASSERT(mode != NULL);
         glfwSetWindowMonitor(this->_window, monitor, 0, 0, mode->width,
                 mode->height, mode->refreshRate);
     }
 
     void Window::convertWindowedMode(){
-        ASSERT(this->_window);
+        ASSERT(this->_window != NULL);
         GLFWmonitor* monitor = this->getCurrentMonitor();
-        glfwSetWindowMonitor(this->_window, NULL, this->_position.x,
-                this->_position.y, this->_size.x, this->_size.y, 0);
+        glfwSetWindowMonitor(this->_window, NULL,
+                this->_winData.position.x, this->_winData.position.y,
+                this->_winData.size.x, this->_winData.size.y, 0);
     }
 
     void Window::closeWindow(){
-        ASSERT(this->_window);
+        ASSERT(this->_window != NULL);
         glfwSetWindowShouldClose(this->_window, GLFW_TRUE);
     }
 
-    void Window::clear(){
-        glClearColor(0.0f, 0.2f, 0.2f, 0.2f);
+    void Window::clear(f32 r, f32 g, f32 b, f32 a){
+        glClearColor(r, g, b, a);
         glClear(GL_COLOR_BUFFER_BIT);
 
+    }
+
+    void Window::setTitle(const char* title){
+        ASSERT(this->_window != NULL && title != NULL);
+        this->_winData.title = title;
+        glfwSetWindowTitle(this->_window, title);
     }
 
     void Window::update(){
@@ -73,7 +143,7 @@ namespace Everest{
 
 
     bool Window::shouldClose(){
-        ASSERT(this->_window);
+        ASSERT(this->_window != NULL);
         return glfwWindowShouldClose(this->_window);
     }
 
