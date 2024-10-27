@@ -8,6 +8,7 @@
 #pragma once
 
 #include "window.h"
+#include "layerstack.h"
 #include "events/windowevent.h"
 
 namespace Everest {
@@ -15,12 +16,15 @@ namespace Everest {
         public:
             Application(const char *name = "Everest-App");
             ~Application();
-            virtual void run();
 
-            void onEvent(Event& event);
+            void pushLayer(Layer* layer);
+
+            virtual void run();
+            virtual void onEvent(Event& event);
         protected:
             Window *_window; 
             bool _running = true;
+            LayerStack _layerStack;
 
             bool onClose(WindowCloseEvent& e);
     };
