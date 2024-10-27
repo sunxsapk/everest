@@ -1,8 +1,8 @@
 /*
  * ========== Event Base Class ==========
  * Author : Sunil Sapkota
- * Description : event-types, event-list, base class, etc for 
- * everest engine's event system.
+ * Description : _event-types, _event-list, base class, etc for 
+ * everest engine's _event system.
  */
 #pragma once
 
@@ -37,6 +37,8 @@ namespace Everest {
 
     class Event {
         public:
+            bool _handled = false;
+
             virtual EventType getEventType() const = 0;
             virtual const char* getName() const = 0;
             virtual int getCategoryFlags() const = 0;
@@ -46,7 +48,25 @@ namespace Everest {
                 return getCategoryFlags() & category;
             }
 
-        protected:
-            bool _handled = false;
+    };
+
+    class EventDispatcher {
+        template <typename T>
+        using EventFunc = std::function<bool(T&)>;
+
+        public:
+            EventDispatcher(Event& e):_event(e){}
+
+            template <typename T>
+            bool dispatch(EventFunc<T> func){
+                if(_event.getEventType() == T::getStaticType()){
+                    _event._handled = func(*(T*)&_event);
+                    return true;
+                }
+                return false;
+            };
+
+        private:
+            Event& _event;
     };
 }

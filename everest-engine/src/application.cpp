@@ -11,12 +11,20 @@ namespace Everest {
     }
 
     void Application::run(){
-        while(!this->_window->shouldClose()){
-            this->_window->clear(0.f, 1.f, 1.f, .3f);
+        while(this->_running){
+            this->_window->clear(0.f, .3f, .3f, .3f);
             this->_window->update();
         }
     }
+
     void Application::onEvent(Event& event){
+        EventDispatcher dispatcher(event);
+        dispatcher.dispatch<WindowCloseEvent>(BIND_EVENT_CB(Application::onClose));
         EVLog_Msg("%s", event.toString().c_str());
+    }
+
+    bool Application::onClose(WindowCloseEvent& e){
+        this->_running = false;
+        return true;
     }
 }

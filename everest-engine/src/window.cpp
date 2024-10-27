@@ -30,76 +30,21 @@ namespace Everest{
         glfwSwapInterval(1);
         glfwSetWindowUserPointer(this->_window, &this->_winData);
 
+        glfwSetErrorCallback(Window::onError);
         glfwSetFramebufferSizeCallback(this->_window, Window::onFBResize);
-        glfwSetWindowSizeCallback(this->_window, [](GLFWwindow* window, i32 width, i32 height){
-                WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
-                _data.size = {width, height};
-                WindowResizeEvent evt(width, height);
-                _data.eventCallback(evt);
-            });
+        glfwSetWindowSizeCallback(this->_window, Window::onResize);
+        glfwSetWindowPosCallback(this->_window, Window::onMove);
+        glfwSetWindowCloseCallback(this->_window, Window::onClose);
+        glfwSetMouseButtonCallback(this->_window, Window::onMouseBtn);
+        glfwSetCursorPosCallback(this->_window, Window::onMouseMove);
+        glfwSetScrollCallback(this->_window, Window::onScroll);
+        glfwSetKeyCallback(this->_window, Window::onKeyEvent);
 
-        glfwSetWindowPosCallback(this->_window, [](GLFWwindow* window, i32 x, i32 y){
-                WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
-                _data.size = {x, y};
-                WindowMovedEvent evt(x, y);
-                _data.eventCallback(evt);
-            });
-
-        glfwSetWindowCloseCallback(this->_window, [](GLFWwindow *window){
-                WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
-                WindowCloseEvent evt;
-                _data.eventCallback(evt);
-            });
-
-        glfwSetMouseButtonCallback(this->_window,
-            [](GLFWwindow* window, i32 button, i32 action, i32 mods){
-                WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
-                if(action == GLFW_PRESS){
-                    MouseButtonDownEvent evt(button);
-                    _data.eventCallback(evt);
-                }else {
-                    MouseButtonUpEvent evt(button);
-                    _data.eventCallback(evt);
-                }
-            });
-
-        glfwSetCursorPosCallback(this->_window,
-            [](GLFWwindow* window, f64 x, f64 y){
-                WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
-                MouseMovedEvent evt(x, y);
-                _data.eventCallback(evt);
-            });
-
-        glfwSetScrollCallback(this->_window,
-            [](GLFWwindow* window, f64 dx, f64 dy){
-                WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
-                MouseScrolledEvent evt(dx, dy);
-                _data.eventCallback(evt);
-            });
-
-        glfwSetKeyCallback(this->_window,
-            [](GLFWwindow *window, i32 key, i32 scancode, i32 action, i32 mods){
-                WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
-                if(action == GLFW_PRESS){
-                    KeyDownEvent evt(key);
-                    _data.eventCallback(evt);
-                } else if(action == GLFW_REPEAT){
-                    KeyRepeatEvent evt(key);
-                    _data.eventCallback(evt);
-                } else {
-                    KeyUpEvent evt(key);
-                    _data.eventCallback(evt);
-                }
-            });
     }
 
     Window::~Window(){
         ASSERT(this->_window != NULL);
         glfwDestroyWindow(this->_window);
-    }
-
-    void Window::onFBResize(GLFWwindow* window, i32 width, i32 height){
-        glViewport(0, 0, width, height);
     }
 
     void Window::convertFullScreen(){
@@ -119,15 +64,9 @@ namespace Everest{
                 this->_winData.size.x, this->_winData.size.y, 0);
     }
 
-    void Window::closeWindow(){
-        ASSERT(this->_window != NULL);
-        glfwSetWindowShouldClose(this->_window, GLFW_TRUE);
-    }
-
     void Window::clear(f32 r, f32 g, f32 b, f32 a){
         glClearColor(r, g, b, a);
         glClear(GL_COLOR_BUFFER_BIT);
-
     }
 
     void Window::setTitle(const char* title){
@@ -141,16 +80,74 @@ namespace Everest{
         glfwPollEvents();
     }
 
-
-    bool Window::shouldClose(){
-        ASSERT(this->_window != NULL);
-        return glfwWindowShouldClose(this->_window);
-    }
-
     GLFWmonitor* Window::getCurrentMonitor(){
         // TODO : get current monitor
         GLFWmonitor* _monitor = glfwGetPrimaryMonitor();
         ASSERT(_monitor);
         return _monitor;
+    }
+
+    void Window::onFBResize(GLFWwindow* window, i32 width, i32 height){
+        glViewport(0, 0, width, height);
+    }
+
+    void Window::onKeyEvent(GLFWwindow *window, i32 key, i32 scancode, i32 action, i32 mods){
+        WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
+        if(action == GLFW_PRESS){
+            KeyDownEvent evt(key);
+            _data.eventCallback(evt);
+        } else if(action == GLFW_REPEAT){
+            KeyRepeatEvent evt(key);
+            _data.eventCallback(evt);
+        } else {
+            KeyUpEvent evt(key);
+            _data.eventCallback(evt);
+        }
+    }
+
+    void Window::onScroll(GLFWwindow* window, f64 dx, f64 dy){
+        WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
+        MouseScrolledEvent evt(dx, dy);
+        _data.eventCallback(evt);
+    }
+
+    void Window::onMouseMove(GLFWwindow* window, f64 x, f64 y){
+        WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
+        MouseMovedEvent evt(x, y);
+        _data.eventCallback(evt);
+    }
+    void Window::onResize(GLFWwindow* window, i32 width, i32 height){
+        WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
+        _data.size = {width, height};
+        WindowResizeEvent evt(width, height);
+        _data.eventCallback(evt);
+    }
+
+    void Window::onMove(GLFWwindow* window, i32 x, i32 y){
+        WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
+        _data.size = {x, y};
+        WindowMovedEvent evt(x, y);
+        _data.eventCallback(evt);
+    }
+
+    void Window::onClose(GLFWwindow *window){
+        WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
+        WindowCloseEvent evt;
+        _data.eventCallback(evt);
+    }
+
+    void Window::onMouseBtn(GLFWwindow* window, i32 button, i32 action, i32 mods){
+        WindowData _data = *(WindowData*)glfwGetWindowUserPointer(window);
+        if(action == GLFW_PRESS){
+            MouseButtonDownEvent evt(button);
+            _data.eventCallback(evt);
+        }else {
+            MouseButtonUpEvent evt(button);
+            _data.eventCallback(evt);
+        }
+    }
+
+    void Window::onError(i32 errcode, const char *err){
+        EVLog_Err("Opengl Error (%d): %s", errcode, err);
     }
 }

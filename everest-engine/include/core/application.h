@@ -8,6 +8,7 @@
 #pragma once
 
 #include "window.h"
+#include "events/windowevent.h"
 
 namespace Everest {
     class Application {
@@ -16,8 +17,11 @@ namespace Everest {
             ~Application();
             virtual void run();
 
-            static void onEvent(Event& event);
+            void onEvent(Event& event);
         protected:
             Window *_window; 
+            bool _running = true;
+
+            bool onClose(WindowCloseEvent& e);
     };
 }

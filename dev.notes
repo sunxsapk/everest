@@ -16,9 +16,11 @@ will proceed in following sequence :-
 - Next thing to do is, research some more about the event dispatcher and also
     buffering the events, so that they can be used in the scripts and other
     places at any time after it is being created in the current frame.
+
 - Also, the logging system has its faults due to it been using c's printf for
     for writing on console. So, develop a new logging system for cpp, so that
     user can effectively use overridden '<<' operator for logging the objects too.
+
 - Then, I can introduce layer system on the application class and then go on to
     do main engine things.
 

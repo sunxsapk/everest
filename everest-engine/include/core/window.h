@@ -19,8 +19,6 @@ namespace Everest {
 
             void convertFullScreen();
             void convertWindowedMode();
-            void closeWindow();
-            bool shouldClose();
 
             void clear(f32 r=0.f,f32 g=0.f,f32 b=0.f, f32 a=1.0f);
             void update();
@@ -44,7 +42,18 @@ namespace Everest {
             GLFWwindow* _window;
 
             GLFWmonitor* getCurrentMonitor();
-            static void onFBResize(GLFWwindow* window, int width, int height);
+
+            static void onFBResize(GLFWwindow* window, i32 width, i32 height);
+            static void onResize(GLFWwindow* window, i32 width, i32 height);
+            static void onMove(GLFWwindow* window, i32 x, i32 y);
+            static void onClose(GLFWwindow *window);
+            static void onMouseBtn(GLFWwindow* window, i32 button, i32 action,
+                    i32 mods);
+            static void onMouseMove(GLFWwindow* window, f64 x, f64 y);
+            static void onScroll(GLFWwindow* window, f64 dx, f64 dy);
+            static void onKeyEvent(GLFWwindow *window, i32 key, i32 scancode,
+                    i32 action, i32 mods);
+            static void onError(i32 errcode, const char *err);
     };
 }
 
