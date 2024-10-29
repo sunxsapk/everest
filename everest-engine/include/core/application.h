@@ -10,6 +10,7 @@
 #include "window.h"
 #include "layerstack.h"
 #include "events/windowevent.h"
+#include "core/debuglayer.h"
 
 namespace Everest {
     class Application {
@@ -19,13 +20,24 @@ namespace Everest {
 
             void pushLayer(Layer* layer);
 
+            virtual void onStart();
             virtual void run();
             virtual void onEvent(Event& event);
+            virtual void onClose(){}
+
+            static inline Window& getWindow(){return *s_app->_window;}
         protected:
-            Window *_window; 
+            std::unique_ptr<Window> _window; 
             bool _running = true;
             LayerStack _layerStack;
 
-            bool onClose(WindowCloseEvent& e);
+            bool onWindowClose(WindowCloseEvent& e);
+        private:
+            static Application* s_app;
+            const char *_name;
+            std::unique_ptr<DebugLayer> debugger;
+
+            void initWindow();
+            void attachDebugger();
     };
 }

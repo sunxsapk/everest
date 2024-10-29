@@ -14,17 +14,20 @@
 namespace Everest {
     class Layer {
         public:
-            Layer(const std::string name = "name");
-            virtual ~Layer() = default;
+            Layer(const char* name = "name");
+            virtual ~Layer();
 
-            virtual void onAttach(){}
-            virtual void onDetach(){}
-            virtual void onEvent(Event& event){}
-            virtual void onUpdate(){}
+            virtual void onAttach();
+            virtual void onDetach();
 
-            const std::string& getName() const {return _name;}
+            virtual void onEvent(Event& event);
+            virtual void onUpdate();
+
+            virtual void onDebugRender();
+
+            const char* getName() const {return _name;}
 
         protected:
-            std::string _name;
+            const char* _name;
     };
 }

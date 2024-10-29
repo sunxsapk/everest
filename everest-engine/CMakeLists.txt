@@ -26,6 +26,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     ${PROJECT_BINARY_DIR}
     include
     externals/glad/include
+    externals/imgui/include
 )
 
 # libraries

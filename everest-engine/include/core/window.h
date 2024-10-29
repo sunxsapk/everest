@@ -21,6 +21,7 @@ namespace Everest {
             void convertWindowedMode();
 
             void clear(f32 r=0.f,f32 g=0.f,f32 b=0.f, f32 a=1.0f);
+            void swapBuffers();
             void update();
 
             void setTitle(const char* title);
@@ -31,6 +32,7 @@ namespace Everest {
             inline ivec2 getSize(){return this->_winData.size;}
             inline i32 getWidth(){return this->_winData.size.x;}
             inline i32 getHeight(){return this->_winData.size.y;}
+            inline GLFWwindow* getWindow(){ return this->_window;}
 
         protected:
             struct WindowData {
@@ -40,8 +42,6 @@ namespace Everest {
                 EventCallback eventCallback;
             } _winData;
             GLFWwindow* _window;
-
-            GLFWmonitor* getCurrentMonitor();
 
             static void onFBResize(GLFWwindow* window, i32 width, i32 height);
             static void onResize(GLFWwindow* window, i32 width, i32 height);

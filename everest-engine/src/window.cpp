@@ -9,8 +9,9 @@ namespace Everest{
         this->_winData.size = {width, height};
         this->_winData.title = title;
 
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
         glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
@@ -30,7 +31,6 @@ namespace Everest{
         glfwSwapInterval(1);
         glfwSetWindowUserPointer(this->_window, &this->_winData);
 
-        glfwSetErrorCallback(Window::onError);
         glfwSetFramebufferSizeCallback(this->_window, Window::onFBResize);
         glfwSetWindowSizeCallback(this->_window, Window::onResize);
         glfwSetWindowPosCallback(this->_window, Window::onMove);
@@ -39,29 +39,11 @@ namespace Everest{
         glfwSetCursorPosCallback(this->_window, Window::onMouseMove);
         glfwSetScrollCallback(this->_window, Window::onScroll);
         glfwSetKeyCallback(this->_window, Window::onKeyEvent);
-
     }
 
     Window::~Window(){
         ASSERT(this->_window != NULL);
         glfwDestroyWindow(this->_window);
-    }
-
-    void Window::convertFullScreen(){
-        ASSERT(this->_window != NULL);
-        GLFWmonitor* monitor = this->getCurrentMonitor();
-        const GLFWvidmode* mode = glfwGetVideoMode(monitor);
-        ASSERT(mode != NULL);
-        glfwSetWindowMonitor(this->_window, monitor, 0, 0, mode->width,
-                mode->height, mode->refreshRate);
-    }
-
-    void Window::convertWindowedMode(){
-        ASSERT(this->_window != NULL);
-        GLFWmonitor* monitor = this->getCurrentMonitor();
-        glfwSetWindowMonitor(this->_window, NULL,
-                this->_winData.position.x, this->_winData.position.y,
-                this->_winData.size.x, this->_winData.size.y, 0);
     }
 
     void Window::clear(f32 r, f32 g, f32 b, f32 a){
@@ -76,15 +58,11 @@ namespace Everest{
     }
 
     void Window::update(){
-        glfwSwapBuffers(this->_window);
         glfwPollEvents();
     }
 
-    GLFWmonitor* Window::getCurrentMonitor(){
-        // TODO : get current monitor
-        GLFWmonitor* _monitor = glfwGetPrimaryMonitor();
-        ASSERT(_monitor);
-        return _monitor;
+    void Window::swapBuffers(){
+        glfwSwapBuffers(this->_window);
     }
 
     void Window::onFBResize(GLFWwindow* window, i32 width, i32 height){
@@ -145,9 +123,5 @@ namespace Everest{
             MouseButtonUpEvent evt(button);
             _data.eventCallback(evt);
         }
-    }
-
-    void Window::onError(i32 errcode, const char *err){
-        EVLog_Err("Opengl Error (%d): %s", errcode, err);
     }
 }
