@@ -82,7 +82,6 @@ namespace Everest {
             if(event._handled) break;
             (*it)->onEvent(event);
         }
-        EVLog_Msg("%s", event.toString().c_str());
     }
 
     bool Application::onWindowClose(WindowCloseEvent& e){

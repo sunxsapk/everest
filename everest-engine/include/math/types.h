@@ -7,6 +7,7 @@
  */
 
 #pragma once
+#include <glm/glm.hpp>
 
 typedef signed char i8;
 typedef unsigned char u8;
@@ -24,3 +25,8 @@ typedef unsigned long int u64;
 typedef float f32;
 typedef double f64;
 
+/* allows to use all glm types from inside engine without having to
+ * scope-access them. Makes things easier.*/
+namespace Everest {
+    using namespace glm;
+}

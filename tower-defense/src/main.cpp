@@ -1,6 +1,6 @@
 #include "towerdefense.h"
 
-class TowerDefenseApp : public Everest::Application {
+class TowerDefenseApp : public Application {
     public:
         TowerDefenseApp(){
             pushLayer(new TowerDefense("Tower defense"));

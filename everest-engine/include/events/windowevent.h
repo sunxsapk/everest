@@ -7,7 +7,6 @@
 #pragma once
 
 #include "event.h"
-#include "math/vec.h"
 
 namespace Everest {
     class WindowCloseEvent : public Event {

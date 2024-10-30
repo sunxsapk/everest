@@ -5,7 +5,6 @@
  */
 
 #pragma once
-#include "math/vec.h"
 #include "events/event.h"
 
 namespace Everest {

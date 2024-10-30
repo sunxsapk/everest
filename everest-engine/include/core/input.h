@@ -8,7 +8,6 @@
 
 #pragma once
 #include "keycode.h"
-#include "math/vec.h"
 #include "events/mouseevent.h"
 
 namespace Everest {

@@ -1,20 +1,26 @@
 #include "towerdefense.h"
 
-
 TowerDefense::TowerDefense(const char* name)
-    :Everest::Layer(name){
+    :Layer(name){
 }
 
 void TowerDefense::onUpdate(){
-    if(Everest::Input::getKeyDown(Everest::K_q)){
-        Everest::Debug::Warn("jhyakneyy");
+    if(Input::getKeyDown(K_q)){
+        Debug::Warn("jhyakneyy");
     }
 
-    Everest::vec2 scroll = Everest::Input::mouseScroll();
+    vec2 scroll = Input::mouseScroll();
     if(scroll.x || scroll.y){
-        Everest::Debug::Warn("scroll : %f, %f", scroll.x, scroll.y);
+        Debug::Warn("scroll : %f, %f", scroll.x, scroll.y);
     }
 }
 
 void TowerDefense::onDebugRender(){
+    ImGui::Begin(this->_name);
+    ImGui::Text("%s", _evLog);
+    ImGui::End();
+}
+
+void TowerDefense::onEvent(Event& event){
+    sprintf(this->_evLog, "%s", event.toString().c_str());
 }

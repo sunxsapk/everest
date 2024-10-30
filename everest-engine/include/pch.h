@@ -16,7 +16,8 @@
 #include <algorithm>
 #include <array>
 #include <functional>
-#include <math.h>
+
+#include <glm/glm.hpp>
 
 #include "core/core.h"
 #include "core/log.h"

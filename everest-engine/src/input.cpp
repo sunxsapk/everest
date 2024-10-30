@@ -39,7 +39,7 @@ namespace Everest {
     ivec2 Input::mousePosition(){
         f64 x, y;
         glfwGetCursorPos(s_window, &x, &y);
-        return {.x = (int)round(x), .y = (int)round(y)};
+        return {round(x), round(y)};
     }
 
     i32 Input::mousePositionX(){
@@ -47,6 +47,7 @@ namespace Everest {
         glfwGetCursorPos(s_window, &x, &y);
         return round(x);
     }
+
     i32 Input::mousePositionY(){
         f64 x, y;
         glfwGetCursorPos(s_window, &x, &y);

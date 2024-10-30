@@ -22,7 +22,6 @@
 
 #include "math/types.h"
 #include "math/utils.h"
-#include "math/vec.h"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
