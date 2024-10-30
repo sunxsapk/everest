@@ -1,7 +1,14 @@
-#include <everest.h>
+#include "towerdefense.h"
+
+class TowerDefenseApp : public Everest::Application {
+    public:
+        TowerDefenseApp(){
+            pushLayer(new TowerDefense("Tower defense"));
+        }
+};
 
 int main(){
-    Everest::Application app;
+    TowerDefenseApp app;
     app.run();
     return 0;
 }

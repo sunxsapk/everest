@@ -11,6 +11,16 @@ will proceed in following sequence :-
     When will the scene/level-editor be built then?
     - Immediately after the scene is made serializable.
 
+=============== Roadmap ======================
+
+- Rendering Texture
+- Models format, (asset bundles)
+- Entity Component System
+- Serialization
+- Level Format
+- Tools (editor & stuff)
+- Scripting
+
 =============== Current Activity =============
 
 - Also, the logging system has its faults due to it been using c's printf for

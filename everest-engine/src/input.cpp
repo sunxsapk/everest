@@ -15,16 +15,16 @@ namespace Everest {
         glfwSetInputMode(s_window, GLFW_STICKY_KEYS, mode);
     }
 
-    bool Input::keyDown(Keycode keycode){
+    bool Input::getKeyDown(Keycode keycode){
         int st = glfwGetKey(s_window, keycode);
-        return st == GLFW_PRESS || st == GLFW_REPEAT;
+        return st == GLFW_PRESS;
     }
 
-    bool Input::keyUp(Keycode keycode){
+    bool Input::getKeyUp(Keycode keycode){
         return glfwGetKey(s_window, keycode) == GLFW_RELEASE;
     }
 
-    bool Input::keyRepeat(Keycode keycode){
+    bool Input::getKeyRepeat(Keycode keycode){
         return glfwGetKey(s_window, keycode) == GLFW_REPEAT;
     }
 

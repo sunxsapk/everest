@@ -17,9 +17,9 @@ namespace Everest {
             static void init();
 
             static void setStickyKeys(bool mode);
-            static bool keyDown(Keycode keycode);
-            static bool keyUp(Keycode keycode);
-            static bool keyRepeat(Keycode keycode);
+            static bool getKeyDown(Keycode keycode);
+            static bool getKeyUp(Keycode keycode);
+            static bool getKeyRepeat(Keycode keycode);
 
             static bool mouseButtonDown(MouseButton button);
             static bool mouseButtonUp(MouseButton button);

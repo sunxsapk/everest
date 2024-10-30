@@ -22,6 +22,7 @@
 #include "core/log.h"
 #include "core/dbghelper.h"
 #include "core/input.h"
+#include "core/time.h"
 
 #ifdef WIN32
 #include <Windows.h>

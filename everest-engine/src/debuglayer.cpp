@@ -53,7 +53,22 @@ namespace Everest {
     void DebugLayer::onDebugRender(){
         ImGui::ShowDemoWindow();
         ImGui::Begin(_name);
-        ImGui::Text("Hello world");
+
+        ImGui::Text("FPS            : %d frames/sec", Time::getFrameRate());
+        ImGui::Text("Framecount     : %d frames", Time::getFrameCount());
+
+        ImGui::Text("unscaled-time  : %.3f sec", Time::getUnscaledTime());
+        ImGui::Text("unscaled-d-time: %.3f sec", Time::getUnscaledDeltaTime());
+
+        ImGui::Text("scaled-time    : %.3f sec", Time::getScaledTime());
+        ImGui::Text("scaled-d-time  : %.3f sec", Time::getDeltaTime());
+
+        /*
+        static f32 _scale = 1.f;
+        ImGui::SliderFloat("Time scale", &_scale, 0.f, 10.f);
+        Time::setTimeScale(_scale);
+        */
+
         ImGui::End();
     }
 

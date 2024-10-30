@@ -24,7 +24,6 @@ namespace Everest {
         atexit(Core::quit);
 
         this->attachDebugger();
-        this->onStart();
     }
 
     void Application::attachDebugger(){
@@ -39,11 +38,7 @@ namespace Everest {
 
     Application::~Application(){
         this->debugger->onDetach();
-        this->onClose();
         this->_window.reset();
-    }
-
-    void Application::onStart(){
     }
 
     void Application::pushLayer(Layer* layer){
@@ -55,6 +50,7 @@ namespace Everest {
         while(this->_running){
             Input::_clearPoll();
             this->_window->update();
+            Time::tick();
 
             for(Layer* layer:this->_layerStack){
                 layer->onUpdate();
