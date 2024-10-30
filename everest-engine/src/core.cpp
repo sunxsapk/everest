@@ -1,11 +1,19 @@
 #include "core/core.h"
 #include "core/dbghelper.h"
+#include "core/input.h"
 
 namespace Everest {
-    void Core::init(){
+    void Core::initDependencies(){
         glfwSetErrorCallback(onGLFWerror);
         i32 _glfwInit = glfwInit();
         ASSERT(_glfwInit);
+
+        EVLog_Msg("Core dependencies init");
+    }
+
+    void Core::init(){
+        Input::init();
+
         EVLog_Msg("Core init");
     }
 

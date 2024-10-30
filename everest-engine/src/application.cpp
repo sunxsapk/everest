@@ -1,5 +1,10 @@
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
+#include "events/mouseevent.h"
 #include "core/application.h"
 #include "core/core.h"
+#include "core/input.h"
 
 namespace Everest {
 #define DEF_WIN_W 1024
@@ -13,10 +18,11 @@ namespace Everest {
         ASSERT(name);
         this->_name = name;
 
+        Core::initDependencies();
+        this->initWindow();
         Core::init();
         atexit(Core::quit);
 
-        this->initWindow();
         this->attachDebugger();
         this->onStart();
     }
@@ -47,6 +53,7 @@ namespace Everest {
 
     void Application::run(){
         while(this->_running){
+            Input::_clearPoll();
             this->_window->update();
 
             for(Layer* layer:this->_layerStack){
@@ -72,6 +79,7 @@ namespace Everest {
         EventDispatcher dispatcher(event);
         dispatcher.dispatch<WindowCloseEvent>(
                 BIND_EVENT_CB(Application::onWindowClose));
+        dispatcher.dispatch<MouseScrolledEvent>(Input::_scrollPoll);
 
         for(auto it = this->_layerStack.rbegin();
                 it != this->_layerStack.rend(); ++it){

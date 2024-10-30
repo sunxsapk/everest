@@ -11,6 +11,8 @@
 #include "core/log.h"
 #include "core/application.h"
 #include "core/dbghelper.h"
+#include "core/debuglayer.h"
+#include "core/layer.h"
 #include "core/window.h"
 
 #include "events/event.h"
@@ -21,4 +23,8 @@
 #include "math/types.h"
 #include "math/utils.h"
 #include "math/vec.h"
+
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
 

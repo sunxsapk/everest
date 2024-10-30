@@ -16,10 +16,12 @@
 #include <algorithm>
 #include <array>
 #include <functional>
+#include <math.h>
 
 #include "core/core.h"
 #include "core/log.h"
 #include "core/dbghelper.h"
+#include "core/input.h"
 
 #ifdef WIN32
 #include <Windows.h>

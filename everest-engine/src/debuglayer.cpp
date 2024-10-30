@@ -5,8 +5,8 @@
 #include "core/debuglayer.h"
 
 namespace Everest {
-    DebugLayer::DebugLayer(const char *name)
-        : Layer(name){
+    DebugLayer::DebugLayer(const char *name, bool mViewPort)
+        : Layer(name), _multiViewPorts(mViewPort){
     }
 
     void DebugLayer::onAttach(){
@@ -16,7 +16,7 @@ namespace Everest {
         ImGuiIO& io = ImGui::GetIO(); (void)io;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+        if(_multiViewPorts) io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
         ImGui::StyleColorsDark();
 
@@ -26,9 +26,9 @@ namespace Everest {
             style.Colors[ImGuiCol_WindowBg].w = 1.0f;
         }
 
-        Window& win = Application::getWindow();
+        Window& win = Application::getAppWindow();
         ImGui_ImplGlfw_InitForOpenGL(win.getWindow(), true);
-        ImGui_ImplOpenGL3_Init("#version 410 core");
+        ImGui_ImplOpenGL3_Init("#version 330");
     }
 
     void DebugLayer::onDetach(){
@@ -38,6 +38,13 @@ namespace Everest {
     }
 
     void DebugLayer::onEvent(Event& event){
+        ImGuiIO& io = ImGui::GetIO();
+        if(this->_blockEvents){
+            if((event.isInCategory(Event_Mouse) && io.WantCaptureMouse) ||
+            (event.isInCategory(Event_Keyboard) && io.WantCaptureKeyboard)){
+                event._handled = true;
+            }
+        }
     }
 
     void DebugLayer::onUpdate(){
@@ -52,8 +59,6 @@ namespace Everest {
 
     void DebugLayer::begin(){
         ImGuiIO& io = ImGui::GetIO();
-        Window& win = Application::getWindow();
-        io.DisplaySize = ImVec2((f32)win.getWidth(), (f32)win.getHeight());
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();

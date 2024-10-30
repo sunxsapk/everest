@@ -30,9 +30,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 
 # libraries
-target_link_libraries(${PROJECT_NAME}
-    glfw
-)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
 if(APPLE)
     find_library(OPENGL_LIB OpenGL)
     target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIB})
@@ -40,9 +38,7 @@ endif()
 
 # precompiled headers
 target_precompile_headers(${PROJECT_NAME} PRIVATE include/pch.h)
-set_source_files_properties(${EXTERNALS}
-    PROPERTIES SKIP_PRECOMPILE_HEADERS ON
-)
+set_source_files_properties(${EXTERNALS} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 
 # definitions
 if(WIN32)

@@ -25,7 +25,7 @@ namespace Everest {
             virtual void onEvent(Event& event);
             virtual void onClose(){}
 
-            static inline Window& getWindow(){return *s_app->_window;}
+            static inline Window& getAppWindow(){return *s_app->_window;}
         protected:
             std::unique_ptr<Window> _window; 
             bool _running = true;
