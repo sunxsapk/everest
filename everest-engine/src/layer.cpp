@@ -12,5 +12,6 @@ namespace Everest{
 
     void Layer::onEvent(Event& event){}
     void Layer::onUpdate(){}
+
     void Layer::onDebugRender(){}
 }

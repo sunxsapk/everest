@@ -6,7 +6,3 @@
  */
 
 #define BIT(x) (1<<x)
-
-namespace Everest{
-    size_t glEnum2Size(GLenum _enum);
-}

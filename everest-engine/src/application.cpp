@@ -6,6 +6,10 @@
 #include "core/core.h"
 #include "core/input.h"
 
+#include "renderer/buffer.h"
+#include "renderer/vao.h"
+#include "renderer/shader.h"
+
 namespace Everest {
 #define DEF_WIN_W 1024
 #define DEF_WIN_H 768
@@ -47,6 +51,57 @@ namespace Everest {
     }
 
     void Application::run(){
+
+#define DEBUGTRIANGLE 1
+#if DEBUGTRIANGLE
+        f32 verts[] = {
+             0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,
+            -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
+             0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f
+        };
+        u32 inds[3] = {
+            0, 1, 2,
+        };
+
+        const char* vsh = R"(
+            #version 330 core
+            layout (location = 0) in vec3 pos;
+            layout (location = 1) in vec3 colorv;
+            out vec3 colorp;
+
+            void main() {
+                gl_Position = vec4(pos, 1.0);
+                colorp = colorv;
+            }
+        )";
+
+        const char* fsh = R"(
+            #version 330 core
+            out vec4 FragColor;  
+            in vec3 colorp;
+              
+            void main() {
+                FragColor = vec4(colorp, 1.0);
+            }
+        )";
+
+        VAO vao;
+        vao.bind();
+
+        VertexBuffer vb(verts, sizeof(verts));
+        IndexBuffer ib(inds, sizeof(inds));
+
+        vao.beginLayout();
+        vao.layout(3, GL_FLOAT, 6*sizeof(float));
+        vao.layout(3, GL_FLOAT, 6*sizeof(float));
+        vao.endLayout();
+
+        vb.unbind();
+        ib.unbind();
+
+        Shader sh(vsh, fsh);
+#endif
+
         while(this->_running){
             Input::_clearPoll();
             this->_window->update();
@@ -56,7 +111,15 @@ namespace Everest {
                 layer->onUpdate();
             }
 
-            this->_window->clear(0.f, .3f, .3f, .3f);
+            this->_window->clear(.1f, .1f, .1f);
+
+#if DEBUGTRIANGLE
+            vao.bind();
+            sh.bind();
+            glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
+            sh.unbind();
+            vao.unbind();
+#endif
 
 #ifdef DEBUG
             this->debugger->begin();

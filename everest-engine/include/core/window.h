@@ -13,24 +13,31 @@ namespace Everest {
         using EventCallback = std::function<void(Event&)>;
 
         public:
+            /*creates a window instance with given params*/
             Window(i32 width, i32 height, std::string title);
             ~Window();
 
-            void convertFullScreen();
-            void convertWindowedMode();
-
+            /*clears the window and fills with given colors*/
             void clear(f32 r=0.f,f32 g=0.f,f32 b=0.f, f32 a=1.0f);
+            /*swaps the front and back buffers*/
             void swapBuffers();
+            /*polls events and updates them*/
             void update();
 
+            /*sets the title of the window to the one provided*/
             void setTitle(const char* title);
+            /*set the window's event callback*/
             inline void setEventCallback(EventCallback callback){
                 this->_winData.eventCallback = callback;
             }
 
+            /*returns the vector containing window's width and height*/
             inline ivec2 getSize(){return this->_winData.size;}
+            /*returns the width of the window*/
             inline i32 getWidth(){return this->_winData.size.x;}
+            /*returns the height of the window*/
             inline i32 getHeight(){return this->_winData.size.y;}
+            /*returns the pointer to current GLFWwindow*/
             inline GLFWwindow* getWindow(){ return this->_window;}
 
         protected:

@@ -9,10 +9,12 @@ void TowerDefense::onUpdate(){
         Debug::Warn("jhyakneyy");
     }
 
+    /*
     vec2 scroll = Input::mouseScroll();
     if(scroll.x || scroll.y){
         Debug::Warn("scroll : %f, %f", scroll.x, scroll.y);
     }
+    */
 }
 
 void TowerDefense::onDebugRender(){

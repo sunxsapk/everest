@@ -2,58 +2,82 @@
 
 namespace Everest {
     Shader::Shader(const char* vert_glsl, const char* frag_glsl){
-        u32 vid = compileShader(vert_glsl, GL_VERTEX_SHADER);
-        u32 fid = compileShader(vert_glsl, GL_FRAGMENT_SHADER);
+        u32 vid, fid;
 
-        _id = linkShaders(vid, fid);
+        i32 vertex_shader_compiled = compileShader(vert_glsl, GL_VERTEX_SHADER, &vid);
+        if(!vertex_shader_compiled){
+            getInfoLog(vid, GL_VERTEX_SHADER);
+            glDeleteShader(vid);
+            ASSERT(vertex_shader_compiled);
+        }
 
-        glDeleteShader(vid);
-        glDeleteShader(fid);
+        i32 fragment_shader_compiled = compileShader(frag_glsl, GL_FRAGMENT_SHADER, &fid);
+        if(!fragment_shader_compiled){
+            getInfoLog(fid, GL_FRAGMENT_SHADER);
+            glDeleteShader(vid);
+            glDeleteShader(fid);
+            ASSERT(fragment_shader_compiled);
+        }
+
+        linkShaders(vid, fid);
     }
 
     Shader::~Shader(){
-        glDeleteProgram(_id);
+        glDeleteProgram(_programID);
     }
 
-    void Shader::use(){
-        glUseProgram(_id);
+    void Shader::bind(){
+        glUseProgram(_programID);
     }
 
-    u32 Shader::compileShader(const char* glsl, GLenum type){
+    void Shader::unbind(){
+        glUseProgram(0);
+    }
+
+    i32 Shader::compileShader(const char* glsl, GLenum type, u32 *id){
         ASSERT(glsl != NULL);
         ASSERT(type == GL_VERTEX_SHADER || type == GL_FRAGMENT_SHADER);
 
-        u32 shader_id = glCreateShader(type);
-        glShaderSource(shader_id, 1, &glsl, NULL);
-        glCompileShader(shader_id);
+        *id = glCreateShader(type);
+        glShaderSource(*id, 1, &glsl, NULL);
+        glCompileShader(*id);
 
-        i32 _success;
-        glGetShaderiv(shader_id, GL_COMPILE_STATUS, &_success);
-        if(!_success){
-            char infoLog[512];
-            glGetShaderInfoLog(shader_id, 512, NULL, infoLog);
-            EVLog_Err("%s Shader Compilation Failed:\n %s",
-                    type == GL_VERTEX_SHADER? "Vertex" : "Fragment",
-                    infoLog);
-        }
+        i32 _shader_compiled;
+        glGetShaderiv(*id, GL_COMPILE_STATUS, &_shader_compiled);
 
-        return shader_id;
+        return _shader_compiled;
     }
 
-    u32 Shader::linkShaders(u32 vert, u32 frag){
-        u32 prog_id = glCreateProgram();
-        glAttachShader(prog_id, vert);
-        glAttachShader(prog_id, frag);
-        glLinkProgram(prog_id);
+    void Shader::getInfoLog(u32 id, GLenum type){
+        char infoLog[512];
+        glGetShaderInfoLog(id, 512, NULL, infoLog);
+        EVLog_Err("%s Shader Compilation Failed:\n %s",
+                type == GL_VERTEX_SHADER? "Vertex" : "Fragment",
+                infoLog);
+    }
 
-        i32 _success;
-        glGetProgramiv(prog_id, GL_LINK_STATUS, &_success);
-        if(!_success){
+    void Shader::linkShaders(u32 vert, u32 frag){
+        _programID = glCreateProgram();
+        glAttachShader(_programID, vert);
+        glAttachShader(_programID, frag);
+        glLinkProgram(_programID);
+
+        i32 _shaders_linked;
+        glGetProgramiv(_programID, GL_LINK_STATUS, &_shaders_linked);
+        if(!_shaders_linked){
             char infoLog[512];
-            glGetShaderInfoLog(prog_id, 512, NULL, infoLog);
+            glGetShaderInfoLog(_programID, 512, NULL, infoLog);
             EVLog_Err("Shaders Linking Failed:\n %s", infoLog);
+
+            glDeleteShader(vert);
+            glDeleteShader(frag);
+            glDeleteProgram(_programID);
+            ASSERT(_shaders_linked);
         }
 
-        return prog_id;
+        glDetachShader(_programID, vert);
+        glDetachShader(_programID, frag);
+        glDeleteShader(vert);
+        glDeleteShader(frag);
     }
 }

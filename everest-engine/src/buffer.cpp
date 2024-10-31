@@ -1,8 +1,11 @@
 #include "renderer/buffer.h"
 
 namespace Everest {
-    Buffer::Buffer(){
+    Buffer::Buffer(dtype *_data, size_t _size, GLenum target)
+        :_target(target){
         glGenBuffers(1, &_id);
+        this->bind();
+        glBufferData(_target, _size, _data, GL_STATIC_DRAW);
     }
 
     Buffer::~Buffer(){
@@ -17,18 +20,10 @@ namespace Everest {
         glBindBuffer(_target, 0);
     }
 
-    void Buffer::setData(dtype *_data, size_t _size, GLenum _usage){
-        this->bind();
-        glBufferData(_target, _size, _data, _usage);
-        this->unbind();
-    }
+    VertexBuffer::VertexBuffer(dtype *_data, size_t _size)
+        :Buffer(_data, _size, GL_ARRAY_BUFFER){ }
 
-    VertexBuffer::VertexBuffer(){
-        _target = GL_ARRAY_BUFFER;
-    }
-
-    ElementBuffer::ElementBuffer(){
-        _target = GL_ELEMENT_ARRAY_BUFFER;
-    }
+    IndexBuffer::IndexBuffer(dtype *_data, size_t _size)
+        :Buffer(_data, _size, GL_ELEMENT_ARRAY_BUFFER){ }
 
 }

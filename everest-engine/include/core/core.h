@@ -15,8 +15,9 @@ namespace Everest {
             static void initDependencies();
             static void init();
             static void quit();
-            static void onGLFWerror(i32 errcode, const char *err);
-
         private:
+#ifdef DEBUG
+            static void onGLFWerror(i32 errcode, const char *err);
+#endif
     };
 }

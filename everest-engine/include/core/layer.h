@@ -17,14 +17,20 @@ namespace Everest {
             Layer(const char* name = "name");
             virtual ~Layer();
 
+            /*called when a layer is attached to the application*/
             virtual void onAttach();
+            /*called when a layer is detached from the application*/
             virtual void onDetach();
 
+            /*called whenever an event(key, mouse, window) is generated*/
             virtual void onEvent(Event& event);
+            /*called every frame for updating the layer*/
             virtual void onUpdate();
 
+            /*called for rendering debug-info gui for the layer*/
             virtual void onDebugRender();
 
+            /*returns the name of the layer*/
             const char* getName() const {return _name;}
 
         protected:

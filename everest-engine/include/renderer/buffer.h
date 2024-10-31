@@ -10,28 +10,35 @@
 
 namespace Everest {
     using dtype = const void;
+
     class Buffer {
         public:
             ~Buffer();
 
+            /*binds the buffer*/
             virtual void bind();
+            /*unbinds the buffer*/
             virtual void unbind();
-            void setData(dtype *_data, size_t _size,
-                    GLenum _usage = GL_STATIC_DRAW);
         protected:
             u32 _id;
             GLenum _target;
-
-            Buffer();
+            Buffer(dtype *_data, size_t _size, GLenum target);
     };
 
     class VertexBuffer : public Buffer {
         public:
-            VertexBuffer();
+            /* creates, binds and fill the vertex-buffer with data. Buffer is
+             * not unbinded when it finishes creating. You have to unbind it
+             * later. Most probably only after unbinding the vertex array.*/
+            VertexBuffer(dtype *_data, size_t _size);
     };
 
-    class ElementBuffer : public Buffer {
+    class IndexBuffer : public Buffer {
         public:
-            ElementBuffer();
+            /* creates, binds and fill the index/element-buffer with data.
+             * Buffer is not unbinded when it finishes creating. You have to
+             * unbind it later. Most probably only after unbinding the vertex
+             * array.*/
+            IndexBuffer(dtype *_data, size_t _size);
     };
 }

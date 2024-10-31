@@ -54,6 +54,14 @@ namespace Everest {
         ImGui::ShowDemoWindow();
         ImGui::Begin(_name);
 
+        ImGui::Text("Vendor         : %s", glGetString(GL_VENDOR));
+        ImGui::Text("Renderer       : %s", glGetString(GL_RENDERER));
+        ImGui::Text("Version        : %s", glGetString(GL_VERSION));
+
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::Spacing();
+
         ImGui::Text("FPS            : %d frames/sec", Time::getFrameRate());
         ImGui::Text("Framecount     : %d frames", Time::getFrameCount());
 
