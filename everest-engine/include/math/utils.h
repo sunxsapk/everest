@@ -6,3 +6,6 @@
  */
 
 #define BIT(x) (1<<x)
+
+#define p_shared(T) std::shared_ptr<T>
+#define p_unique(T) std::unique_ptr<T>

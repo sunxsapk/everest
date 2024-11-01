@@ -9,6 +9,7 @@
 #include "renderer/buffer.h"
 #include "renderer/vao.h"
 #include "renderer/shader.h"
+#include "renderer/renderer.h"
 
 namespace Everest {
 #define DEF_WIN_W 1024
@@ -55,53 +56,58 @@ namespace Everest {
 #define DEBUGTRIANGLE 1
 #if DEBUGTRIANGLE
         f32 verts[] = {
-             0.5f, -0.5f, 0.0f,  1.0f, 0.0f, 0.0f,
-            -0.5f, -0.5f, 0.0f,  0.0f, 1.0f, 0.0f,
-             0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f
+            -0.5f,  0.0f, 0.0f,  0.3f, 0.0f, 0.0f,
+             0.5f,  0.0f, 0.0f,  0.0f, 0.3f, 0.0f,
+             0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 0.3f,
+             0.0f, -0.5f, 0.0f,  0.3f, 0.3f, 0.0f,
         };
-        u32 inds[3] = {
+        u32 inds[] = {
             0, 1, 2,
+            0, 3, 1,
+        };
+
+        BufferLayout layout {
+            {T_vec3, "aPos"},
+            {T_vec3, "aColor"},
         };
 
         const char* vsh = R"(
             #version 330 core
-            layout (location = 0) in vec3 pos;
-            layout (location = 1) in vec3 colorv;
-            out vec3 colorp;
+            layout (location = 0) in vec3 aPos;
+            layout (location = 1) in vec3 aColor;
+            out vec3 fColor;
 
             void main() {
-                gl_Position = vec4(pos, 1.0);
-                colorp = colorv;
+                gl_Position = vec4(aPos, 1.0);
+                fColor = aColor;
             }
         )";
 
         const char* fsh = R"(
             #version 330 core
             out vec4 FragColor;  
-            in vec3 colorp;
+            in vec3 fColor;
               
             void main() {
-                FragColor = vec4(colorp, 1.0);
+                FragColor = vec4(fColor, 1.0);
             }
         )";
 
-        VAO vao;
-        vao.bind();
+        p_shared(VAO) vao = std::make_shared<VAO>();
+        p_shared(VertexBuffer) vb = std::make_shared<VertexBuffer>
+            (verts, sizeof(verts));
+        vb->setLayout(layout);
 
-        VertexBuffer vb(verts, sizeof(verts));
-        IndexBuffer ib(inds, sizeof(inds));
+        p_shared(IndexBuffer) ib = std::make_shared<IndexBuffer>
+            (inds, sizeof(inds)); 
 
-        vao.beginLayout();
-        vao.layout(3, GL_FLOAT, 6*sizeof(float));
-        vao.layout(3, GL_FLOAT, 6*sizeof(float));
-        vao.endLayout();
-
-        vb.unbind();
-        ib.unbind();
+        vao->addVertexBuffer(vb);
+        vao->addIndexBuffer(ib);
 
         Shader sh(vsh, fsh);
 #endif
 
+        Renderer::issue_setClearColor({1.f, 0.f, 1.f, 1.f});
         while(this->_running){
             Input::_clearPoll();
             this->_window->update();
@@ -111,15 +117,14 @@ namespace Everest {
                 layer->onUpdate();
             }
 
-            this->_window->clear(.1f, .1f, .1f);
-
+            Renderer::issue_clear();
+            Renderer::beginScene();
 #if DEBUGTRIANGLE
-            vao.bind();
             sh.bind();
-            glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, NULL);
+            Renderer::submit(vao);
             sh.unbind();
-            vao.unbind();
 #endif
+            Renderer::endScene();
 
 #ifdef DEBUG
             this->debugger->begin();

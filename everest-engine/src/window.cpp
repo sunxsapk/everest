@@ -46,11 +46,6 @@ namespace Everest{
         glfwDestroyWindow(this->_window);
     }
 
-    void Window::clear(f32 r, f32 g, f32 b, f32 a){
-        glClearColor(r, g, b, a);
-        glClear(GL_COLOR_BUFFER_BIT);
-    }
-
     void Window::setTitle(const char* title){
         ASSERT(this->_window != NULL && title != NULL);
         this->_winData.title = title;

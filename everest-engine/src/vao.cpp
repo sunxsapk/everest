@@ -2,31 +2,6 @@
 #include "math/utils.h"
 
 namespace Everest{
-    size_t glEnum2Size(GLenum _enum){
-        switch(_enum){
-						case GL_BYTE:
-                return sizeof(GLbyte);
-						case GL_UNSIGNED_BYTE:
-                return sizeof(GLubyte);
-						case GL_SHORT:
-                return sizeof(GLshort);
-						case GL_UNSIGNED_SHORT:
-                return sizeof(GLushort);
-						case GL_INT:
-                return sizeof(GLint);
-						case GL_UNSIGNED_INT:
-                return sizeof(GLuint);
-						case GL_FIXED:
-                return sizeof(GLfixed);
-						case GL_HALF_FLOAT:
-                return sizeof(GLhalf);
-						case GL_FLOAT:
-                return sizeof(GLfloat);
-						case GL_DOUBLE:
-                return sizeof(GLdouble);
-        }
-        return 0;
-    }
 
     VAO::VAO(){
         glGenVertexArrays(1, &_id);
@@ -36,22 +11,31 @@ namespace Everest{
         glDeleteVertexArrays(1, &_id);
     }
 
-    void VAO::beginLayout(){
-        this->_offset = 0;
-        this->_index = 0;
-        this->bind();
+    void VAO::addVertexBuffer(p_shared(VertexBuffer) vertexBuf){
+        glBindVertexArray(_id);
+        vertexBuf->bind();
+        setLayout(vertexBuf->getLayout());
+        glBindVertexArray(0);
+        _vertexBuf = vertexBuf;
     }
 
-    void VAO::endLayout(){
-        this->unbind();
+    void VAO::addIndexBuffer(p_shared(IndexBuffer) indexBuf){
+        glBindVertexArray(_id);
+        indexBuf->bind();
+        glBindVertexArray(0);
+        _indexBuf = indexBuf;
     }
 
-    void VAO::layout(u32 count, GLenum type, size_t stride){
-        glEnableVertexAttribArray(this->_index);
-        glVertexAttribPointer(this->_index, count, type, GL_FALSE,
-                stride, (void*)this->_offset);
-        this->_index++;
-        this->_offset += count * glEnum2Size(type);
+    void VAO::setLayout(const BufferLayout& layout){
+        ASSERT(layout.getSize() != 0);
+
+        u32 index = 0;
+        for(const auto& item:layout){
+            glEnableVertexAttribArray(index);
+            glVertexAttribPointer(index, item.getCount(), item.getPrimitive(),
+                    GL_FALSE, layout.getSize(), (const void*)(u64)item.offset);
+            index++;
+        }
     }
 
     void VAO::bind(){
@@ -61,4 +45,5 @@ namespace Everest{
     void VAO::unbind(){
         glBindVertexArray(0);
     }
+
 }

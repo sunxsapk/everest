@@ -1,6 +1,7 @@
 #include "core/core.h"
 #include "core/dbghelper.h"
 #include "core/input.h"
+#include "renderer/renderer.h"
 
 namespace Everest {
     void Core::initDependencies(){
@@ -13,11 +14,13 @@ namespace Everest {
 
     void Core::init(){
         Input::init();
+        Renderer::init();
 
         EVLog_Msg("Core init");
     }
 
     void Core::quit(){
+        Renderer::quit();
         glfwTerminate();
         EVLog_Msg("Core quit");
     }

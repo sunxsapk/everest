@@ -6,14 +6,23 @@
  */
 
 #pragma once
-#include "vao.h"
+#include "renderAPI.h"
 
 namespace Everest {
     class Renderer {
         public:
-            Renderer();
-            ~Renderer();
-        protected:
-            VAO _vao;
+            static void init();
+            static void quit();
+
+            static void beginScene();
+            static void endScene();
+            static void submit(p_shared(VAO) vertexArray);
+
+            static inline void issue_clear(){_api->clear();}
+            static inline void issue_setClearColor(vec4 color){
+                _api->setClearColor(color);
+            }
+        private:
+            static RenderAPI *_api;
     };
 }

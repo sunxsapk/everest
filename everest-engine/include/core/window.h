@@ -17,8 +17,6 @@ namespace Everest {
             Window(i32 width, i32 height, std::string title);
             ~Window();
 
-            /*clears the window and fills with given colors*/
-            void clear(f32 r=0.f,f32 g=0.f,f32 b=0.f, f32 a=1.0f);
             /*swaps the front and back buffers*/
             void swapBuffers();
             /*polls events and updates them*/

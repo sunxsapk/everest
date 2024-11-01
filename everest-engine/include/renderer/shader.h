@@ -8,6 +8,7 @@
 #pragma once
 
 namespace Everest {
+
     class Shader {
         public:
             Shader(const char* vert_glsl, const char* frag_glsl);
