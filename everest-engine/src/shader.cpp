@@ -1,4 +1,5 @@
 #include "renderer/shader.h"
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Everest {
     Shader::Shader(const char* vert_glsl, const char* frag_glsl){
@@ -32,6 +33,11 @@ namespace Everest {
 
     void Shader::unbind(){
         glUseProgram(0);
+    }
+
+    void Shader::setUniform_Mat4(const std::string name, mat4 value){
+        GLint loc = glGetUniformLocation(_programID, name.c_str());
+        glUniformMatrix4fv(loc, 1, GL_FALSE, value_ptr(value));
     }
 
     i32 Shader::compileShader(const char* glsl, GLenum type, u32 *id){

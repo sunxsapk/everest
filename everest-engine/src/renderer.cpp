@@ -13,7 +13,7 @@ namespace Everest {
         delete _api;
     }
 
-    void Renderer::beginScene(){
+    void Renderer::beginScene(Camera* camera){
     }
 
     void Renderer::endScene(){

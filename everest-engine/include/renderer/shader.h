@@ -17,6 +17,8 @@ namespace Everest {
             void bind();
             void unbind();
 
+            void setUniform_Mat4(const std::string name, mat4 value);
+
         private:
             u32 _programID;
             i32 compileShader(const char* glsl, GLenum type, u32 *id);

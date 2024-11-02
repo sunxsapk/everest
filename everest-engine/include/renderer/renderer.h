@@ -7,6 +7,7 @@
 
 #pragma once
 #include "renderAPI.h"
+#include "scene/camera.h"
 
 namespace Everest {
     class Renderer {
@@ -14,7 +15,7 @@ namespace Everest {
             static void init();
             static void quit();
 
-            static void beginScene();
+            static void beginScene(Camera* camera);
             static void endScene();
             static void submit(p_shared(VAO) vertexArray);
 

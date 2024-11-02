@@ -14,6 +14,9 @@
 #include "core/debuglayer.h"
 #include "core/layer.h"
 #include "core/window.h"
+#include "core/input.h"
+#include "core/keycode.h"
+#include "core/time.h"
 
 #include "events/event.h"
 #include "events/keyevent.h"
@@ -22,6 +25,11 @@
 
 #include "math/types.h"
 #include "math/utils.h"
+
+#include "renderer/vao.h"
+#include "renderer/shader.h"
+
+#include "scene/camera.h"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
