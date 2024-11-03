@@ -8,22 +8,28 @@
 #pragma once
 #include "renderAPI.h"
 #include "scene/camera.h"
+#include "shader.h"
 
 namespace Everest {
+    struct SceneData {
+        mat4 viewProjectionMatrix;
+    };
+
     class Renderer {
         public:
             static void init();
             static void quit();
 
-            static void beginScene(Camera* camera);
+            static void beginScene(Camera& camera);
             static void endScene();
-            static void submit(p_shared(VAO) vertexArray);
+            static void submit(p_shared(VAO)& vertexArray, p_shared(Shader)& shader);
 
-            static inline void issue_clear(){_api->clear();}
+            static inline void issue_clear(){ _api->clear();}
             static inline void issue_setClearColor(vec4 color){
                 _api->setClearColor(color);
             }
         private:
             static RenderAPI *_api;
+            static SceneData _scene;
     };
 }

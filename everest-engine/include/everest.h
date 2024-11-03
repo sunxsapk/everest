@@ -28,6 +28,7 @@
 
 #include "renderer/vao.h"
 #include "renderer/shader.h"
+#include "renderer/renderer.h"
 
 #include "scene/camera.h"
 

@@ -12,5 +12,12 @@ class TowerDefense : public Layer {
         void onEvent(Event& event) override;
 
     private:
+        void handleEvents();
+
+    private:
+        p_shared(VAO) _quad;
+        p_shared(Shader) _shader;
+        PerspectiveCamera _cam;
+
         char _evLog[100] = "";
 };

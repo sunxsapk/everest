@@ -6,12 +6,6 @@
 #include "core/core.h"
 #include "core/input.h"
 
-#include "renderer/buffer.h"
-#include "renderer/vao.h"
-#include "renderer/shader.h"
-#include "renderer/renderer.h"
-
-#include "scene/camera.h"
 
 namespace Everest {
 #define DEF_WIN_W 1024
@@ -54,66 +48,6 @@ namespace Everest {
     }
 
     void Application::run(){
-
-#define DEBUGTRIANGLE 1
-#if DEBUGTRIANGLE
-        f32 verts[] = {
-            -1.0f, -1.0f, 1.0f,  0.f, 0.f, 0.f,
-             1.0f, -1.0f, 1.0f,  1.f, 0.f, 0.f,
-             1.0f,  1.0f, 1.0f,  0.f, 1.f, 0.f,
-            -1.0f,  1.0f, 1.0f,  0.f, 0.f, 1.f,
-        };
-        u32 inds[] = {
-            0, 1, 2,
-            2, 3, 0
-        };
-
-        BufferLayout layout {
-            {T_vec3, "aPos"},
-            {T_vec3, "aColor"},
-        };
-
-        const char* vsh = R"(
-            #version 330 core
-            layout (location = 0) in vec3 aPos;
-            layout (location = 1) in vec3 aColor;
-
-            uniform mat4 u_viewProjMat;
-            out vec3 fColor;
-
-            void main() {
-                gl_Position = u_viewProjMat * vec4(aPos, 1.0);
-                fColor = aColor;
-            }
-        )";
-
-        const char* fsh = R"(
-            #version 330 core
-            out vec4 FragColor;
-            in vec3 fColor;
-            
-            void main() {
-                FragColor = vec4(fColor, 1.0);
-            }
-        )";
-
-        p_shared(VAO) vao = std::make_shared<VAO>();
-        p_shared(VertexBuffer) vb = std::make_shared<VertexBuffer>
-            (verts, sizeof(verts));
-        vb->setLayout(layout);
-
-        p_shared(IndexBuffer) ib = std::make_shared<IndexBuffer>
-            (inds, sizeof(inds)); 
-
-        vao->addVertexBuffer(vb);
-        vao->addIndexBuffer(ib);
-
-        Shader sh(vsh, fsh);
-        OrthographicCamera cam({16.f,8.f});
-        cam.setRotation(vec3(0, -pi<f32>()/2, 0));
-#endif
-
-        Renderer::issue_setClearColor({.1f, .1f, .1f, 1.f});
         while(this->_running){
             Input::_clearPoll();
             this->_window->update();
@@ -123,23 +57,14 @@ namespace Everest {
                 layer->onUpdate();
             }
 
-            Renderer::issue_clear();
-            Renderer::beginScene(&cam);
-#if DEBUGTRIANGLE
-            sh.bind();
-            sh.setUniform_Mat4("u_viewProjMat", cam.getVPmatrix());
-            Renderer::submit(vao);
-#endif
-            Renderer::endScene();
-
-#ifdef DEBUG
             this->debugger->begin();
             for(Layer* layer:this->_layerStack){
                 layer->onDebugRender();
             }
+#ifdef DEBUG
             this->debugger->onDebugRender();
-            this->debugger->end();
 #endif
+            this->debugger->end();
 
             this->_window->swapBuffers();
         }
