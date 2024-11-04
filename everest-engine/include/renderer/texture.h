@@ -13,7 +13,10 @@ namespace Everest {
             Texture(const std::string filepath);
             ~Texture();
 
-            inline void bind(u32 slot = 0){glBindTexture(slot, _id);}
+            inline void bind(u32 slot = 0){
+                glActiveTexture(GL_TEXTURE0+slot);
+                glBindTexture(GL_TEXTURE_2D, _id);
+            }
 
             inline u32 getWidth(){return _size.x;}
             inline u32 getHeight(){return _size.y;}

@@ -17,7 +17,7 @@ class TowerDefense : public Layer {
     private:
         ref<VAO> _quad;
         ref<Shader> _shader;
-        ref<Texture> _texture;
+        ref<Texture> _logo, _tiles;
         PerspectiveCamera _cam;
 
         char _evLog[100] = "";

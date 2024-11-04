@@ -5,6 +5,9 @@ namespace Everest {
     SceneData Renderer::_scene{mat4(0)};
 
     void Renderer::init(){
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
         ASSERT(_api == NULL);
         _api = new RenderAPI();
     }
