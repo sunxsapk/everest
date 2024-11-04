@@ -7,25 +7,26 @@
 
 #pragma once
 
+
 namespace Everest {
     class Camera {
         public:
 
             /*returns the projection * view matrix of camera*/
             inline mat4 getVPmatrix(){return _vpMat;}
-            /* returns the camera tilt */
-            inline vec3 getRotation(){return _rotation;}
             /* returns camera position */
             inline vec3 getPosition(){return _position;}
+            /* returns the direction in which camera is facing */
+            inline vec3 getForward(){return _vectors.forward;}
 
             /* sets the camera position */
-            inline void setRotation(vec3 rotation){
-                _rotation = rotation;
-                recalcView();
-            }
-            /* sets the camera rotation */
             inline void setPosition(vec3 position){
                 _position = position;
+                recalcView();
+            }
+            /* makes the camera look towards the given point */
+            inline void lookAt(vec3 point){
+                _vectors.forward = point - _position;
                 recalcView();
             }
 
@@ -36,10 +37,10 @@ namespace Everest {
             virtual void recalcProj() = 0;
 
         protected:
-            vec3 _position, _rotation; // normally comes from transform, so not pur in constructor
+            vec3 _position;
             mat4 _viewMat, _projMat, _vpMat;
             struct CamVectors {
-                vec3 forward, up, right;
+                vec3 forward, up;
             } _vectors;
     };
 

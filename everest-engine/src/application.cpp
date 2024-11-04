@@ -1,11 +1,8 @@
-#include <imgui_impl_glfw.h>
-#include <imgui_impl_opengl3.h>
-
 #include "events/mouseevent.h"
 #include "core/application.h"
 #include "core/core.h"
 #include "core/input.h"
-
+#include "core/time.h"
 
 namespace Everest {
 #define DEF_WIN_W 1024
@@ -28,12 +25,12 @@ namespace Everest {
     }
 
     void Application::attachDebugger(){
-        this->debugger = std::make_unique<DebugLayer>();
+        this->debugger = scoped<DebugLayer>();
         this->debugger->onAttach();
     }
 
     void Application::initWindow(){
-        this->_window = std::make_unique<Window>( DEF_WIN_W, DEF_WIN_H, _name);
+        this->_window = scoped<Window>( DEF_WIN_W, DEF_WIN_H, _name);
         this->_window->setEventCallback(BIND_EVENT_CB(Application::onEvent));
     }
 

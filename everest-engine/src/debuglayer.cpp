@@ -1,40 +1,18 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 
-#include "core/application.h"
 #include "core/debuglayer.h"
+#include "core/time.h"
 
 namespace Everest {
-    DebugLayer::DebugLayer(const char *name, bool mViewPort)
-        : Layer(name), _multiViewPorts(mViewPort){
+    DebugLayer::DebugLayer(const char *name)
+        : Layer(name){
     }
 
     void DebugLayer::onAttach(){
-        IMGUI_CHECKVERSION();
-        ImGui::CreateContext();
-
-        ImGuiIO& io = ImGui::GetIO(); (void)io;
-        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-        if(_multiViewPorts) io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-
-        ImGui::StyleColorsDark();
-
-        ImGuiStyle& style = ImGui::GetStyle();
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-            style.WindowRounding = 0.0f;
-            style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-        }
-
-        Window& win = Application::getAppWindow();
-        ImGui_ImplGlfw_InitForOpenGL(win.getWindow(), true);
-        ImGui_ImplOpenGL3_Init("#version 330");
     }
 
     void DebugLayer::onDetach(){
-        ImGui_ImplOpenGL3_Shutdown();
-        ImGui_ImplGlfw_Shutdown();
-        ImGui::DestroyContext();
     }
 
     void DebugLayer::onEvent(Event& event){

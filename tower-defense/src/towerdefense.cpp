@@ -5,105 +5,100 @@ TowerDefense::TowerDefense(const char* name)
     const char* vsh = R"(
         #version 330 core
         layout (location = 0) in vec3 aPos;
-        layout (location = 1) in vec3 aColor;
+        layout (location = 1) in vec2 aUV;
 
         uniform mat4 u_viewProjMat;
-        out vec3 fColor;
+        uniform mat4 u_transform;
 
+        out vec2 _uv;
         void main() {
-            gl_Position = u_viewProjMat * vec4(aPos, 1.0);
-            fColor = aColor;
+            gl_Position = u_viewProjMat * u_transform * vec4(aPos, 1.0);
+            _uv = aUV;
         }
     )";
 
     const char* fsh = R"(
         #version 330 core
+        uniform sampler2D u_texture;
+
+        in vec2 _uv;
         out vec4 FragColor;
-        in vec3 fColor;
         
         void main() {
-            FragColor = vec4(fColor, 1.0);
+            FragColor = texture(u_texture, _uv);
         }
     )";
 
     f32 verts[] = {
-        -1.0f, -1.0f, 1.0f,  0.f, 0.f, 0.f,
-         1.0f, -1.0f, 1.0f,  1.f, 0.f, 0.f,
-         1.0f,  1.0f, 1.0f,  0.f, 1.f, 0.f,
-        -1.0f,  1.0f, 1.0f,  0.f, 0.f, 1.f,
+        //-0.5f, -0.5f, -0.5f,
+        // 0.5f, -0.5f, -0.5f,
+        //-0.5f,  0.5f, -0.5f,
+        // 0.5f,  0.5f, -0.5f,
+        -0.5f, -0.5f,  0.5f, 0.f, 0.f,
+         0.5f, -0.5f,  0.5f, 1.f, 0.f,
+        -0.5f,  0.5f,  0.5f, 0.f, 1.f,
+         0.5f,  0.5f,  0.5f, 1.f, 1.f,
     };
 
     u32 inds[] = {
-        0, 1, 2,
-        2, 3, 0
+        0, 1, 2, 1, 3, 2, // front
+        //1, 5, 3, 5, 7, 3, // right
+        //5, 4, 7, 4, 6, 7, // back
+        //4, 0, 6, 0, 2, 6, // left
+        //2, 3, 6, 3, 7, 6, // top
+        //4, 5, 0, 5, 1, 0, // bottom
     };
 
     BufferLayout layout {
-        {T_vec3, "aPos"},
-        {T_vec3, "aColor"},
+        {ShaderDataType::T_vec3, "aPos"},
+        {ShaderDataType::T_vec2, "aUV"},
     };
 
-    _quad = std::make_shared<VAO>();
-    _shader = (std::make_shared<Shader>(vsh, fsh));
+    _quad = shareable<VAO>();
+    _shader = shareable<Shader>(vsh, fsh);
+    _texture = shareable<Texture>("./assets/textures/test.png");
 
-    p_shared(VertexBuffer) vb = std::make_shared<VertexBuffer>(verts, sizeof(verts));
+
+    ref<VertexBuffer> vb = shareable<VertexBuffer>(verts, sizeof(verts));
     vb->setLayout(layout);
-    p_shared(IndexBuffer) ib = std::make_shared<IndexBuffer>(inds, sizeof(inds)); 
+    ref<IndexBuffer> ib = shareable<IndexBuffer>(inds, sizeof(inds)); 
 
     _quad->addVertexBuffer(vb);
     _quad->addIndexBuffer(ib);
 
-    _cam.setRotation(vec3(0.f, 90.f, 0.f));
-    _cam.setPosition(vec3(0.f, 0.f, 3.f));
+    _cam.setPosition(vec3(0.f, 0.f, 2.f));
+    _cam.lookAt(vec3(0.f, 0.f, 0.f));
+
+    _shader->bind();
+    _texture->bind();
+    _shader->setUniform_i32("u_texture", 0);
 }
 
 void TowerDefense::handleEvents(){
-    static float rotSpeed = 10.f;
+    static float moveSpeed = 10.f;
     vec3 camPos = _cam.getPosition();
-    vec3 camRot = _cam.getRotation();
 
-    if(Input::getKeyDown(Everest::K_left_shift)){
-        if(Input::getKeyDown(Everest::K_w)){
-            camRot.z -= rotSpeed * Time::getDeltaTime();
-        }
-        if(Input::getKeyDown(Everest::K_s)){
-            camRot.z += rotSpeed * Time::getDeltaTime();
-        }
-        if(Input::getKeyDown(Everest::K_a)){
-            camRot.x -= rotSpeed * Time::getDeltaTime();
-        }
-        if(Input::getKeyDown(Everest::K_d)){
-            camRot.x += rotSpeed * Time::getDeltaTime();
-        }
-        if(Input::getKeyDown(Everest::K_q)){
-            camRot.y += rotSpeed * Time::getDeltaTime();
-        }
-        if(Input::getKeyDown(Everest::K_e)){
-            camRot.y -= rotSpeed * Time::getDeltaTime();
-        }
-    }else{
-        if(Input::getKeyDown(Everest::K_w)){
-            camPos.z -= Time::getDeltaTime();
-        }
-        if(Input::getKeyDown(Everest::K_s)){
-            camPos.z += Time::getDeltaTime();
-        }
-        if(Input::getKeyDown(Everest::K_a)){
-            camPos.x -= Time::getDeltaTime();
-        }
-        if(Input::getKeyDown(Everest::K_d)){
-            camPos.x += Time::getDeltaTime();
-        }
-        if(Input::getKeyDown(Everest::K_q)){
-            camPos.y += Time::getDeltaTime();
-        }
-        if(Input::getKeyDown(Everest::K_e)){
-            camPos.y -= Time::getDeltaTime();
-        }
+    if(Input::getKeyDown(Everest::K_w)){
+        camPos.z -= moveSpeed * Time::getDeltaTime();
+    }
+    if(Input::getKeyDown(Everest::K_s)){
+        camPos.z += moveSpeed * Time::getDeltaTime();
+    }
+    if(Input::getKeyDown(Everest::K_a)){
+        camPos.x -= moveSpeed * Time::getDeltaTime();
+    }
+    if(Input::getKeyDown(Everest::K_d)){
+        camPos.x += moveSpeed * Time::getDeltaTime();
+    }
+    if(Input::getKeyDown(Everest::K_q)){
+        camPos.y += moveSpeed * Time::getDeltaTime();
+    }
+    if(Input::getKeyDown(Everest::K_e)){
+        camPos.y -= moveSpeed * Time::getDeltaTime();
     }
 
     _cam.setPosition(camPos);
-    _cam.setRotation(camRot);
+    _cam.lookAt(vec3(0.f, 0.f, 0.f));
 }
 
 void TowerDefense::onUpdate(){
@@ -112,7 +107,10 @@ void TowerDefense::onUpdate(){
     Renderer::issue_setClearColor({.1f, .1f, .1f, 1.f});
     Renderer::issue_clear();
     Renderer::beginScene(_cam);
-    Renderer::submit(_quad, _shader);
+
+    static vec3 position(0), color(0.f, 0.6f, 0.6f);
+    //position.x = glm::sin(Time::getDeltaTime());
+    Renderer::submit(_quad, _shader, glm::translate(mat4(1.f), position));
     Renderer::endScene();
 }
 

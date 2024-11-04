@@ -7,21 +7,12 @@
 
 namespace Everest {
     Camera::Camera()
-        :_position(0), _rotation(0),
-        _vectors({{0.f,1.f,0.f},{1.f,0.f,0.f},{0.f,0.f,1}}){ }
+        :_position(0),
+        _vectors({vec3(0.f,0.f,1.f),vec3(0.f,1.f,0.f)}){ }
 
 
     void Camera::recalcView(){
-        // TODO : properly calculate the rotation of camera
-        mat4 rot = 
-            eulerAngleXYZ(radians(_rotation.x), radians(_rotation.y), radians(_rotation.z));
-            //yawPitchRoll(radians(_rotation.y), radians(_rotation.z), radians(_rotation.x));
-
-        _vectors.forward = rot * vec4(1.f,0.f,0.f,0.f);
-        _vectors.up  = rot * vec4(0.f,1.f,0.f,0.f);
-        _vectors.right = normalize(cross(_vectors.forward, _vectors.up));
-
-        _viewMat = lookAt(_position, _position+_vectors.forward, _vectors.up);
+        _viewMat = glm::lookAt(_position, _position+_vectors.forward, _vectors.up);
         _vpMat = _projMat * _viewMat;
     }
 
@@ -44,7 +35,7 @@ namespace Everest {
     }
 
     void OrthographicCamera::recalcProj(){
-        _projMat = ortho(_props.left, _props.right, _props.bottom,
+        _projMat = glm::ortho(_props.left, _props.right, _props.bottom,
                 _props.top, _props.near, _props.far);
         _vpMat = _projMat * _viewMat;
     }
@@ -70,7 +61,7 @@ namespace Everest {
     }
 
     void PerspectiveCamera::recalcProj(){
-        _projMat = perspective(radians(_props.fov), _props.aspect,
+        _projMat = glm::perspective(glm::radians(_props.fov), _props.aspect,
                 _props.near, _props.far);
         _vpMat = _projMat * _viewMat;
     }

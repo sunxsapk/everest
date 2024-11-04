@@ -15,17 +15,17 @@ namespace Everest{
             ~VAO();
 
             /* adds & binds the vertex buffer to vertex array object */
-            void addVertexBuffer(p_shared(VertexBuffer) vertexBuf);
+            void addVertexBuffer(ref<VertexBuffer> vertexBuf);
             /* adds & binds the index buffer to vertex array object */
-            void addIndexBuffer(p_shared(IndexBuffer) index);
+            void addIndexBuffer(ref<IndexBuffer> index);
             /* returns the shared pointer to the vertex buffer added to the
              * vertex array object. Returns NULL is there is no vertex buffer
              * added */
-            inline p_shared(VertexBuffer) getVertexBuffer(){return _vertexBuf;}
+            inline ref<VertexBuffer> getVertexBuffer(){return _vertexBuf;}
             /* returns the shared pointer to the vertex buffer added to the
              * vertex array object. Returns NULL is there is no vertex buffer
              * added */
-            inline p_shared(IndexBuffer) getIndexBuffer(){return _indexBuf;}
+            inline ref<IndexBuffer> getIndexBuffer(){return _indexBuf;}
 
             /* binds the current vertex array object*/
             void bind();
@@ -37,7 +37,7 @@ namespace Everest{
             void setLayout(const BufferLayout& layout);
         private:
             u32 _id;
-            p_shared(VertexBuffer) _vertexBuf;
-            p_shared(IndexBuffer)  _indexBuf;
+            ref<VertexBuffer> _vertexBuf;
+            ref<IndexBuffer>  _indexBuf;
     };
 }

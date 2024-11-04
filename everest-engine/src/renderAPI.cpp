@@ -9,7 +9,7 @@ namespace Everest {
         glClearColor(color.r, color.g, color.b, color.a);
     }
 
-    void RenderAPI::drawIndexed(p_shared(VAO) vertexArray){
+    void RenderAPI::drawIndexed(ref<VAO> vertexArray){
         vertexArray->bind();
         glDrawElements(GL_TRIANGLES, vertexArray->getIndexBuffer()->getCount(),
                 GL_UNSIGNED_INT, NULL);

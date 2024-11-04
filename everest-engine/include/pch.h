@@ -2,7 +2,19 @@
 
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
-#include "math/types.h"
+
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/glm.hpp>
+#include <glm/ext/scalar_constants.hpp>
+#include <glm/ext/matrix_clip_space.hpp>
+#include <glm/ext/matrix_transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
+
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <imgui_impl_opengl3.h>
+
+#include <stb_image.h>
 
 #include <iostream>
 #include <sstream>
@@ -17,18 +29,14 @@
 #include <array>
 #include <functional>
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/glm.hpp>
-#include <glm/ext/scalar_constants.hpp>
-#include <glm/ext/matrix_clip_space.hpp>
-#include <glm/ext/matrix_transform.hpp>
-#include <glm/gtx/euler_angles.hpp>
+
+#include "math/types.h"
+#include "math/utils.h"
 
 #include "core/core.h"
 #include "core/log.h"
 #include "core/dbghelper.h"
-#include "core/input.h"
-#include "core/time.h"
+
 
 #ifdef WIN32
 #include <Windows.h>

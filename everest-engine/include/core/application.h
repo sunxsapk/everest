@@ -29,7 +29,7 @@ namespace Everest {
             /* returns the window wrapper used by the application*/
             static inline Window& getAppWindow(){return *s_app->_window;}
         protected:
-            std::unique_ptr<Window> _window; 
+            scope<Window> _window; 
             bool _running = true;
             LayerStack _layerStack;
 
@@ -38,7 +38,7 @@ namespace Everest {
         private:
             static Application* s_app;
             const char *_name;
-            std::unique_ptr<DebugLayer> debugger;
+            scope<DebugLayer> debugger;
 
             /* initializes the window of the application and binds the event
              * callbacks*/

@@ -14,6 +14,6 @@ namespace Everest {
         public:
             void clear();
             void setClearColor(vec4 color);
-            void drawIndexed(p_shared(VAO) vertexArray);
+            void drawIndexed(ref<VAO> vertexArray);
     };
 }

@@ -15,8 +15,9 @@ class TowerDefense : public Layer {
         void handleEvents();
 
     private:
-        p_shared(VAO) _quad;
-        p_shared(Shader) _shader;
+        ref<VAO> _quad;
+        ref<Shader> _shader;
+        ref<Texture> _texture;
         PerspectiveCamera _cam;
 
         char _evLog[100] = "";

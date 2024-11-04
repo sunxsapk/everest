@@ -21,9 +21,11 @@ namespace Everest {
     void Renderer::endScene(){
     }
 
-    void Renderer::submit(p_shared(VAO)& vertexArray, p_shared(Shader)& shader){
+    void Renderer::submit(ref<VAO>& vertexArray, ref<Shader>& shader,
+            mat4 transform){
         shader->bind();
         shader->setUniform_Mat4("u_viewProjMat", _scene.viewProjectionMatrix);
+        shader->setUniform_Mat4("u_transform", transform);
         _api->drawIndexed(vertexArray);
     }
 }

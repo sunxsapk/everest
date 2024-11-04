@@ -13,7 +13,7 @@
 namespace Everest {
     class DebugLayer : public Layer {
         public:
-            DebugLayer(const char* name = "debugger", bool mViewPort = false);
+            DebugLayer(const char* name = "debugger");
 
             void onAttach() override;
             void onDetach() override;
@@ -25,6 +25,6 @@ namespace Everest {
             void end();
             void onDebugRender() override;
         private:
-            bool _blockEvents, _multiViewPorts;
+            bool _blockEvents;
     };
 }

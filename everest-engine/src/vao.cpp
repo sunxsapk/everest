@@ -11,7 +11,7 @@ namespace Everest{
         glDeleteVertexArrays(1, &_id);
     }
 
-    void VAO::addVertexBuffer(p_shared(VertexBuffer) vertexBuf){
+    void VAO::addVertexBuffer(ref<VertexBuffer> vertexBuf){
         glBindVertexArray(_id);
         vertexBuf->bind();
         setLayout(vertexBuf->getLayout());
@@ -19,7 +19,7 @@ namespace Everest{
         _vertexBuf = vertexBuf;
     }
 
-    void VAO::addIndexBuffer(p_shared(IndexBuffer) indexBuf){
+    void VAO::addIndexBuffer(ref<IndexBuffer> indexBuf){
         glBindVertexArray(_id);
         indexBuf->bind();
         glBindVertexArray(0);

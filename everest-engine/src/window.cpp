@@ -19,6 +19,7 @@ namespace Everest{
         glfwWindowHint(GLFW_FOCUS_ON_SHOW, GLFW_TRUE);
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
         glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
+        glfwWindowHint(GLFW_SAMPLES, 8);
 
         this->_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
         ASSERT(this->_window != NULL);

@@ -22,7 +22,8 @@ namespace Everest {
 
             static void beginScene(Camera& camera);
             static void endScene();
-            static void submit(p_shared(VAO)& vertexArray, p_shared(Shader)& shader);
+            static void submit(ref<VAO>& vertexArray,
+                    ref<Shader>& shader, mat4 transform);
 
             static inline void issue_clear(){ _api->clear();}
             static inline void issue_setClearColor(vec4 color){

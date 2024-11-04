@@ -5,7 +5,24 @@
  * constants, etc.
  */
 
+#pragma once
+
 #define BIT(x) (1<<x)
 
-#define p_shared(T) std::shared_ptr<T>
-#define p_unique(T) std::unique_ptr<T>
+namespace Everest {
+    template<typename T>
+    using scope = std::unique_ptr<T>;
+
+    template<typename T>
+    using ref = std::shared_ptr<T>;
+
+    template<typename T, typename... Args>
+    ref<T> shareable(Args&&... args){
+        return std::make_shared<T>(std::forward<Args>(args)...);
+    }
+
+    template<typename T, typename... Args>
+    scope<T> scoped(Args&&... args){
+        return std::make_unique<T>(std::forward<Args>(args)...);
+    }
+}
