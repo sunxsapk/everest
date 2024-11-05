@@ -2,32 +2,6 @@
 
 TowerDefense::TowerDefense(const char* name)
     :Layer(name){
-    const char* vsh = R"(
-        #version 330 core
-        layout (location = 0) in vec3 aPos;
-        layout (location = 1) in vec2 aUV;
-
-        uniform mat4 u_viewProjMat;
-        uniform mat4 u_transform;
-
-        out vec2 _uv;
-        void main() {
-            gl_Position = u_viewProjMat * u_transform * vec4(aPos, 1.0);
-            _uv = aUV;
-        }
-    )";
-
-    const char* fsh = R"(
-        #version 330 core
-        uniform sampler2D u_texture;
-
-        in vec2 _uv;
-        out vec4 FragColor;
-        
-        void main() {
-            FragColor = texture(u_texture, _uv);
-        }
-    )";
 
     f32 verts[] = {
         //-0.5f, -0.5f, -0.5f,
@@ -55,7 +29,7 @@ TowerDefense::TowerDefense(const char* name)
     };
 
     _quad = shareable<VAO>();
-    _shader = shareable<Shader>(vsh, fsh);
+    _shader = shareable<Shader>("./assets/shaders/shader.glsl");
     _logo = shareable<Texture>("./assets/textures/test.png");
     _tiles = shareable<Texture>("./assets/textures/test2.png");
 

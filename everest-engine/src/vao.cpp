@@ -27,7 +27,7 @@ namespace Everest{
     }
 
     void VAO::setLayout(const BufferLayout& layout){
-        ASSERT(layout.getSize() != 0);
+        ASSERT(layout.getSize() != 0, "Layout not specified");
 
         u32 index = 0;
         for(const auto& item:layout){

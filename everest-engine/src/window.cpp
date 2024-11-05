@@ -22,12 +22,12 @@ namespace Everest{
         glfwWindowHint(GLFW_SAMPLES, 8);
 
         this->_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
-        ASSERT(this->_window != NULL);
+        ASSERT(this->_window != NULL, "Failed to create window");
 
         glfwMakeContextCurrent(this->_window);
 
         i32 _glLoaded = gladLoadGL(glfwGetProcAddress);
-        ASSERT(_glLoaded);
+        ASSERT(_glLoaded, "Failed to initialize glad");
 
         glfwSwapInterval(1);
         glfwSetWindowUserPointer(this->_window, &this->_winData);
@@ -43,12 +43,12 @@ namespace Everest{
     }
 
     Window::~Window(){
-        ASSERT(this->_window != NULL);
+        ASSERT(this->_window != NULL, "No window provided");
         glfwDestroyWindow(this->_window);
     }
 
     void Window::setTitle(const char* title){
-        ASSERT(this->_window != NULL && title != NULL);
+        ASSERT(this->_window != NULL && title != NULL, "Should have valid window and name");
         this->_winData.title = title;
         glfwSetWindowTitle(this->_window, title);
     }

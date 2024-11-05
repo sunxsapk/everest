@@ -1,29 +1,90 @@
 #include "renderer/shader.h"
 
 namespace Everest {
-    Shader::Shader(const char* vert_glsl, const char* frag_glsl){
+    GLenum getType(std::string token){
+        if(token == "vertex") return GL_VERTEX_SHADER;
+        if(token == "fragment" || token == "pixel") return GL_FRAGMENT_SHADER;
+        ASSERT(false, "Unknown shader type");
+        return 0;
+    }
+
+    std::unordered_map<GLenum, std::string> getShaders(std::string src){
+        std::unordered_map<GLenum, std::string> shaders;
+
+        const char* type_token = "#type";
+        size_t ttoken_l = strlen(type_token);
+
+        size_t pos = src.find(type_token);
+        while(pos != std::string::npos){
+            size_t eol = src.find_first_of("\r\n", pos);
+            ASSERT(eol != std::string::npos, "Shader syntax err: no shader \
+                    source after #type token");
+            size_t tkpos = pos + ttoken_l + 1;
+            std::string tname = src.substr(tkpos, eol-tkpos);
+
+            size_t shbeg = src.find_first_not_of("\r\n", eol);
+            pos = src.find(type_token, shbeg);
+            shaders[getType(tname)] = src.substr(shbeg, pos - 
+                    (shbeg == std::string::npos?src.size()-1:shbeg));
+        }
+
+        return shaders;
+    }
+
+    Shader::Shader(const std::string name, const std::string vert_glsl, const std::string frag_glsl)
+    : _name(name){
+        _compile(vert_glsl.c_str(), frag_glsl.c_str());
+    }
+
+    Shader::Shader(const std::string filepath){
+        std::string src = _readSh(filepath);
+        std::unordered_map<GLenum, std::string> shaders = getShaders(src);
+        _compile(shaders[GL_VERTEX_SHADER].c_str(), shaders[GL_FRAGMENT_SHADER].c_str());
+
+        size_t _beg = filepath.find_last_of("/\\");
+        _beg = _beg == std::string::npos?0:(_beg+1);
+        size_t _end = filepath.find_last_of(".");
+        _end = _end == std::string::npos?filepath.size() : _end;
+
+        _name = filepath.substr(_beg, _end -_beg);
+    }
+
+    std::string Shader::_readSh(const std::string& filepath){
+        std::ifstream f_in(filepath, std::ios::in | std::ios::binary);
+        ASSERT(f_in.is_open(), "Invalid file: %s", filepath.c_str());
+
+        std::string content;
+        f_in.seekg(0, std::ios::end);
+        content.resize(f_in.tellg());
+        f_in.seekg(0, std::ios::beg);
+        f_in.read(&content[0], content.size());
+        f_in.close();
+        return content;
+    }
+    void Shader::_compile(const char* vert_glsl, const char* frag_glsl){
         u32 vid, fid;
 
-        i32 vertex_shader_compiled = compileShader(vert_glsl, GL_VERTEX_SHADER, &vid);
-        if(!vertex_shader_compiled){
-            getInfoLog(vid, GL_VERTEX_SHADER);
+        i32 _success = _compSh(vert_glsl, GL_VERTEX_SHADER, &vid);
+        if(!_success){
+            _getIL(vid, GL_VERTEX_SHADER);
             glDeleteShader(vid);
-            ASSERT(vertex_shader_compiled);
+            ASSERT(_success, "Failed to compile vertex shader");
         }
 
-        i32 fragment_shader_compiled = compileShader(frag_glsl, GL_FRAGMENT_SHADER, &fid);
-        if(!fragment_shader_compiled){
-            getInfoLog(fid, GL_FRAGMENT_SHADER);
+        _success = _compSh(frag_glsl, GL_FRAGMENT_SHADER, &fid);
+        if(!_success){
+            _getIL(fid, GL_FRAGMENT_SHADER);
             glDeleteShader(vid);
             glDeleteShader(fid);
-            ASSERT(fragment_shader_compiled);
+            ASSERT(_success, "Failed to compile fragment shader");
         }
 
-        linkShaders(vid, fid);
+        _linkSh(vid, fid);
     }
 
     Shader::~Shader(){
         glDeleteProgram(_programID);
+        EVLog_Msg("Shader deleted");
     }
 
     void Shader::bind(){
@@ -34,9 +95,10 @@ namespace Everest {
         glUseProgram(0);
     }
 
-    i32 Shader::compileShader(const char* glsl, GLenum type, u32 *id){
-        ASSERT(glsl != NULL);
-        ASSERT(type == GL_VERTEX_SHADER || type == GL_FRAGMENT_SHADER);
+    i32 Shader::_compSh(const char* glsl, GLenum type, u32 *id){
+        ASSERT(glsl != NULL, "Cannot pass null string for compilation");
+        ASSERT(type == GL_VERTEX_SHADER || type == GL_FRAGMENT_SHADER, 
+                "Invalid shader type");
 
         *id = glCreateShader(type);
         glShaderSource(*id, 1, &glsl, NULL);
@@ -48,7 +110,7 @@ namespace Everest {
         return _shader_compiled;
     }
 
-    void Shader::getInfoLog(u32 id, GLenum type){
+    void Shader::_getIL(u32 id, GLenum type){
         char infoLog[512];
         glGetShaderInfoLog(id, 512, NULL, infoLog);
         EVLog_Err("%s Shader Compilation Failed:\n %s",
@@ -56,7 +118,7 @@ namespace Everest {
                 infoLog);
     }
 
-    void Shader::linkShaders(u32 vert, u32 frag){
+    void Shader::_linkSh(u32 vert, u32 frag){
         _programID = glCreateProgram();
         glAttachShader(_programID, vert);
         glAttachShader(_programID, frag);
@@ -72,12 +134,44 @@ namespace Everest {
             glDeleteShader(vert);
             glDeleteShader(frag);
             glDeleteProgram(_programID);
-            ASSERT(_shaders_linked);
+            ASSERT(_shaders_linked, "Failed to link shaders");
         }
 
         glDetachShader(_programID, vert);
         glDetachShader(_programID, frag);
         glDeleteShader(vert);
         glDeleteShader(frag);
+    }
+
+
+    void ShaderLibrary::Add(const std::string name, ref<Shader>& shader){
+        ASSERT(_shaders.find(name) == _shaders.end(), "Shader already exists");
+        _shaders[name] = shader;
+    }
+
+    void ShaderLibrary::Add(ref<Shader>& shader){
+        Add(shader->getName(), shader);
+    }
+
+    ref<Shader> ShaderLibrary::load(const std::string filepath){
+        ref<Shader> shader = shareable<Shader>(filepath);
+        Add(shader);
+        return shader;
+    }
+
+    ref<Shader> ShaderLibrary::load(const std::string filepath,
+            const std::string name){
+        ref<Shader> shader = shareable<Shader>(filepath);
+        Add(name, shader);
+        return shader;
+    }
+
+    bool ShaderLibrary::exists(const std::string name){
+        return _shaders.find(name) != _shaders.end();
+    }
+
+    ref<Shader> ShaderLibrary::get(const std::string name){
+        ASSERT(_shaders.find(name) != _shaders.end(), "Shader not found");
+        return _shaders[name];
     }
 }

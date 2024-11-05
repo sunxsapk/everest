@@ -53,13 +53,13 @@ namespace Everest {
             void setLensSize(vec2 lenSize);
             /* sets the view range of the camera */
             inline void setViewRange(f32 range){
-                ASSERT(range > 0.f);
+                ASSERT(range > 0.f, "Invalid view-range value");
                 _props.far = range;
                 recalcProj();
             }
             /* sets the near clipping point of camera */
             inline void setNearClip(f32 near){
-                ASSERT(near >= 0);
+                ASSERT(near >= 0.f, "Invalid near clip point value");
                 _props.near = near;
                 recalcProj();
             }
@@ -80,19 +80,19 @@ namespace Everest {
 
             /* sets the field of view of camera */
             inline void setFOV(f32 fov){
-                ASSERT(fov >= 0.f);
+                ASSERT(fov >= 0.f, "Invalid FOV");
                 _props.fov = fov;
                 recalcProj();
             }
             /* sets the view range of the camera */
             inline void setViewRange(f32 range){
-                ASSERT(range > 0.f);
+                ASSERT(range > 0.f, "Invalid view range");
                 _props.far = range;
                 recalcProj();
             }
             /* sets the near clipping point of camera */
             inline void setNearClip(f32 near){
-                ASSERT(near >= 0);
+                ASSERT(near >= 0, "Invalid near-clip point");
                 _props.near = near;
                 recalcProj();
             }

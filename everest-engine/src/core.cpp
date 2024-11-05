@@ -8,7 +8,7 @@ namespace Everest {
     void Core::initDependencies(){
         glfwSetErrorCallback(onGLFWerror);
         i32 _glfwInit = glfwInit();
-        ASSERT(_glfwInit);
+        ASSERT(_glfwInit, "Failed to initialize GLFW");
         EVLog_Msg("GLFW init");
 
         IMGUI_CHECKVERSION();

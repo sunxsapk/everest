@@ -73,7 +73,7 @@ namespace Everest {
         ImGuiIO& io = ImGui::GetIO();
         if(io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable){
             GLFWwindow* backup_current_context = glfwGetCurrentContext();
-            ASSERT(backup_current_context != NULL);
+            ASSERT(backup_current_context != NULL, "No window context to backing up");
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
             glfwMakeContextCurrent(backup_current_context);

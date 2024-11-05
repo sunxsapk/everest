@@ -11,9 +11,9 @@ namespace Everest {
     Application *Application::s_app = NULL;
 
     Application::Application(const char *name){
-        ASSERT(Application::s_app == NULL);
+        ASSERT(Application::s_app == NULL, "Can't have multiple instances of application");
         s_app = this;
-        ASSERT(name);
+        ASSERT(name, "Application should have a name");
         this->_name = name;
 
         Core::initDependencies();

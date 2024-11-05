@@ -29,6 +29,7 @@ namespace Everest {
             static inline void issue_setClearColor(vec4 color){
                 _api->setClearColor(color);
             }
+
         private:
             static RenderAPI *_api;
             static SceneData _scene;

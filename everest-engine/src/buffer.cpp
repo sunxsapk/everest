@@ -35,7 +35,7 @@ namespace Everest {
                 case T_dvec3:
                 case T_dvec4:   return GL_DOUBLE;
 
-                default: ASSERT(false);
+                default: ASSERT(false, "Invalid type");
             }
             return GL_NONE;
         }
@@ -71,7 +71,7 @@ namespace Everest {
                 case T_mat3x3:  return 3*3;
                 case T_mat4x4:  return 4*4;
 
-                default: ASSERT(false);
+                default: ASSERT(false, "Invalid type");
             }
             return 1;
         }
@@ -108,7 +108,7 @@ namespace Everest {
 
     Buffer::Buffer(bufd_t *_data, size_t _size, GLenum target)
         :_target(target){
-        ASSERT(_data != NULL);
+        ASSERT(_data != NULL, "Buffer should have data");
 
         glGenBuffers(1, &_id);
         glBindBuffer(_target, _id);

@@ -18,6 +18,7 @@
 
 #include <iostream>
 #include <sstream>
+#include <fstream>
 #include <memory>
 #include <stdio.h>
 #include <string>

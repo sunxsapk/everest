@@ -37,3 +37,4 @@ bin/
 bin-int/
 objs/
 .cache/
+assets/

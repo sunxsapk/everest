@@ -12,12 +12,12 @@ namespace Everest {
     }
 
     void LayerStack::pushLayer(Layer *layer){
-        ASSERT(layer != NULL);
+        ASSERT(layer != NULL, "Invalid layer");
         this->_layerStack.emplace_back(layer);
     }
 
     void LayerStack::popLayer(Layer *layer){
-        ASSERT(layer != NULL);
+        ASSERT(layer != NULL, "Invalid layer");
         auto itr = std::find(_layerStack.begin(), _layerStack.end(), layer);
         if(itr != _layerStack.end()){
             layer->onDetach();
@@ -27,7 +27,7 @@ namespace Everest {
 
     void LayerStack::popLayer(){
         Layer* layer = this->_layerStack.back();
-        ASSERT(layer != NULL);
+        ASSERT(layer != NULL, "Attempt to pop from empty layer stack.");
         layer->onDetach();
         this->_layerStack.pop_back();
     }

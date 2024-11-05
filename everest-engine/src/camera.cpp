@@ -17,9 +17,8 @@ namespace Everest {
     }
 
     OrthographicCamera::OrthographicCamera(vec2 lensSize, f32 near, f32 far){
-        ASSERT(lensSize.x > 0.f);
-        ASSERT(lensSize.y > 0.f);
-        ASSERT(far > 0.f);
+        ASSERT(lensSize.x > 0.f && lensSize.y > 0.f, "Invalid lens size");
+        ASSERT(far > 0.f, "Camera's 'far' property should be positive");
 
         lensSize.x /= 2;
         lensSize.y /= 2;
@@ -41,8 +40,7 @@ namespace Everest {
     }
 
     void OrthographicCamera::setLensSize(vec2 lensSize){
-        ASSERT(lensSize.x > 0.f);
-        ASSERT(lensSize.y > 0.f);
+        ASSERT(lensSize.x > 0.f && lensSize.y > 0.f, "Invalid lens size");
         lensSize.x /= 2; lensSize.y /= 2;
         _props.left   = -lensSize.x, _props.right = lensSize.x;
         _props.bottom = -lensSize.y, _props.top   = lensSize.y;
@@ -50,10 +48,10 @@ namespace Everest {
     }
 
     PerspectiveCamera::PerspectiveCamera(f32 fov, f32 aspect, f32 near, f32 far){
-        ASSERT(fov >= 0.f);
-        ASSERT(aspect >= 0.f);
-        ASSERT(near >= 0.f);
-        ASSERT(far >= 0.f);
+        ASSERT(fov >= 0.f, "Invalid field of view");
+        ASSERT(aspect >= 0.f, "Invalid aspect ratio");
+        ASSERT(near >= 0.f, "Invalid 'near' property");
+        ASSERT(far >= 0.f, "Invalid 'far' property");
 
         _props = {fov, aspect, near, far};
         recalcView();

@@ -19,12 +19,13 @@
 
 
 #ifdef ASSERT_ON
-    #define ASSERT(exp) if(!(exp)){\
-    EVLog_Err(\
-"Assertion Failed: %s \n\
-                   ^~~~~\n\
-                  === %s, line %d ===", #exp, __FILE__, __LINE__);\
-        BREAKPOINT;\
+#define ASSERT(exp, ...) if(!(exp)){\
+    EVLog_Err("\n\nAssertion failed:");\
+    EVLog_Err(__VA_ARGS__);\
+    EVLog_Err("\t%s\
+            \n\t^~~~~\
+            \n=== %s, line %d ===", #exp, __FILE__, __LINE__);\
+    BREAKPOINT;\
 }
 #else
     #define ASSERT(...)

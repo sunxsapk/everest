@@ -8,10 +8,9 @@ namespace Everest {
 
         stbi_set_flip_vertically_on_load(true);
         stbi_uc* data = stbi_load(_path.c_str(), &width, &height, &channels, 0);
-        ASSERT(data != NULL);
+        ASSERT(data != NULL, "Failed to load texture");
 
         _size = {width, height};
-        EVLog_Msg("%s : %d, %d, %d", filepath.c_str(), width, height, channels);
 
         GLenum _srcformat = 0, _trgformat;
         if(channels == 4){
@@ -24,7 +23,7 @@ namespace Everest {
             _srcformat = GL_RED;
             _trgformat = GL_RED;
         }
-        ASSERT(_srcformat != 0);
+        ASSERT(_srcformat != 0, "Unsupported format detected");
 
         glGenTextures(1, &_id);
         glBindTexture(GL_TEXTURE_2D, _id);

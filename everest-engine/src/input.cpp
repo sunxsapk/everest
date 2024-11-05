@@ -7,7 +7,7 @@ namespace Everest {
 
     void Input::init(){
         s_window = Application::getAppWindow().getWindow();
-        ASSERT(s_window != NULL);
+        ASSERT(s_window != NULL, "No window set for input");
         setStickyKeys(false);
     }
 

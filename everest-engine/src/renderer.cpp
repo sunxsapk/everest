@@ -8,12 +8,12 @@ namespace Everest {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        ASSERT(_api == NULL);
+        ASSERT(_api == NULL, "Api already created");
         _api = new RenderAPI();
     }
 
     void Renderer::quit(){
-        ASSERT(_api != NULL);
+        ASSERT(_api != NULL, "No API to quit");
         delete _api;
     }
 

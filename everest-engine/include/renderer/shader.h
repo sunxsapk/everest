@@ -14,11 +14,13 @@ namespace Everest {
 
     class Shader {
         public:
-            Shader(const char* vert_glsl, const char* frag_glsl);
+            Shader(const std::string name, const std::string vert_glsl, const std::string frag_glsl);
+            Shader(const std::string filepath);
             ~Shader();
 
             void bind();
             void unbind();
+            inline const std::string& getName(){return _name;}
 
             using name_t = const std::string;
 
@@ -74,15 +76,35 @@ namespace Everest {
                 if(_it != _uniformCache.end()) return _it->second;
 
                 GLint loc = glGetUniformLocation(_programID, name.c_str());
-                ASSERT(loc != -1);
+                ASSERT(loc != -1, "Either invalid uniform name or unused uniform variable detected");
                 _uniformCache[name] = loc;
                 return loc;
             }
 
         private:
             u32 _programID;
-            i32 compileShader(const char* glsl, GLenum type, u32 *id);
-            void linkShaders(u32 vert, u32 frag);
-            void getInfoLog(u32 id, GLenum type);
+            std::string _name;
+
+        private:
+            void _compile(const char* vert, const char* frag);
+            i32 _compSh(const char* glsl, GLenum type, u32 *id);
+            std::string _readSh(const std::string& filepath);
+            void _linkSh(u32 vert, u32 frag);
+            void _getIL(u32 id, GLenum type);
+    };
+
+    class ShaderLibrary {
+        public:
+            void Add(const std::string name, ref<Shader>& shader);
+            void Add(ref<Shader>& shader);
+
+            ref<Shader> load(const std::string filepath);
+            ref<Shader> load(const std::string filepath, const std::string name);
+
+            bool exists(const std::string name);
+            ref<Shader> get(const std::string name);
+
+        private:
+            std::unordered_map<std::string, ref<Shader>> _shaders;
     };
 }
