@@ -14,7 +14,7 @@ namespace Everest {
 
         public:
             /*creates a window instance with given params*/
-            Window(i32 width, i32 height, std::string title);
+            Window(i32 width, i32 height, std::string title, bool transparent = false);
             ~Window();
 
             /*swaps the front and back buffers*/

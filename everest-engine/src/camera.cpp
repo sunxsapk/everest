@@ -18,32 +18,30 @@ namespace Everest {
 
     OrthographicCamera::OrthographicCamera(vec2 lensSize, f32 near, f32 far){
         ASSERT(lensSize.x > 0.f && lensSize.y > 0.f, "Invalid lens size");
-        ASSERT(far > 0.f, "Camera's 'far' property should be positive");
+        ASSERT(far >= 0.f, "Camera's 'far' property should be positive");
 
-        lensSize.x /= 2;
-        lensSize.y /= 2;
-
-        _props = {
-            -lensSize.x, lensSize.x,
-            -lensSize.y, lensSize.y,
-             near,       far
-        };
+        _props = {lensSize.x, lensSize.y, near, far};
 
         recalcView();
         recalcProj();
     }
 
     void OrthographicCamera::recalcProj(){
-        _projMat = glm::ortho(_props.left, _props.right, _props.bottom,
-                _props.top, _props.near, _props.far);
+        f32 hw = _props.width/2.f, hh = _props.height/2.f;
+        _projMat = glm::ortho(-hw, hw, -hh, hh, _props.near, _props.far);
         _vpMat = _projMat * _viewMat;
     }
 
-    void OrthographicCamera::setLensSize(vec2 lensSize){
-        ASSERT(lensSize.x > 0.f && lensSize.y > 0.f, "Invalid lens size");
-        lensSize.x /= 2; lensSize.y /= 2;
-        _props.left   = -lensSize.x, _props.right = lensSize.x;
-        _props.bottom = -lensSize.y, _props.top   = lensSize.y;
+    void OrthographicCamera::setAspectRatio(f32 aspect){
+        ASSERT(aspect > 0.f, "Invalid aspect ratio for camera");
+        _props.width = _props.height * aspect;
+        recalcProj();
+    }
+
+    void OrthographicCamera::setOrthoSize(f32 size){
+        ASSERT(size > 0.f, "Invalid lens size");
+        _props.width = size * _props.width / _props.height;
+        _props.height = size;
         recalcProj();
     }
 

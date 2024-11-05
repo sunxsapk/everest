@@ -32,6 +32,7 @@
 #include "renderer/texture.h"
 
 #include "scene/camera.h"
+#include "scene/orthocamController.h"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>

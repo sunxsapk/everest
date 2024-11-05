@@ -15,10 +15,10 @@ class TowerDefense : public Layer {
         void handleEvents();
 
     private:
+        OrthographicCameraController _camController;
         ref<VAO> _quad;
         ref<Shader> _shader;
         ref<Texture> _logo, _tiles;
-        PerspectiveCamera _cam;
 
         char _evLog[100] = "";
 };

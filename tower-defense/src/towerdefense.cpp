@@ -1,13 +1,13 @@
 #include "towerdefense.h"
 
 TowerDefense::TowerDefense(const char* name)
-    :Layer(name){
+    :Layer(name), _camController(10.f, 5.f){
 
     f32 verts[] = {
-        //-0.5f, -0.5f, -0.5f,
-        // 0.5f, -0.5f, -0.5f,
-        //-0.5f,  0.5f, -0.5f,
-        // 0.5f,  0.5f, -0.5f,
+        //-0.5f, -0.5f, -0.5f, 0.f, 0.f,
+        // 0.5f, -0.5f, -0.5f, 1.f, 0.f,
+        //-0.5f,  0.5f, -0.5f, 0.f, 1.f,
+        // 0.5f,  0.5f, -0.5f, 1.f, 1.f,
         -0.5f, -0.5f,  0.5f, 0.f, 0.f,
          0.5f, -0.5f,  0.5f, 1.f, 0.f,
         -0.5f,  0.5f,  0.5f, 0.f, 1.f,
@@ -41,54 +41,21 @@ TowerDefense::TowerDefense(const char* name)
     _quad->addVertexBuffer(vb);
     _quad->addIndexBuffer(ib);
 
-    _cam.setPosition(vec3(0.f, 0.f, 3.f));
-    _cam.lookAt(vec3(0.f, 0.f, 0.f));
-
     _shader->bind();
     _shader->setUniform_i32("u_texture", 0);
 }
 
-void TowerDefense::handleEvents(){
-    static float moveSpeed = 10.f;
-    vec3 camPos = _cam.getPosition();
-
-    if(Input::getKeyDown(Everest::K_w)){
-        camPos.z -= moveSpeed * Time::getDeltaTime();
-    }
-    if(Input::getKeyDown(Everest::K_s)){
-        camPos.z += moveSpeed * Time::getDeltaTime();
-    }
-    if(Input::getKeyDown(Everest::K_a)){
-        camPos.x -= moveSpeed * Time::getDeltaTime();
-    }
-    if(Input::getKeyDown(Everest::K_d)){
-        camPos.x += moveSpeed * Time::getDeltaTime();
-    }
-    if(Input::getKeyDown(Everest::K_q)){
-        camPos.y += moveSpeed * Time::getDeltaTime();
-    }
-    if(Input::getKeyDown(Everest::K_e)){
-        camPos.y -= moveSpeed * Time::getDeltaTime();
-    }
-
-    _cam.setPosition(camPos);
-    _cam.lookAt(vec3(0.f, 0.f, 0.f));
-}
-
 void TowerDefense::onUpdate(){
-    this->handleEvents();
+    _camController.onUpdate();
 
     Renderer::issue_setClearColor({.1f, .1f, .1f, 1.f});
     Renderer::issue_clear();
-    Renderer::beginScene(_cam);
+    Renderer::beginScene(_camController.getCamera());
 
-    vec3 position(0), color(0.f, 0.6f, 0.6f);
-    //position.x = glm::sin(Time::getDeltaTime());
     _logo->bind();
-    Renderer::submit(_quad, _shader, glm::translate(mat4(1.f), position));
-    position.z = 1.f;
+    Renderer::submit(_quad, _shader, mat4(1.f));
     _tiles->bind();
-    Renderer::submit(_quad, _shader, glm::translate(mat4(1.f), position));
+    Renderer::submit(_quad, _shader, mat4(1.f));
     Renderer::endScene();
 }
 

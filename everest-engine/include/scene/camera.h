@@ -7,7 +7,6 @@
 
 #pragma once
 
-
 namespace Everest {
     class Camera {
         public:
@@ -18,6 +17,8 @@ namespace Everest {
             inline vec3 getPosition(){return _position;}
             /* returns the direction in which camera is facing */
             inline vec3 getForward(){return _vectors.forward;}
+            /* returns the up-vector of the camera orientation */
+            inline vec3 getUp(){return _vectors.up;}
 
             /* sets the camera position */
             inline void setPosition(vec3 position){
@@ -29,6 +30,12 @@ namespace Everest {
                 _vectors.forward = point - _position;
                 recalcView();
             }
+            inline void setUpVector(vec3 up){
+                _vectors.up = up;
+                recalcView();
+            }
+
+            friend class OrthographicCameraController;
 
         protected:
             Camera();
@@ -46,14 +53,20 @@ namespace Everest {
 
     class OrthographicCamera : public Camera {
         public:
-            OrthographicCamera(vec2 lensSize = vec2(16.f, 9.f), f32 near=0.f,
-                    f32 far=100.f);
+            OrthographicCamera(vec2 lensSize, f32 near, f32 far);
 
-            /* sets the camera's lens' width and height */
-            void setLensSize(vec2 lenSize);
+            /* returns camera's aspect ratio : lens_width/lens_height */
+            inline f32 getAspect(){return _props.width/_props.height;}
+            /* returns camera's lens height */
+            inline f32 getOrthoSize(){return _props.height;}
+
+            /* sets the aspect ratio of the camera lens */
+            void setAspectRatio(f32 aspect);
+            /* sets the camera's lens height maintaining aspect ratio */
+            void setOrthoSize(f32 size);
             /* sets the view range of the camera */
             inline void setViewRange(f32 range){
-                ASSERT(range > 0.f, "Invalid view-range value");
+                ASSERT(range >= 0.f, "Invalid view-range value");
                 _props.far = range;
                 recalcProj();
             }
@@ -69,7 +82,7 @@ namespace Everest {
 
         private:
             struct OrthoClipSpace {
-                f32 left, right, bottom, top, near, far;
+                f32 width, height, near, far;
             } _props;
     };
 

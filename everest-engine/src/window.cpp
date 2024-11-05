@@ -4,7 +4,7 @@
 #include "events/windowevent.h"
 
 namespace Everest{
-    Window::Window(i32 width, i32 height, std::string title){
+    Window::Window(i32 width, i32 height, std::string title, bool transparent){
         this->_winData.position = {0, 0};
         this->_winData.size = {width, height};
         this->_winData.title = title;
@@ -18,8 +18,8 @@ namespace Everest{
         glfwWindowHint(GLFW_CENTER_CURSOR, GLFW_TRUE);
         glfwWindowHint(GLFW_FOCUS_ON_SHOW, GLFW_TRUE);
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-        glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
         glfwWindowHint(GLFW_SAMPLES, 8);
+        if(transparent) glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
 
         this->_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
         ASSERT(this->_window != NULL, "Failed to create window");
