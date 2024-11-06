@@ -29,6 +29,9 @@ namespace Everest {
             static inline void issue_setClearColor(vec4 color){
                 _api->setClearColor(color);
             }
+            static inline void setViewPort(u32 x, u32 y, u32 width, u32 height){
+                glViewport(x, y, width, height);
+            }
 
         private:
             static RenderAPI *_api;

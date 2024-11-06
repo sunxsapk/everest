@@ -1,4 +1,3 @@
-#include <glm/gtx/rotate_vector.hpp>
 #include "scene/orthocamController.h"
 #include "core/input.h"
 #include "core/time.h"
@@ -6,11 +5,12 @@
 
 namespace Everest {
     OrthographicCameraController::OrthographicCameraController(f32 speed,
-            f32 rot_speed, vec2 lensSize, f32 near, f32 far)
-    :_camera(lensSize, near, far), _speed(speed), _angularSpeed(rot_speed),
+            f32 rot_speed, vec2 lensSize)
+    :_camera(lensSize, 0.1f, 100.f), _speed(speed), _angularSpeed(rot_speed),
      _zoomSensitivity(4.f), _speedZoomRatio(0.1f){
-        _camera._position = vec3(0.f, 0.f, 10.f);
-        _camera._vectors = { vec3(0.f, 0.f, -1.f), vec3(0.f, 1.f, 0.f)};
+        _camera.setPosition(vec3(0.f, 0.f, 10.f));
+        _camera.setUpVector({0.f, 1.f, 0.f});
+        _camera.lookAt(vec3(0.f));
     }
 
     void OrthographicCameraController::onUpdate(){

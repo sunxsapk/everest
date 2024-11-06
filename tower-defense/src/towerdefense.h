@@ -15,7 +15,7 @@ class TowerDefense : public Layer {
         void handleEvents();
 
     private:
-        OrthographicCameraController _camController;
+        PerspectiveCameraController _camController;
         ref<VAO> _quad;
         ref<Shader> _shader;
         ref<Texture> _logo, _tiles;

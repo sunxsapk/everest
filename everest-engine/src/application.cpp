@@ -3,6 +3,7 @@
 #include "core/core.h"
 #include "core/input.h"
 #include "core/time.h"
+#include "renderer/renderer.h"
 
 namespace Everest {
 #define DEF_WIN_W 1024
@@ -50,8 +51,10 @@ namespace Everest {
             this->_window->update();
             Time::tick();
 
-            for(Layer* layer:this->_layerStack){
-                layer->onUpdate();
+            if(!_minimized){
+                for(Layer* layer:this->_layerStack){
+                    layer->onUpdate();
+                }
             }
 
             this->debugger->begin();
@@ -72,12 +75,23 @@ namespace Everest {
         dispatcher.dispatch<WindowCloseEvent>(
                 BIND_EVENT_CB(Application::onWindowClose));
         dispatcher.dispatch<MouseScrolledEvent>(Input::_scrollPoll);
+        dispatcher.dispatch<WindowResizeEvent>(
+                BIND_EVENT_CB(Application::onWindowResize));
 
         for(auto it = this->_layerStack.rbegin();
                 it != this->_layerStack.rend(); ++it){
             if(event._handled) break;
             (*it)->onEvent(event);
         }
+    }
+    bool Application::onWindowResize(WindowResizeEvent& e){
+        if(e.getWidth() == 0 || e.getHeight() == 0){
+            _minimized = true;
+        } else {
+            _minimized = false;
+            Renderer::setViewPort(0, 0, e.getWidth(), e.getHeight());
+        }
+        return false;
     }
 
     bool Application::onWindowClose(WindowCloseEvent& e){

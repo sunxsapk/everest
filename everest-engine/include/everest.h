@@ -33,6 +33,7 @@
 
 #include "scene/camera.h"
 #include "scene/orthocamController.h"
+#include "scene/perscamController.h"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>

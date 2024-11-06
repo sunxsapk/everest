@@ -47,7 +47,6 @@ namespace Everest {
             } _winData;
             GLFWwindow* _window;
 
-            static void onFBResize(GLFWwindow* window, i32 width, i32 height);
             static void onResize(GLFWwindow* window, i32 width, i32 height);
             static void onMove(GLFWwindow* window, i32 x, i32 y);
             static void onClose(GLFWwindow *window);

@@ -32,7 +32,6 @@ namespace Everest{
         glfwSwapInterval(1);
         glfwSetWindowUserPointer(this->_window, &this->_winData);
 
-        glfwSetFramebufferSizeCallback(this->_window, Window::onFBResize);
         glfwSetWindowSizeCallback(this->_window, Window::onResize);
         glfwSetWindowPosCallback(this->_window, Window::onMove);
         glfwSetWindowCloseCallback(this->_window, Window::onClose);
@@ -59,10 +58,6 @@ namespace Everest{
 
     void Window::swapBuffers(){
         glfwSwapBuffers(this->_window);
-    }
-
-    void Window::onFBResize(GLFWwindow* window, i32 width, i32 height){
-        glViewport(0, 0, width, height);
     }
 
     void Window::onKeyEvent(GLFWwindow *window, i32 key, i32 scancode, i32 action, i32 mods){

@@ -1,7 +1,7 @@
 #include "towerdefense.h"
 
 TowerDefense::TowerDefense(const char* name)
-    :Layer(name), _camController(10.f, 5.f){
+    :Layer(name), _camController(4.f){
 
     f32 verts[] = {
         //-0.5f, -0.5f, -0.5f, 0.f, 0.f,

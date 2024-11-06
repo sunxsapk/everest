@@ -2,13 +2,10 @@
 #include <glm/ext/matrix_clip_space.hpp>
 #include <glm/ext/matrix_transform.hpp>
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/euler_angles.hpp>
-
 namespace Everest {
     Camera::Camera()
         :_position(0),
-        _vectors({vec3(0.f,0.f,1.f),vec3(0.f,1.f,0.f)}){ }
+        _vectors({vec3(0.f,0.f,1.f),vec3(0.f,1.f,0.f), vec3(-1.f, 0.f, 0.f)}){ }
 
 
     void Camera::recalcView(){

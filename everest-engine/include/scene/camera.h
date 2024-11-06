@@ -17,8 +17,10 @@ namespace Everest {
             inline vec3 getPosition(){return _position;}
             /* returns the direction in which camera is facing */
             inline vec3 getForward(){return _vectors.forward;}
-            /* returns the up-vector of the camera orientation */
+            /* returns the up-vector of the camera */
             inline vec3 getUp(){return _vectors.up;}
+            /* returns the right-vector of the camera */
+            inline vec3 getRight(){return _vectors.right;}
 
             /* sets the camera position */
             inline void setPosition(vec3 position){
@@ -28,14 +30,22 @@ namespace Everest {
             /* makes the camera look towards the given point */
             inline void lookAt(vec3 point){
                 _vectors.forward = point - _position;
+                _vectors.right = glm::normalize(glm::cross(_vectors.forward, _vectors.up));
+                _vectors.up = glm::normalize(glm::cross(_vectors.right, _vectors.forward));
+                recalcView();
+            }
+            inline void faceTo(vec3 dir){
+                _vectors.forward = dir;
+                _vectors.right = glm::normalize(glm::cross(_vectors.forward, _vectors.up));
+                _vectors.up = glm::normalize(glm::cross(_vectors.right, _vectors.forward));
                 recalcView();
             }
             inline void setUpVector(vec3 up){
                 _vectors.up = up;
+                _vectors.right = glm::normalize(glm::cross(_vectors.forward, _vectors.up));
+                _vectors.forward = glm::normalize(glm::cross(_vectors.up, _vectors.right));
                 recalcView();
             }
-
-            friend class OrthographicCameraController;
 
         protected:
             Camera();
@@ -47,7 +57,7 @@ namespace Everest {
             vec3 _position;
             mat4 _viewMat, _projMat, _vpMat;
             struct CamVectors {
-                vec3 forward, up;
+                vec3 forward, up, right;
             } _vectors;
     };
 

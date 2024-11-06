@@ -31,10 +31,12 @@ namespace Everest {
         protected:
             scope<Window> _window; 
             bool _running = true;
+            bool _minimized = false;
             LayerStack _layerStack;
 
             /*called when the window close event is recieved by the application*/
             bool onWindowClose(WindowCloseEvent& e);
+            bool onWindowResize(WindowResizeEvent& e);
         private:
             static Application* s_app;
             const char *_name;
