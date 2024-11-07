@@ -16,7 +16,7 @@ void SandBox2D::onUpdate(){
     Renderer::issue_setClearColor({.1f, .1f, .1f, 1.f});
     Renderer::issue_clear();
     Renderer2D::beginScene(_camController.getCamera());
-    Renderer2D::drawQuad(vec3(0.f), vec2(4.f), 10 * Time::getScaledTime(),
+    Renderer2D::drawQuad(vec3(0.f), vec2(4.f), 10.f*Time::getTime(),
             color, _logo);
     Renderer2D::drawQuad(vec2(-4.f, -2.f), vec2(3.f, 2.f), 0.f, vec4(1.f),
             _tiles);

@@ -39,9 +39,13 @@ Now, let's talk about the current milestones of the project:
 
 + Establish  a rendering system with movable camera system, that can draw basic
     shapes on the window.
-    ; Components: Camera(Main-Camera), Renderer, Rectangle, Circle, Line, Triangle
+    ; Components: Camera(Main-Camera), Renderer
     ; Target: Move a object(Shape) around screen, using key-inputs, mouse-inputs
         and if possible with window-move events too.
+
+- Before starting to work on a major bulk of a engine, we need a system for
+    profiling the engine, so do something about that. Make a memory monitoring
+    system, resources monitor, etc.
 
 - Make a fully functioning 2D renderer, with scene submission and whatnot. Research
     some more on this topic and try to go towards the path of optimized renderering
@@ -52,6 +56,3 @@ Now, let's talk about the current milestones of the project:
     ; Components: Orthographic camera, Renderer, Textures, Shaders, etc
     ; Target: Make a non-physics involved game like tic-tac-toe.
 
-- Before starting to work on a major bulk of a engine, we need a system for
-    profiling the engine, so do something about that. Make a memory monitoring
-    system, resources monitor, etc.

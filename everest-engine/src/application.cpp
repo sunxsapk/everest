@@ -46,10 +46,10 @@ namespace Everest {
     }
 
     void Application::run(){
+        Time::begin();
         while(this->_running){
             Input::_clearPoll();
             this->_window->update();
-            Time::tick();
 
             if(!_minimized){
                 for(Layer* layer:this->_layerStack){
@@ -67,6 +67,7 @@ namespace Everest {
             this->debugger->end();
 
             this->_window->swapBuffers();
+            Time::tick();
         }
     }
 

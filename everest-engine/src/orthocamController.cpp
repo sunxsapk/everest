@@ -15,8 +15,8 @@ namespace Everest {
 
     void OrthographicCameraController::onUpdate(){
         vec3 pos = _camera.getPosition();
-        f32 disp = getSpeed() * Time::getDeltaTime();
-        f32 angdisp = getAngularSpeed() * Time::getDeltaTime();
+        f32 disp = getSpeed() * Time::getDeltatime();
+        f32 angdisp = getAngularSpeed() * Time::getDeltatime();
 
         if(Input::getKeyDown(K_w)) pos.y += disp;
         if(Input::getKeyDown(K_s)) pos.y -= disp;
@@ -35,7 +35,7 @@ namespace Everest {
         f32 scroll = Input::mouseScrollY();
         if(scroll != 0.f){
             _camera.setOrthoSize(_camera.getOrthoSize() *
-                    (1.f - Time::getDeltaTime() * scroll * _zoomSensitivity));
+                    (1.f - Time::getDeltatime() * scroll * _zoomSensitivity));
         }
 
         _camera.setPosition(pos);

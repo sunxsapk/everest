@@ -3,6 +3,7 @@
 #include "core/input.h"
 #include "renderer/renderer.h"
 #include "core/application.h"
+#include "core/time.h"
 
 namespace Everest {
     void Core::initDependencies(){
@@ -38,11 +39,13 @@ namespace Everest {
 
         Input::init();
         Renderer::init();
+        Time::init();
 
         EVLog_Msg("Core init");
     }
 
     void Core::quit(){
+        Time::quit();
         Renderer::quit();
         EVLog_Msg("Core quit");
 

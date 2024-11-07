@@ -44,10 +44,10 @@ namespace Everest {
         ImGui::Text("Framecount     : %d frames", Time::getFrameCount());
 
         ImGui::Text("unscaled-time  : %.3f sec", Time::getUnscaledTime());
-        ImGui::Text("unscaled-d-time: %.3f sec", Time::getUnscaledDeltaTime());
+        ImGui::Text("unscaled-d-time: %.3f sec", Time::getUnscaledDeltatime());
 
-        ImGui::Text("scaled-time    : %.3f sec", Time::getScaledTime());
-        ImGui::Text("scaled-d-time  : %.3f sec", Time::getDeltaTime());
+        ImGui::Text("scaled-time    : %.3f sec", Time::getTime());
+        ImGui::Text("scaled-d-time  : %.3f sec", Time::getDeltatime());
 
         /*
         static f32 _scale = 1.f;
