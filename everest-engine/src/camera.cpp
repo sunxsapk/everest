@@ -13,11 +13,12 @@ namespace Everest {
         _vpMat = _projMat * _viewMat;
     }
 
-    OrthographicCamera::OrthographicCamera(vec2 lensSize, f32 near, f32 far){
-        ASSERT(lensSize.x > 0.f && lensSize.y > 0.f, "Invalid lens size");
+    OrthographicCamera::OrthographicCamera(f32 orthosize, f32 aspect,
+            f32 near, f32 far){
+        ASSERT(orthosize > 0.f, "Invalid lens size");
         ASSERT(far >= 0.f, "Camera's 'far' property should be positive");
 
-        _props = {lensSize.x, lensSize.y, near, far};
+        _props = {orthosize * aspect, orthosize, near, far};
 
         recalcView();
         recalcProj();

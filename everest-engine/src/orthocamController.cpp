@@ -5,8 +5,8 @@
 
 namespace Everest {
     OrthographicCameraController::OrthographicCameraController(f32 speed,
-            f32 rot_speed, vec2 lensSize)
-    :_camera(lensSize, 0.1f, 100.f), _speed(speed), _angularSpeed(rot_speed),
+            f32 rot_speed, f32 orthoSize, f32 aspect)
+    :_camera(orthoSize, aspect, 0.1f, 100.f), _speed(speed), _angularSpeed(rot_speed),
      _zoomSensitivity(4.f), _speedZoomRatio(0.1f){
         _camera.setPosition(vec3(0.f, 0.f, 10.f));
         _camera.setUpVector({0.f, 1.f, 0.f});

@@ -26,12 +26,12 @@ namespace Everest {
     }
 
     void Application::attachDebugger(){
-        this->debugger = scoped<DebugLayer>();
+        this->debugger = createScope<DebugLayer>();
         this->debugger->onAttach();
     }
 
     void Application::initWindow(){
-        this->_window = scoped<Window>( DEF_WIN_W, DEF_WIN_H, _name);
+        this->_window = createScope<Window>( DEF_WIN_W, DEF_WIN_H, _name);
         this->_window->setEventCallback(BIND_EVENT_CB(Application::onEvent));
     }
 
@@ -84,6 +84,7 @@ namespace Everest {
             (*it)->onEvent(event);
         }
     }
+
     bool Application::onWindowResize(WindowResizeEvent& e){
         if(e.getWidth() == 0 || e.getHeight() == 0){
             _minimized = true;

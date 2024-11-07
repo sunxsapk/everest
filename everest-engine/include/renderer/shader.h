@@ -76,7 +76,7 @@ namespace Everest {
                 if(_it != _uniformCache.end()) return _it->second;
 
                 GLint loc = glGetUniformLocation(_programID, name.c_str());
-                ASSERT(loc != -1, "Either invalid uniform name or unused uniform variable detected");
+                ASSERT(loc != -1, "Uniform variable '%s' not found", name.c_str());
                 _uniformCache[name] = loc;
                 return loc;
             }

@@ -28,15 +28,14 @@ TowerDefense::TowerDefense(const char* name)
         {ShaderDataType::T_vec2, "aUV"},
     };
 
-    _quad = shareable<VAO>();
-    _shader = shareable<Shader>("./assets/shaders/shader.glsl");
-    _logo = shareable<Texture>("./assets/textures/test.png");
-    _tiles = shareable<Texture>("./assets/textures/test2.png");
+    _quad = createRef<VAO>();
+    _shader = createRef<Shader>("./assets/shaders/shader.glsl");
+    _logo = createRef<Texture>("./assets/textures/test.png");
+    _tiles = createRef<Texture>("./assets/textures/test2.png");
 
-
-    ref<VertexBuffer> vb = shareable<VertexBuffer>(verts, sizeof(verts));
+    ref<VertexBuffer> vb = createRef<VertexBuffer>(verts, sizeof(verts));
     vb->setLayout(layout);
-    ref<IndexBuffer> ib = shareable<IndexBuffer>(inds, sizeof(inds)); 
+    ref<IndexBuffer> ib = createRef<IndexBuffer>(inds, sizeof(inds)); 
 
     _quad->addVertexBuffer(vb);
     _quad->addIndexBuffer(ib);

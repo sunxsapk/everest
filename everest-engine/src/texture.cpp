@@ -1,6 +1,34 @@
 #include "renderer/texture.h"
 
 namespace Everest {
+    Texture::Texture(ivec2 size, TextureFormat format)
+    :_size(size), _format(format){
+        ASSERT(_format != 0, "Unsupported format detected");
+
+        glGenTextures(1, &_id);
+        glBindTexture(GL_TEXTURE_2D, _id);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    }
+
+    void Texture::setData(void* data
+#if ASSERT_ON
+            ,u32 size
+#endif
+        ){
+#if ASSERT_ON
+        u32 sz = _format==RGBA?4:(_format==RGB?3:1);
+        sz *= _size.x * _size.y;
+        ASSERT(size == sz, "Invalid data size");
+#endif
+        glBindTexture(GL_TEXTURE_2D, _id);
+        glTexImage2D(GL_TEXTURE_2D, 0, _format, _size.x, _size.y, 0,
+                _format, GL_UNSIGNED_BYTE, data);
+    }
+
     Texture::Texture(const std::string filepath)
         :_path(filepath){
 
@@ -12,29 +40,25 @@ namespace Everest {
 
         _size = {width, height};
 
-        GLenum _srcformat = 0, _trgformat;
         if(channels == 4){
-            _srcformat = GL_RGBA;
-            _trgformat = GL_RGBA;
+            _format = RGBA;
         } else if (channels == 3){
-            _srcformat = GL_RGB;
-            _trgformat = GL_RGB;
+            _format = RGB;
         } else if (channels == 1){
-            _srcformat = GL_RED;
-            _trgformat = GL_RED;
+            _format = RED;
         }
-        ASSERT(_srcformat != 0, "Unsupported format detected");
+        ASSERT(_format != 0, "Unsupported format detected");
 
         glGenTextures(1, &_id);
         glBindTexture(GL_TEXTURE_2D, _id);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);	
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, _trgformat, _size.x, _size.y, 0,
-                _srcformat, GL_UNSIGNED_BYTE, data);
+        glTexImage2D(GL_TEXTURE_2D, 0, _format, _size.x, _size.y, 0,
+                _format, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
 
         stbi_image_free(data);

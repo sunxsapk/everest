@@ -4,21 +4,19 @@
 
 using namespace Everest;
 
-class TowerDefense : public Layer {
+class SandBox2D : public Layer {
     public:
-        TowerDefense(const char* name);
+        SandBox2D(const char* name);
+        void onAttach() override;
         void onUpdate() override;
         void onDebugRender() override;
         void onEvent(Event& event) override;
+        void onDetach() override;
 
     private:
-        void handleEvents();
-
+        ref<Texture> _logo, _tiles;
+        vec4 color;
     private:
         OrthographicCameraController _camController;
-        ref<VAO> _quad;
-        ref<Shader> _shader;
-        ref<Texture> _logo, _tiles;
-
-        char _evLog[100] = "";
 };
+

@@ -37,9 +37,21 @@ Now, let's talk about the current milestones of the project:
                 Window, Application, Layer
     ; Target: Log each events on the console with detail info
 
-- Establish  a rendering system with movable camera system, that can draw basic
++ Establish  a rendering system with movable camera system, that can draw basic
     shapes on the window.
     ; Components: Camera(Main-Camera), Renderer, Rectangle, Circle, Line, Triangle
     ; Target: Move a object(Shape) around screen, using key-inputs, mouse-inputs
         and if possible with window-move events too.
 
+- Make a fully functioning 2D renderer, with scene submission and whatnot. Research
+    some more on this topic and try to go towards the path of optimized renderering
+    systems like instanced rendering and batched rendering. Add supports for multiple
+    textures, sprites, etc. Also, make the orthographic camera not effect the shape
+    of the sprites when resizing the screen. It is okay, if size differs but not
+    the shapes.
+    ; Components: Orthographic camera, Renderer, Textures, Shaders, etc
+    ; Target: Make a non-physics involved game like tic-tac-toe.
+
+- Before starting to work on a major bulk of a engine, we need a system for
+    profiling the engine, so do something about that. Make a memory monitoring
+    system, resources monitor, etc.

@@ -4,9 +4,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(everest)
 message("Setting up the workspace for ${PROJECT_NAME}")
 
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE "Debug")
-endif()
+option(Build "Build" "Debug")
+set(CMAKE_BUILD_TYPE ${Build})
 
 # now we'll add subprojects
 set(OUT_dir "${CMAKE_BINARY_DIR}/bin")

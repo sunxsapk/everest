@@ -39,6 +39,8 @@
 #include "core/log.h"
 #include "core/dbghelper.h"
 
+#include "renderer/renderer.h"
+#include "renderer/renderer2d.h"
 
 #ifdef WIN32
 #include <Windows.h>

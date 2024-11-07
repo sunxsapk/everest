@@ -15,7 +15,7 @@ namespace Everest {
     class OrthographicCameraController {
         public:
             OrthographicCameraController(f32 speed = 1.f, f32 rot_speed = 1.f,
-                    vec2 lensSize = {16.f, 9.f});
+                    f32 orthoSize = 10.f, f32 aspect = 16.f/9.f);
 
             void onUpdate();
 

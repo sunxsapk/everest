@@ -12,8 +12,8 @@
 namespace Everest {
     class RenderAPI {
         public:
-            void clear();
-            void setClearColor(vec4 color);
-            void drawIndexed(ref<VAO> vertexArray);
+            static void clear();
+            static void setClearColor(vec4 color);
+            static void drawIndexed(ref<VAO> vertexArray);
     };
 }

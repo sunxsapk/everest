@@ -19,7 +19,7 @@ namespace Everest{
             /* adds & binds the index buffer to vertex array object */
             void addIndexBuffer(ref<IndexBuffer> index);
             /* returns the shared pointer to the vertex buffer added to the
-             * vertex array object. Returns NULL is there is no vertex buffer
+             * vertex array object. Returns NULL if there is no vertex buffer
              * added */
             inline ref<VertexBuffer> getVertexBuffer(){return _vertexBuf;}
             /* returns the shared pointer to the vertex buffer added to the

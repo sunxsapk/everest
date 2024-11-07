@@ -17,12 +17,12 @@ namespace Everest {
     using ref = std::shared_ptr<T>;
 
     template<typename T, typename... Args>
-    ref<T> shareable(Args&&... args){
+    ref<T> createRef(Args&&... args){
         return std::make_shared<T>(std::forward<Args>(args)...);
     }
 
     template<typename T, typename... Args>
-    scope<T> scoped(Args&&... args){
+    scope<T> createScope(Args&&... args){
         return std::make_unique<T>(std::forward<Args>(args)...);
     }
 }

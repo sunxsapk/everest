@@ -1,20 +1,19 @@
 #include "renderer/renderer.h"
+#include "renderer/renderer2d.h"
 
 namespace Everest {
-    RenderAPI *Renderer::_api = NULL;
     SceneData Renderer::_scene{mat4(0)};
 
     void Renderer::init(){
         glEnable(GL_BLEND);
+        glEnable(GL_DEPTH_TEST);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        ASSERT(_api == NULL, "Api already created");
-        _api = new RenderAPI();
+        Renderer2D::init();
     }
 
     void Renderer::quit(){
-        ASSERT(_api != NULL, "No API to quit");
-        delete _api;
+        Renderer2D::quit();
     }
 
     void Renderer::beginScene(Camera& camera){
@@ -29,6 +28,6 @@ namespace Everest {
         shader->bind();
         shader->setUniform_Mat4("u_viewProjMat", _scene.viewProjectionMatrix);
         shader->setUniform_Mat4("u_transform", transform);
-        _api->drawIndexed(vertexArray);
+        RenderAPI::drawIndexed(vertexArray);
     }
 }

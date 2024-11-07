@@ -6,7 +6,9 @@
 
 namespace Everest {
     void Core::initDependencies(){
+#ifdef DEBUG
         glfwSetErrorCallback(onGLFWerror);
+#endif
         i32 _glfwInit = glfwInit();
         ASSERT(_glfwInit, "Failed to initialize GLFW");
         EVLog_Msg("GLFW init");
@@ -53,7 +55,9 @@ namespace Everest {
         EVLog_Msg("GLFW quit");
     }
 
+#ifdef DEBUG
     void Core::onGLFWerror(i32 errcode, const char *err){
         EVLog_Err("Opengl Error (%d): %s", errcode, err);
     }
+#endif
 }

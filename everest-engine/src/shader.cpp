@@ -154,14 +154,14 @@ namespace Everest {
     }
 
     ref<Shader> ShaderLibrary::load(const std::string filepath){
-        ref<Shader> shader = shareable<Shader>(filepath);
+        ref<Shader> shader = createRef<Shader>(filepath);
         Add(shader);
         return shader;
     }
 
     ref<Shader> ShaderLibrary::load(const std::string filepath,
             const std::string name){
-        ref<Shader> shader = shareable<Shader>(filepath);
+        ref<Shader> shader = createRef<Shader>(filepath);
         Add(name, shader);
         return shader;
     }

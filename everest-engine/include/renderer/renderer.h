@@ -25,16 +25,15 @@ namespace Everest {
             static void submit(ref<VAO>& vertexArray,
                     ref<Shader>& shader, mat4 transform);
 
-            static inline void issue_clear(){ _api->clear();}
+            static inline void issue_clear(){RenderAPI::clear();}
             static inline void issue_setClearColor(vec4 color){
-                _api->setClearColor(color);
+                RenderAPI::setClearColor(color);
             }
             static inline void setViewPort(u32 x, u32 y, u32 width, u32 height){
                 glViewport(x, y, width, height);
             }
 
         private:
-            static RenderAPI *_api;
             static SceneData _scene;
     };
 }
