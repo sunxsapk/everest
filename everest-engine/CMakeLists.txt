@@ -52,8 +52,8 @@ elseif (APPLE)
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
-    $<$<CONFIG:Debug>:DEBUG;ASSERT_ON>
-    $<$<CONFIG:Release>:RELEASE;ASSERT_ON>
+    $<$<CONFIG:Debug>:DEBUG;ASSERT_ON;EV_PROFILE>
+    $<$<CONFIG:Release>:RELEASE;ASSERT_ON;EV_PROFILE>
     $<$<CONFIG:Dist>:DIST>
 )
 

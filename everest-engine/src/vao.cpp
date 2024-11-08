@@ -4,14 +4,18 @@
 namespace Everest{
 
     VAO::VAO(){
+        EV_profile_function();
         glGenVertexArrays(1, &_id);
     }
 
     VAO::~VAO(){
+        EV_profile_function();
         glDeleteVertexArrays(1, &_id);
     }
 
     void VAO::addVertexBuffer(ref<VertexBuffer> vertexBuf){
+        EV_profile_function();
+
         glBindVertexArray(_id);
         vertexBuf->bind();
         setLayout(vertexBuf->getLayout());
@@ -20,6 +24,8 @@ namespace Everest{
     }
 
     void VAO::addIndexBuffer(ref<IndexBuffer> indexBuf){
+        EV_profile_function();
+
         glBindVertexArray(_id);
         indexBuf->bind();
         glBindVertexArray(0);
@@ -27,6 +33,8 @@ namespace Everest{
     }
 
     void VAO::setLayout(const BufferLayout& layout){
+        EV_profile_function();
+
         ASSERT(layout.getSize() != 0, "Layout not specified");
 
         u32 index = 0;
@@ -39,10 +47,14 @@ namespace Everest{
     }
 
     void VAO::bind(){
+        EV_profile_function();
+
         glBindVertexArray(_id);
     }
 
     void VAO::unbind(){
+        EV_profile_function();
+
         glBindVertexArray(0);
     }
 

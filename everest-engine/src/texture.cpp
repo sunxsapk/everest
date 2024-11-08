@@ -3,6 +3,8 @@
 namespace Everest {
     Texture::Texture(ivec2 size, TextureFormat format)
     :_size(size), _format(format){
+        EV_profile_function();
+
         ASSERT(_format != 0, "Unsupported format detected");
 
         glGenTextures(1, &_id);
@@ -19,6 +21,8 @@ namespace Everest {
             ,u32 size
 #endif
         ){
+        EV_profile_function();
+
 #if ASSERT_ON
         u32 sz = _format==RGBA?4:(_format==RGB?3:1);
         sz *= _size.x * _size.y;
@@ -31,11 +35,17 @@ namespace Everest {
 
     Texture::Texture(const std::string filepath)
         :_path(filepath){
+        EV_profile_function();
+
 
         i32 width, height, channels;
 
         stbi_set_flip_vertically_on_load(true);
-        stbi_uc* data = stbi_load(_path.c_str(), &width, &height, &channels, 0);
+        stbi_uc* data;
+        {
+            EV_profile_scope("Texture image load");
+            data = stbi_load(_path.c_str(), &width, &height, &channels, 0);
+        }
         ASSERT(data != NULL, "Failed to load texture");
 
         _size = {width, height};
@@ -65,6 +75,8 @@ namespace Everest {
     }
 
     Texture::~Texture(){
+        EV_profile_function();
+
         glDeleteTextures(1, &_id);
     }
 }

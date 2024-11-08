@@ -55,6 +55,7 @@ namespace Everest {
     };
 
     class ScaledClock {
+        friend class Time;
         public:
             ScaledClock(f32 scale = 1.f):_scale(scale){}
 

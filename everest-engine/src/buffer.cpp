@@ -108,6 +108,9 @@ namespace Everest {
 
     Buffer::Buffer(bufd_t *_data, size_t _size, GLenum target)
         :_target(target){
+        EV_profile_function();
+
+
         ASSERT(_data != NULL, "Buffer should have data");
 
         glGenBuffers(1, &_id);
@@ -117,10 +120,16 @@ namespace Everest {
     }
 
     Buffer::~Buffer(){
+        EV_profile_function();
+
+
         glDeleteBuffers(1, &_id);
     }
 
     void Buffer::bind(){
+        EV_profile_function();
+
+
         glBindBuffer(_target, _id);
     }
 
@@ -129,10 +138,14 @@ namespace Everest {
     }
 
     VertexBuffer::VertexBuffer(bufd_t *_data, size_t _size)
-        :Buffer(_data, _size, GL_ARRAY_BUFFER){ }
+        :Buffer(_data, _size, GL_ARRAY_BUFFER){ 
+        EV_profile_function();
+    }
 
     IndexBuffer::IndexBuffer(u32 *_data, size_t _size)
         :Buffer(_data, _size, GL_ELEMENT_ARRAY_BUFFER){
+        EV_profile_function();
+
         _count = _size / sizeof(_data[0]);
     }
 }

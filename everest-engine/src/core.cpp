@@ -7,6 +7,9 @@
 
 namespace Everest {
     void Core::initDependencies(){
+        EV_profile_function();
+
+
 #ifdef DEBUG
         glfwSetErrorCallback(onGLFWerror);
 #endif
@@ -33,6 +36,9 @@ namespace Everest {
     }
 
     void Core::init(){
+        EV_profile_function();
+
+
         Window& win = Application::getAppWindow();
         ImGui_ImplGlfw_InitForOpenGL(win.getWindow(), true);
         ImGui_ImplOpenGL3_Init("#version 330");
@@ -45,6 +51,8 @@ namespace Everest {
     }
 
     void Core::quit(){
+        EV_profile_function();
+
         Time::quit();
         Renderer::quit();
         EVLog_Msg("Core quit");

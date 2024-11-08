@@ -21,6 +21,8 @@ namespace Everest {
             ~Texture();
 
             inline void bind(u32 slot = 0){
+                EV_profile_function();
+
                 glActiveTexture(GL_TEXTURE0+slot);
                 glBindTexture(GL_TEXTURE_2D, _id);
             }

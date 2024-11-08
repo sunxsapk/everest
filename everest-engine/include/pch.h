@@ -31,6 +31,7 @@
 #include <array>
 #include <functional>
 
+#include "core/instrumentor.h"
 
 #include "math/types.h"
 #include "math/utils.h"

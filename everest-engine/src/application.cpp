@@ -12,6 +12,9 @@ namespace Everest {
     Application *Application::s_app = NULL;
 
     Application::Application(const char *name){
+        EV_profile_function();
+
+
         ASSERT(Application::s_app == NULL, "Can't have multiple instances of application");
         s_app = this;
         ASSERT(name, "Application should have a name");
@@ -26,16 +29,25 @@ namespace Everest {
     }
 
     void Application::attachDebugger(){
+        EV_profile_function();
+
+
         this->debugger = createScope<DebugLayer>();
         this->debugger->onAttach();
     }
 
     void Application::initWindow(){
+        EV_profile_function();
+
+
         this->_window = createScope<Window>( DEF_WIN_W, DEF_WIN_H, _name);
         this->_window->setEventCallback(BIND_EVENT_CB(Application::onEvent));
     }
 
     Application::~Application(){
+        EV_profile_function();
+
+
         this->debugger->onDetach();
         this->_window.reset();
     }
@@ -48,23 +60,34 @@ namespace Everest {
     void Application::run(){
         Time::begin();
         while(this->_running){
+            EV_profile_scope("Main Loop");
+
+
             Input::_clearPoll();
             this->_window->update();
 
             if(!_minimized){
+                EV_profile_scope("Layer update");
+
+
                 for(Layer* layer:this->_layerStack){
                     layer->onUpdate();
                 }
             }
 
-            this->debugger->begin();
-            for(Layer* layer:this->_layerStack){
-                layer->onDebugRender();
-            }
+            {
+                EV_profile_scope("GUI layer Render");
+
+
+                this->debugger->begin();
+                for(Layer* layer:this->_layerStack){
+                    layer->onDebugRender();
+                }
 #ifdef DEBUG
-            this->debugger->onDebugRender();
+                this->debugger->onDebugRender();
 #endif
-            this->debugger->end();
+                this->debugger->end();
+            }
 
             this->_window->swapBuffers();
             Time::tick();

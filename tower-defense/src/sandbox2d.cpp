@@ -1,9 +1,12 @@
 #include "sandbox2d.h"
 
 SandBox2D::SandBox2D(const char* name)
-:Layer(name), _camController(){ }
+:Layer(name), _camController(){ 
+    EV_profile_function();
+}
 
 void SandBox2D::onAttach(){
+    EV_profile_function();
     color = vec4(1.f);
     _logo = createRef<Texture>("assets/textures/test.png");
     _tiles = createRef<Texture>("assets/textures/test2.png");
@@ -11,6 +14,7 @@ void SandBox2D::onAttach(){
 }
 
 void SandBox2D::onUpdate(){
+    EV_profile_function();
     _camController.onUpdate();
 
     Renderer::issue_setClearColor({.1f, .1f, .1f, 1.f});
@@ -26,6 +30,7 @@ void SandBox2D::onUpdate(){
 }
 
 void SandBox2D::onDebugRender(){
+    EV_profile_function();
     ImGui::Begin(this->_name);
     ImGui::Text("Hello from renderer2d test sandbox");
     ImGui::SliderFloat4("Color", glm::value_ptr(color), 0.f, 1.f);
@@ -36,4 +41,5 @@ void SandBox2D::onEvent(Event& event){
 }
 
 void SandBox2D::onDetach(){
+    EV_profile_function();
 }

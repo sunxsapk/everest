@@ -1,5 +1,7 @@
 #include "core/time.h"
 
+#define MAX_DELTATIME 10.f
+
 namespace Everest {
     Clock::Clock(){
         _epoch = hrclock::now();
@@ -40,6 +42,7 @@ namespace Everest {
         _lastTickTime = t;
 
         _timeBetweenTicks = uc_del.count() * _scale;
+        if(_timeBetweenTicks > MAX_DELTATIME) _timeBetweenTicks = 1.f/60.f;
         _tickRate = 1.f/_timeBetweenTicks;
         _time += _timeBetweenTicks;
         _ticks++;
@@ -62,6 +65,8 @@ namespace Everest {
         } else if(_manualTick){
             _clock->manualTick();
             _manualTick = false;
+        } else {
+            _clock->_lastTickTime = hrclock::now();
         }
     }
 }

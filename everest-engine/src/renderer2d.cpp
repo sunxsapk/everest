@@ -5,6 +5,8 @@ namespace Everest {
     RendererStorage *Renderer2D::_data = new RendererStorage;
 
     void Renderer2D::init(){
+        EV_profile_function();
+
         f32 verts[] = {
             -0.5f, -0.5f,  0.5f, 0.f, 0.f,
             0.5f, -0.5f,  0.5f, 1.f, 0.f,
@@ -33,19 +35,27 @@ namespace Everest {
     }
 
     void Renderer2D::quit(){
+        EV_profile_function();
+
         delete _data;
     }
 
     void Renderer2D::beginScene(Camera& camera){
+        EV_profile_function();
+
         _data->textureShader->bind();
         _data->textureShader->setUniform_Mat4("u_viewProjMat", camera.getVPmatrix());
         _data->textureShader->setUniform_i32("u_texture", 0);
     }
 
     void Renderer2D::endScene(){
+        EV_profile_function();
+
     }
 
     void Renderer2D::drawQuad(vec3 position, vec2 scale, f32 rotation, vec4 color, ref<Texture> texture){
+        EV_profile_function();
+
         static const vec3 _z_axis = vec3(0.f, 0.f, 1.f);
         mat4 transform(1.f);
         transform = glm::translate(transform, position);

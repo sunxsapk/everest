@@ -9,6 +9,8 @@ namespace Everest {
     }
 
     std::unordered_map<GLenum, std::string> getShaders(std::string src){
+        EV_profile_function();
+
         std::unordered_map<GLenum, std::string> shaders;
 
         const char* type_token = "#type";
@@ -33,10 +35,14 @@ namespace Everest {
 
     Shader::Shader(const std::string name, const std::string vert_glsl, const std::string frag_glsl)
     : _name(name){
+        EV_profile_function();
+
         _compile(vert_glsl.c_str(), frag_glsl.c_str());
     }
 
     Shader::Shader(const std::string filepath){
+        EV_profile_function();
+
         std::string src = _readSh(filepath);
         std::unordered_map<GLenum, std::string> shaders = getShaders(src);
         _compile(shaders[GL_VERTEX_SHADER].c_str(), shaders[GL_FRAGMENT_SHADER].c_str());
@@ -50,6 +56,8 @@ namespace Everest {
     }
 
     std::string Shader::_readSh(const std::string& filepath){
+        EV_profile_function();
+
         std::ifstream f_in(filepath, std::ios::in | std::ios::binary);
         ASSERT(f_in.is_open(), "Invalid file: %s", filepath.c_str());
 
@@ -62,6 +70,8 @@ namespace Everest {
         return content;
     }
     void Shader::_compile(const char* vert_glsl, const char* frag_glsl){
+        EV_profile_function();
+
         u32 vid, fid;
 
         i32 _success = _compSh(vert_glsl, GL_VERTEX_SHADER, &vid);
@@ -83,19 +93,27 @@ namespace Everest {
     }
 
     Shader::~Shader(){
+        EV_profile_function();
+
         glDeleteProgram(_programID);
         EVLog_Msg("Shader deleted");
     }
 
     void Shader::bind(){
+        EV_profile_function();
+
         glUseProgram(_programID);
     }
 
     void Shader::unbind(){
+        EV_profile_function();
+
         glUseProgram(0);
     }
 
     i32 Shader::_compSh(const char* glsl, GLenum type, u32 *id){
+        EV_profile_function();
+
         ASSERT(glsl != NULL, "Cannot pass null string for compilation");
         ASSERT(type == GL_VERTEX_SHADER || type == GL_FRAGMENT_SHADER, 
                 "Invalid shader type");
@@ -111,6 +129,8 @@ namespace Everest {
     }
 
     void Shader::_getIL(u32 id, GLenum type){
+        EV_profile_function();
+
         char infoLog[512];
         glGetShaderInfoLog(id, 512, NULL, infoLog);
         EVLog_Err("%s Shader Compilation Failed:\n %s",
@@ -119,6 +139,8 @@ namespace Everest {
     }
 
     void Shader::_linkSh(u32 vert, u32 frag){
+        EV_profile_function();
+
         _programID = glCreateProgram();
         glAttachShader(_programID, vert);
         glAttachShader(_programID, frag);
@@ -145,15 +167,21 @@ namespace Everest {
 
 
     void ShaderLibrary::Add(const std::string name, ref<Shader>& shader){
+        EV_profile_function();
+
         ASSERT(_shaders.find(name) == _shaders.end(), "Shader already exists");
         _shaders[name] = shader;
     }
 
     void ShaderLibrary::Add(ref<Shader>& shader){
+        EV_profile_function();
+
         Add(shader->getName(), shader);
     }
 
     ref<Shader> ShaderLibrary::load(const std::string filepath){
+        EV_profile_function();
+
         ref<Shader> shader = createRef<Shader>(filepath);
         Add(shader);
         return shader;
@@ -161,16 +189,22 @@ namespace Everest {
 
     ref<Shader> ShaderLibrary::load(const std::string filepath,
             const std::string name){
+        EV_profile_function();
+
         ref<Shader> shader = createRef<Shader>(filepath);
         Add(name, shader);
         return shader;
     }
 
     bool ShaderLibrary::exists(const std::string name){
+        EV_profile_function();
+
         return _shaders.find(name) != _shaders.end();
     }
 
     ref<Shader> ShaderLibrary::get(const std::string name){
+        EV_profile_function();
+
         ASSERT(_shaders.find(name) != _shaders.end(), "Shader not found");
         return _shaders[name];
     }

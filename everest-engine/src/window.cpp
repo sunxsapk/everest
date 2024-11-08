@@ -5,6 +5,9 @@
 
 namespace Everest{
     Window::Window(i32 width, i32 height, std::string title, bool transparent){
+        EV_profile_function();
+
+
         this->_winData.position = {0, 0};
         this->_winData.size = {width, height};
         this->_winData.title = title;
@@ -42,21 +45,33 @@ namespace Everest{
     }
 
     Window::~Window(){
+        EV_profile_function();
+
+
         ASSERT(this->_window != NULL, "No window provided");
         glfwDestroyWindow(this->_window);
     }
 
     void Window::setTitle(const char* title){
+        EV_profile_function();
+
+
         ASSERT(this->_window != NULL && title != NULL, "Should have valid window and name");
         this->_winData.title = title;
         glfwSetWindowTitle(this->_window, title);
     }
 
     void Window::update(){
+        EV_profile_function();
+
+
         glfwPollEvents();
     }
 
     void Window::swapBuffers(){
+        EV_profile_function();
+
+
         glfwSwapBuffers(this->_window);
     }
 

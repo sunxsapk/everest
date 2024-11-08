@@ -10,6 +10,8 @@ namespace Everest {
         _isPanning(false){ }
 
     vec3 PerspectiveCameraController::dirFromDel(vec2 del){
+        EV_profile_function();
+
         del *= Time::getDeltatime() * _mouseSensitivity;
         vec3 fwd = glm::rotate(_camera.getForward(), glm::radians(del.x), _camera.getUp());
         //fwd = glm::rotate(fwd, glm::radians(del.y), _camera.getRight());
@@ -17,6 +19,8 @@ namespace Everest {
     }
 
     void PerspectiveCameraController::onUpdate(){
+        EV_profile_function();
+
         vec3 pos = _camera.getPosition();
         f32 disp = _speed * Time::getDeltatime();
 

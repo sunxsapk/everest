@@ -29,6 +29,8 @@ namespace Everest {
     }
 
     void DebugLayer::onDebugRender(){
+        EV_profile_function();
+
         ImGui::ShowDemoWindow();
         ImGui::Begin(_name);
 
@@ -43,11 +45,11 @@ namespace Everest {
         ImGui::Text("FPS            : %d frames/sec", Time::getFrameRate());
         ImGui::Text("Framecount     : %d frames", Time::getFrameCount());
 
-        ImGui::Text("unscaled-time  : %.3f sec", Time::getUnscaledTime());
-        ImGui::Text("unscaled-d-time: %.3f sec", Time::getUnscaledDeltatime());
+        ImGui::Text("unscaled-time  : %.7f sec", Time::getUnscaledTime());
+        ImGui::Text("unscaled-d-time: %.7f sec", Time::getUnscaledDeltatime());
 
-        ImGui::Text("scaled-time    : %.3f sec", Time::getTime());
-        ImGui::Text("scaled-d-time  : %.3f sec", Time::getDeltatime());
+        ImGui::Text("scaled-time    : %.7f sec", Time::getTime());
+        ImGui::Text("scaled-d-time  : %.7f sec", Time::getDeltatime());
 
         static f32 _scale = 1.f;
         ImGui::SliderFloat("Time scale", &_scale, -10.f, 10.f);
@@ -60,6 +62,9 @@ namespace Everest {
     }
 
     void DebugLayer::begin(){
+        EV_profile_function();
+
+
         ImGuiIO& io = ImGui::GetIO();
 
         ImGui_ImplOpenGL3_NewFrame();
@@ -68,6 +73,8 @@ namespace Everest {
     }
 
     void DebugLayer::end(){
+        EV_profile_function();
+
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
