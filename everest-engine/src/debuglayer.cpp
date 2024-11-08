@@ -49,11 +49,12 @@ namespace Everest {
         ImGui::Text("scaled-time    : %.3f sec", Time::getTime());
         ImGui::Text("scaled-d-time  : %.3f sec", Time::getDeltatime());
 
-        /*
         static f32 _scale = 1.f;
-        ImGui::SliderFloat("Time scale", &_scale, 0.f, 10.f);
-        Time::setTimeScale(_scale);
-        */
+        ImGui::SliderFloat("Time scale", &_scale, -10.f, 10.f);
+        Time::setScale(_scale);
+
+        if(ImGui::Button("Pause")) Time::setPauseState(!Time::isPaused());
+        if(ImGui::Button("Manual Tick")) Time::tickManually();
 
         ImGui::End();
     }

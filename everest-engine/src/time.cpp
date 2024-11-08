@@ -1,32 +1,67 @@
 #include "core/time.h"
 
 namespace Everest {
-    Clock::Clock(ClockResolution res):_resolution(res){
-        _epoch = _clock::now();
+    Clock::Clock(){
+        _epoch = hrclock::now();
     }
 
     void Clock::begin(){
-        _lastTickTime = _clock::now();
+        _lastTickTime = hrclock::now();
         _ticks = 0;
         _timeBetweenTicks = 0;
     }
 
     void Clock::tick(){
-        time_t t = _clock::now();
-        duration_t<f64, std::micro> uc_del = t - _lastTickTime;
+        time_t t = hrclock::now();
+        duration_s<f64> uc_del = t - _lastTickTime;
         _lastTickTime = t;
 
         _ticks++;
-        _timeBetweenTicks = uc_del.count()/_resolution;
+        _timeBetweenTicks = uc_del.count();
         _tickRate = 1.f/_timeBetweenTicks;
     }
 
-    scope<Clock> Time::clock = NULL;
-    void Time::init(){
-        clock = createScope<Clock>();
+    void ScaledClock::begin(){
+        _lastTickTime = hrclock::now();
+        _ticks = 0;
+        _timeBetweenTicks = 0;
     }
 
-    void Time::tick(){ //TODO: scaled time and manual ticking
-        clock->tick();
+    void ScaledClock::manualTick(){
+        _timeBetweenTicks = 1.f/60.f;
+        _tickRate = 60.f;
+        _time += _timeBetweenTicks;
+        _ticks++;
+    }
+
+    void ScaledClock::tick(){
+        time_t t = hrclock::now();
+        duration_s<f64> uc_del = t - _lastTickTime;
+        _lastTickTime = t;
+
+        _timeBetweenTicks = uc_del.count() * _scale;
+        _tickRate = 1.f/_timeBetweenTicks;
+        _time += _timeBetweenTicks;
+        _ticks++;
+    }
+
+    scope<ScaledClock> Time::_clock = NULL;
+    scope<Clock> Time::_unscaledClock = NULL;
+    bool Time::_manualTick = false;
+    bool Time::_paused = false;
+
+    void Time::init(){
+        _clock = createScope<ScaledClock>();
+        _unscaledClock = createScope<Clock>();
+    }
+
+    void Time::tick(){
+        _unscaledClock->tick();
+        if(!_paused){
+            _clock->tick();
+        } else if(_manualTick){
+            _clock->manualTick();
+            _manualTick = false;
+        }
     }
 }
