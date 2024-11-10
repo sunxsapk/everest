@@ -10,7 +10,7 @@
 #include "window.h"
 #include "layerstack.h"
 #include "events/windowevent.h"
-#include "core/debuglayer.h"
+#include "core/guilayer.h"
 
 namespace Everest {
     class Application {
@@ -40,7 +40,7 @@ namespace Everest {
         private:
             static Application* s_app;
             const char *_name;
-            scope<DebugLayer> debugger;
+            scope<GUILayer> guilayer;
 
             /* initializes the window of the application and binds the event
              * callbacks*/

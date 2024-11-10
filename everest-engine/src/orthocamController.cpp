@@ -44,4 +44,8 @@ namespace Everest {
 
         _camera.setPosition(pos);
     }
+
+    void OrthographicCameraController::onWindowResize(WindowResizeEvent& event){
+        _camera.setAspectRatio((f32)event.getWidth()/(f32)event.getHeight());
+    }
 }

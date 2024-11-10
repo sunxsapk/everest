@@ -63,7 +63,8 @@ namespace Everest {
 
     class OrthographicCamera : public Camera {
         public:
-            OrthographicCamera(f32 orthosize, f32 aspect, f32 near, f32 far);
+            OrthographicCamera(f32 orthosize, f32 aspect, f32 near = 0.f,
+                    f32 far = 100.f);
 
             /* returns camera's aspect ratio : lens_width/lens_height */
             inline f32 getAspect(){return _props.width/_props.height;}

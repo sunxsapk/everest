@@ -98,6 +98,9 @@ namespace Everest {
              * not unbinded when it finishes creating. You have to unbind it
              * later. Most probably only after unbinding the vertex array.*/
             VertexBuffer(bufd_t *_data, size_t _size);
+            VertexBuffer(size_t _size);
+
+            void setData(const void* data, u32 size);
 
             inline void setLayout(const BufferLayout layout){_layout = layout;}
             inline const BufferLayout& getLayout(){return _layout;}

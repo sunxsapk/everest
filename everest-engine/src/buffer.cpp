@@ -110,12 +110,9 @@ namespace Everest {
         :_target(target){
         EV_profile_function();
 
-
-        ASSERT(_data != NULL, "Buffer should have data");
-
         glGenBuffers(1, &_id);
         glBindBuffer(_target, _id);
-        glBufferData(_target, _size, _data, GL_STATIC_DRAW);
+        glBufferData(_target, _size, _data, _data?GL_STATIC_DRAW:GL_DYNAMIC_DRAW);
         glBindBuffer(_target, 0);
     }
 
@@ -142,10 +139,21 @@ namespace Everest {
         EV_profile_function();
     }
 
+    VertexBuffer::VertexBuffer(size_t _size)
+        :Buffer(NULL, _size, GL_ARRAY_BUFFER){
+    }
+
+    void VertexBuffer::setData(const void* data, u32 size){
+        glBindBuffer(_target, _id);
+        glBufferData(_target, size, data, GL_DYNAMIC_DRAW);
+        glBindBuffer(_target, 0);
+    }
+
     IndexBuffer::IndexBuffer(u32 *_data, size_t _size)
         :Buffer(_data, _size, GL_ELEMENT_ARRAY_BUFFER){
         EV_profile_function();
 
+        ASSERT(_data != NULL, "Can't pass null-pointer to index buffer");
         _count = _size / sizeof(_data[0]);
     }
 }

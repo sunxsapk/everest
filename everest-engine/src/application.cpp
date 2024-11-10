@@ -32,8 +32,8 @@ namespace Everest {
         EV_profile_function();
 
 
-        this->debugger = createScope<DebugLayer>();
-        this->debugger->onAttach();
+        this->guilayer = createScope<GUILayer>();
+        this->guilayer->onAttach();
     }
 
     void Application::initWindow(){
@@ -48,16 +48,22 @@ namespace Everest {
         EV_profile_function();
 
 
-        this->debugger->onDetach();
+        this->guilayer->onDetach();
         this->_window.reset();
     }
 
     void Application::pushLayer(Layer* layer){
+        EV_profile_function();
+
+
         this->_layerStack.pushLayer(layer);
         layer->onAttach();
     }
 
     void Application::run(){
+        EV_profile_function();
+
+
         Time::begin();
         while(this->_running){
             EV_profile_scope("Main Loop");
@@ -79,14 +85,11 @@ namespace Everest {
                 EV_profile_scope("GUI layer Render");
 
 
-                this->debugger->begin();
+                this->guilayer->begin();
                 for(Layer* layer:this->_layerStack){
-                    layer->onDebugRender();
+                    layer->onGUIrender();
                 }
-#ifdef DEBUG
-                this->debugger->onDebugRender();
-#endif
-                this->debugger->end();
+                this->guilayer->end();
             }
 
             this->_window->swapBuffers();

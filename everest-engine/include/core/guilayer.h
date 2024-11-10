@@ -8,12 +8,11 @@
 
 #pragma once 
 #include "layer.h"
-#include <imgui.h>
 
 namespace Everest {
-    class DebugLayer : public Layer {
+    class GUILayer : public Layer {
         public:
-            DebugLayer(const char* name = "debugger");
+            GUILayer(const char* name = "GUILayer");
 
             void onAttach() override;
             void onDetach() override;
@@ -23,7 +22,6 @@ namespace Everest {
 
             void begin();
             void end();
-            void onDebugRender() override;
         private:
             bool _blockEvents;
     };

@@ -4,6 +4,7 @@
 #include "renderer/renderer.h"
 #include "core/application.h"
 #include "core/time.h"
+#include "math/random.h"
 
 namespace Everest {
     void Core::initDependencies(){
@@ -46,6 +47,7 @@ namespace Everest {
         Input::init();
         Renderer::init();
         Time::init();
+        Random::init() ;
 
         EVLog_Msg("Core init");
     }

@@ -11,7 +11,7 @@
 #include "core/log.h"
 #include "core/application.h"
 #include "core/dbghelper.h"
-#include "core/debuglayer.h"
+#include "core/guilayer.h"
 #include "core/layer.h"
 #include "core/window.h"
 #include "core/input.h"
@@ -25,6 +25,7 @@
 
 #include "math/types.h"
 #include "math/utils.h"
+#include "math/random.h"
 
 #include "renderer/vao.h"
 #include "renderer/shader.h"

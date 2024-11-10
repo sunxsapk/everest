@@ -28,7 +28,7 @@ namespace Everest {
             virtual void onUpdate();
 
             /*called for rendering debug-info gui for the layer*/
-            virtual void onDebugRender();
+            virtual void onGUIrender();
 
             /*returns the name of the layer*/
             const char* getName() const {return _name;}

@@ -20,10 +20,12 @@ namespace Everest {
             Texture(ivec2 size, TextureFormat format = RGBA);
             ~Texture();
 
+            inline u32 getID(){return _id;}
+
             inline void bind(u32 slot = 0){
                 EV_profile_function();
 
-                glActiveTexture(GL_TEXTURE0+slot);
+                glActiveTexture(GL_TEXTURE0 + slot);
                 glBindTexture(GL_TEXTURE_2D, _id);
             }
 
@@ -46,6 +48,10 @@ namespace Everest {
                     ,u32 size
 #endif
                     );
+
+            bool operator==(Texture& other){
+                return _id ==  other.getID();
+            }
 
         private:
             u32 _id;

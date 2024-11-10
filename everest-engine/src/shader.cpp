@@ -150,7 +150,7 @@ namespace Everest {
         glGetProgramiv(_programID, GL_LINK_STATUS, &_shaders_linked);
         if(!_shaders_linked){
             char infoLog[512];
-            glGetShaderInfoLog(_programID, 512, NULL, infoLog);
+            glGetProgramInfoLog(_programID, 512, NULL, infoLog);
             EVLog_Err("Shaders Linking Failed:\n %s", infoLog);
 
             glDeleteShader(vert);

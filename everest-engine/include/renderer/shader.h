@@ -30,6 +30,9 @@ namespace Everest {
             inline void setUniform_f32(name_t name, f32 value){
                 glUniform1f(_getloc(name), value);
             }
+            inline void setUniform_iarr(name_t name, i32* value, u32 count){
+                glUniform1iv(_getloc(name), count, value);
+            }
 
             inline void setUniform_ivec2(name_t name, ivec2 value){
                 glUniform2iv(_getloc(name), 1, glm::value_ptr(value));

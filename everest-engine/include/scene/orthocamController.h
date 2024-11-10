@@ -10,6 +10,7 @@
 
 #include "math/types.h"
 #include "camera.h"
+#include "events/windowevent.h"
 
 namespace Everest {
     class OrthographicCameraController {
@@ -18,6 +19,7 @@ namespace Everest {
                     f32 orthoSize = 10.f, f32 aspect = 16.f/9.f);
 
             void onUpdate();
+            void onWindowResize(WindowResizeEvent& event);
 
             inline OrthographicCamera& getCamera(){ return _camera;}
 

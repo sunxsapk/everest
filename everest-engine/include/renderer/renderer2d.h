@@ -14,10 +14,37 @@
 #include "texture.h"
 
 namespace Everest {
-    struct RendererStorage{
+    struct QuadProps {
+        ref<Texture> texture = NULL;
+        vec4 color = vec4(1.f);
+        vec3 position = vec3(0.f);
+        f32 rotation = 0.f;
+        vec2 scale = vec2(1.f);
+        f32 tilingFactor = 1.f;
+    };
+
+    struct QuadVertex {
+        vec3 position;
+        vec4 color;
+        vec2 uv;
+        f32 textureIndex;
+        f32 tilingFactor;
+    };
+
+    struct Renderer2Ddata {
+        const u32 maxQuads = 10000;
+        const u32 maxVertices = maxQuads * 4;
+        const u32 maxIndices = maxQuads * 6;
+        static const i32 maxTexSlots = 32; // TODO: glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &_data->maxTexSlots);
+
+        QuadVertex *vertBase, *vertPtr;
+
         ref<VAO> vertArray;
         ref<Shader> textureShader;
         ref<Texture> whiteTexture;
+        std::array<ref<Texture>, maxTexSlots> textures;
+
+        u32 indexCount, texCount;
     };
 
     class Renderer2D {
@@ -29,10 +56,14 @@ namespace Everest {
             static void endScene();
 
             static void drawQuad(vec3 position, vec2 scale, f32 rotation,
-                    vec4 color = vec4(1.f), ref<Texture> texture = NULL);
+                    vec4 color = vec4(1.f), ref<Texture> texture = NULL, f32 tilingFactor = 1.f);
             static void drawQuad(vec2 position, vec2 scale, f32 rotation,
-                    vec4 color=vec4(1.f), ref<Texture> texture = NULL);
+                    vec4 color=vec4(1.f), ref<Texture> texture = NULL, f32 tilingFactor = 1.f);
+            static void drawQuad(const QuadProps& props);
+
         private:
-            static RendererStorage *_data;
+            static void flush();
+        private:
+            static Renderer2Ddata *_data;
     };
 }

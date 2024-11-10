@@ -9,11 +9,12 @@ class SandBox2D : public Layer {
         SandBox2D(const char* name);
         void onAttach() override;
         void onUpdate() override;
-        void onDebugRender() override;
+        void onGUIrender() override;
         void onEvent(Event& event) override;
         void onDetach() override;
 
     private:
+        Random _random;
         ref<Texture> _logo, _tiles;
         vec4 color;
     private:

@@ -58,7 +58,7 @@ void TowerDefense::onUpdate(){
     Renderer::endScene();
 }
 
-void TowerDefense::onDebugRender(){
+void TowerDefense::onGUIrender(){
     ImGui::Begin(this->_name);
     ImGui::Text("%s", _evLog);
     ImGui::End();
