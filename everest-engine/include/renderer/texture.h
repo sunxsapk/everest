@@ -15,10 +15,24 @@ namespace Everest {
         RGBA = GL_RGBA
     };
 
+    enum TextureWrapMode {
+        REPEAT = GL_REPEAT,
+        CLAMP = GL_CLAMP_TO_EDGE,
+    };
+
+    enum TextureFilter {
+        NEAREST = GL_NEAREST,
+        LINEAR = GL_LINEAR,
+    };
+
     class Texture {
         public:
-            Texture(const std::string filepath);
-            Texture(ivec2 size, TextureFormat format = RGBA);
+            Texture(const std::string filepath,
+                    TextureWrapMode wrap = CLAMP,
+                    TextureFilter filter = NEAREST);
+            Texture(ivec2 size, TextureFormat format = RGBA,
+                    TextureWrapMode wrap = CLAMP,
+                    TextureFilter filter = NEAREST);
             ~Texture();
 
             inline u32 getID(){return _id;}
@@ -34,15 +48,8 @@ namespace Everest {
             inline u32 getHeight(){return _size.y;}
             inline uvec2 getSize(){return _size;}
 
-            inline void setRepeat(){
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-            }
-
-            inline void setClamp(){
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);	
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-            }
+            void setWrapMode(TextureWrapMode mode);
+            void setFilter(TextureFilter filter);
 
             void setData(void* data ,u32 size);
 
@@ -55,5 +62,7 @@ namespace Everest {
             std::string _path;
             uvec2 _size;
             TextureFormat _format;
+            TextureWrapMode _wrap;
+            TextureFilter _filter;
     };
 }

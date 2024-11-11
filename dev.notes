@@ -52,7 +52,15 @@ Now, let's talk about the current milestones of the project:
     systems like instanced rendering and batched rendering. Add supports for multiple
     textures, sprites, etc. Also, make the orthographic camera not effect the shape
     of the sprites when resizing the screen. It is okay, if size differs but not
-    the shapes.
-    ; Components: Orthographic camera, Renderer, Textures, Shaders, etc
-    ; Target: Make a non-physics involved game like tic-tac-toe.
+    the shapes. Also add support for texture/sprite atlas.
+    ; Components: Orthographic camera, Renderer, Textures, Shaders, Sprite atlas,etc
+    ; Target: Make a non-physics involved game like Snake,
 
+- Make a scene editor layout and add a simple 2d scene editing and saving mechanism.
+    Add gizmo to the scene for ease of editing and some mouse related functionalities
+    for moving and selecting things. Make everything ready for big things to come next.
+    Also experiment with the instanced renderer2d.
+    ; Components: Sprite atlas, Scene editor, Scene loader & serializer (partial),
+        IMGUI docked layout and Menu, Mouse, Tilemap
+        position: world space & screen space, Gizmo, UI
+    ; Target: Edit and setup a scene for simple 2d game(maybe copy of Predcave)

@@ -1,7 +1,7 @@
 #include "renderer/texture.h"
 
 namespace Everest {
-    Texture::Texture(ivec2 size, TextureFormat format)
+    Texture::Texture(ivec2 size, TextureFormat format, TextureWrapMode wrap, TextureFilter filter)
     :_size(size), _format(format){
         EV_profile_function();
 
@@ -10,10 +10,8 @@ namespace Everest {
         glGenTextures(1, &_id);
         glBindTexture(GL_TEXTURE_2D, _id);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        setWrapMode(wrap);
+        setFilter(filter);
     }
 
     void Texture::setData(void* data ,u32 size){
@@ -29,7 +27,7 @@ namespace Everest {
                 _format, GL_UNSIGNED_BYTE, data);
     }
 
-    Texture::Texture(const std::string filepath)
+    Texture::Texture(const std::string filepath, TextureWrapMode wrap, TextureFilter filter)
         :_path(filepath){
         EV_profile_function();
 
@@ -58,16 +56,26 @@ namespace Everest {
         glGenTextures(1, &_id);
         glBindTexture(GL_TEXTURE_2D, _id);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        setWrapMode(wrap);
+        setFilter(filter);
 
         glTexImage2D(GL_TEXTURE_2D, 0, _format, _size.x, _size.y, 0,
                 _format, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
+        //glGenerateMipmap(GL_TEXTURE_2D);
 
         stbi_image_free(data);
+    }
+
+    void Texture::setWrapMode(TextureWrapMode mode){
+        _wrap = mode;
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, _wrap);	
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, _wrap);
+    }
+
+    void Texture::setFilter(TextureFilter filter){
+        _filter = filter;
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _filter);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _filter);
     }
 
     Texture::~Texture(){

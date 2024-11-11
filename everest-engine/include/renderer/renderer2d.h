@@ -31,6 +31,13 @@ namespace Everest {
         f32 tilingFactor;
     };
 
+    struct RendererStats {
+        u32 quadCount = 0;
+        u32 vertexCount = 0;
+        u32 textureCount = 0;
+        u32 drawCalls = 0;
+    };
+
     struct Renderer2Ddata {
         const u32 maxQuads = 10000;
         const u32 maxVertices = maxQuads * 4;
@@ -62,10 +69,12 @@ namespace Everest {
             static void drawQuad(vec2 position, vec2 scale, f32 rotation,
                     vec4 color=vec4(1.f), ref<Texture> texture = NULL, f32 tilingFactor = 1.f);
             static void drawQuad(const QuadProps& props);
+            static inline const RendererStats& getStats(){return _stats;}
 
         private:
             static void flush();
         private:
             static Renderer2Ddata *_data;
+            static RendererStats _stats;
     };
 }

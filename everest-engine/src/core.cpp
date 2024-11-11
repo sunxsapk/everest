@@ -49,6 +49,7 @@ namespace Everest {
         Input::init();
         Renderer::init();
         Time::init();
+
         Random::init() ;
     }
 

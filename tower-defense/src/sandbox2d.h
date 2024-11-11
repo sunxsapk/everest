@@ -14,9 +14,8 @@ class SandBox2D : public Layer {
         void onDetach() override;
 
     private:
-        Random _random;
         ref<Texture> _logo, _tiles;
-        vec4 color;
+        ivec2 _quads;
     private:
         OrthographicCameraController _camController;
 };

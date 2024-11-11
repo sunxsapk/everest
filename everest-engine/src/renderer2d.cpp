@@ -3,6 +3,7 @@
 
 namespace Everest {
     Renderer2Ddata* Renderer2D::_data = new Renderer2Ddata;
+    RendererStats Renderer2D::_stats;
 
     void Renderer2D::init(){
         EV_profile_function();
@@ -72,6 +73,8 @@ namespace Everest {
         _data->indexCount = 0;
         _data->texCount = 1; //white texture
         _data->vertPtr = _data->vertBase;
+
+        _stats = {0,0,0,0};
     }
 
     void Renderer2D::endScene(){
@@ -89,6 +92,8 @@ namespace Everest {
         }
 
         RenderAPI::drawIndexed(_data->vertArray, _data->indexCount);
+
+        _stats.drawCalls++;
 
         _data->indexCount = 0;
         _data->texCount = 1;
@@ -110,6 +115,7 @@ namespace Everest {
             if(tind == 0){
                 tind = _data->texCount;
                 _data->textures[_data->texCount++] = texture;
+                _stats.textureCount++;
             }
         }
 
@@ -129,6 +135,9 @@ namespace Everest {
             _data->vertPtr++;
         }
         _data->indexCount += 6;
+
+        _stats.quadCount++;
+        _stats.vertexCount += 4;
     }
 
     void Renderer2D::drawQuad(vec2 position, vec2 scale, f32 rotation,
