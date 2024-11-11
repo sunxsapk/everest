@@ -11,13 +11,14 @@ namespace Everest {
         EV_profile_function();
 
 
+        EVLog_Msg("GLFW init");
 #ifdef DEBUG
         glfwSetErrorCallback(onGLFWerror);
 #endif
         i32 _glfwInit = glfwInit();
         ASSERT(_glfwInit, "Failed to initialize GLFW");
-        EVLog_Msg("GLFW init");
 
+        EVLog_Msg("ImGUI init");
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();
 
@@ -33,12 +34,13 @@ namespace Everest {
             style.WindowRounding = 0.0f;
             style.Colors[ImGuiCol_WindowBg].w = 1.0f;
         }
-        EVLog_Msg("ImGUI init");
     }
 
     void Core::init(){
         EV_profile_function();
 
+
+        EVLog_Msg("Core init");
 
         Window& win = Application::getAppWindow();
         ImGui_ImplGlfw_InitForOpenGL(win.getWindow(), true);
@@ -48,8 +50,6 @@ namespace Everest {
         Renderer::init();
         Time::init();
         Random::init() ;
-
-        EVLog_Msg("Core init");
     }
 
     void Core::quit(){

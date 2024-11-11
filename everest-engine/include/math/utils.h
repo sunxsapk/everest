@@ -1,28 +1,13 @@
 /*
- * ======== Utils ==========
- * Author : Sunil Sapkota
- * Description : Contains some utility classes, definitions, functions,
- * constants, etc.
+ * ========== math utility library ===========
+ * Author: Sunil Sapkota
+ * Description: Contains some utility math functions for in-engine & out-engine
+ * use
  */
 
 #pragma once
-
-#define BIT(x) (1<<x)
+#include "types.h"
 
 namespace Everest {
-    template<typename T>
-    using scope = std::unique_ptr<T>;
-
-    template<typename T>
-    using ref = std::shared_ptr<T>;
-
-    template<typename T, typename... Args>
-    ref<T> createRef(Args&&... args){
-        return std::make_shared<T>(std::forward<Args>(args)...);
-    }
-
-    template<typename T, typename... Args>
-    scope<T> createScope(Args&&... args){
-        return std::make_unique<T>(std::forward<Args>(args)...);
-    }
+    vec3 transformOrtho(vec3 point, vec3 position, vec2 scale, f32 rotation);
 }

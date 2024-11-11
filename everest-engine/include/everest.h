@@ -17,6 +17,7 @@
 #include "core/input.h"
 #include "core/keycode.h"
 #include "core/time.h"
+#include "core/utils.h"
 
 #include "events/event.h"
 #include "events/keyevent.h"
@@ -30,6 +31,7 @@
 #include "renderer/vao.h"
 #include "renderer/shader.h"
 #include "renderer/renderer.h"
+#include "renderer/renderer2d.h"
 #include "renderer/texture.h"
 
 #include "scene/camera.h"

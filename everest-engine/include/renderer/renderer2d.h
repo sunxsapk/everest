@@ -37,6 +37,8 @@ namespace Everest {
         const u32 maxIndices = maxQuads * 6;
         static const i32 maxTexSlots = 32; // TODO: glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &_data->maxTexSlots);
 
+        std::array<vec3, 4> quadVertPos;
+
         QuadVertex *vertBase, *vertPtr;
 
         ref<VAO> vertArray;

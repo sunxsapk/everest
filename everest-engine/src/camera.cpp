@@ -47,7 +47,7 @@ namespace Everest {
     void OrthographicCamera::setOrthoSize(f32 size){
         EV_profile_function();
 
-        ASSERT(size > 0.f, "Invalid lens size");
+        size = std::max(0.00001f, size);
         _props.width = size * _props.width / _props.height;
         _props.height = size;
         recalcProj();

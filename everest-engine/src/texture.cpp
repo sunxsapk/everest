@@ -16,11 +16,7 @@ namespace Everest {
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     }
 
-    void Texture::setData(void* data
-#if ASSERT_ON
-            ,u32 size
-#endif
-        ){
+    void Texture::setData(void* data ,u32 size){
         EV_profile_function();
 
 #if ASSERT_ON

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glad/gl.h>
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #define GLM_ENABLE_EXPERIMENTAL
@@ -32,16 +32,13 @@
 #include <functional>
 
 #include "core/instrumentor.h"
+#include "core/utils.h"
 
 #include "math/types.h"
 #include "math/utils.h"
 
-#include "core/core.h"
 #include "core/log.h"
 #include "core/dbghelper.h"
-
-#include "renderer/renderer.h"
-#include "renderer/renderer2d.h"
 
 #ifdef WIN32
 #include <Windows.h>

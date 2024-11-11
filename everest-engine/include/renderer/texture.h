@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#include "pch.h"
 
 namespace Everest {
     enum TextureFormat{
@@ -24,7 +25,7 @@ namespace Everest {
 
             inline void bind(u32 slot = 0){
                 EV_profile_function();
-
+                
                 glActiveTexture(GL_TEXTURE0 + slot);
                 glBindTexture(GL_TEXTURE_2D, _id);
             }
@@ -43,11 +44,7 @@ namespace Everest {
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             }
 
-            void setData(void* data
-#if ASSERT_ON
-                    ,u32 size
-#endif
-                    );
+            void setData(void* data ,u32 size);
 
             bool operator==(Texture& other){
                 return _id ==  other.getID();

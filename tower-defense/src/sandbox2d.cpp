@@ -22,10 +22,11 @@ void SandBox2D::onUpdate(){
 
     Renderer2D::beginScene(_camController.getCamera());
 
-    for(i32 x = 0; x <= 1; x++){
-        for(i32 y = 0; y <= 1; y++){
-            Renderer2D::drawQuad(vec2(x*1.1f, y*1.1f), vec2(1.f), 0.f,
-                    vec4(1.f), x?_tiles:_logo, 2.f);
+    for(int y = -50; y <= 50; y++){
+        for(int x = -20; x <= 20; x++){
+            Renderer2D::drawQuad(vec3(3.1f*x+0.f, 1.1f*y, 0.f), vec2(0.5f),  0.f, vec4(1.f));
+            Renderer2D::drawQuad(vec3(3.1f*x+1.f, 1.1f*y, 0.f), vec2(0.5f), 30.f, vec4(1.f), _logo);
+            Renderer2D::drawQuad(vec3(3.1f*x+2.f, 1.1f*y, 0.f), vec2(0.5f), 60.f, vec4(1.f), _tiles);
         }
     }
 
@@ -38,12 +39,9 @@ void SandBox2D::onGUIrender(){
         ImGui::ShowDemoWindow();
         ImGui::Begin(_name);
 
-        i32 texture_units;
-        glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &texture_units);
         ImGui::Text("Vendor         : %s", glGetString(GL_VENDOR));
         ImGui::Text("Renderer       : %s", glGetString(GL_RENDERER));
         ImGui::Text("Version        : %s", glGetString(GL_VERSION));
-        ImGui::Text("TexSlot count  : %d", texture_units);
 
         ImGui::Spacing();
         ImGui::Separator();

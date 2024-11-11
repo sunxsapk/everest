@@ -7,8 +7,14 @@ namespace Everest {
     void Renderer2D::init(){
         EV_profile_function();
 
+        _data->vertArray = createRef<VAO>();
         _data->vertBase = new QuadVertex[_data->maxVertices];
         _data->vertPtr = _data->vertBase;
+
+        _data->quadVertPos[0] = vec3(-0.5f, -0.5f, 0.f);
+        _data->quadVertPos[1] = vec3( 0.5f, -0.5f, 0.f);
+        _data->quadVertPos[2] = vec3( 0.5f,  0.5f, 0.f);
+        _data->quadVertPos[3] = vec3(-0.5f,  0.5f, 0.f);
 
         ref<VertexBuffer> qvb = createRef<VertexBuffer>(_data->maxVertices * sizeof(QuadVertex));
         BufferLayout layout {
@@ -19,7 +25,6 @@ namespace Everest {
             {ShaderDataType::T_float, "tilingFactor"},
         };
         qvb->setLayout(layout);
-        _data->vertArray = createRef<VAO>();
         _data->vertArray->addVertexBuffer(qvb);
 
         u32 *qind = new u32[_data->maxIndices];
@@ -31,19 +36,22 @@ namespace Everest {
             qind[i + 4] = 3 + offset;
             qind[i + 5] = 0 + offset;
         }
-
         ref<IndexBuffer> qib = createRef<IndexBuffer>(qind, sizeof(u32) * _data->maxIndices);
         _data->vertArray->addIndexBuffer(qib);
         delete[] qind;
 
-        _data->textureShader = createRef<Shader>("assets/shaders/batchedShader.glsl");
-        i32 samplerArr[32];
-        for(u32 i=0; i<_data->maxTexSlots; i++) samplerArr[i] = i;
-        _data->textureShader->setUniform_iarr("u_textures", samplerArr, _data->maxTexSlots);
-
         _data->whiteTexture = createRef<Texture>(uvec2(1));
         u32 whiteText_data = 0xffffffff;
         _data->whiteTexture->setData(&whiteText_data, 4);
+
+        _data->textureShader = createRef<Shader>("assets/shaders/batchedShader.glsl");
+        i32 samplerArr[32];
+        for(i32 i=0; i<_data->maxTexSlots; i++) samplerArr[i] = i;
+        _data->textureShader->bind();
+        _data->textureShader->setUniform_iarr("u_textures", samplerArr, _data->maxTexSlots);
+
+        _data->textures[0] = _data->whiteTexture;
+        _data->texCount = 1;
     }
 
     void Renderer2D::quit(){
@@ -64,9 +72,6 @@ namespace Everest {
         _data->indexCount = 0;
         _data->texCount = 1; //white texture
         _data->vertPtr = _data->vertBase;
-
-        _data->textures[0] = _data->whiteTexture;
-        _data->texCount = 1;
     }
 
     void Renderer2D::endScene(){
@@ -94,66 +99,36 @@ namespace Everest {
             vec4 color, ref<Texture> texture, f32 tilingFactor){
         EV_profile_function();
 
-        f32 tind = 0;
+        i32 tind = 0;
         if(texture != NULL){
             for(u32 i=1; i<_data->texCount; i++){
-                if(_data->textures[i]->getID() == texture->getID()){
+                if(*_data->textures[i].get() == *texture.get()){
                     tind = i;
                     break;
                 }
             }
             if(tind == 0){
-                EVLog_Msg("slot : %d, texture : %d", _data->texCount, texture->getID());
+                tind = _data->texCount;
                 _data->textures[_data->texCount++] = texture;
             }
         }
 
-        _data->vertPtr->position = position;
-        _data->vertPtr->color = color;
-        _data->vertPtr->uv = {0.f, 0.f};
-        _data->vertPtr->textureIndex = tind;
-        _data->vertPtr->tilingFactor = tilingFactor;
-        _data->vertPtr++;
+        if(_data->indexCount == _data->maxIndices) flush();
 
-        _data->vertPtr->position = position + vec3(1.f, 0.f, 0.f);
-        _data->vertPtr->color = color;
-        _data->vertPtr->uv = {1.f, 0.f};
-        _data->vertPtr->textureIndex = tind;
-        _data->vertPtr->tilingFactor = tilingFactor;
-        _data->vertPtr++;
+        constexpr vec2 uvs[] = {{0.f, 0.f}, {1.f, 0.f}, {1.f, 1.f}, {0.f, 1.f}};
+        constexpr u32 quadVertCount = 4;
 
-        _data->vertPtr->position = position + vec3(1.f, 1.f, 0.f);
-        _data->vertPtr->color = color;
-        _data->vertPtr->uv = {1.f, 1.f};
-        _data->vertPtr->textureIndex = tind;
-        _data->vertPtr->tilingFactor = tilingFactor;
-        _data->vertPtr++;
-
-        _data->vertPtr->position = position + vec3(0.f, 1.f, 0.f);
-        _data->vertPtr->color = color;
-        _data->vertPtr->uv = {0.f, 1.f};
-        _data->vertPtr->textureIndex = tind;
-        _data->vertPtr->tilingFactor = tilingFactor;
-        _data->vertPtr++;
-
+        for(int i=0; i<quadVertCount; i++){
+            //_data->vertPtr->position = transform * _data->quadVertPos[i];
+            _data->vertPtr->position = transformOrtho(_data->quadVertPos[i],
+                    position, scale, glm::radians(rotation));
+            _data->vertPtr->color = color;
+            _data->vertPtr->uv = uvs[i];
+            _data->vertPtr->textureIndex = tind;
+            _data->vertPtr->tilingFactor = tilingFactor;
+            _data->vertPtr++;
+        }
         _data->indexCount += 6;
-
-        /*
-        static const vec3 _z_axis = vec3(0.f, 0.f, 1.f);
-        mat4 transform(1.f);
-        transform = glm::translate(transform, position);
-        transform = glm::rotate(transform, glm::radians(rotation), _z_axis);
-        transform = glm::scale(transform, vec3(scale.x, scale.y, 1.f));
-
-        _data->textureShader->setUniform_Mat4("u_transform", transform);
-        _data->textureShader->setUniform_vec4("u_color", color);
-        _data->textureShader->setUniform_f32("u_tilingF", tilingFactor);
-
-        if(texture != NULL) texture->bind();
-        else _data->whiteTexture->bind();
-
-        RenderAPI::drawIndexed(_data->vertArray);
-        */
     }
 
     void Renderer2D::drawQuad(vec2 position, vec2 scale, f32 rotation,
