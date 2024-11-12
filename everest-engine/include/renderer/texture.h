@@ -27,7 +27,7 @@ namespace Everest {
 
     class Texture {
         public:
-            Texture(const std::string filepath,
+            Texture(const char* filepath,
                     TextureWrapMode wrap = CLAMP,
                     TextureFilter filter = NEAREST);
             Texture(ivec2 size, TextureFormat format = RGBA,

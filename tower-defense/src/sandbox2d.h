@@ -14,7 +14,7 @@ class SandBox2D : public Layer {
         void onDetach() override;
 
     private:
-        ref<Texture> _logo, _tiles;
+        SpriteSheet _farmsprites;
         ivec2 _quads;
     private:
         OrthographicCameraController _camController;

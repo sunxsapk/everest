@@ -27,7 +27,7 @@ namespace Everest {
                 _format, GL_UNSIGNED_BYTE, data);
     }
 
-    Texture::Texture(const std::string filepath, TextureWrapMode wrap, TextureFilter filter)
+    Texture::Texture(const char* filepath, TextureWrapMode wrap, TextureFilter filter)
         :_path(filepath){
         EV_profile_function();
 

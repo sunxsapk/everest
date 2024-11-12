@@ -12,6 +12,7 @@
 #include "shader.h"
 #include "scene/camera.h"
 #include "texture.h"
+#include "sprite.h"
 
 namespace Everest {
     struct QuadProps {
@@ -69,6 +70,10 @@ namespace Everest {
             static void drawQuad(vec2 position, vec2 scale, f32 rotation,
                     vec4 color=vec4(1.f), ref<Texture> texture = NULL, f32 tilingFactor = 1.f);
             static void drawQuad(const QuadProps& props);
+
+            static void drawSprite(Sprite sprite, vec3 position, vec2 scale = vec2(1.f),
+                    f32 rotation = 0.f, vec4 color=vec4(1.f), f32 tilingFactor=1.f);
+
             static inline const RendererStats& getStats(){return _stats;}
 
         private:

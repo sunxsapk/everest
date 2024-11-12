@@ -1,16 +1,14 @@
 #include "sandbox2d.h"
 
 SandBox2D::SandBox2D(const char* name)
-:Layer(name), _camController(){ 
+:Layer(name), _camController(8.f){ 
     EV_profile_function();
 }
 
 void SandBox2D::onAttach(){
     EV_profile_function();
     _quads = ivec2(50, 50);
-    _logo = createRef<Texture>("assets/textures/test.png");
-    _tiles = createRef<Texture>("assets/textures/test2.png");
-    _tiles->setWrapMode(TextureWrapMode::CLAMP);
+    _farmsprites = SpriteSheet("assets/sprites/farm.png", uvec2(16, 16));
 }
 
 void SandBox2D::onUpdate(){
@@ -21,24 +19,11 @@ void SandBox2D::onUpdate(){
     Renderer::issue_clear();
 
     Renderer2D::beginScene(_camController.getCamera());
-    PRNumGenerator rgen(0xfdfdfdf);
 
-    for(int y = -_quads.y/2; y < _quads.y/2; y++){
-        for(int x = -_quads.x/2; x < _quads.x/2; x++){
-            int _r = glm::round(rgen.r_f32() * 3.f);
-            switch(_r){
-                case 1:
-                    Renderer2D::drawQuad(vec3(1.1f*x, 1.1f*y, 0.f),
-                            vec2(0.6f), 30.f, vec4(1.f), _logo);
-                    break;
-                case 2:
-                    Renderer2D::drawQuad(vec3(1.1f*x, 1.1f*y, 0.f),
-                            vec2(0.6f), 60.f, vec4(1.f), _tiles);
-                    break;
-                default:
-                    Renderer2D::drawQuad(vec3(1.1f*x, 1.1f*y, 0.f),
-                            vec2(0.6f),  0.f, vec4(0.f, 1.f, 1.f, 0.4f));
-            }
+    for(int y = 0; y<10; y++){
+        for(int x = 0; x<13; x++){
+            Renderer2D::drawSprite(_farmsprites.getSprite({x, y}, {1,1}),
+                    vec3(x+0.5f, y+0.5f, 0.f));
         }
     }
 

@@ -139,6 +139,49 @@ namespace Everest {
         _stats.quadCount++;
         _stats.vertexCount += 4;
     }
+    void Renderer2D::drawSprite(Sprite sprite, vec3 position, vec2 scale, f32 rotation,
+            vec4 color, f32 tilingFactor){
+        EV_profile_function();
+
+        i32 tind = 0;
+        if(sprite.texture != NULL){
+            for(u32 i=1; i<_data->texCount; i++){
+                if(*_data->textures[i].get() == *sprite.texture.get()){
+                    tind = i;
+                    break;
+                }
+            }
+            if(tind == 0){
+                tind = _data->texCount;
+                _data->textures[_data->texCount++] = sprite.texture;
+                _stats.textureCount++;
+            }
+        }
+
+        if(_data->indexCount == _data->maxIndices) flush();
+
+        constexpr u32 quadVertCount = 4;
+        vec2 uvs[] = {sprite.startUV,
+            sprite.startUV+vec2(sprite.sizeUV.x, 0.f),
+            sprite.startUV + sprite.sizeUV,
+            sprite.startUV+vec2(0.f, sprite.sizeUV.y)};
+
+        for(int i=0; i<quadVertCount; i++){
+            //_data->vertPtr->position = transform * _data->quadVertPos[i];
+            _data->vertPtr->position = transformOrtho(_data->quadVertPos[i],
+                    position, scale, glm::radians(rotation));
+            _data->vertPtr->color = color;
+            _data->vertPtr->uv = uvs[i];
+            _data->vertPtr->textureIndex = tind;
+            _data->vertPtr->tilingFactor = tilingFactor;
+            _data->vertPtr++;
+        }
+        _data->indexCount += 6;
+
+        _stats.quadCount++;
+        _stats.vertexCount += 4;
+    }
+
 
     void Renderer2D::drawQuad(vec2 position, vec2 scale, f32 rotation,
             vec4 color, ref<Texture> texture, f32 tilingFactor){

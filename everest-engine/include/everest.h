@@ -33,6 +33,7 @@
 #include "renderer/renderer.h"
 #include "renderer/renderer2d.h"
 #include "renderer/texture.h"
+#include "renderer/sprite.h"
 
 #include "scene/camera.h"
 #include "scene/orthocamController.h"
