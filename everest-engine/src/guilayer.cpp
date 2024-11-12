@@ -17,12 +17,8 @@ namespace Everest {
 
     void GUILayer::onEvent(Event& event){
         ImGuiIO& io = ImGui::GetIO();
-        if(this->_blockEvents){
-            if((event.isInCategory(Event_Mouse) && io.WantCaptureMouse) ||
-            (event.isInCategory(Event_Keyboard) && io.WantCaptureKeyboard)){
-                event._handled = true;
-            }
-        }
+        event._handled |= event.isInCategory(Event_Mouse) & io.WantCaptureMouse;
+        event._handled |= event.isInCategory(Event_Keyboard) & io.WantCaptureKeyboard;
     }
 
     void GUILayer::onUpdate(){

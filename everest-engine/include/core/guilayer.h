@@ -22,7 +22,5 @@ namespace Everest {
 
             void begin();
             void end();
-        private:
-            bool _blockEvents;
     };
 }

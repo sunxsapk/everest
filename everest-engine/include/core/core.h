@@ -8,6 +8,7 @@
  */
 
 #pragma once
+#include "math/types.h"
 
 namespace Everest {
     class Core {

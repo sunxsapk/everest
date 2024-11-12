@@ -24,11 +24,16 @@ namespace Everest {
             void bind();
             void unbind();
 
+            /* resizes the framebuffer to new size */
+            void resize(uvec2 size);
+
             inline const u32 getColorAttachment(){return _colorAttachment;}
             inline const u32 getDepthAttachment(){return _depthAttachment;}
 
             inline const FramebufferSpecs& getSpecs(){return _specs;}
 
+        private:
+            void invalidate();
         private:
             FramebufferSpecs _specs;
             u32 _id, _colorAttachment, _depthAttachment;

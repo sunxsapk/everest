@@ -51,4 +51,10 @@ namespace Everest {
             /*attaches a application debugger gui*/
             void attachDebugger();
     };
+
+    struct CommandLineArgs {
+        i32 argc;
+        char** argv;
+    };
+    Application* createApplication(CommandLineArgs args);
 }

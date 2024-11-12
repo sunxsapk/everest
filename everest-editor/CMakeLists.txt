@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-project(tower-defense VERSION 1.0 LANGUAGES CXX)
+project(everest-editor VERSION 1.0 LANGUAGES CXX)
 
 # Set the C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -35,5 +35,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     $<$<CONFIG:Release>:RELEASE;ASSERT_ON;EV_PROFILE>
     $<$<CONFIG:Dist>:DIST>
 )
+
 
 

@@ -1,9 +1,51 @@
 #include "renderer/framebuffer.h"
+#define __MAX_FRAMEBUF_SIZE 8192
 
 namespace Everest {
     Framebuffer::Framebuffer(const FramebufferSpecs& specs)
     :_specs(specs){
         EV_profile_function();
+        invalidate();
+    }
+
+    Framebuffer::~Framebuffer(){
+        EV_profile_function();
+        glDeleteFramebuffers(1, &_id);
+        glDeleteTextures(1, &_colorAttachment);
+        glDeleteTextures(1, &_depthAttachment);
+    }
+
+    void Framebuffer::bind(){
+        EV_profile_function();
+        glBindFramebuffer(GL_FRAMEBUFFER, _id);
+        glViewport(0, 0, _specs.width, _specs.height); 
+    }
+
+    void Framebuffer::unbind(){
+        EV_profile_function();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    void Framebuffer::resize(uvec2 size){
+        if(size.x == 0 || size.y == 0 || size.x > __MAX_FRAMEBUF_SIZE ||
+                size.y > __MAX_FRAMEBUF_SIZE){
+            EVLog_Wrn("Invalid framebuffer size");
+            return;
+        }
+        _specs.width = size.x;
+        _specs.height = size.y;
+        
+        invalidate();
+    }
+
+    void Framebuffer::invalidate(){
+        EV_profile_function();
+
+        if(_id){
+            glDeleteFramebuffers(1, &_id);
+            glDeleteTextures(1, &_colorAttachment);
+            glDeleteTextures(1, &_depthAttachment);
+        }
 
         glGenFramebuffers(1, &_id);
         glBindFramebuffer(GL_FRAMEBUFFER, _id);
@@ -31,20 +73,6 @@ namespace Everest {
         ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE,
                 "Framebuffer is not complete");
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    }
-
-    Framebuffer::~Framebuffer(){
-        EV_profile_function();
-        glDeleteFramebuffers(1, &_id);
-    }
-
-    void Framebuffer::bind(){
-        EV_profile_function();
-        glBindFramebuffer(GL_FRAMEBUFFER, _id);
-    }
-    void Framebuffer::unbind(){
-        EV_profile_function();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 }
