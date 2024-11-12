@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "pch.h"
 #include "window.h"
 #include "layerstack.h"
 #include "events/windowevent.h"
@@ -26,6 +27,8 @@ namespace Everest {
             /*called whenever the application recieves an event*/
             void onEvent(Event& event);
 
+            /* closes the application */
+            static inline void close(){s_app->_running = false;}
             /* returns the window wrapper used by the application*/
             static inline Window& getAppWindow(){return *s_app->_window;}
         protected:

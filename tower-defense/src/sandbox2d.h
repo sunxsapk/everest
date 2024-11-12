@@ -15,7 +15,7 @@ class SandBox2D : public Layer {
 
     private:
         SpriteSheet _farmsprites;
-        ivec2 _quads;
+        ref<Framebuffer> _framebuffer;
     private:
         OrthographicCameraController _camController;
 };

@@ -140,7 +140,7 @@ namespace Everest {
         _stats.vertexCount += 4;
     }
     void Renderer2D::drawSprite(Sprite sprite, vec3 position, vec2 scale, f32 rotation,
-            vec4 color, f32 tilingFactor){
+            vec4 color){
         EV_profile_function();
 
         i32 tind = 0;
@@ -160,6 +160,7 @@ namespace Everest {
 
         if(_data->indexCount == _data->maxIndices) flush();
 
+        constexpr f32 tilingFactor = 1.f;
         constexpr u32 quadVertCount = 4;
         vec2 uvs[] = {sprite.startUV,
             sprite.startUV+vec2(sprite.sizeUV.x, 0.f),
