@@ -28,6 +28,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     externals/glad/include
     externals/imgui/include
     externals/stb_image/include
+    externals/entt/include
     externals/glm
 )
 

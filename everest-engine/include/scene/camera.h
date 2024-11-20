@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#include "pch.h"
 
 namespace Everest {
     class Camera {

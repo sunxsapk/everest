@@ -36,6 +36,9 @@
 #include "renderer/sprite.h"
 #include "renderer/framebuffer.h"
 
+#include "scene/entity.h"
+#include "scene/scene.h"
+#include "scene/components.h"
 #include "scene/camera.h"
 #include "scene/orthocamController.h"
 #include "scene/perscamController.h"
