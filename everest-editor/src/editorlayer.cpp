@@ -22,6 +22,7 @@ void EditorLayer::onAttach(){
     e.add<spriteRenderer_c>(spriteRenderer_c{
             .sprite = _farmsprites.getSprite({0, 0}, {1, 1}),
             });
+    e.add<nativeScript_c>().bind<CameraController>();
 }
 
 void EditorLayer::onUpdate(){

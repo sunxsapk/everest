@@ -4,6 +4,24 @@
 
 using namespace Everest;
 
+
+// TODO: write a camera controller for both 2d and 3d scene
+class CameraController : public Scriptable {
+    public:
+        void onCreate(){
+            EVLog_Msg("on create camera controller");
+        }
+
+        void onUpdate(){
+            EVLog_Msg("on update camera controller");
+        }
+
+        void onDestroy(){
+            EVLog_Msg("on destroy camera controller");
+        }
+};
+
+
 class EditorLayer : public Layer {
     public:
         EditorLayer(const char* name);

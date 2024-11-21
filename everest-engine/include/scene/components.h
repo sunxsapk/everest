@@ -6,6 +6,7 @@
 #pragma once
 #include "camera.h"
 #include "renderer/sprite.h"
+#include "scriptable.h"
 
 namespace Everest {
     struct transform_c {
@@ -29,5 +30,26 @@ namespace Everest {
         bool fixedAspect = false;
 
         operator Camera&(){return camera;}
+    };
+
+    struct nativeScript_c {
+        Scriptable* _instance;
+
+        std::function<void()> create;
+        std::function<void()> destroy;
+
+        std::function<void()> onCreate;
+        std::function<void()> onUpdate;
+        std::function<void()> onDestroy;
+
+        template<typename script_t>
+        void bind(){
+            create = [&](){_instance = new script_t();};
+            destroy = [&](){delete (script_t*)_instance;};
+
+            onCreate = [&](){ ((script_t*)_instance)->onCreate();};
+            onUpdate = [&](){ ((script_t*)_instance)->onUpdate();};
+            onDestroy = [&](){ ((script_t*)_instance)->onDestroy();};
+        }
     };
 }
