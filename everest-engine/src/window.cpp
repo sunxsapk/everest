@@ -66,12 +66,6 @@ namespace Everest{
 
 
         glfwPollEvents();
-    }
-
-    void Window::swapBuffers(){
-        EV_profile_function();
-
-
         glfwSwapBuffers(this->_window);
     }
 

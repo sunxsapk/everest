@@ -23,7 +23,7 @@ namespace Everest {
     void Renderer::beginScene(Camera& camera){
         EV_profile_function();
 
-        _scene.viewProjectionMatrix = camera.getVPmatrix();
+        _scene.viewProjectionMatrix = camera.getProjection();
     }
 
     void Renderer::endScene(){

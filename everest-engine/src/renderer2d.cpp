@@ -12,10 +12,10 @@ namespace Everest {
         _data->vertBase = new QuadVertex[_data->maxVertices];
         _data->vertPtr = _data->vertBase;
 
-        _data->quadVertPos[0] = vec3(-0.5f, -0.5f, 0.f);
-        _data->quadVertPos[1] = vec3( 0.5f, -0.5f, 0.f);
-        _data->quadVertPos[2] = vec3( 0.5f,  0.5f, 0.f);
-        _data->quadVertPos[3] = vec3(-0.5f,  0.5f, 0.f);
+        _data->quadVertPos[0] = vec4(-0.5f, -0.5f, 0.f, 1.f);
+        _data->quadVertPos[1] = vec4( 0.5f, -0.5f, 0.f, 1.f);
+        _data->quadVertPos[2] = vec4( 0.5f,  0.5f, 0.f, 1.f);
+        _data->quadVertPos[3] = vec4(-0.5f,  0.5f, 0.f, 1.f);
 
         ref<VertexBuffer> qvb = createRef<VertexBuffer>(_data->maxVertices * sizeof(QuadVertex));
         BufferLayout layout {
@@ -66,7 +66,7 @@ namespace Everest {
         EV_profile_function();
 
         _data->textureShader->bind();
-        _data->textureShader->setUniform_Mat4("u_viewProjMat", camera.getVPmatrix());
+        _data->textureShader->setUniform_Mat4("u_viewProjMat", camera.getProjection());
 
         _data->whiteTexture->bind();
 
@@ -105,19 +105,7 @@ namespace Everest {
         EV_profile_function();
 
         i32 tind = 0;
-        if(texture != NULL){
-            for(u32 i=1; i<_data->texCount; i++){
-                if(*_data->textures[i].get() == *texture.get()){
-                    tind = i;
-                    break;
-                }
-            }
-            if(tind == 0){
-                tind = _data->texCount;
-                _data->textures[_data->texCount++] = texture;
-                _stats.textureCount++;
-            }
-        }
+        _checkTexture(tind, texture);
 
         if(_data->indexCount == _data->maxIndices) flush();
 
@@ -139,24 +127,13 @@ namespace Everest {
         _stats.quadCount++;
         _stats.vertexCount += 4;
     }
+
     void Renderer2D::drawSprite(Sprite sprite, vec3 position, vec2 scale, f32 rotation,
             vec4 color){
         EV_profile_function();
 
         i32 tind = 0;
-        if(sprite.texture != NULL){
-            for(u32 i=1; i<_data->texCount; i++){
-                if(*_data->textures[i].get() == *sprite.texture.get()){
-                    tind = i;
-                    break;
-                }
-            }
-            if(tind == 0){
-                tind = _data->texCount;
-                _data->textures[_data->texCount++] = sprite.texture;
-                _stats.textureCount++;
-            }
-        }
+        _checkTexture(tind, sprite.texture);
 
         if(_data->indexCount == _data->maxIndices) flush();
 
@@ -183,6 +160,34 @@ namespace Everest {
         _stats.vertexCount += 4;
     }
 
+    void Renderer2D::drawSprite(mat4 transform, Sprite sprite, vec4 color){
+        EV_profile_function();
+
+        i32 tind = 0;
+        _checkTexture(tind, sprite.texture);
+
+        if(_data->indexCount == _data->maxIndices) flush();
+
+        constexpr f32 tilingFactor = 1.f;
+        constexpr u32 quadVertCount = 4;
+        vec2 uvs[] = {sprite.startUV,
+            sprite.startUV+vec2(sprite.sizeUV.x, 0.f),
+            sprite.startUV + sprite.sizeUV,
+            sprite.startUV+vec2(0.f, sprite.sizeUV.y)};
+
+        for(int i=0; i<quadVertCount; i++){
+            _data->vertPtr->position = transform * _data->quadVertPos[i];
+            _data->vertPtr->color = color;
+            _data->vertPtr->uv = uvs[i];
+            _data->vertPtr->textureIndex = tind;
+            _data->vertPtr->tilingFactor = tilingFactor;
+            _data->vertPtr++;
+        }
+        _data->indexCount += 6;
+
+        _stats.quadCount++;
+        _stats.vertexCount += 4;
+    }
 
     void Renderer2D::drawQuad(vec2 position, vec2 scale, f32 rotation,
             vec4 color, ref<Texture> texture, f32 tilingFactor){
@@ -192,4 +197,21 @@ namespace Everest {
     void Renderer2D::drawQuad(const QuadProps& props){
         drawQuad(props.position, props.scale, props.rotation, props.color, props.texture, props.tilingFactor);
     }
+
+    void Renderer2D::_checkTexture(i32& tind, ref<Texture> tex){
+        if(tex != NULL){
+            for(u32 i=1; i<_data->texCount; i++){
+                if(*_data->textures[i].get() == *tex.get()){
+                    tind = i;
+                    break;
+                }
+            }
+            if(tind == 0){
+                tind = _data->texCount;
+                _data->textures[_data->texCount++] = tex;
+                _stats.textureCount++;
+            }
+        }
+    }
+
 }

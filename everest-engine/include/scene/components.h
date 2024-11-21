@@ -4,7 +4,8 @@
  * Description : Contains all of the components made available by the engine.
  */
 #pragma once
-
+#include "camera.h"
+#include "renderer/sprite.h"
 
 namespace Everest {
     struct transform_c {
@@ -20,5 +21,13 @@ namespace Everest {
     
     struct spriteRenderer_c{
         vec4 color{1.f}; 
+        Sprite sprite;
+    };
+
+    struct camera_c {
+        Camera camera;
+        bool fixedAspect = false;
+
+        operator Camera&(){return camera;}
     };
 }

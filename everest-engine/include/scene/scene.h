@@ -7,7 +7,6 @@
 #pragma once
 
 #include <entt.hpp>
-#include "entity.h"
 
 namespace Everest {
 
@@ -20,9 +19,11 @@ namespace Everest {
             Entity createEntity(const char * name = "Entity");
 
             void onUpdate();
+            void onViewportResize(uvec2 viewportSize);
 
         private:
             entt::registry _registry;
+            uvec2 _viewportSize;
             friend class Entity;
     };
 }

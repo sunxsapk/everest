@@ -6,6 +6,7 @@
  */
 
 #pragma once
+#include "log.h"
 
 #ifdef LINUX
     #define BREAKPOINT __builtin_trap()

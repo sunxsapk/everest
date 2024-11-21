@@ -7,6 +7,7 @@
 #pragma once
 
 #include "math/utils.h"
+#include "core/utils.h"
 
 namespace Everest {
     #define BIND_EVENT_CB(fn) [this](auto&&... args) -> decltype(auto) {\

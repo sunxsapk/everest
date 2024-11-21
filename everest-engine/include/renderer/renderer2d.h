@@ -45,7 +45,7 @@ namespace Everest {
         const u32 maxIndices = maxQuads * 6;
         static const i32 maxTexSlots = 32; // TODO: glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &_data->maxTexSlots);
 
-        std::array<vec3, 4> quadVertPos;
+        std::array<vec4, 4> quadVertPos;
 
         QuadVertex *vertBase, *vertPtr;
 
@@ -72,6 +72,7 @@ namespace Everest {
 
             static void drawQuad(const QuadProps& props);
 
+            static void drawSprite(mat4 transform, Sprite sprite, vec4 color);
             static void drawSprite(Sprite sprite, vec3 position, vec2 scale = vec2(1.f),
                     f32 rotation = 0.f, vec4 color=vec4(1.f));
 
@@ -79,6 +80,7 @@ namespace Everest {
 
         private:
             static void flush();
+            static void _checkTexture(i32& texIndex, ref<Texture> texture);
         private:
             static Renderer2Ddata *_data;
             static RendererStats _stats;

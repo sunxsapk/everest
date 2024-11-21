@@ -2,7 +2,7 @@
 
 
 EditorLayer::EditorLayer(const char* name)
-:Layer(name), _camController(8.f, 1.f, 50.f){ 
+:Layer(name){ 
     EV_profile_function();
 }
 
@@ -12,31 +12,29 @@ void EditorLayer::onAttach(){
 
     FramebufferSpecs specs{
         .width = 1280,
-        .height = 720
+            .height = 720
     };
     _framebuffer = createRef<Framebuffer>(specs);
+    _camera = _activeScene.createEntity("Scene Camera");
+    _camera.add<camera_c>(camera_c{OrthographicCamera(9.f, 16.f/9.f)});
+
+    Entity e = _activeScene.createEntity();
+    e.add<spriteRenderer_c>(spriteRenderer_c{
+            .sprite = _farmsprites.getSprite({0, 0}, {1, 1}),
+            });
 }
 
 void EditorLayer::onUpdate(){
     EV_profile_function();
-    if(_sceneViewportFocused) _camController.onUpdate();
 
     _framebuffer->bind();
 
     Renderer::issue_setClearColor({.1f, .1f, .1f, 1.f});
     Renderer::issue_clear();
+    Renderer2D::beginScene(_camera.get<camera_c>());
 
-    Renderer2D::beginScene(_camController.getCamera());
+    _activeScene.onUpdate();
 
-    for(int y = 0; y<10; y++){
-        for(int x = 0; x<13; x++){
-            Renderer2D::drawSprite(_farmsprites.getSprite({x, y}, {1,1}),
-                    vec3(x*1.1f+0.5f, y*1.1f+0.5f, 0.f));
-        }
-    }
-
-    Renderer2D::drawSprite(_farmsprites.getSprite({0, 2}, {4, 5}),
-            vec3(-10.f, 0.f, 0.f), vec2(4, 5), 0.f, vec4(1.f));
     Renderer2D::endScene();
 
     _framebuffer->unbind();
@@ -112,8 +110,7 @@ void EditorLayer::handleSceneViewPort() {
     if(_svps != _sceneViewPortSize){
         _sceneViewPortSize = _svps;
         _framebuffer->resize(_sceneViewPortSize);
-        _camController.getCamera().setAspectRatio(
-                (f32)_sceneViewPortSize.x/(f32)_sceneViewPortSize.y);
+        _activeScene.onViewportResize(_sceneViewPortSize);
     }
 
     ImGui::Image(_framebuffer->getColorAttachment(),

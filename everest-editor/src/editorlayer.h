@@ -22,6 +22,7 @@ class EditorLayer : public Layer {
         uvec2 _sceneViewPortSize = {1280, 720};
         bool _sceneViewportFocused = false;
     private:
-        OrthographicCameraController _camController;
+        Scene _activeScene;
+        Entity _camera;
 };
 

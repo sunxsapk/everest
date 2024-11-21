@@ -6,6 +6,7 @@
 
 #pragma once
 #include "events/event.h"
+#include "pch.h"
 
 namespace Everest {
 
@@ -18,8 +19,6 @@ namespace Everest {
             ~Window();
 
             /*swaps the front and back buffers*/
-            void swapBuffers();
-            /*polls events and updates them*/
             void update();
 
             /*sets the title of the window to the one provided*/

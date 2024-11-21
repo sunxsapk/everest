@@ -10,8 +10,9 @@
 
 namespace Everest {
 
-    class Scene;
-    struct Entity {
+    class Entity {
+        public:
+        Entity() = default;
         Entity(entt::entity id, Scene* scene):_id(id), _scene(scene){}
 
         template<typename... component_t>
@@ -37,7 +38,7 @@ namespace Everest {
         }
 
         private:
-        entt::entity _id{0};
+        entt::entity _id{entt::null};
         Scene* _scene = nullptr;
     };
 }
