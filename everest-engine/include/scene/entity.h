@@ -15,6 +15,12 @@ namespace Everest {
         Entity() = default;
         Entity(entt::entity id, Scene* scene):_id(id), _scene(scene){}
 
+        operator u32() const {return (u32)_id;}
+        bool operator ==(Entity& other) const {return _id == other._id && _scene == other._scene;}
+        bool operator !=(Entity& other) const {return !(*this == other);}
+
+        inline bool isValid(){return _id != entt::null;}
+
         template<typename... component_t>
         inline bool has(){
             return _scene->_registry.all_of<component_t...>(_id);

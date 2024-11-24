@@ -62,11 +62,12 @@ namespace Everest {
         delete _data;
     }
 
-    void Renderer2D::beginScene(Camera& camera){
+    void Renderer2D::beginScene(Camera& camera, mat4 transform){
         EV_profile_function();
 
         _data->textureShader->bind();
-        _data->textureShader->setUniform_Mat4("u_viewProjMat", camera.getProjection());
+        _data->textureShader->setUniform_Mat4("u_viewProjMat",
+                camera.getProjection() * glm::inverse(transform));
 
         _data->whiteTexture->bind();
 

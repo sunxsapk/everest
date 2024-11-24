@@ -17,7 +17,7 @@ namespace Everest {
     };
 
     struct tag_c {
-        const char* tag;
+        std::string tag;
     };
     
     struct spriteRenderer_c{
@@ -35,21 +35,16 @@ namespace Everest {
     struct nativeScript_c {
         Scriptable* _instance;
 
-        std::function<void()> create;
-        std::function<void()> destroy;
-
-        std::function<void()> onCreate;
-        std::function<void()> onUpdate;
-        std::function<void()> onDestroy;
+        Scriptable* (*create)();
+        void (*destroy)(nativeScript_c*);
 
         template<typename script_t>
         void bind(){
-            create = [&](){_instance = new script_t();};
-            destroy = [&](){delete (script_t*)_instance;};
-
-            onCreate = [&](){ ((script_t*)_instance)->onCreate();};
-            onUpdate = [&](){ ((script_t*)_instance)->onUpdate();};
-            onDestroy = [&](){ ((script_t*)_instance)->onDestroy();};
+            create = [](){return static_cast<Scriptable*>(new script_t());};
+            destroy = [](nativeScript_c* nsc){
+                delete nsc->_instance;
+                nsc->_instance = nullptr;
+            };
         }
     };
 }

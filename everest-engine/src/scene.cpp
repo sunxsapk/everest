@@ -29,8 +29,8 @@ namespace Everest {
 
         _registry.view<nativeScript_c>().each([=](auto ent, nativeScript_c nscript){
                 if(nscript._instance){
-                    nscript.onDestroy();
-                    nscript.destroy();
+                    nscript._instance->onDestroy();
+                    nscript.destroy(&nscript);
                 }
             });
     }
@@ -39,13 +39,13 @@ namespace Everest {
         EV_profile_function();
 
 
-        _registry.view<nativeScript_c>().each([=](auto ent, nativeScript_c nscript){
+        _registry.view<nativeScript_c>().each([=](auto ent, nativeScript_c& nscript){
                 if(!nscript._instance){
-                    nscript.create();
-                    nscript.onCreate();
-                } else {
-                    nscript.onUpdate();
+                    nscript._instance = nscript.create();
+                    nscript._instance->_entity = {ent, this};
+                    nscript._instance->onCreate();
                 }
+                nscript._instance->onUpdate();
             });
 
 

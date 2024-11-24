@@ -12,6 +12,8 @@
 namespace Everest {
     class Scriptable {
         public:
+            virtual ~Scriptable(){}
+
             template<typename t>
             inline t& get(){
                 return _entity.get<t>();
@@ -32,7 +34,12 @@ namespace Everest {
                 _entity.remove<component_t>();
             }
 
+        protected:
+            virtual void onCreate(){}
+            virtual void onUpdate(){}
+            virtual void onDestroy(){}
         private:
             Entity _entity;
+            friend class Scene;
     };
 }

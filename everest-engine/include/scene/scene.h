@@ -7,6 +7,7 @@
 #pragma once
 
 #include <entt.hpp>
+#include "math/types.h"
 
 namespace Everest {
 
@@ -25,5 +26,6 @@ namespace Everest {
             entt::registry _registry;
             uvec2 _viewportSize;
             friend class Entity;
+            friend class SceneHeirarchyUI;
     };
 }

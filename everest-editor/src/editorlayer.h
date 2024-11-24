@@ -1,25 +1,10 @@
 #pragma once
 
 #include <everest.h>
+#include "editor/sceneheirarchy.h"
+#include "editor/propspanel.h"
 
 using namespace Everest;
-
-
-// TODO: write a camera controller for both 2d and 3d scene
-class CameraController : public Scriptable {
-    public:
-        void onCreate(){
-            EVLog_Msg("on create camera controller");
-        }
-
-        void onUpdate(){
-            EVLog_Msg("on update camera controller");
-        }
-
-        void onDestroy(){
-            EVLog_Msg("on destroy camera controller");
-        }
-};
 
 
 class EditorLayer : public Layer {
@@ -32,7 +17,6 @@ class EditorLayer : public Layer {
         void onDetach() override;
     private:
         void handleSceneViewPort();
-        void handleMenuBar();
 
     private:
         SpriteSheet _farmsprites;
@@ -40,7 +24,9 @@ class EditorLayer : public Layer {
         uvec2 _sceneViewPortSize = {1280, 720};
         bool _sceneViewportFocused = false;
     private:
-        Scene _activeScene;
+        ref<Scene> _activeScene;
+        SceneHeirarchyUI _scenehui;
+        PropertiesPanel _props;
         Entity _camera;
 };
 
