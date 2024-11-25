@@ -69,7 +69,8 @@ namespace Everest {
         for(auto ent : cams){
             auto& cam = cams->get(ent);
             if(!cam.fixedAspect){
-                cam.camera.setAspect(aspect);
+                if(cam.camera.getType() == Orthographic) cam.camera.setOrtho_aspect(aspect);
+                else cam.camera.setPersp_aspect(aspect);
             }
         }
     }

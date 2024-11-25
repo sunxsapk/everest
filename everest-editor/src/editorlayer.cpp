@@ -3,50 +3,53 @@
 #include "editor/statspanel.h"
 #include "editor/menupanel.h"
 
+namespace Everest {
 
-EditorLayer::EditorLayer(const char* name)
-:Layer(name){ 
-    EV_profile_function();
-}
+    EditorLayer::EditorLayer(const char* name)
+        :Layer(name){ 
+            EV_profile_function();
+        }
 
-void EditorLayer::onAttach(){
-    EV_profile_function();
-    _farmsprites = SpriteSheet("assets/sprites/farm.png", uvec2(16, 16));
+    void EditorLayer::onAttach(){
+        EV_profile_function();
+        _farmsprites = SpriteSheet("assets/sprites/farm.png", uvec2(16, 16));
 
-    FramebufferSpecs specs{
-        .width = 1280,
-            .height = 720
-    };
-    _framebuffer = createRef<Framebuffer>(specs);
-    _activeScene = createRef<Scene>();
-    _scenehui.setScene(_activeScene);
-    _camera = _activeScene->createEntity("Scene Camera");
-    _camera.add<camera_c>(camera_c{OrthographicCamera(9.f, 16.f/9.f)});
-    _camera.add<nativeScript_c>().bind<CameraController>();
+        FramebufferSpecs specs{
+            .width = 1280,
+                .height = 720
+        };
+        _framebuffer = createRef<Framebuffer>(specs);
+        _activeScene = createRef<Scene>();
+        _scenehui.setScene(_activeScene);
+        _camera = _activeScene->createEntity("Scene Camera");
 
-    Entity e = _activeScene->createEntity();
-    e.add<spriteRenderer_c>(spriteRenderer_c{
-            .sprite = _farmsprites.getSprite({0, 0}, {1, 1}),
-            });
-}
+        auto _camdata = OrthographicData{.orthoSize = 10.f, .aspect = 16.f/9.f};
+        _camera.add<camera_c>(camera_c{Camera(_camdata)});
+        _camera.add<nativeScript_c>().bind<CameraController>();
 
-void EditorLayer::onUpdate(){
-    EV_profile_function();
+        Entity e = _activeScene->createEntity();
+        e.add<spriteRenderer_c>(spriteRenderer_c{
+                .sprite = _farmsprites.getSprite({0, 0}, {1, 1}),
+                });
+    }
 
-    _framebuffer->bind();
+    void EditorLayer::onUpdate(){
+        EV_profile_function();
 
-    Renderer::issue_setClearColor({.1f, .1f, .1f, 1.f});
-    Renderer::issue_clear();
-    Renderer2D::beginScene(_camera.get<camera_c>(), _camera.get<transform_c>());
+        _framebuffer->bind();
 
-    _activeScene->onUpdate();
+        Renderer::issue_setClearColor({.1f, .1f, .1f, 1.f});
+        Renderer::issue_clear();
+        Renderer2D::beginScene(_camera.get<camera_c>(), _camera.get<transform_c>());
 
-    Renderer2D::endScene();
+        _activeScene->onUpdate();
 
-    _framebuffer->unbind();
-}
+        Renderer2D::endScene();
 
-void EditorLayer::onGUIrender(){
+        _framebuffer->unbind();
+    }
+
+    void EditorLayer::onGUIrender(){
         EV_profile_function();
         //ImGui::ShowDemoWindow();
 
@@ -59,34 +62,35 @@ void EditorLayer::onGUIrender(){
         _props.onGUIrender(_scenehui.getSelectedEntity());
 
         handleSceneViewPort();
-}
-
-void EditorLayer::handleSceneViewPort() {
-    static ImVec2 uv0{0.f, 1.f}, uv1{1.f, 0.f};
-
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-    ImGui::Begin("Scene");
-
-    _sceneViewportFocused = ImGui::IsWindowFocused();
-
-    ImVec2 _svps_i = ImGui::GetContentRegionAvail();
-    uvec2 _svps{_svps_i.x, _svps_i.y};
-    if(_svps != _sceneViewPortSize){
-        _sceneViewPortSize = _svps;
-        _framebuffer->resize(_sceneViewPortSize);
-        _activeScene->onViewportResize(_sceneViewPortSize);
     }
 
-    ImGui::Image(_framebuffer->getColorAttachment(),
-            ImVec2(_sceneViewPortSize.x, _sceneViewPortSize.y), uv0, uv1);
+    void EditorLayer::handleSceneViewPort() {
+        static ImVec2 uv0{0.f, 1.f}, uv1{1.f, 0.f};
 
-    ImGui::End();
-    ImGui::PopStyleVar();
-}
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+        ImGui::Begin("Scene");
 
-void EditorLayer::onEvent(Event& event){
-}
+        _sceneViewportFocused = ImGui::IsWindowFocused();
 
-void EditorLayer::onDetach(){
-    EV_profile_function();
+        ImVec2 _svps_i = ImGui::GetContentRegionAvail();
+        uvec2 _svps{_svps_i.x, _svps_i.y};
+        if(_svps != _sceneViewPortSize){
+            _sceneViewPortSize = _svps;
+            _framebuffer->resize(_sceneViewPortSize);
+            _activeScene->onViewportResize(_sceneViewPortSize);
+        }
+
+        ImGui::Image(_framebuffer->getColorAttachment(),
+                ImVec2(_sceneViewPortSize.x, _sceneViewPortSize.y), uv0, uv1);
+
+        ImGui::End();
+        ImGui::PopStyleVar();
+    }
+
+    void EditorLayer::onEvent(Event& event){
+    }
+
+    void EditorLayer::onDetach(){
+        EV_profile_function();
+    }
 }

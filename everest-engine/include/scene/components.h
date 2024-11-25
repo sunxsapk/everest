@@ -9,6 +9,11 @@
 #include "scriptable.h"
 
 namespace Everest {
+
+    struct tag_c {
+        std::string tag;
+    };
+    
     struct transform_c {
         mat4 transform{1.f};
 
@@ -16,10 +21,6 @@ namespace Everest {
         operator const mat4&()const{return transform;}
     };
 
-    struct tag_c {
-        std::string tag;
-    };
-    
     struct spriteRenderer_c{
         vec4 color{1.f}; 
         Sprite sprite;
