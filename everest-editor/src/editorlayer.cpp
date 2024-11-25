@@ -40,7 +40,7 @@ namespace Everest {
 
         Renderer::issue_setClearColor({.1f, .1f, .1f, 1.f});
         Renderer::issue_clear();
-        Renderer2D::beginScene(_camera.get<camera_c>(), _camera.get<transform_c>());
+        Renderer2D::beginScene(_camera.get<camera_c>(), _camera.get<transform_c>().getTransform());
 
         _activeScene->onUpdate();
 
@@ -74,14 +74,19 @@ namespace Everest {
 
         ImVec2 _svps_i = ImGui::GetContentRegionAvail();
         uvec2 _svps{_svps_i.x, _svps_i.y};
+        bool needResize = false;
         if(_svps != _sceneViewPortSize){
             _sceneViewPortSize = _svps;
-            _framebuffer->resize(_sceneViewPortSize);
-            _activeScene->onViewportResize(_sceneViewPortSize);
+            needResize = true;
         }
 
         ImGui::Image(_framebuffer->getColorAttachment(),
                 ImVec2(_sceneViewPortSize.x, _sceneViewPortSize.y), uv0, uv1);
+
+        if(needResize){
+            //_framebuffer->resize(_sceneViewPortSize);
+            _activeScene->onViewportResize(_sceneViewPortSize);
+        }
 
         ImGui::End();
         ImGui::PopStyleVar();

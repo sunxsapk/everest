@@ -15,10 +15,20 @@ namespace Everest {
     };
     
     struct transform_c {
-        mat4 transform{1.f};
+        vec3 position{0.f}, rotation{0.f}, scale{1.f};
 
-        operator mat4&(){return transform;}
-        operator const mat4&()const{return transform;}
+        mat4 getTransform(){
+            mat4 trl = glm::translate(mat4(1.f), position);
+
+            vec3 rrot = glm::radians(rotation);
+            mat4 rotx = glm::rotate(mat4(1.f), rrot.x, {1.f, 0.f, 0.f});
+            mat4 roty = glm::rotate(mat4(1.f), rrot.y, {0.f, 1.f, 0.f});
+            mat4 rotz = glm::rotate(mat4(1.f), rrot.z, {0.f, 0.f, 1.f});
+
+            mat4 scl = glm::scale(mat4( 1.f), scale);
+
+            return trl * (rotz * roty * rotx) * scl;
+        }
     };
 
     struct spriteRenderer_c{

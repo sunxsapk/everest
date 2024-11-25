@@ -42,21 +42,25 @@ namespace Everest {
         if(ImGui::InputText("Tag", buf, sizeof(buf))){
             tag = std::string(buf);
         }
+        ImGui::Spacing();
+        ImGui::Separator();
     }
 
     void PropertiesPanel::_transform(Entity& ent){
-        ImGui::Spacing();
-        ImGui::Separator();
         if(ImGui::TreeNodeEx("Transform", ImGuiTreeNodeFlags_DefaultOpen)){
-            auto& tfr = ent.get<transform_c>().transform ;
-            ImGui::DragFloat3("Position", glm::value_ptr(tfr[3]), 0.1f);
+            auto& tfr = ent.get<transform_c>();
+
+            _vec3ui("Position", tfr.position, 0.f);
+            _vec3ui("Rotation", tfr.rotation, 0.f);
+            _vec3ui("Scale", tfr.scale, 1.f);
+
             ImGui::TreePop();
         }
+        ImGui::Spacing();
+        ImGui::Separator();
     }
 
     void PropertiesPanel::_camera(Entity& ent){
-        ImGui::Spacing();
-        ImGui::Separator();
         if(ImGui::TreeNodeEx("Camera", ImGuiTreeNodeFlags_DefaultOpen)){
             auto& cam_c = ent.get<camera_c>();
             Camera& cam = cam_c.camera;
@@ -77,8 +81,11 @@ namespace Everest {
                     }
                     ImGui::EndCombo();
                 }
+
+                ImGui::Checkbox("Fixed Aspect Ratio", &cam_c.fixedAspect);
             }
 
+            ImGui::Separator();
             ImGui::Indent();
             if(type == CameraType::Orthographic){
                 f32 osz = cam.getOrtho_size(), asp = cam.getOrtho_aspect(),
@@ -93,10 +100,10 @@ namespace Everest {
                 if(ImGui::DragFloat("Far", &fr, 0.5f)) 
                     cam.setOrtho_far(fr);
             }else{
-                f32 fov = cam.getPersp_fov(), asp = cam.getOrtho_aspect(),
-                    nr = cam.getPersp_near(), fr = cam.getOrtho_far();
+                f32 fov = cam.getPersp_fov(), asp = cam.getPersp_aspect(),
+                    nr = cam.getPersp_near(), fr = cam.getPersp_far();
 
-                if(ImGui::DragFloat("FOV", &fov, 0.05f)) 
+                if(ImGui::SliderFloat("FOV", &fov, 0.01f, 180.f)) 
                     cam.setPersp_fov(glm::max(0.f, fov));
                 if(ImGui::DragFloat("Aspect Ratio", &asp, 0.05f)) 
                     cam.setPersp_aspect(glm::max(0.f, asp));
@@ -109,11 +116,79 @@ namespace Everest {
 
             ImGui::TreePop();
         }
+        ImGui::Spacing();
+        ImGui::Separator();
     }
 
     void PropertiesPanel::_spriteRenderer(Entity& ent){
+        if(ImGui::TreeNodeEx("Sprite Renderer", ImGuiTreeNodeFlags_DefaultOpen)){
+            auto& sr_c = ent.get<spriteRenderer_c>();
+            ImGui::ColorEdit4("Color", glm::value_ptr(sr_c.color));
+
+            auto& spr = sr_c.sprite;
+            ImVec2 uv0 = ImVec2(spr.startUV.x, spr.sizeUV.y);
+            ImVec2 uv1 = ImVec2(spr.sizeUV.x, spr.startUV.y);
+            ImGui::Image(spr.texture->getID(), ImVec2(128,128), uv0, uv1);
+            ImGui::TreePop();
+        }
+        ImGui::Spacing();
+        ImGui::Separator();
     }
 
     void PropertiesPanel::_nativeScript(Entity& ent){
+    }
+
+    void PropertiesPanel::_vec3ui(const char* label, vec3& value, f32 resetvalue){
+        const f32 colwidth = 100.f;
+
+        ImGui::PushID(label);
+        ImGui::Columns(2);
+
+        ImGui::SetColumnWidth(0, colwidth);
+        ImGui::Text("%s", label);
+        ImGui::NextColumn();
+
+        ImGui::PushMultiItemsWidths(3, ImGui::CalcItemWidth());
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{0,0});
+
+        f32 lh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
+        ImVec2 btnsz = {lh + 3.f, lh};
+
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.6f, 0.1f, 0.1f, 0.8f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.6f, 0.1f, 0.1f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.8f, 0.1f, 0.1f, 1.f));
+        if(ImGui::Button("X", btnsz)) value.x = resetvalue;
+        ImGui::PopStyleColor(3);
+
+        ImGui::SameLine();
+        ImGui::DragFloat("##1", &value.x, 0.1f);
+        ImGui::PopItemWidth();
+        ImGui::SameLine();
+
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.1f, 0.6f, 0.8f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.1f, 0.1f, 0.6f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.1f, 0.8f, 1.f));
+        if(ImGui::Button("Y", btnsz)) value.y = resetvalue;
+        ImGui::PopStyleColor(3);
+
+        ImGui::SameLine();
+        ImGui::DragFloat("##2", &value.y, 0.1f);
+        ImGui::PopItemWidth();
+        ImGui::SameLine();
+
+        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.1f, 0.6f, 0.1f, 0.8f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.1f, 0.6f, 0.1f, 1.f));
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.1f, 0.8f, 0.1f, 1.f));
+        if(ImGui::Button("Z", btnsz)) value.z = resetvalue;
+        ImGui::PopStyleColor(3);
+
+        ImGui::SameLine();
+        ImGui::DragFloat("##3", &value.z, 0.1f);
+        ImGui::PopItemWidth();
+
+        ImGui::PopStyleVar();
+        ImGui::Columns(1);
+
+        ImGui::PopID();
     }
 }

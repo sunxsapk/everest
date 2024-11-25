@@ -15,5 +15,8 @@ namespace Everest {
             void _camera(Entity& ent);
             void _spriteRenderer(Entity& ent);
             void _nativeScript(Entity& ent);
+
+        private:
+            void _vec3ui(const char* label, vec3& value, f32 resetvalue);
     };
 }

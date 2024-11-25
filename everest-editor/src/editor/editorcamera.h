@@ -14,7 +14,7 @@ namespace Everest {
 
         void onUpdate() override {
             transform_c&  transform = get<transform_c>();
-            vec3 pos = transform.transform[3];
+            vec3& pos = transform.position;
 
             f32 disp = _speed * Time::getDeltatime();
 
@@ -28,11 +28,6 @@ namespace Everest {
             }
             if(Input::getKeyDown(K_a)) pos.x -= disp;
             if(Input::getKeyDown(K_d)) pos.x += disp;
-
-
-            transform.transform[3][0] = pos.x;
-            transform.transform[3][1] = pos.y;
-            transform.transform[3][2] = pos.z;
         }
 
         void onDestroy() override {

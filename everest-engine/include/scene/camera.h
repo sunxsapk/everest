@@ -23,7 +23,7 @@ namespace Everest {
     };
 
     struct PerspectiveData {
-        f32 fov = 60.f, aspect = 1.f, near = 0.01f, far = 1000.f;
+        f32 fov = 60.f, aspect = 16.f/9.f, near = 0.01f, far = 1000.f;
     };
 
     class Camera {
@@ -83,7 +83,7 @@ namespace Everest {
                     _projection = glm::ortho(-lw, lw, -_orthoData.orthoSize, _orthoData.orthoSize,
                             _orthoData.near, _orthoData.far);
                 } else {
-                    _projection = glm::perspective(_perspData.fov, _perspData.aspect,
+                    _projection = glm::perspective(glm::radians(_perspData.fov), _perspData.aspect,
                             _perspData.near, _perspData.far);
                 }
             }
