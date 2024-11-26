@@ -15,6 +15,7 @@ namespace Everest {
         Entity() = default;
         Entity(entt::entity id, Scene* scene):_id(id), _scene(scene){}
 
+        operator entt::entity() const {return _id;}
         operator u32() const {return (u32)_id;}
         bool operator ==(Entity& other) const {return _id == other._id && _scene == other._scene;}
         bool operator !=(Entity& other) const {return !(*this == other);}
@@ -46,5 +47,6 @@ namespace Everest {
         private:
         entt::entity _id{entt::null};
         Scene* _scene = nullptr;
+        friend class Scene;
     };
 }

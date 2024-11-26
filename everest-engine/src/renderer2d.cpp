@@ -86,13 +86,15 @@ namespace Everest {
 
     void Renderer2D::flush(){
         u32 datasize = (u8*)_data->vertPtr - (u8*)_data->vertBase;
-        _data->vertArray->getVertexBuffer()->setData(_data->vertBase, datasize);
+        if(datasize != 0){
+            _data->vertArray->getVertexBuffer()->setData(_data->vertBase, datasize);
 
-        for(u32 i=0; i<_data->texCount; i++){
-            _data->textures[i]->bind(i);
+            for(u32 i=0; i<_data->texCount; i++){
+                _data->textures[i]->bind(i);
+            }
+
+            RenderAPI::drawIndexed(_data->vertArray, _data->indexCount);
         }
-
-        RenderAPI::drawIndexed(_data->vertArray, _data->indexCount);
 
         _stats.drawCalls++;
 

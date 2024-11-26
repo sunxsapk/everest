@@ -1,7 +1,6 @@
 #include "scene/scene.h"
 #include "scene/components.h"
 #include "scene/entity.h"
-#include "renderer/renderer.h"
 #include "renderer/renderer2d.h"
 
 namespace Everest {
@@ -21,6 +20,13 @@ namespace Everest {
         _en.add<tag_c>(name);
         return _en;
     }
+
+    void Scene::destroyEntity(Entity& entity){
+        EV_profile_function();
+        
+        _registry.destroy(entity);
+        entity._id = entt::null;
+    } 
 
     Scene::~Scene(){
         EV_profile_function();

@@ -14,6 +14,7 @@ namespace Everest {
     void SceneHeirarchyUI::onGUIrender(){
         ImGui::Begin("Scene Hierarchy");
 
+        heirarchyPopup();
         for(auto entity: _scene->_registry.view<tag_c>()){
             drawEntityNode({entity, _scene.get()});
         }
@@ -31,8 +32,27 @@ namespace Everest {
         bool opened = ImGui::TreeNodeEx((void*)(u64)(u32)entity, flags, "%s", tag.c_str());
         if(ImGui::IsItemClicked()) _selectedEntity = entity;
 
+        bool deleteEntity = false;
+        if(ImGui::BeginPopupContextItem()){
+            if(ImGui::MenuItem("Delete Entity")) deleteEntity = true;
+            ImGui::EndPopup();
+        }
+
         if(opened){
             ImGui::TreePop();
         }
+
+        if(deleteEntity) {
+            _scene->destroyEntity(entity);
+        }
     }
+
+    void SceneHeirarchyUI::heirarchyPopup(){
+        if(ImGui::BeginPopupContextWindow(0, 1)){
+            if(ImGui::MenuItem("Create New Entity")) _scene->createEntity();
+
+            ImGui::EndPopup();
+        }
+    }
+
 }

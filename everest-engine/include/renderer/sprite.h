@@ -11,7 +11,7 @@
 
 namespace Everest {
     struct Sprite {
-        ref<Texture> texture;
+        ref<Texture> texture = nullptr;
         vec2 startUV = vec2(0.f);
         vec2 sizeUV  = vec2(1.f);
     };

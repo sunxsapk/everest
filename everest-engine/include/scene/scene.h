@@ -18,6 +18,7 @@ namespace Everest {
             ~Scene();
 
             Entity createEntity(const char * name = "Entity");
+            void destroyEntity(Entity& entity);
 
             void onUpdate();
             void onViewportResize(uvec2 viewportSize);

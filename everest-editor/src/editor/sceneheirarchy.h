@@ -18,6 +18,7 @@ namespace Everest {
             inline Entity getSelectedEntity(){return _selectedEntity;}
         private:
             void drawEntityNode(Entity entity);
+            void heirarchyPopup();
 
         private:
             Entity _selectedEntity;

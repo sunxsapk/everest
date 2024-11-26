@@ -10,28 +10,42 @@ namespace Everest {
             return;
         }
 
-        if(ent.has<tag_c>()){
-            _tag(ent);
-        }
-
-
-        if(ent.has<transform_c>()){
-            _transform(ent);
-        }
-
-        if(ent.has<camera_c>()){
-            _camera(ent);
-        }
-
-        if(ent.has<spriteRenderer_c>()){
-            _spriteRenderer(ent);
-        }
-
-        if(ent.has<nativeScript_c>()){
-            _nativeScript(ent);
-        }
-
+        drawComponents(ent);
+        addComponentUI(ent);
         ImGui::End();
+    }
+
+    void PropertiesPanel::addComponentUI(Entity& ent){
+        if(ImGui::Button("Add Component")){
+            ImGui::OpenPopup("_add_component_");
+        }
+
+        if(ImGui::BeginPopup("_add_component_")){
+            if(ImGui::MenuItem("Camera")) ent.add<camera_c>();
+            if(ImGui::MenuItem("Sprite Renderer")) ent.add<spriteRenderer_c>();
+
+            ImGui::EndPopup();
+        }
+    }
+
+    bool PropertiesPanel::removeComponentUI(){
+        ImGui::SameLine(ImGui::GetWindowWidth()-32);
+        if(ImGui::Button("x")) ImGui::OpenPopup("_comp_settings_");
+
+        bool c_remove = false;
+        if(ImGui::BeginPopup("_comp_settings_")){
+            if(ImGui::MenuItem("Remove component")) c_remove = true;
+            ImGui::EndPopup();
+        }
+        return c_remove;
+    }
+
+    void PropertiesPanel::drawComponents(Entity& ent){
+        if(ent.has<tag_c>()) _tag(ent);
+        if(ent.has<transform_c>()) _transform(ent);
+        if(ent.has<camera_c>()) _camera(ent);
+        if(ent.has<spriteRenderer_c>()) _spriteRenderer(ent);
+        if(ent.has<nativeScript_c>()) _nativeScript(ent);
     }
 
     void PropertiesPanel::_tag(Entity& ent){
@@ -61,7 +75,9 @@ namespace Everest {
     }
 
     void PropertiesPanel::_camera(Entity& ent){
-        if(ImGui::TreeNodeEx("Camera", ImGuiTreeNodeFlags_DefaultOpen)){
+        bool c_open = ImGui::TreeNodeEx("Camera", _compFlags);
+        bool c_remove = removeComponentUI();
+        if(c_open){
             auto& cam_c = ent.get<camera_c>();
             Camera& cam = cam_c.camera;
 
@@ -86,7 +102,6 @@ namespace Everest {
             }
 
             ImGui::Separator();
-            ImGui::Indent();
             if(type == CameraType::Orthographic){
                 f32 osz = cam.getOrtho_size(), asp = cam.getOrtho_aspect(),
                     nr = cam.getOrtho_near(), fr = cam.getOrtho_far();
@@ -111,28 +126,34 @@ namespace Everest {
                     cam.setPersp_near(nr);
                 if(ImGui::DragFloat("Far", &fr, 1.f)) 
                     cam.setPersp_far(fr);
-
             }
 
             ImGui::TreePop();
         }
         ImGui::Spacing();
         ImGui::Separator();
+
+        if(c_remove) ent.remove<camera_c>();
     }
 
     void PropertiesPanel::_spriteRenderer(Entity& ent){
-        if(ImGui::TreeNodeEx("Sprite Renderer", ImGuiTreeNodeFlags_DefaultOpen)){
+        bool c_open = ImGui::TreeNodeEx("Sprite Renderer", _compFlags);
+        bool c_remove = removeComponentUI();
+
+        if(c_open){
             auto& sr_c = ent.get<spriteRenderer_c>();
             ImGui::ColorEdit4("Color", glm::value_ptr(sr_c.color));
 
             auto& spr = sr_c.sprite;
             ImVec2 uv0 = ImVec2(spr.startUV.x, spr.sizeUV.y);
             ImVec2 uv1 = ImVec2(spr.sizeUV.x, spr.startUV.y);
-            ImGui::Image(spr.texture->getID(), ImVec2(128,128), uv0, uv1);
+            ImGui::Image(spr.texture? spr.texture->getID() : 0, ImVec2(64,64), uv0, uv1);
             ImGui::TreePop();
         }
         ImGui::Spacing();
         ImGui::Separator();
+
+        if(c_remove) ent.remove<spriteRenderer_c>();
     }
 
     void PropertiesPanel::_nativeScript(Entity& ent){

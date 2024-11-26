@@ -29,8 +29,8 @@ namespace Everest {
 
         Entity e = _activeScene->createEntity();
         e.add<spriteRenderer_c>(spriteRenderer_c{
-                .sprite = _farmsprites.getSprite({0, 0}, {1, 1}),
-                });
+                .sprite = _farmsprites.getSprite({0,0}, {1,1})
+            });
     }
 
     void EditorLayer::onUpdate(){
