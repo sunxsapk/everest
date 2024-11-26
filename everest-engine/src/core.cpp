@@ -4,6 +4,7 @@
 #include "renderer/renderer.h"
 #include "core/application.h"
 #include "core/time.h"
+#include "core/uifontmanager.h"
 #include "math/random.h"
 
 namespace Everest {
@@ -49,6 +50,7 @@ namespace Everest {
         Input::init();
         Renderer::init();
         Time::init();
+        UIFontManager::init();
 
         Random::init() ;
     }

@@ -18,6 +18,7 @@
 #include "core/keycode.h"
 #include "core/time.h"
 #include "core/utils.h"
+#include "core/uifontmanager.h"
 
 #include "events/event.h"
 #include "events/keyevent.h"

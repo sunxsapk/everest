@@ -21,9 +21,9 @@ namespace Everest {
             void heirarchyPopup();
 
         private:
+            ref<Scene> _scene;
             Entity _selectedEntity;
             friend class PropertiesPanel;
-        private:
-            ref<Scene> _scene;
     };
+
 }

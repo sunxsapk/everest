@@ -22,5 +22,8 @@ namespace Everest {
 
             void begin();
             void end();
+
+        private:
+            void setDarkThemeColors();
     };
 }

@@ -27,7 +27,8 @@ namespace Everest {
     void SceneHeirarchyUI::drawEntityNode(Entity entity){
         auto& tag = entity.get<tag_c>().tag;
 
-        ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow
+        ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow 
+            | ImGuiTreeNodeFlags_SpanAvailWidth
             | (_selectedEntity == entity ? ImGuiTreeNodeFlags_Selected : 0);
         bool opened = ImGui::TreeNodeEx((void*)(u64)(u32)entity, flags, "%s", tag.c_str());
         if(ImGui::IsItemClicked()) _selectedEntity = entity;

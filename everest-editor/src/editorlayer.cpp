@@ -51,7 +51,7 @@ namespace Everest {
 
     void EditorLayer::onGUIrender(){
         EV_profile_function();
-        //ImGui::ShowDemoWindow();
+        ImGui::ShowDemoWindow();
 
         MenuPanel::onGuiRender();
 
