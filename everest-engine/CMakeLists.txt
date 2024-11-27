@@ -14,9 +14,14 @@ file(GLOB_RECURSE SRC_FILES
     "src/*.c"
 )
 file(GLOB_RECURSE EXTERNALS
-    "externals/*.c"
-    "externals/*.cpp"
+    "externals/sources/*.c"
+    "externals/sources/*.cpp"
 )
+
+# submodules
+set(YAML_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+add_subdirectory("externals/yaml-cpp")
 
 # adding targets
 add_library(${PROJECT_NAME} STATIC ${SRC_FILES} ${EXTERNALS})
@@ -25,15 +30,16 @@ add_library(${PROJECT_NAME} STATIC ${SRC_FILES} ${EXTERNALS})
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${PROJECT_BINARY_DIR}
     include
-    externals/glad/include
-    externals/imgui/include
-    externals/stb_image/include
-    externals/entt/include
-    externals/glm
+    externals/sources/glad/include
+    externals/sources/imgui/include
+    externals/sources/stb_image/include
+    externals/sources/entt/include
+    externals/sources/glm
+    externals/yaml-cpp/include
 )
 
 # libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw yaml-cpp)
 if(APPLE)
     find_library(OPENGL_LIB OpenGL)
     target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIB})

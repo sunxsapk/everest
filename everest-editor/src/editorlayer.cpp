@@ -31,6 +31,9 @@ namespace Everest {
         e.add<spriteRenderer_c>(spriteRenderer_c{
                 .sprite = _farmsprites.getSprite({0,0}, {1,1})
             });
+
+        _serializer.setSerializationContext(_activeScene);
+        _serializer.serialize("assets/scenes/scene.everest");
     }
 
     void EditorLayer::onUpdate(){

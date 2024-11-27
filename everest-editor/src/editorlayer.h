@@ -26,6 +26,7 @@ namespace Everest {
         private:
             ref<Scene> _activeScene;
             SceneHeirarchyUI _scenehui;
+            Serializer _serializer;
             PropertiesPanel _props;
             Entity _camera;
     };

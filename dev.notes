@@ -56,7 +56,7 @@ Now, let's talk about the current milestones of the project:
     ; Components: Orthographic camera, Renderer, Textures, Shaders, Sprite atlas,etc
     ; Target: Make a non-physics involved game like Snake,
 
-- Develop an Entity Component System before actually going on with scene setup
++ Develop an Entity Component System before actually going on with scene setup
     ; Components: ECS, <Components : Transform, Sprite>
     ; Target: Make a simple game like space invader or tetris
 

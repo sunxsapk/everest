@@ -4,6 +4,7 @@
  * Description : Contains all of the components made available by the engine.
  */
 #pragma once
+
 #include "camera.h"
 #include "renderer/sprite.h"
 #include "scriptable.h"
@@ -29,6 +30,7 @@ namespace Everest {
 
             return trl * (rotz * roty * rotx) * scl;
         }
+
     };
 
     struct spriteRenderer_c{

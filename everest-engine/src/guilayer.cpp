@@ -57,19 +57,19 @@ namespace Everest {
 		colors[ImGuiCol_WindowBg]           = ImVec4{ 0.1f, 0.105f, 0.11f, 1.0f };
 
 		// Headers
-		colors[ImGuiCol_Header]             = ImVec4{ 0.12f, 0.12f, 0.12f, 1.0f };
-		colors[ImGuiCol_HeaderHovered]      = ImVec4{ 0.3f, 0.3f, 0.3f, 1.0f };
+		colors[ImGuiCol_Header]             = ImVec4{ 0.22f, 0.20f, 0.15f, 1.0f };
+		colors[ImGuiCol_HeaderHovered]      = ImVec4{ 0.30f, 0.30f, 0.30f, 1.0f };
 		colors[ImGuiCol_HeaderActive]       = ImVec4{ 0.15f, 0.15f, 0.15f, 1.0f };
-		
+
 		// Buttons
-		colors[ImGuiCol_Button]             = ImVec4{ 0.3f, 0.21f, 0.18f, 1.0f };
-		colors[ImGuiCol_ButtonHovered]      = ImVec4{ 0.5f, 0.41f, 0.31f, 1.0f };
-		colors[ImGuiCol_ButtonActive]       = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
+		colors[ImGuiCol_Button]             = ImVec4{ 0.41f, 0.21f, 0.11f, 1.0f };
+		colors[ImGuiCol_ButtonHovered]      = ImVec4{ 0.64f, 0.32f, 0.08f, 1.0f };
+		colors[ImGuiCol_ButtonActive]       = ImVec4{ 0.31f, 0.28f, 0.24f, 1.0f };
 
 		// Frame BG
-		colors[ImGuiCol_FrameBg]            = ImVec4{ 0.2f, 0.25f, 0.341f, 1.0f };
-		colors[ImGuiCol_FrameBgHovered]     = ImVec4{ 0.3f, 0.35f, 0.421f, 1.0f };
-		colors[ImGuiCol_FrameBgActive]      = ImVec4{ 0.15f, 0.185f, 0.251f, 1.0f };
+		colors[ImGuiCol_FrameBg]            = ImVec4{ 0.14f, 0.40f, 0.34f, 1.0f };
+		colors[ImGuiCol_FrameBgHovered]     = ImVec4{ 0.10f, 0.64f, 0.48f, 1.0f };
+		colors[ImGuiCol_FrameBgActive]      = ImVec4{ 0.22f, 0.34f, 0.21f, 1.0f };
 
 		// Tabs
 		colors[ImGuiCol_Tab]                = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
