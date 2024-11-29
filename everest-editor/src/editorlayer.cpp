@@ -12,6 +12,7 @@ namespace Everest {
 
     void EditorLayer::onAttach(){
         EV_profile_function();
+
         _farmsprites = SpriteSheet("assets/sprites/farm.png", uvec2(16, 16));
 
         FramebufferSpecs specs{
@@ -21,6 +22,8 @@ namespace Everest {
         _framebuffer = createRef<Framebuffer>(specs);
         _activeScene = createRef<Scene>();
         _scenehui.setScene(_activeScene);
+        SceneSerializer::setSerializationContext(_activeScene.get());
+
         _camera = _activeScene->createEntity("Scene Camera");
 
         auto _camdata = OrthographicData{.orthoSize = 10.f, .aspect = 16.f/9.f};
@@ -31,9 +34,6 @@ namespace Everest {
         e.add<spriteRenderer_c>(spriteRenderer_c{
                 .sprite = _farmsprites.getSprite({0,0}, {1,1})
             });
-
-        _serializer.setSerializationContext(_activeScene);
-        _serializer.serialize("assets/scenes/scene.everest");
     }
 
     void EditorLayer::onUpdate(){

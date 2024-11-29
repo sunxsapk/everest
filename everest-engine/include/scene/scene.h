@@ -28,6 +28,6 @@ namespace Everest {
             uvec2 _viewportSize;
             friend class Entity;
             friend class SceneHeirarchyUI;
-            friend class Serializer;
+            friend class SceneSerializer;
     };
 }

@@ -38,15 +38,15 @@ namespace Everest {
                 _projection = projection;
             }
 
-            inline f32 getOrtho_size(){return _orthoData.orthoSize;}
-            inline f32 getOrtho_aspect(){return _orthoData.aspect;}
-            inline f32 getOrtho_near(){return _orthoData.near;}
-            inline f32 getOrtho_far(){return _orthoData.far;}
+            inline f32 getOrtho_size() const {return _orthoData.orthoSize;}
+            inline f32 getOrtho_aspect() const {return _orthoData.aspect;}
+            inline f32 getOrtho_near() const {return _orthoData.near;}
+            inline f32 getOrtho_far() const {return _orthoData.far;}
 
-            inline f32 getPersp_fov(){return _perspData.fov;}
-            inline f32 getPersp_aspect(){return _perspData.aspect;}
-            inline f32 getPersp_near(){return _perspData.near;}
-            inline f32 getPersp_far(){return _perspData.far;}
+            inline f32 getPersp_fov() const {return _perspData.fov;}
+            inline f32 getPersp_aspect() const {return _perspData.aspect;}
+            inline f32 getPersp_near() const {return _perspData.near;}
+            inline f32 getPersp_far() const {return _perspData.far;}
 
             inline void setOrtho_aspect(f32 aspect){
                 _orthoData.aspect = aspect; if(_type == Orthographic)recalc();}
@@ -66,15 +66,18 @@ namespace Everest {
             inline void setPersp_fov(f32 fov){
                 _perspData.fov = fov; if(_type == Perspective)recalc();}
 
-            inline CameraType getType(){return _type;}
+            inline CameraType getType() const {return _type;}
             inline void setType(CameraType type){_type = type; recalc();}
+
+            inline void setOrthographicData(OrthographicData data){_orthoData = data;}
+            inline void setPerspectiveData(PerspectiveData data){_perspData = data;}
 
         protected:
             OrthographicData _orthoData;
             PerspectiveData _perspData;
+            CameraType _type = CameraType::Orthographic;
         protected:
             mat4 _projection;
-            CameraType _type = CameraType::Orthographic;
 
         private:
             inline void recalc(){

@@ -1,7 +1,7 @@
 /*
- * ========== Scene Serializer ===========
+ * ========== Scene SceneSerializer ===========
  * Author: Sunil Sapkota
- * Description: Serializer class handles everything regarding serialization and deserialization of the
+ * Description: SceneSerializer class handles everything regarding serialization and deserialization of the
  * scene. It provides abstraction for saving and loading scenes into some readable file format (most
  * likely 'yaml' or some custom made format.
  */
@@ -16,18 +16,17 @@
 
 namespace Everest {
 
-    class Serializer {
+    class SceneSerializer {
         public:
-            Serializer() = default;
-            Serializer(const ref<Scene>& scene);
+            static void serialize(const char* filepath);
+            static bool deserialize(const char* filepath);
 
-            void serialize(const char* filepath);
-            bool deserialize(const char* filepath);
-
-            inline void setSerializationContext(const ref<Scene>& scene){ _scene = scene;}
+            static inline void setSerializationContext(Scene* scene){
+                _scene = scene;}
+            static inline void clearSerializationContext(){_scene = nullptr;}
 
         private:
-            ref<Scene> _scene;
+            static Scene* _scene;
     };
 
 
@@ -36,5 +35,6 @@ namespace Everest {
 
     YAML::Emitter& operator<<(YAML::Emitter& out, const transform_c& tfr);
     YAML::Emitter& operator<<(YAML::Emitter& out, const tag_c& tag);
-
+    YAML::Emitter& operator<<(YAML::Emitter& out, const camera_c& camera);
+    YAML::Emitter& operator<<(YAML::Emitter& out, const spriteRenderer_c& spriteRenderer);
 }

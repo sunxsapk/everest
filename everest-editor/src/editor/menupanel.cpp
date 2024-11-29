@@ -11,14 +11,16 @@ namespace Everest {
 
                 if (ImGui::MenuItem("Open Scene", "Ctrl+O")) {}
                 if (ImGui::BeginMenu("Open Recent Scene")) {
-                    ImGui::MenuItem("level1.evsc");
-                    ImGui::MenuItem("level2.evsc");
-                    ImGui::MenuItem("main-menu.evsc");
+                    if(ImGui::MenuItem("scene.everest")){
+                        SceneSerializer::deserialize("assets/scenes/scene.everest");
+                    }
                     ImGui::EndMenu();
                 }
                 ImGui::Separator();
 
-                if (ImGui::MenuItem("Save Scene", "Ctrl+S")) {}
+                if (ImGui::MenuItem("Save Scene", "Ctrl+S")) {
+                    SceneSerializer::serialize("assets/scenes/scene.everest");
+                }
                 if (ImGui::MenuItem("Save Scene As..")) {}
 
                 ImGui::Separator();
