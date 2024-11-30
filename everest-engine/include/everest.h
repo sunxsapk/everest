@@ -29,6 +29,8 @@
 #include "math/utils.h"
 #include "math/random.h"
 
+#include "utils/utils.h"
+
 #include "renderer/vao.h"
 #include "renderer/shader.h"
 #include "renderer/renderer.h"

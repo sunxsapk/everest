@@ -1,0 +1,31 @@
+scene: Untitled
+entities:
+  - entity: 1
+    tag_c:
+      tag: Entity
+    transform_c:
+      position: [0, 0, 0]
+      rotation: [0, 0, 0]
+      scale: [10, 10, 1]
+    spriteRenderer_c:
+      color: [1, 1, 1, 1]
+  - entity: 0
+    tag_c:
+      tag: Scene Camera
+    transform_c:
+      position: [0, 0, 0]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+    camera_c:
+      fixedAspect: false
+      type: 0
+      perspective_d:
+        fov: 60
+        aspect: 1.7777778
+        near: 0.01
+        far: 1000
+      orthographic_d:
+        size: 10
+        aspect: 1.660079
+        near: -10
+        far: 10

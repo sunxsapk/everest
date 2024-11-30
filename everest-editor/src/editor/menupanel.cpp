@@ -9,7 +9,11 @@ namespace Everest {
                 if (ImGui::MenuItem("New Scene")) {}
                 ImGui::Separator();
 
-                if (ImGui::MenuItem("Open Scene", "Ctrl+O")) {}
+                if (ImGui::MenuItem("Open Scene", "Ctrl+O")) {
+                    std::string scf = FileDialog::filters("*.everest", "*.evsc");
+                    std::string filename = FileDialog::openFile(scf.c_str());
+                    if(!filename.empty()) SceneSerializer::deserialize(filename.c_str());
+                }
                 if (ImGui::BeginMenu("Open Recent Scene")) {
                     if(ImGui::MenuItem("scene.everest")){
                         SceneSerializer::deserialize("assets/scenes/scene.everest");
@@ -21,7 +25,11 @@ namespace Everest {
                 if (ImGui::MenuItem("Save Scene", "Ctrl+S")) {
                     SceneSerializer::serialize("assets/scenes/scene.everest");
                 }
-                if (ImGui::MenuItem("Save Scene As..")) {}
+                if (ImGui::MenuItem("Save Scene As..")) {
+                    std::string scf = FileDialog::filters("*.everest", "*.evsc");
+                    std::string filename = FileDialog::saveFile(scf.c_str());
+                    if(!filename.empty()) SceneSerializer::serialize(filename.c_str());
+                }
 
                 ImGui::Separator();
                 if(ImGui::MenuItem("Exit")) Application::close();
