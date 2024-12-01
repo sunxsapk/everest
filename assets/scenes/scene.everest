@@ -2,24 +2,6 @@ scene: Untitled
 entities:
   - entity: 2
     tag_c:
-      tag: Entity
-    transform_c:
-      position: [0, 0, -1.7]
-      rotation: [0, -46.3, 0]
-      scale: [7, 4.2, 1]
-    spriteRenderer_c:
-      color: [1, 1, 1, 1]
-  - entity: 1
-    tag_c:
-      tag: Entity
-    transform_c:
-      position: [0, 0, 0]
-      rotation: [2.1, 66.6, 0]
-      scale: [4, 3.2, 1]
-    spriteRenderer_c:
-      color: [1, 1, 1, 1]
-  - entity: 0
-    tag_c:
       tag: Scene Camera
     transform_c:
       position: [2.6023605, 0, 5.029017]
@@ -38,3 +20,21 @@ entities:
         aspect: 1.660079
         near: -10
         far: 10
+  - entity: 1
+    tag_c:
+      tag: Entity
+    transform_c:
+      position: [0, 0, 0]
+      rotation: [2.1, 66.6, 0]
+      scale: [4, 3.2, 1]
+    spriteRenderer_c:
+      color: [0.039167523, 0.33346924, 0.37130803, 1]
+  - entity: 0
+    tag_c:
+      tag: Entity
+    transform_c:
+      position: [0, 0, -1.7]
+      rotation: [0, -46.3, 0]
+      scale: [7, 4.2, 1]
+    spriteRenderer_c:
+      color: [0.47257382, 0.24791007, 0.2153501, 1]

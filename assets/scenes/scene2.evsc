@@ -2,15 +2,6 @@ scene: Untitled
 entities:
   - entity: 1
     tag_c:
-      tag: Entity
-    transform_c:
-      position: [0, 0, 0]
-      rotation: [0, 0, 0]
-      scale: [10, 10, 1]
-    spriteRenderer_c:
-      color: [1, 1, 1, 1]
-  - entity: 0
-    tag_c:
       tag: Scene Camera
     transform_c:
       position: [0, 0, 0]
@@ -29,3 +20,12 @@ entities:
         aspect: 1.660079
         near: -10
         far: 10
+  - entity: 0
+    tag_c:
+      tag: Entity
+    transform_c:
+      position: [0, 0, 0]
+      rotation: [0, 0, 0]
+      scale: [10, 10, 1]
+    spriteRenderer_c:
+      color: [0.039309945, 0.40506327, 0.23376106, 1]

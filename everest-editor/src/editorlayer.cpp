@@ -22,14 +22,6 @@ namespace Everest {
                 .height = 720
         };
         _framebuffer = createRef<Framebuffer>(specs);
-        
-        auto _activeScene = SceneManager::createAndActivateScene("Hello");
-        SceneHeirarchyUI::setScene(_activeScene);
-
-        Entity e = _activeScene->createEntity();
-        e.add<spriteRenderer_c>(spriteRenderer_c{
-                .sprite = _farmsprites.getSprite({0,0}, {1,1})
-            });
     }
 
     void EditorLayer::onUpdate(){
@@ -96,11 +88,14 @@ namespace Everest {
         ImGui::End();
         ImGui::PopStyleVar();
     }
-
-    void EditorLayer::onEvent(Event& event){
-    }
-
     void EditorLayer::onDetach(){
         EV_profile_function();
     }
+
+    void EditorLayer::onEvent(Event& event){
+        EventDispatcher dispatcher(event);
+
+        dispatcher.dispatch<KeyDownEvent>(MenuPanel::onKeyShortcuts);
+    }
+
 }

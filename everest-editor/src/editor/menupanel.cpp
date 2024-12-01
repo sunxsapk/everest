@@ -6,56 +6,100 @@ namespace Everest {
 
     void MenuPanel::onGuiRender(){
         if(ImGui::BeginMainMenuBar()) {
-            if (ImGui::BeginMenu("File")) {
-                if (ImGui::MenuItem("New Scene")) {}
-                ImGui::Separator();
-
-                if (ImGui::MenuItem("Open Scene", "Ctrl+O")) {
-                    std::string scf = FileDialog::filters("*.everest", "*.evsc");
-                    std::string filename = FileDialog::openFile(scf.c_str());
-                    if(!filename.empty()) SceneSerializer::deserialize(filename.c_str());
-                }
-                if (ImGui::BeginMenu("Open Recent Scene")) {
-                    if(ImGui::MenuItem("scene.everest")){
-                        bool __scs = false;
-                        try{
-                            __scs = SceneManager::loadScene("assets/scenes/scene.everest");
-                        }catch(YAML::Exception exc){
-                            // TODO: make this into a popup
-                            EVLog_Err("Error on loading scene: %s", exc.what());
-                        }
-
-                        if(__scs) SceneHeirarchyUI::setScene(SceneManager::getActiveScene());
-                    }
-                    ImGui::EndMenu();
-                }
-                ImGui::Separator();
-
-                if (ImGui::MenuItem("Save Scene", "Ctrl+S")) {
-                    SceneSerializer::serialize("assets/scenes/scene.everest");
-                }
-                if (ImGui::MenuItem("Save Scene As..")) {
-                    std::string scf = FileDialog::filters("*.everest", "*.evsc");
-                    std::string filename = FileDialog::saveFile(scf.c_str());
-                    if(!filename.empty()) SceneSerializer::serialize(filename.c_str());
-                }
-
-                ImGui::Separator();
-                if(ImGui::MenuItem("Exit")) Application::close();
-                ImGui::EndMenu();
-            }
-
-            if (ImGui::BeginMenu("Edit"))
-            {
-                if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-                if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-                ImGui::Separator();
-                if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-                if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-                if (ImGui::MenuItem("Paste", "CTRL+V")) {}
-                ImGui::EndMenu();
-            }
+            fileMenu();
+            editMenu();
             ImGui::EndMainMenuBar();
+        }
+    }
+
+    void MenuPanel::editMenu(){
+        if (ImGui::BeginMenu("Edit")) {
+            if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+            if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+            ImGui::Separator();
+            if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+            if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+            if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+            ImGui::EndMenu();
+        }
+    }
+
+    inline void sceneOpen(const char* filename){
+        try{
+            SceneManager::loadScene(filename);
+            SceneHeirarchyUI::setScene(SceneManager::getActiveScene());
+        }catch(YAML::Exception exc){
+            // TODO: make this into a popup
+            EVLog_Err("Error on loading scene: %s", exc.what());
+        }
+    }
+
+    inline void openSceneSeq(){
+        std::string scf = FileDialog::filters("*.everest", "*.evsc");
+        std::string filename = FileDialog::openFile(scf.c_str());
+        if(!filename.empty()) sceneOpen(filename.c_str());
+    }
+
+    inline void openRecentSeq(){
+        if(ImGui::MenuItem("scene.everest")) sceneOpen("assets/scenes/scene.everest");
+        ImGui::EndMenu();
+    }
+
+    inline void saveSeq(){
+        SceneManager::saveScene("assets/scenes/scene.everest");
+    }
+
+    inline void saveAsSeq(){
+        std::string scf = FileDialog::filters("*.everest", "*.evsc");
+        std::string filename = FileDialog::saveFile(scf.c_str());
+        if(!filename.empty()) SceneManager::saveScene(filename.c_str());
+    }
+
+    inline void newSceneSeq(){
+        SceneHeirarchyUI::setScene(SceneManager::createAndActivateScene());
+    }
+
+    bool MenuPanel::onKeyShortcuts(KeyDownEvent& event){
+        auto key = event.getKey();
+
+        bool isctrl = Input::getKeyDown(K_left_control) || Input::getKeyDown(K_right_control);
+        if(!isctrl) return false;
+
+        bool isshft = Input::getKeyDown(K_left_shift) || Input::getKeyDown(K_right_shift);
+
+        switch(key){
+            case K_n:
+                newSceneSeq();
+                break;
+            case K_o:
+                openSceneSeq();
+                break;
+            case K_s:
+                if(isshft) saveAsSeq();
+                else saveSeq();
+                break;
+
+            default:
+                return false;
+        }
+        return true;
+    }
+
+    void MenuPanel::fileMenu(){
+        if (ImGui::BeginMenu("File")) {
+            if (ImGui::MenuItem("New Scene", "Ctrl+N")) newSceneSeq();
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Open Scene", "Ctrl+O")) openSceneSeq();
+            if (ImGui::BeginMenu("Open Recent Scene")) openRecentSeq();
+            ImGui::Separator();
+
+            if (ImGui::MenuItem("Save Scene", "Ctrl+S")) saveSeq();
+            if (ImGui::MenuItem("Save Scene As..",  "Ctrl+Shift+S")) saveAsSeq();
+            ImGui::Separator();
+
+            if(ImGui::MenuItem("Exit")) Application::close();
+            ImGui::EndMenu();
         }
     }
 }
