@@ -74,7 +74,7 @@ namespace Everest {
         using namespace YAML;
         Emitter out;
         out << BeginMap;
-        out << Key << "scene" << Value << "Untitled";
+        out << Key << "scene" << Value << _scene->_name.c_str();
         out << Key << "entities" << Value << BeginSeq;
 
         for(auto entity: _scene->_registry.view<tag_c>()){
@@ -91,15 +91,12 @@ namespace Everest {
     bool SceneSerializer::deserialize(const char* filepath){
         using namespace YAML;
 
-        /*std::ifstream stream(filepath);
-        std::stringstream sstream;
-        sstream << stream.rdbuf();*/
-
         Node data = YAML::LoadFile(filepath);
         if(!data["scene"]) return false;
 
         std::string scene_n = data["scene"].as<std::string>();
         EVLog_Msg("Deserializing scene %s", scene_n.c_str());
+        _scene->_name = scene_n;
 
         auto entities = data["entities"];
 

@@ -7,12 +7,15 @@
 
 #pragma once
 
+#include "pch.h"
+
 
 namespace Everest {
     using c_str_t = const char*;
     class UIFontManager {
         public:
             static void init();
+            static void quit();
             static ImFont* loadFont(c_str_t name, c_str_t filepath, f32 fontSize = 18.f);
 
             static inline ImFont* getDefaultRegular(){return _fonts[default_regular];}

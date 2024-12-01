@@ -44,6 +44,7 @@
 #include "scene/components.h"
 #include "scene/camera.h"
 #include "scene/serializer.h"
+#include "scene/scenemanager.h"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>

@@ -2,13 +2,15 @@
 #include "editor/editorcamera.h"
 #include "editor/statspanel.h"
 #include "editor/menupanel.h"
+#include "editor/propspanel.h"
+#include "editor/sceneheirarchy.h"
 
 namespace Everest {
 
     EditorLayer::EditorLayer(const char* name)
         :Layer(name){ 
-            EV_profile_function();
-        }
+        EV_profile_function();
+    }
 
     void EditorLayer::onAttach(){
         EV_profile_function();
@@ -20,15 +22,9 @@ namespace Everest {
                 .height = 720
         };
         _framebuffer = createRef<Framebuffer>(specs);
-        _activeScene = createRef<Scene>();
-        _scenehui.setScene(_activeScene);
-        SceneSerializer::setSerializationContext(_activeScene.get());
-
-        _camera = _activeScene->createEntity("Scene Camera");
-
-        auto _camdata = OrthographicData{.orthoSize = 10.f, .aspect = 16.f/9.f};
-        _camera.add<camera_c>(camera_c{Camera(_camdata)});
-        _camera.add<nativeScript_c>().bind<CameraController>();
+        
+        auto _activeScene = SceneManager::createAndActivateScene("Hello");
+        SceneHeirarchyUI::setScene(_activeScene);
 
         Entity e = _activeScene->createEntity();
         e.add<spriteRenderer_c>(spriteRenderer_c{
@@ -43,11 +39,15 @@ namespace Everest {
 
         Renderer::issue_setClearColor({.1f, .1f, .1f, 1.f});
         Renderer::issue_clear();
-        Renderer2D::beginScene(_camera.get<camera_c>(), _camera.get<transform_c>().getTransform());
 
-        _activeScene->onUpdate();
+        _camera.onUpdate();
+        auto _activeScene = SceneManager::getActiveScene();
+        if(_activeScene){
+            Renderer2D::beginScene(_camera.getCamera(), _camera.getTransform());
+            _activeScene->onUpdate();
+            Renderer2D::endScene();
+        }
 
-        Renderer2D::endScene();
 
         _framebuffer->unbind();
     }
@@ -61,8 +61,8 @@ namespace Everest {
         ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
 
         StatsPanel::onGUIrender();
-        _scenehui.onGUIrender();
-        _props.onGUIrender(_scenehui.getSelectedEntity());
+        SceneHeirarchyUI::onGUIrender();
+        PropertiesPanel::onGUIrender(SceneHeirarchyUI::getSelectedEntity());
 
         handleSceneViewPort();
     }
@@ -87,8 +87,10 @@ namespace Everest {
                 ImVec2(_sceneViewPortSize.x, _sceneViewPortSize.y), uv0, uv1);
 
         if(needResize){
-            //_framebuffer->resize(_sceneViewPortSize);
-            _activeScene->onViewportResize(_sceneViewPortSize);
+            //_framebuffer->resize(_sceneViewPortSize); TODO
+            _camera.onViewportResize(_sceneViewPortSize);
+            auto _activeScene = SceneManager::getActiveScene();
+            if(_activeScene) _activeScene->onViewportResize(_sceneViewPortSize);
         }
 
         ImGui::End();

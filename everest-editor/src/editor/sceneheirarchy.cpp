@@ -3,20 +3,22 @@
 
 namespace Everest {
 
-    SceneHeirarchyUI::SceneHeirarchyUI(const ref<Scene>& scene) {
-        setScene(scene);
-    }
+    Scene* SceneHeirarchyUI::_scene = nullptr;
+    Entity SceneHeirarchyUI::_selectedEntity;
 
     void SceneHeirarchyUI::setScene(const ref<Scene>& scene){
-        _scene = scene;
+        _scene = scene.get();
+        _selectedEntity = {};
     }
 
     void SceneHeirarchyUI::onGUIrender(){
         ImGui::Begin("Scene Hierarchy");
 
         heirarchyPopup();
-        for(auto entity: _scene->_registry.view<tag_c>()){
-            drawEntityNode({entity, _scene.get()});
+        if(_scene != nullptr){
+            for(auto entity: _scene->_registry.view<tag_c>()){
+                drawEntityNode({entity, _scene});
+            }
         }
 
         if(ImGui::IsWindowHovered() && ImGui::IsMouseDown(0)) _selectedEntity = {};
@@ -49,6 +51,7 @@ namespace Everest {
     }
 
     void SceneHeirarchyUI::heirarchyPopup(){
+        if(!_scene) return;
         if(ImGui::BeginPopupContextWindow(0, 1)){
             if(ImGui::MenuItem("Create New Entity")) _scene->createEntity();
 

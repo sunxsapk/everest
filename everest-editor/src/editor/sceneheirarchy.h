@@ -8,21 +8,19 @@ namespace Everest {
 
     class SceneHeirarchyUI {
         public:
-            SceneHeirarchyUI() = default;
-            SceneHeirarchyUI(const ref<Scene>& scene);
+            static void setScene(const ref<Scene>& scene);
 
-            void setScene(const ref<Scene>& scene);
+            static void onGUIrender();
 
-            void onGUIrender();
-
-            inline Entity getSelectedEntity(){return _selectedEntity;}
-        private:
-            void drawEntityNode(Entity entity);
-            void heirarchyPopup();
+            static inline Entity getSelectedEntity(){return _selectedEntity;}
 
         private:
-            ref<Scene> _scene;
-            Entity _selectedEntity;
+            static void drawEntityNode(Entity entity);
+            static void heirarchyPopup();
+
+        private:
+            static Scene* _scene;
+            static Entity _selectedEntity;
             friend class PropertiesPanel;
     };
 

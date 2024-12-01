@@ -5,7 +5,7 @@
 
 namespace Everest {
 
-    Scene::Scene(){
+    Scene::Scene(const char* name): _name(name){
         EV_profile_function();
 
     }
@@ -39,6 +39,7 @@ namespace Everest {
                     nscript.destroy(&nscript);
                 }
             });
+        _registry.clear();
     }
 
     void Scene::onUpdate(){

@@ -1,4 +1,5 @@
 #include "menupanel.h"
+#include "sceneheirarchy.h"
 
 
 namespace Everest {
@@ -16,7 +17,15 @@ namespace Everest {
                 }
                 if (ImGui::BeginMenu("Open Recent Scene")) {
                     if(ImGui::MenuItem("scene.everest")){
-                        SceneSerializer::deserialize("assets/scenes/scene.everest");
+                        bool __scs = false;
+                        try{
+                            __scs = SceneManager::loadScene("assets/scenes/scene.everest");
+                        }catch(YAML::Exception exc){
+                            // TODO: make this into a popup
+                            EVLog_Err("Error on loading scene: %s", exc.what());
+                        }
+
+                        if(__scs) SceneHeirarchyUI::setScene(SceneManager::getActiveScene());
                     }
                     ImGui::EndMenu();
                 }

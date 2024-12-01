@@ -80,7 +80,7 @@ namespace Everest {
     class Time {
 
         static void init();
-        inline static void quit(){/*maybe add something here*/}
+        static void quit();
 
         inline static void begin(){
             _clock->begin();

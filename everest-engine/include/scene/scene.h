@@ -14,7 +14,8 @@ namespace Everest {
     struct Entity;
     class Scene {
         public:
-            Scene();
+            Scene() = default;
+            Scene(const char* name);
             ~Scene();
 
             Entity createEntity(const char * name = "Entity");
@@ -26,6 +27,8 @@ namespace Everest {
         private:
             entt::registry _registry;
             uvec2 _viewportSize;
+            std::string _name;
+        private:
             friend class Entity;
             friend class SceneHeirarchyUI;
             friend class SceneSerializer;

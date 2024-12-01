@@ -58,6 +58,11 @@ namespace Everest {
         _unscaledClock = createScope<Clock>();
     }
 
+    void Time::quit(){
+        _unscaledClock.reset();
+        _clock.reset();
+    }
+
     void Time::tick(){
         _unscaledClock->tick();
         if(!_paused){

@@ -12,6 +12,10 @@ namespace Everest {
         loadFont(default_bold, "assets/fonts/JetBrainsMono-Bold.ttf", 16.f);
     }
 
+    void UIFontManager::quit(){
+        _fonts.clear();
+    }
+
     ImFont* UIFontManager::loadFont(c_str_t name, c_str_t filepath, f32 fontSize){
         ASSERT(name != nullptr, "Invalid name for font");
         ImGuiIO& io = ImGui::GetIO();

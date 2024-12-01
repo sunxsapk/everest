@@ -6,7 +6,7 @@
 namespace Everest {
     class PropertiesPanel {
         public:
-            void onGUIrender(Entity ent);
+            static void onGUIrender(Entity ent);
 
         private:
 

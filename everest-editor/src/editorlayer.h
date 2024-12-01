@@ -1,9 +1,7 @@
 #pragma once
 
 #include <everest.h>
-#include "editor/sceneheirarchy.h"
-#include "editor/propspanel.h"
-
+#include "editor/editorcamera.h"
 
 namespace Everest {
 
@@ -24,10 +22,7 @@ namespace Everest {
             uvec2 _sceneViewPortSize = {1280, 720};
             bool _sceneViewportFocused = false;
         private:
-            ref<Scene> _activeScene;
-            SceneHeirarchyUI _scenehui;
-            PropertiesPanel _props;
-            Entity _camera;
+            SceneCamera _camera;
     };
 
 }
