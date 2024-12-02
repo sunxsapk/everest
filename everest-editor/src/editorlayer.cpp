@@ -4,6 +4,7 @@
 #include "editor/menupanel.h"
 #include "editor/propspanel.h"
 #include "editor/sceneheirarchy.h"
+#include "editor/scenepanel.h"
 
 namespace Everest {
 
@@ -44,6 +45,16 @@ namespace Everest {
         _framebuffer->unbind();
     }
 
+    void EditorLayer::onDetach(){
+        EV_profile_function();
+    }
+
+    void EditorLayer::onEvent(Event& event){
+        EventDispatcher dispatcher(event);
+
+        dispatcher.dispatch<KeyDownEvent>(MenuPanel::onKeyShortcuts);
+    }
+
     void EditorLayer::onGUIrender(){
         EV_profile_function();
         ImGui::ShowDemoWindow();
@@ -55,47 +66,6 @@ namespace Everest {
         StatsPanel::onGUIrender();
         SceneHeirarchyUI::onGUIrender();
         PropertiesPanel::onGUIrender(SceneHeirarchyUI::getSelectedEntity());
-
-        handleSceneViewPort();
+        ScenePanel::onGUIrender(_framebuffer, _camera);
     }
-
-    void EditorLayer::handleSceneViewPort() {
-        static ImVec2 uv0{0.f, 1.f}, uv1{1.f, 0.f};
-
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-        ImGui::Begin("Scene");
-
-        _sceneViewportFocused = ImGui::IsWindowFocused();
-
-        ImVec2 _svps_i = ImGui::GetContentRegionAvail();
-        uvec2 _svps{_svps_i.x, _svps_i.y};
-        bool needResize = false;
-        if(_svps != _sceneViewPortSize){
-            _sceneViewPortSize = _svps;
-            needResize = true;
-        }
-
-        ImGui::Image(_framebuffer->getColorAttachment(),
-                ImVec2(_sceneViewPortSize.x, _sceneViewPortSize.y), uv0, uv1);
-
-        if(needResize){
-            //_framebuffer->resize(_sceneViewPortSize); TODO
-            _camera.onViewportResize(_sceneViewPortSize);
-            auto _activeScene = SceneManager::getActiveScene();
-            if(_activeScene) _activeScene->onViewportResize(_sceneViewPortSize);
-        }
-
-        ImGui::End();
-        ImGui::PopStyleVar();
-    }
-    void EditorLayer::onDetach(){
-        EV_profile_function();
-    }
-
-    void EditorLayer::onEvent(Event& event){
-        EventDispatcher dispatcher(event);
-
-        dispatcher.dispatch<KeyDownEvent>(MenuPanel::onKeyShortcuts);
-    }
-
 }

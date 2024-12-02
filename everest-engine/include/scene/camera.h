@@ -19,7 +19,7 @@ namespace Everest {
     };
 
     struct OrthographicData {
-        f32 orthoSize = 1.f, aspect = 1.f, near = -100.f, far=100.f;
+        f32 orthoSize = 10.f, aspect = 1.f, near = -100.f, far=100.f;
     };
 
     struct PerspectiveData {

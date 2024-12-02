@@ -5,10 +5,13 @@
 
 namespace Everest {
 
-    class SceneCamera {
+    class EditorCamera {
 
         public:
-            SceneCamera();
+            f32 speed = 10.f, mouseSensitivity = 0.1f, scrollSensitivity = 2.f;
+
+        public:
+            EditorCamera();
 
             void onUpdate();
             void onViewportResize(uvec2 viewportsize);
@@ -17,8 +20,17 @@ namespace Everest {
             inline Camera& getCamera(){return camera;}
 
         private:
-            f32 _speed = 10.f;
-            f32 _zoomSensitivity = 0.5f, _speedZoomRatio = 1.f;
+            void cam2d_ctrls();
+            void cam3d_ctrls();
+
+            void keyControls_2d();
+            void keyControls_3d();
+            void mouseControls_2d();
+            void mouseControls_3d();
+
+        private:
+            bool _mouseHeld = false;
+            ivec2 _mouseLastPos;
 
         private:
             transform_c transform;
