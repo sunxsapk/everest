@@ -62,12 +62,12 @@ namespace Everest {
         delete _data;
     }
 
-    void Renderer2D::beginScene(Camera& camera, mat4 transform){
+    void Renderer2D::beginScene(Camera& camera, mat4 camTransform){
         EV_profile_function();
 
         _data->textureShader->bind();
-        _data->textureShader->setUniform_Mat4("u_viewProjMat",
-                camera.getProjection() * glm::inverse(transform));
+        _data->textureShader->setUniform_Mat4("u_vpmat",
+                camera.getProjection() * glm::inverse(camTransform));
 
         _data->whiteTexture->bind();
 
@@ -202,18 +202,18 @@ namespace Everest {
     }
 
     void Renderer2D::_checkTexture(i32& tind, ref<Texture> tex){
-        if(tex != NULL){
-            for(u32 i=1; i<_data->texCount; i++){
-                if(*_data->textures[i].get() == *tex.get()){
-                    tind = i;
-                    break;
-                }
+        if(tex == nullptr) return;
+
+        for(u32 i=1; i<_data->texCount; i++){
+            if(*_data->textures[i].get() == *tex.get()){
+                tind = i;
+                break;
             }
-            if(tind == 0){
-                tind = _data->texCount;
-                _data->textures[_data->texCount++] = tex;
-                _stats.textureCount++;
-            }
+        }
+        if(tind == 0){
+            tind = _data->texCount;
+            _data->textures[_data->texCount++] = tex;
+            _stats.textureCount++;
         }
     }
 

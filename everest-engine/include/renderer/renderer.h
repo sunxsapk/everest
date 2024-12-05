@@ -25,6 +25,9 @@ namespace Everest {
             static void submit(ref<VAO>& vertexArray,
                     ref<Shader>& shader, mat4 transform);
 
+            static inline void enableDepth(){ glEnable(GL_DEPTH_TEST); }
+            static inline void disableDepth(){ glDisable(GL_DEPTH_TEST); }
+
             static inline void issue_clear(){RenderAPI::clear();}
             static inline void issue_setClearColor(vec4 color){
                 RenderAPI::setClearColor(color);

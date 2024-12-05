@@ -5,6 +5,7 @@
 #include "editor/propspanel.h"
 #include "editor/sceneheirarchy.h"
 #include "editor/scenepanel.h"
+#include "editor/gizmos.h"
 
 namespace Everest {
 
@@ -16,13 +17,12 @@ namespace Everest {
     void EditorLayer::onAttach(){
         EV_profile_function();
 
-        _farmsprites = SpriteSheet("assets/sprites/farm.png", uvec2(16, 16));
-
         FramebufferSpecs specs{
             .width = 1280,
                 .height = 720
         };
         _framebuffer = createRef<Framebuffer>(specs);
+        Gizmos::init();
     }
 
     void EditorLayer::onUpdate(){
@@ -30,23 +30,29 @@ namespace Everest {
 
         _framebuffer->bind();
 
-        Renderer::issue_setClearColor({.1f, .1f, .1f, 1.f});
+        _camera.onUpdate();
+
+        Renderer::issue_setClearColor({.1f, .2f, .3f, 1.f});
         Renderer::issue_clear();
 
-        _camera.onUpdate();
+        Renderer::disableDepth();
+        Gizmos::renderGrid(_camera);
+
+        Renderer::enableDepth();
         auto _activeScene = SceneManager::getActiveScene();
         if(_activeScene){
-            Renderer2D::beginScene(_camera.getCamera(), _camera.getTransform());
+            Renderer2D::beginScene(_camera.camera, _camera.getTransform());
             _activeScene->onUpdate();
             Renderer2D::endScene();
         }
-
 
         _framebuffer->unbind();
     }
 
     void EditorLayer::onDetach(){
         EV_profile_function();
+
+        Gizmos::quit();
     }
 
     void EditorLayer::onEvent(Event& event){

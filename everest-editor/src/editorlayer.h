@@ -17,7 +17,6 @@ namespace Everest {
             void handleSceneViewPort();
 
         private:
-            SpriteSheet _farmsprites;
             ref<Framebuffer> _framebuffer;
         private:
             EditorCamera _camera;

@@ -41,7 +41,7 @@ namespace Everest {
     }
 
     void ScenePanel::renderSceneSettings(EditorCamera& sceneCamera){
-        Camera& cam = sceneCamera.getCamera();
+        Camera& cam = sceneCamera.camera;
 
         bool is2D = cam.getType() == CameraType::Orthographic;
         if(ImGui::RadioButton("2D", is2D)){
@@ -81,8 +81,18 @@ namespace Everest {
             ImGui::SliderFloat("Speed", &sceneCamera.speed, 0.1f, 100.f, "");
             ImGui::SliderFloat("Mouse Sensitivity", &sceneCamera.mouseSensitivity, 0.01f, 1.f, "");
             ImGui::SliderFloat("Scroll Sensitivity", &sceneCamera.scrollSensitivity, 0.1f, 5.f, "");
+
+            ImGui::Separator();
+            ImGui::DragFloat3("Position", glm::value_ptr(sceneCamera.transform.position));
+            ImGui::DragFloat3("Rotation", glm::value_ptr(sceneCamera.transform.rotation));
+
             ImGui::EndPopup();
         }
 
+        ImGui::SameLine();
+        vec3 fwd = sceneCamera.getForward();
+        ImGui::Text("%.2f, %.2f, %.2f", fwd.x, fwd.y, fwd.z);
+        ImGui::SameLine();
+        if(ImGui::Button("Reset")) sceneCamera.lookAt(vec3(0.f));
     }
 }

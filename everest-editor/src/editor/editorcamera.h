@@ -9,6 +9,8 @@ namespace Everest {
 
         public:
             f32 speed = 10.f, mouseSensitivity = 0.1f, scrollSensitivity = 2.f;
+            transform_c transform;
+            Camera camera;
 
         public:
             EditorCamera();
@@ -16,8 +18,12 @@ namespace Everest {
             void onUpdate();
             void onViewportResize(uvec2 viewportsize);
 
+            vec3 getForward();
+            void lookAt(vec3 point);
+
             inline mat4 getTransform(){return transform.getTransform();}
-            inline Camera& getCamera(){return camera;}
+            inline mat4 getVPmat(){return camera.getProjection() *
+                glm::inverse(transform.getTransform());}
 
         private:
             void cam2d_ctrls();
@@ -25,15 +31,12 @@ namespace Everest {
 
             void keyControls_2d();
             void keyControls_3d();
-            void mouseControls_2d();
-            void mouseControls_3d();
+            bool mouseControls_2d();
+            bool mouseControls_3d();
 
         private:
             bool _mouseHeld = false;
             ivec2 _mouseLastPos;
 
-        private:
-            transform_c transform;
-            Camera camera;
     };
 }

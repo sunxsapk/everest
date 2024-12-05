@@ -69,6 +69,7 @@ namespace Everest {
             EV_profile_scope("Main Loop");
 
 
+            Input::update();
 
             if(!_minimized){
                 EV_profile_scope("Layer update");
@@ -90,7 +91,6 @@ namespace Everest {
                 this->guilayer->end();
             }
 
-            Input::_clearPoll();
             this->_window->update();
             Time::tick();
         }

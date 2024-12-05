@@ -62,7 +62,7 @@ namespace Everest {
             static void init();
             static void quit();
 
-            static void beginScene(Camera& camera, mat4 transform);
+            static void beginScene(Camera& camera, mat4 cameraTransform);
             static void endScene();
 
             static void drawQuad(vec3 position, vec2 scale, f32 rotation,
