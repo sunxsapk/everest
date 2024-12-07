@@ -15,11 +15,16 @@ namespace Everest {
         public:
             EditorCamera();
 
-            void onUpdate();
+            void onUpdate(bool focused = true);
             void onViewportResize(uvec2 viewportsize);
 
+            vec3 getRight();
             vec3 getForward();
+            vec3 getUp();
+
             void lookAt(vec3 point);
+
+            void setType(CameraType type);
 
             inline mat4 getTransform(){return transform.getTransform();}
             inline mat4 getVPmat(){return camera.getProjection() *
@@ -34,7 +39,7 @@ namespace Everest {
             bool mouseControls_2d();
             bool mouseControls_3d();
 
-        private:
+        public:
             bool _mouseHeld = false;
             ivec2 _mouseLastPos;
 

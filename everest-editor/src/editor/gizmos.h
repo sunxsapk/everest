@@ -13,14 +13,20 @@ namespace Everest {
 
     class Gizmos {
         public:
+            static bool showGizmos;
+        public:
             static void init();
             static void quit();
-            static void renderGrid(EditorCamera& camera, vec2 size = {1000.f, 1000.f}, bool is2D = false);
+            static void renderGrid(EditorCamera& camera, vec2 size = {1000.f, 1000.f});
+            static void renderTranslationGizmo(vec3 position);
 
         private:
-             static Shader *_gridShader;
-             static vec3 _gridVertices[4];
-             static ref<VAO> _vao;
+            static void initGrid();
+        private:
+             ref<Shader> gridShader;
+             ref<VAO> gridVertexArray;
+        private:
+             static Gizmos* _instance;
     };
 
 }

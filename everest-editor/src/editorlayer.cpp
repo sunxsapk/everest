@@ -30,9 +30,9 @@ namespace Everest {
 
         _framebuffer->bind();
 
-        _camera.onUpdate();
+        _camera.onUpdate(ScenePanel::isFocused());
 
-        Renderer::issue_setClearColor({.1f, .2f, .3f, 1.f});
+        Renderer::issue_setClearColor(ScenePanel::sceneBackgroundColor);
         Renderer::issue_clear();
 
         Renderer::disableDepth();
@@ -63,7 +63,7 @@ namespace Everest {
 
     void EditorLayer::onGUIrender(){
         EV_profile_function();
-        ImGui::ShowDemoWindow();
+        //ImGui::ShowDemoWindow();
 
         MenuPanel::onGuiRender();
 

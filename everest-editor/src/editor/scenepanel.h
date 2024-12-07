@@ -18,13 +18,16 @@ namespace Everest {
 
     class ScenePanel {
         public:
+            static vec4 sceneBackgroundColor;
+        public:
             static void onGUIrender(ref<Framebuffer>& sceneRender, EditorCamera& sceneCamera);
-
+            static inline bool isFocused(){return _focused;}
 
         private:
             static bool renderSceneViewport(ref<Framebuffer>& sceneRender);
             static void renderSceneSettings(EditorCamera& sceneCamera);
         private:
             static uvec2 _sceneViewPortSize;
+            static bool _focused;
     };
 }

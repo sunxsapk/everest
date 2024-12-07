@@ -5,6 +5,7 @@
  */
 
 #pragma once
+#include "pch.h"
 
 namespace Everest {
 
@@ -13,15 +14,13 @@ namespace Everest {
             template<typename... args_t>
             static std::string filters(args_t... args){
                 std::ostringstream res;
-#ifdef LINUX
+
+#ifdef WIN32
+                ((res << args << "\0"), ...);
+#else
                 res << "\"";
                 ((res << "\"" << args << "\" "), ...);
                 res << "\"";
-
-#elif defined(WIN32)
-                ((res << args << "\0"), ...);
-#elif defined(APPLE)
-                ((res << args << " "), ...);
 #endif
 
                 return res.str();

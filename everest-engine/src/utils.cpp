@@ -3,6 +3,7 @@
 namespace Everest {
 
 #ifdef LINUX
+
     std::string FileDialog::openFile(const char* filters){
         char buffer[256];
         std::string command = "zenity --file-selection --file-filter=";
