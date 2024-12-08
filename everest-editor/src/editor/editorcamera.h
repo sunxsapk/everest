@@ -26,9 +26,11 @@ namespace Everest {
 
             void setType(CameraType type);
 
-            inline mat4 getTransform(){return transform.getTransform();}
             inline mat4 getVPmat(){return camera.getProjection() *
-                glm::inverse(transform.getTransform());}
+                glm::inverse((mat4)transform);}
+
+            vec3 screenToWorldPos(vec2 position);
+            vec3 screenPointToDir(vec2 position);
 
         private:
             void cam2d_ctrls();

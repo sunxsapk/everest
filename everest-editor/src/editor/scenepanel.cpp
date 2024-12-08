@@ -4,6 +4,7 @@
 
 namespace Everest {
 
+    vec2 ScenePanel::_sceneOffset(0);
     uvec2 ScenePanel::_sceneViewPortSize = {1280, 720};
     bool ScenePanel::_focused = false;
     vec4 ScenePanel::sceneBackgroundColor = {.2f, .2f, .2f, 1.f};
@@ -37,6 +38,9 @@ namespace Everest {
 
         ImGui::Image(sceneRender->getColorAttachment(),
                 ImVec2(_sceneViewPortSize.x, _sceneViewPortSize.y), uv0, uv1);
+        auto off = ImGui::GetItemRectMin();
+        auto sz = ImGui::GetItemRectMax();
+        _sceneOffset = {off.x, off.y};
         _focused = ImGui::IsItemHovered();
 
         return needResize;
@@ -93,7 +97,12 @@ namespace Everest {
         }
 
         ImGui::SameLine();
-        if(ImGui::Button("Reset")) sceneCamera.lookAt(vec3(0.f));
+        if(ImGui::Button("Reset")) {
+            if(sceneCamera.camera.getType() == Orthographic){
+                sceneCamera.transform.position.x = 0.f;
+                sceneCamera.transform.position.y = 0.f;
+            } else sceneCamera.lookAt(vec3(0.f));
+        }
         ImGui::SameLine();
         if(ImGui::RadioButton("Gizmos", Gizmos::showGizmos)){
             Gizmos::showGizmos = !Gizmos::showGizmos;
@@ -110,9 +119,8 @@ namespace Everest {
             ImGui::ColorPicker4("##12", glm::value_ptr(sceneBackgroundColor));
             ImGui::EndPopup();
         }
-        //vec3 dbgv = sceneCamera.getUp();
-        //ImGui::SameLine();
-        //ImGui::Text("%.2f, %.2f, %.2f", dbgv.x, dbgv.y, dbgv.z);
-
+        vec3 dbgv = sceneCamera.screenToWorldPos(Input::mousePosition() - getSceneOffset());
+        ImGui::SameLine();
+        ImGui::Text("%.2f, %.2f, %.2f", dbgv.x, dbgv.y, dbgv.z);
     }
 }

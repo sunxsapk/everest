@@ -8,6 +8,7 @@
 #include "camera.h"
 #include "renderer/sprite.h"
 #include "scriptable.h"
+#include "pch.h"
 
 namespace Everest {
 
@@ -18,17 +19,15 @@ namespace Everest {
     struct transform_c {
         vec3 position{0.f}, rotation{0.f}, scale{1.f};
 
-        mat4 getTransform(){
+        operator mat4(){
             mat4 trl = glm::translate(mat4(1.f), position);
 
             vec3 rrot = glm::radians(rotation);
-            mat4 rotx = glm::rotate(mat4(1.f), rrot.x, {1.f, 0.f, 0.f});
-            mat4 roty = glm::rotate(mat4(1.f), rrot.y, {0.f, 1.f, 0.f});
-            mat4 rotz = glm::rotate(mat4(1.f), rrot.z, {0.f, 0.f, 1.f});
+            mat4 rot = glm::toMat4(glm::quat(rrot));
 
             mat4 scl = glm::scale(mat4( 1.f), scale);
 
-            return trl * (rotz * roty * rotx) * scl;
+            return trl * rot * scl;
         }
 
     };

@@ -192,11 +192,6 @@ namespace Everest {
         _stats.vertexCount += 4;
     }
 
-    void Renderer2D::drawQuad(vec2 position, vec2 scale, f32 rotation,
-            vec4 color, ref<Texture> texture, f32 tilingFactor){
-        drawQuad(vec3(position.x, position.y, 0.f), scale, rotation, color, texture, tilingFactor);
-    }
-
     void Renderer2D::drawQuad(const QuadProps& props){
         drawQuad(props.position, props.scale, props.rotation, props.color, props.texture, props.tilingFactor);
     }

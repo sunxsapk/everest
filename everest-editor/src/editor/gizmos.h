@@ -20,6 +20,8 @@ namespace Everest {
             static void renderGrid(EditorCamera& camera, vec2 size = {1000.f, 1000.f});
             static void renderTranslationGizmo(vec3 position);
 
+            static void testGizmos(EditorCamera& cam);
+
         private:
             static void initGrid();
         private:

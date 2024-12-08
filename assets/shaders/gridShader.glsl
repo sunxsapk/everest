@@ -67,7 +67,7 @@ void main(){
 
     if(isThick(pxPos.x) || isThick(u_is2D == 0? pxPos.z : pxPos.y)) FragColor = AXIS_COLOR;
 
-    if(u_is2D != 0) FragColor.a = 1.f;
+    if(u_is2D != 0) FragColor.a = 0.6f;
     else {
         //float d = distance(u_camera.xyz, pxPos);
         float d = distance(u_camera.xz, pxPos.xz); // ignore cam-height

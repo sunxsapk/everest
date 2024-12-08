@@ -1,4 +1,5 @@
 #include "gizmos.h"
+#include "scenepanel.h"
 
 
 namespace Everest {
@@ -55,5 +56,16 @@ namespace Everest {
 
     void Gizmos::renderTranslationGizmo(vec3 position){
         if(!showGizmos) return; // TODO
+    }
+
+    void Gizmos::testGizmos(EditorCamera& cam){
+        vec3 md = cam.screenPointToDir(Input::mousePosition() - ScenePanel::getSceneOffset());
+        vec3 pos;
+        if(cam.camera.getType() == Orthographic){
+            pos = cam.screenToWorldPos(Input::mousePosition() - ScenePanel::getSceneOffset());
+        } else {
+            pos = cam.transform.position + md * 20.f;
+        }
+        Renderer2D::drawQuad(pos, vec2(1.f), 0.f, vec4(0.f, 1.f, 1.f, .6f));
     }
 }

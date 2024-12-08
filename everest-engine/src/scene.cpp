@@ -60,7 +60,7 @@ namespace Everest {
             auto sprgrp = _registry.group<transform_c>(entt::get<spriteRenderer_c>);
             for(auto ent : sprgrp){
                 auto [tfr, spr] = sprgrp.get(ent);
-                Renderer2D::drawSprite(tfr.getTransform(), spr.sprite, spr.color);
+                Renderer2D::drawSprite(tfr,spr.sprite, spr.color);
             }
         }
     }

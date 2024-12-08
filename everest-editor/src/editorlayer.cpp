@@ -41,8 +41,9 @@ namespace Everest {
         Renderer::enableDepth();
         auto _activeScene = SceneManager::getActiveScene();
         if(_activeScene){
-            Renderer2D::beginScene(_camera.camera, _camera.getTransform());
+            Renderer2D::beginScene(_camera.camera, _camera.transform);
             _activeScene->onUpdate();
+            Gizmos::testGizmos(_camera);
             Renderer2D::endScene();
         }
 
