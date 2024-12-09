@@ -13,19 +13,20 @@ namespace Everest {
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
         ImGui::Begin("Scene");
 
-        renderSceneSettings(sceneCamera);
-        if(renderSceneViewport(sceneRender)){
+        sceneSettings(sceneCamera);
+        if(sceneViewport(sceneRender)){
             //sceneRender->resize(_sceneViewPortSize); TODO
             sceneCamera.onViewportResize(_sceneViewPortSize);
             auto _activeScene = SceneManager::getActiveScene();
             if(_activeScene) _activeScene->onViewportResize(_sceneViewPortSize);
         }
+        Gizmos::renderTransformationGizmo(sceneCamera);
 
         ImGui::End();
         ImGui::PopStyleVar();
     }
 
-    bool ScenePanel::renderSceneViewport(ref<Framebuffer>& sceneRender){
+    bool ScenePanel::sceneViewport(ref<Framebuffer>& sceneRender){
 
         const ImVec2 uv0{0.f, 1.f}, uv1{1.f, 0.f};
         ImVec2 _svps_i = ImGui::GetContentRegionAvail();
@@ -46,7 +47,7 @@ namespace Everest {
         return needResize;
     }
 
-    void ScenePanel::renderSceneSettings(EditorCamera& sceneCamera){
+    void ScenePanel::sceneSettings(EditorCamera& sceneCamera){
         Camera& cam = sceneCamera.camera;
         ImGui::Spacing();
 
@@ -104,6 +105,13 @@ namespace Everest {
             } else sceneCamera.lookAt(vec3(0.f));
         }
         ImGui::SameLine();
+        gizmosSettings();
+        //vec3 dbgv(Input::mousePosition() - getSceneOffset(), 0.f);
+        //ImGui::SameLine();
+        //ImGui::Text("%.2f, %.2f, %.2f", dbgv.x, dbgv.y, dbgv.z);
+    }
+
+    void ScenePanel::gizmosSettings(){
         if(ImGui::RadioButton("Gizmos", Gizmos::showGizmos)){
             Gizmos::showGizmos = !Gizmos::showGizmos;
         }
@@ -119,8 +127,7 @@ namespace Everest {
             ImGui::ColorPicker4("##12", glm::value_ptr(sceneBackgroundColor));
             ImGui::EndPopup();
         }
-        //vec3 dbgv(Input::mousePosition() - getSceneOffset(), 0.f);
-        //ImGui::SameLine();
-        //ImGui::Text("%.2f, %.2f, %.2f", dbgv.x, dbgv.y, dbgv.z);
+        //TODO: translation, rotation and scale selector
     }
+
 }

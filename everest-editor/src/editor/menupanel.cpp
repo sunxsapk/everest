@@ -27,7 +27,6 @@ namespace Everest {
     inline void sceneOpen(const char* filename){
         try{
             SceneManager::loadScene(filename);
-            SceneHeirarchyUI::setScene(SceneManager::getActiveScene());
         }catch(YAML::Exception exc){
             // TODO: make this into a popup
             EVLog_Err("Error on loading scene: %s", exc.what());
@@ -56,7 +55,7 @@ namespace Everest {
     }
 
     inline void newSceneSeq(){
-        SceneHeirarchyUI::setScene(SceneManager::createAndActivateScene());
+        SceneManager::createAndActivateScene();
     }
 
     bool MenuPanel::onKeyShortcuts(KeyDownEvent& event){

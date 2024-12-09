@@ -7,6 +7,7 @@
 #pragma once
 #include "entt.hpp"
 #include "scene.h"
+#include "core/dbghelper.h"
 
 namespace Everest {
 

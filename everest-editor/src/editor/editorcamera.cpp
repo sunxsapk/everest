@@ -90,8 +90,8 @@ namespace Everest {
             mdel.y = Input::mousePositionY() - _mouseLastPos.y;
 
             _mouseLastPos = Input::mousePosition();
-            if(Input::mouseButtonUp(MouseButton_0)) _mouseHeld = false;
-        } else if(Input::mouseButtonDown(MouseButton_0)) {
+            if(Input::mouseButtonUp(MouseButton_1)) _mouseHeld = false;
+        } else if(Input::mouseButtonDown(MouseButton_1)) {
             _mouseHeld = true;
             _mouseLastPos = Input::mousePosition(); 
         } else return false;
@@ -129,8 +129,8 @@ namespace Everest {
             mdel.y = Input::mousePositionY() - _mouseLastPos.y;
 
             _mouseLastPos = Input::mousePosition();
-            if(Input::mouseButtonUp(MouseButton_0)) _mouseHeld = false;
-        } else if(Input::mouseButtonDown(MouseButton_0)) {
+            if(Input::mouseButtonUp(MouseButton_1)) _mouseHeld = false;
+        } else if(Input::mouseButtonDown(MouseButton_1)) {
             _mouseHeld = true;
             _mouseLastPos = Input::mousePosition(); 
         } else return false;

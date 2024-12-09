@@ -19,7 +19,7 @@ namespace Everest {
         ref<Scene> scene = createScene();
         SceneSerializer::setSerializationContext(scene.get());
         bool _success = SceneSerializer::deserialize(filepath);
-        if(_success) _instance->activeScene = scene;
+        if(_success) activateScene(scene);
         return _success;
     }
 

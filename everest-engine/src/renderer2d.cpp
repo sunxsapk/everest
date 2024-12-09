@@ -117,7 +117,7 @@ namespace Everest {
 
         for(int i=0; i<quadVertCount; i++){
             //_data->vertPtr->position = transform * _data->quadVertPos[i];
-            _data->vertPtr->position = transformOrtho(_data->quadVertPos[i],
+            _data->vertPtr->position = Math::transformOrtho(_data->quadVertPos[i],
                     position, scale, glm::radians(rotation));
             _data->vertPtr->color = color;
             _data->vertPtr->uv = uvs[i];
@@ -149,7 +149,7 @@ namespace Everest {
 
         for(int i=0; i<quadVertCount; i++){
             //_data->vertPtr->position = transform * _data->quadVertPos[i];
-            _data->vertPtr->position = transformOrtho(_data->quadVertPos[i],
+            _data->vertPtr->position = Math::transformOrtho(_data->quadVertPos[i],
                     position, scale, glm::radians(rotation));
             _data->vertPtr->color = color;
             _data->vertPtr->uv = uvs[i];

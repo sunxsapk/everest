@@ -18,15 +18,17 @@ namespace Everest {
             static void init();
             static void quit();
             static void renderGrid(EditorCamera& camera, vec2 size = {1000.f, 1000.f});
-            static void renderTranslationGizmo(vec3 position);
+            static void renderTransformationGizmo(EditorCamera& cam);
 
             static void testGizmos(EditorCamera& cam);
 
         private:
             static void initGrid();
+             static ImGuizmo::OPERATION operation;
         private:
              ref<Shader> gridShader;
              ref<VAO> gridVertexArray;
+             friend class ScenePanel;
         private:
              static Gizmos* _instance;
     };

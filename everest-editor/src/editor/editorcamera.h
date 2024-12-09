@@ -29,6 +29,7 @@ namespace Everest {
             vec3 screenToWorldPos(vec2 position);
             vec3 screenPointToDir(vec2 position);
 
+            inline mat4 getView(){return glm::inverse((mat4)transform);}
             inline mat4 getVPmat(){return camera.getProjection() *
                 glm::inverse((mat4)transform);}
             inline bool is2D(){return camera.getType() == Orthographic;}

@@ -1,11 +1,14 @@
 #include "gizmos.h"
 #include "scenepanel.h"
+#include "sceneheirarchy.h"
 
+#include "ImGuizmo.h"
 
 namespace Everest {
 
     bool Gizmos::showGizmos = true;
     Gizmos *Gizmos::_instance = nullptr;
+    ImGuizmo::OPERATION Gizmos::operation = ImGuizmo::OPERATION::TRANSLATE;
 
     void Gizmos::initGrid(){
         _instance->gridShader = createRef<Shader>("assets/shaders/gridShader.glsl");
@@ -54,8 +57,24 @@ namespace Everest {
         RenderAPI::drawIndexed(_instance->gridVertexArray, 6);
     }
 
-    void Gizmos::renderTranslationGizmo(vec3 position){
-        if(!showGizmos) return; // TODO
+    void Gizmos::renderTransformationGizmo(EditorCamera& cam){
+        if(!showGizmos) return;
+        Entity ent = SceneHeirarchyUI::getSelectedEntity();
+        if(!ent.isValid()) return;
+        ImGuizmo::SetOrthographic(false);
+        ImGuizmo::SetDrawlist();
+        ImVec2 pos = ImGui::GetWindowPos();
+        ImVec2 sz = ImGui::GetWindowSize();
+        ImGuizmo::SetRect(pos.x, pos.y, sz.x, sz.y);
+
+        auto& transform = ent.get<transform_c>();
+        mat4 tmat = transform;
+        ImGuizmo::Manipulate(glm::value_ptr(cam.getView()), glm::value_ptr(cam.camera.getProjection()),
+                operation, ImGuizmo::LOCAL, glm::value_ptr(tmat));
+
+        if(ImGuizmo::IsUsing()){
+            Math::decomposeTransform(transform, tmat); // TODO: some errors in decompose
+        }
     }
 
     void Gizmos::testGizmos(EditorCamera& cam){

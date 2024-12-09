@@ -1,3 +1,6 @@
 [submodule "everest-engine/externals/yaml-cpp"]
 	path = everest-engine/externals/yaml-cpp
 	url = https://github.com/jbeder/yaml-cpp
+[submodule "everest-engine/externals/ImGuizmo"]
+	path = everest-engine/externals/ImGuizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo

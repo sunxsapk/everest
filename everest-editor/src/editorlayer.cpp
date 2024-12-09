@@ -22,6 +22,10 @@ namespace Everest {
                 .height = 720
         };
         _framebuffer = createRef<Framebuffer>(specs);
+        SceneManager::onSceneChanged([](ref<Scene>& scene){
+                SceneHeirarchyUI::setScene(scene);
+            });
+        SceneManager::loadScene("assets/scenes/scene.everest");
         Gizmos::init();
     }
 

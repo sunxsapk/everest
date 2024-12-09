@@ -13,6 +13,7 @@ file(GLOB_RECURSE SRC_FILES
     "src/*.cpp"
     "src/*.c"
 )
+
 file(GLOB_RECURSE EXTERNALS
     "externals/sources/*.c"
     "externals/sources/*.cpp"
@@ -35,6 +36,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     externals/sources/stb_image/include
     externals/sources/entt/include
     externals/sources/glm
+    externals/sources/ImGuizmo
     externals/yaml-cpp/include
 )
 

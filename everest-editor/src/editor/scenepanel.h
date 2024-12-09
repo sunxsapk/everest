@@ -26,8 +26,9 @@ namespace Everest {
             static inline vec2 getSceneOffset(){return _sceneOffset;}
             static inline vec2 getSceneViewportSize(){return _sceneViewPortSize;}
         private:
-            static bool renderSceneViewport(ref<Framebuffer>& sceneRender);
-            static void renderSceneSettings(EditorCamera& sceneCamera);
+            static bool sceneViewport(ref<Framebuffer>& sceneRender);
+            static void sceneSettings(EditorCamera& sceneCamera);
+            static void gizmosSettings();
         private:
             static vec2 _sceneOffset;
             static uvec2 _sceneViewPortSize;
