@@ -43,21 +43,18 @@ namespace Everest {
 
     vec3 EditorCamera::screenPointToDir(vec2 position){
         vec2 sz = ScenePanel::getSceneViewportSize();
-        vec2 ndc = position/sz - 0.5f;
-
-        // TODO: calculate using near point and instead of fov
-        ndc *= camera.getPersp_fov();
-        ndc.x *= camera.getPersp_aspect();
-        ndc = glm::radians(ndc); 
-
-        vec3 ax = glm::rotate(getForward(), -ndc.y, getRight());
-        ax = glm::rotate(ax, -ndc.x, getUp());
+        vec4 ndc(position.x/sz.x*2-1.f, 1.f-position.y/sz.y*2, 1.f, 1.f);
+        vec4 ax = glm::inverse(camera.getProjection()) * ndc;
+        ax /= ax.w;
+        ax.w = 0.f;
+        ax = glm::normalize((mat4)transform * ax);
         return ax;
     }
 
     vec3 EditorCamera::screenToWorldPos(vec2 position){
         vec2 sz = ScenePanel::getSceneViewportSize();
-        vec3 clipc(position.x/sz.x*2-1.f, 1.f-position.y/sz.y*2, 0.5f);
+        vec3 clipc(position.x/sz.x*2-1.f, 1.f-position.y/sz.y*2, 
+                is2D()? -1.f : camera.getPersp_near());
         vec4 pp = glm::inverse(getVPmat()) * vec4(clipc, 1.f);
         pp /= pp.w;
         return pp;

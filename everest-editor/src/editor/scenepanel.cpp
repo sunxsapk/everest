@@ -119,8 +119,8 @@ namespace Everest {
             ImGui::ColorPicker4("##12", glm::value_ptr(sceneBackgroundColor));
             ImGui::EndPopup();
         }
-        vec3 dbgv = sceneCamera.screenToWorldPos(Input::mousePosition() - getSceneOffset());
-        ImGui::SameLine();
-        ImGui::Text("%.2f, %.2f, %.2f", dbgv.x, dbgv.y, dbgv.z);
+        //vec3 dbgv(Input::mousePosition() - getSceneOffset(), 0.f);
+        //ImGui::SameLine();
+        //ImGui::Text("%.2f, %.2f, %.2f", dbgv.x, dbgv.y, dbgv.z);
     }
 }

@@ -35,7 +35,7 @@ namespace Everest {
     void Gizmos::renderGrid(EditorCamera& camera, vec2 size){
         if(!showGizmos) return;
 
-        bool is2D = camera.camera.getType() == Orthographic;
+        bool is2D = camera.is2D();
         vec3 _sz = is2D? vec3(size.x, size.y, 0.f) : vec3(size.x, 0.f, size.y);
         _sz /= 2.f;
         vec3 gridVertices[4]{
@@ -59,13 +59,12 @@ namespace Everest {
     }
 
     void Gizmos::testGizmos(EditorCamera& cam){
-        vec3 md = cam.screenPointToDir(Input::mousePosition() - ScenePanel::getSceneOffset());
-        vec3 pos;
-        if(cam.camera.getType() == Orthographic){
-            pos = cam.screenToWorldPos(Input::mousePosition() - ScenePanel::getSceneOffset());
-        } else {
-            pos = cam.transform.position + md * 20.f;
+        vec2 mp = Input::mousePosition() - ScenePanel::getSceneOffset();
+        vec3 pos = cam.screenToWorldPos(mp);
+        if(!cam.is2D()){
+            pos = 10.f * glm::normalize(pos - cam.transform.position);
+            pos += cam.transform.position;
         }
-        Renderer2D::drawQuad(pos, vec2(1.f), 0.f, vec4(0.f, 1.f, 1.f, .6f));
+        Renderer2D::drawQuad(pos, vec2(0.5f), 0.f, vec4(0.f, 1.f, 1.f, .6f));
     }
 }
