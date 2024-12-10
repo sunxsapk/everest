@@ -20,11 +20,10 @@ namespace Everest {
             static void renderGrid(EditorCamera& camera, vec2 size = {1000.f, 1000.f});
             static void renderTransformationGizmo(EditorCamera& cam);
 
-            static void testGizmos(EditorCamera& cam);
-
         private:
             static void initGrid();
-             static ImGuizmo::OPERATION operation;
+            static ImGuizmo::OPERATION operation;
+            static bool isLocalTransform;
         private:
              ref<Shader> gridShader;
              ref<VAO> gridVertexArray;

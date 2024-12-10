@@ -15,7 +15,7 @@ namespace Everest {
         return point + position;
     }
 
-    bool Math::decomposeTransform(transform_c& transform, mat4 transformMatrix){
+    bool Math::decomposeTransform(transform_c& transform, mat4& transformMatrix){
         using namespace glm;
 
         mat4 locmat(transformMatrix);
@@ -28,8 +28,8 @@ namespace Everest {
 		if (
 			epsilonNotEqual(locmat[0][3], static_cast<f32>(0), epsilon<f32>()) ||
 			epsilonNotEqual(locmat[1][3], static_cast<f32>(0), epsilon<f32>()) ||
-			epsilonNotEqual(locmat[2][3], static_cast<f32>(0), epsilon<f32>()))
-		{
+			epsilonNotEqual(locmat[2][3], static_cast<f32>(0), epsilon<f32>())
+            ) {
 			// Clear the perspective partition
 			locmat[0][3] = locmat[1][3] = locmat[2][3] = static_cast<f32>(0);
 			locmat[3][3] = static_cast<f32>(1);
@@ -67,6 +67,7 @@ namespace Everest {
 			transform.rotation.x = atan2(-Row[2][0], Row[1][1]);
 			transform.rotation.z = 0;
 		}
+        transform.rotation = glm::degrees(transform.rotation);
 
 
 		return true;

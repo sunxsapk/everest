@@ -79,9 +79,7 @@ namespace detail
 			// Clear the perspective partition
 			LocalMatrix[0][3] = LocalMatrix[1][3] = LocalMatrix[2][3] = static_cast<T>(0);
 			LocalMatrix[3][3] = static_cast<T>(1);
-		}
-		else
-		{
+		} else {
 			// No perspective.
 			Perspective = vec<4, T, Q>(0, 0, 0, 1);
 		}

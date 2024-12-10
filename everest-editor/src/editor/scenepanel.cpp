@@ -40,7 +40,6 @@ namespace Everest {
         ImGui::Image(sceneRender->getColorAttachment(),
                 ImVec2(_sceneViewPortSize.x, _sceneViewPortSize.y), uv0, uv1);
         auto off = ImGui::GetItemRectMin();
-        auto sz = ImGui::GetItemRectMax();
         _sceneOffset = {off.x, off.y};
         _focused = ImGui::IsItemHovered();
 
@@ -127,7 +126,24 @@ namespace Everest {
             ImGui::ColorPicker4("##12", glm::value_ptr(sceneBackgroundColor));
             ImGui::EndPopup();
         }
-        //TODO: translation, rotation and scale selector
+
+        bool& lcl = Gizmos::isLocalTransform;
+        ImGui::SameLine();
+        if(ImGui::Button(lcl?"Local" : "World")) lcl = !lcl;
+
+        ImGuizmo::OPERATION& op = Gizmos::operation;
+        ImGui::SameLine();
+        if(ImGui::RadioButton("Translate", op == ImGuizmo::TRANSLATE)){
+            op = ImGuizmo::TRANSLATE;
+        }
+        ImGui::SameLine();
+        if(ImGui::RadioButton("Rotation", op == ImGuizmo::ROTATE)){
+            op = ImGuizmo::ROTATE;
+        }
+        ImGui::SameLine();
+        if(ImGui::RadioButton("Scale", op == ImGuizmo::SCALE)){
+            op = ImGuizmo::SCALE;
+        }
     }
 
 }

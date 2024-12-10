@@ -12,6 +12,6 @@
 namespace Everest {
     namespace Math {
         vec3 transformOrtho(vec3 point, vec3 position, vec2 scale, f32 rotation);
-        bool decomposeTransform(transform_c& transform, mat4 transformMatrix);
+        bool decomposeTransform(transform_c& transform, mat4& transformMatrix);
     }
 }

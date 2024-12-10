@@ -47,7 +47,6 @@ namespace Everest {
         if(_activeScene){
             Renderer2D::beginScene(_camera.camera, _camera.transform);
             _activeScene->onUpdate();
-            Gizmos::testGizmos(_camera);
             Renderer2D::endScene();
         }
 

@@ -1,5 +1,4 @@
 #include "gizmos.h"
-#include "scenepanel.h"
 #include "sceneheirarchy.h"
 
 #include "ImGuizmo.h"
@@ -9,6 +8,7 @@ namespace Everest {
     bool Gizmos::showGizmos = true;
     Gizmos *Gizmos::_instance = nullptr;
     ImGuizmo::OPERATION Gizmos::operation = ImGuizmo::OPERATION::TRANSLATE;
+    bool Gizmos::isLocalTransform = true;
 
     void Gizmos::initGrid(){
         _instance->gridShader = createRef<Shader>("assets/shaders/gridShader.glsl");
@@ -61,29 +61,20 @@ namespace Everest {
         if(!showGizmos) return;
         Entity ent = SceneHeirarchyUI::getSelectedEntity();
         if(!ent.isValid()) return;
-        ImGuizmo::SetOrthographic(false);
+        ImGuizmo::SetOrthographic(cam.is2D());
         ImGuizmo::SetDrawlist();
-        ImVec2 pos = ImGui::GetWindowPos();
-        ImVec2 sz = ImGui::GetWindowSize();
-        ImGuizmo::SetRect(pos.x, pos.y, sz.x, sz.y);
+        ImVec2 pos = ImGui::GetItemRectMin();
+        ImVec2 end = ImGui::GetItemRectMax();
+        ImGuizmo::SetRect(pos.x, pos.y, end.x - pos.x, end.y - pos.y);
 
         auto& transform = ent.get<transform_c>();
         mat4 tmat = transform;
         ImGuizmo::Manipulate(glm::value_ptr(cam.getView()), glm::value_ptr(cam.camera.getProjection()),
-                operation, ImGuizmo::LOCAL, glm::value_ptr(tmat));
+                operation, isLocalTransform?ImGuizmo::LOCAL : ImGuizmo::WORLD, glm::value_ptr(tmat));
 
         if(ImGuizmo::IsUsing()){
-            Math::decomposeTransform(transform, tmat); // TODO: some errors in decompose
+            Math::decomposeTransform(transform, tmat);
         }
-    }
-
-    void Gizmos::testGizmos(EditorCamera& cam){
-        vec2 mp = Input::mousePosition() - ScenePanel::getSceneOffset();
-        vec3 pos = cam.screenToWorldPos(mp);
-        if(!cam.is2D()){
-            pos = 10.f * glm::normalize(pos - cam.transform.position);
-            pos += cam.transform.position;
-        }
-        Renderer2D::drawQuad(pos, vec2(0.5f), 0.f, vec4(0.f, 1.f, 1.f, .6f));
     }
 }
+
