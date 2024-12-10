@@ -41,7 +41,7 @@ namespace Everest {
                 ImVec2(_sceneViewPortSize.x, _sceneViewPortSize.y), uv0, uv1);
         auto off = ImGui::GetItemRectMin();
         _sceneOffset = {off.x, off.y};
-        _focused = ImGui::IsItemHovered();
+        _focused = ImGui::IsWindowFocused();
 
         return needResize;
     }
@@ -137,12 +137,12 @@ namespace Everest {
             op = ImGuizmo::TRANSLATE;
         }
         ImGui::SameLine();
-        if(ImGui::RadioButton("Rotation", op == ImGuizmo::ROTATE)){
-            op = ImGuizmo::ROTATE;
-        }
-        ImGui::SameLine();
         if(ImGui::RadioButton("Scale", op == ImGuizmo::SCALE)){
             op = ImGuizmo::SCALE;
+        }
+        ImGui::SameLine();
+        if(ImGui::RadioButton("Rotation", op == ImGuizmo::ROTATE)){
+            op = ImGuizmo::ROTATE;
         }
     }
 

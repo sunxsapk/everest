@@ -1,4 +1,5 @@
 #include "gizmos.h"
+#include "scenepanel.h"
 #include "sceneheirarchy.h"
 
 #include "ImGuizmo.h"
@@ -67,13 +68,26 @@ namespace Everest {
         ImVec2 end = ImGui::GetItemRectMax();
         ImGuizmo::SetRect(pos.x, pos.y, end.x - pos.x, end.y - pos.y);
 
+        bool snap = Input::getKeyDown(K_left_control);
+        f32 snapValue = operation == ImGuizmo::ROTATE? 45.f : 0.25f;
+        f32 snapVals[3] = {snapValue, snapValue, snapValue};
+
         auto& transform = ent.get<transform_c>();
         mat4 tmat = transform;
         ImGuizmo::Manipulate(glm::value_ptr(cam.getView()), glm::value_ptr(cam.camera.getProjection()),
-                operation, isLocalTransform?ImGuizmo::LOCAL : ImGuizmo::WORLD, glm::value_ptr(tmat));
+                operation, isLocalTransform?ImGuizmo::LOCAL : ImGuizmo::WORLD, glm::value_ptr(tmat),
+                nullptr, snap ? snapVals : nullptr);
 
         if(ImGuizmo::IsUsing()){
             Math::decomposeTransform(transform, tmat);
+        } else if(ScenePanel::isFocused()) {
+            if(Input::getKeyDown(K_w)){
+                Gizmos::operation = ImGuizmo::TRANSLATE;
+            } else if(Input::getKeyDown(K_e)){
+                Gizmos::operation = ImGuizmo::SCALE;
+            } else if(Input::getKeyDown(K_r)){
+                Gizmos::operation = ImGuizmo::ROTATE;
+            }
         }
     }
 }
