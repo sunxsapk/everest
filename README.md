@@ -15,6 +15,9 @@ Ensure you've got the dependencies installed.
   - Make sure all development tools are installed for your system (try to compile once and you'll get the idea what is missing)
   - Linux : make sure `zenity` is in your system (it is in most of distros by default). It is used for file dialogs.
 
+Setting up the project
+- clone the repository with submodules `git clone --recurse-submodules https://github.com/therealsunx/everest`
+- go into the project directory `cd everest`
 
 Building the project:
 - Run `cmake -B build` from root project directory to build the project

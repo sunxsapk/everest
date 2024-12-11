@@ -7,6 +7,8 @@
 extern Everest::Application* Everest::createApplication(Everest::CommandLineArgs args);
 
 int main(int argc, char** argv){
+    FILE* pipe = popen("mkdir -p profile-res", "r");
+    pclose(pipe);
     EV_profile_begin("Everest Begin", "profile-res/result_begin.json");
     Everest::Application *app = Everest::createApplication({argc, argv});
     EV_profile_end();

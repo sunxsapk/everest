@@ -40,8 +40,8 @@ namespace Everest {
 
             void keyControls_2d();
             void keyControls_3d();
-            bool mouseControls_2d();
-            bool mouseControls_3d();
+            void mouseControls_2d();
+            void mouseControls_3d();
 
         public:
             bool _mouseHeld = false;

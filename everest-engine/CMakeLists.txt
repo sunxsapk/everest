@@ -54,10 +54,13 @@ set_source_files_properties(${EXTERNALS} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 # definitions
 if(WIN32)
     target_compile_definitions(${PROJECT_NAME} PUBLIC WIN32)
+    message(STATUS "Configuring project for Windows")
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_compile_definitions(${PROJECT_NAME} PUBLIC LINUX)
+    message(STATUS "Configuring project for Linux")
 elseif (APPLE)
     target_compile_definitions(${PROJECT_NAME} PUBLIC APPLE)
+    message(STATUS "Configuring project for MacOS")
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
