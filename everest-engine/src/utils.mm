@@ -34,5 +34,7 @@ namespace Everest {
         }
         return std::string();
     }
+
 #endif
+
 }

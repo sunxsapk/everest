@@ -19,21 +19,13 @@ file(GLOB_RECURSE EXTERNALS
     "externals/sources/*.cpp"
 )
 
-set(UTILS_FILE "")
-
-if(APPLE)
-    set(UTILS_FILE src/utils.mm)
-    set_source_files_properties(${UTILS_FILE} PROPERTIES LANGUAGE CXX
-        COMPILE_FLAGS "-x objective-c++")
-endif()
-
 # submodules
 set(YAML_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 add_subdirectory("externals/yaml-cpp")
 
 # adding targets
-add_library(${PROJECT_NAME} STATIC ${SRC_FILES} ${EXTERNALS} ${UTILS_FILE})
+add_library(${PROJECT_NAME} STATIC ${SRC_FILES} ${EXTERNALS})
 
 # include directories
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -67,7 +59,7 @@ elseif (APPLE)
     target_compile_definitions(${PROJECT_NAME} PUBLIC APPLE)
     find_library(OPENGL_LIB OpenGL)
     target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIB} -"framework Cocoa")
-    target_include_directories(${PROJECT_NAME} PUBLIC usr/local/include)
+    target_include_directories(${PROJECT_NAME} PUBLIC /opt/homebrew/include)
     message(STATUS "Configuring project for MacOS")
 endif()
 

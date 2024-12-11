@@ -2,40 +2,7 @@
 
 namespace Everest {
 
-#ifdef LINUX
-
-    std::string FileDialog::openFile(const char* filters){
-        char buffer[256];
-        std::string command = "zenity --file-selection --file-filter=";
-        command.append(filters);
-        FILE* pipe = popen(command.c_str(), "r");
-        if (!pipe) return std::string();
-        if (fgets(buffer, sizeof(buffer), pipe)) {
-            pclose(pipe);
-            buffer[strcspn(buffer, "\n")] = 0; // Remove trailing newline
-            return std::string(buffer);
-        }
-        pclose(pipe);
-        return std::string();
-    }
-
-    std::string FileDialog::saveFile(const char* filters){
-        char buffer[256];
-        std::string command = "zenity --file-selection --save --confirm-overwrite --file-filter=";
-        command.append(filters);
-        FILE* pipe = popen(command.c_str(), "r");
-        if (!pipe) return std::string();
-        if (fgets(buffer, sizeof(buffer), pipe)) {
-            pclose(pipe);
-            buffer[strcspn(buffer, "\n")] = 0; // Remove trailing newline
-            return std::string(buffer);
-        }
-        pclose(pipe);
-        return std::string();
-    }
-
-#elif defined(WIN32)
-
+#ifdef WIN32
 #include <commdlg.h>
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
@@ -84,6 +51,39 @@ namespace Everest {
 
         return std::string();
     }
+
+#else
+
+    std::string FileDialog::openFile(const char* filters){
+        char buffer[256];
+        std::string command = "zenity --file-selection --file-filter=";
+        command.append(filters);
+        FILE* pipe = popen(command.c_str(), "r");
+        if (!pipe) return std::string();
+        if (fgets(buffer, sizeof(buffer), pipe)) {
+            pclose(pipe);
+            buffer[strcspn(buffer, "\n")] = 0; // Remove trailing newline
+            return std::string(buffer);
+        }
+        pclose(pipe);
+        return std::string();
+    }
+
+    std::string FileDialog::saveFile(const char* filters){
+        char buffer[256];
+        std::string command = "zenity --file-selection --save --confirm-overwrite --file-filter=";
+        command.append(filters);
+        FILE* pipe = popen(command.c_str(), "r");
+        if (!pipe) return std::string();
+        if (fgets(buffer, sizeof(buffer), pipe)) {
+            pclose(pipe);
+            buffer[strcspn(buffer, "\n")] = 0; // Remove trailing newline
+            return std::string(buffer);
+        }
+        pclose(pipe);
+        return std::string();
+    }
+
 
 #endif
 }
