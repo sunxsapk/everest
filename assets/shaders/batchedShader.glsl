@@ -1,5 +1,5 @@
 #type vertex
-#version 420 core
+#version 400 core
 layout (location = 0) in vec3 position;
 layout (location = 1) in vec4 color;
 layout (location = 2) in vec2 uv;
@@ -24,7 +24,9 @@ void main() {
 
 
 #type fragment
-#version 420 core
+#version 400 core
+
+#define MAX_TEXS 32
 
 out vec4 fragmentColor;
 
@@ -33,7 +35,7 @@ in vec2 _uv;
 in float _textureInd;
 in float _tilingFactor;
 
-uniform sampler2D u_textures[32];
+uniform sampler2D u_textures[MAX_TEXS];
 
 void main() {
     int index = int(round(_textureInd));

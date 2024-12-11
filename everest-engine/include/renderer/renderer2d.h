@@ -14,6 +14,12 @@
 #include "texture.h"
 #include "sprite.h"
 
+#ifdef APPLE
+#define MAX_TEXTURES 16
+#else
+#define MAX_TEXTURES 32
+#endif
+
 namespace Everest {
     struct QuadProps {
         ref<Texture> texture = NULL;
@@ -43,7 +49,7 @@ namespace Everest {
         const u32 maxQuads = 10000;
         const u32 maxVertices = maxQuads * 4;
         const u32 maxIndices = maxQuads * 6;
-        static const i32 maxTexSlots = 32; // TODO: glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &_data->maxTexSlots);
+        static const i32 maxTexSlots = MAX_TEXTURES; // TODO: glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &_data->maxTexSlots);
 
         std::array<vec4, 4> quadVertPos;
 

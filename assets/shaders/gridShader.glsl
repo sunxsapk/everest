@@ -1,5 +1,5 @@
 #type vertex
-#version 420 core
+#version 400 core
 layout (location = 0) in vec3 position;
 
 uniform mat4 u_vpmat;
@@ -13,7 +13,7 @@ void main() {
 
 
 #type fragment
-#version 420 core
+#version 400 core
 
 #define THICKNESS 0.02f
 #define AXIS_COLOR vec4(1.f, 0.f, 0.f, 1.f)

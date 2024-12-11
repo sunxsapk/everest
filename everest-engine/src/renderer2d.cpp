@@ -46,7 +46,7 @@ namespace Everest {
         _data->whiteTexture->setData(&whiteText_data, 4);
 
         _data->textureShader = createRef<Shader>("assets/shaders/batchedShader.glsl");
-        i32 samplerArr[32];
+        i32 samplerArr[MAX_TEXTURES];
         for(i32 i=0; i<_data->maxTexSlots; i++) samplerArr[i] = i;
         _data->textureShader->bind();
         _data->textureShader->setUniform_iarr("u_textures", samplerArr, _data->maxTexSlots);

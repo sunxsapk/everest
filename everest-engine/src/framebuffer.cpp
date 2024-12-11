@@ -63,9 +63,9 @@ namespace Everest {
 
         glGenTextures(1, &_depthAttachment);
         glBindTexture(GL_TEXTURE_2D, _depthAttachment);
-        glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, _specs.width, _specs.height);
-        //glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, _specs.width,
-        //        _specs.height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
+        //glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, _specs.width, _specs.height);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, _specs.width,
+                _specs.height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
 
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D,
                 _depthAttachment, 0);

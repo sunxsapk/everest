@@ -71,6 +71,12 @@ namespace Everest {
                 glUniformMatrix3fv(_getloc(name), 1, 0, glm::value_ptr(value));
             }
 
+            static inline i32 getMaxTexturesCount(){
+                i32 textureUnits = 16;
+                glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &textureUnits);
+                return textureUnits;
+            }
+
         private:
             std::unordered_map<std::string, int> _uniformCache;
 

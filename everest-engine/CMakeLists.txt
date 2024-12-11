@@ -49,18 +49,21 @@ set_source_files_properties(${EXTERNALS} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 
 # definitions
 if(WIN32)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC WIN32)
     message(STATUS "Configuring project for Windows")
+    message(WARNING "Please install glfw and if installed, update the path below")
+    target_include_directories(${PROJECT_NAME} PUBLIC C:/GLFW/glfw/include)
+    target_link_directories(${PROJECT_NAME} PUBLIC C:/GLFW/glfw/lib)
+
+    target_compile_definitions(${PROJECT_NAME} PUBLIC WIN32)
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    target_compile_definitions(${PROJECT_NAME} PUBLIC LINUX)
-    target_include_directories(${PROJECT_NAME} PUBLIC usr/include)
     message(STATUS "Configuring project for Linux")
+    target_compile_definitions(${PROJECT_NAME} PUBLIC LINUX)
 elseif (APPLE)
+    message(STATUS "Configuring project for MacOS")
     target_compile_definitions(${PROJECT_NAME} PUBLIC APPLE)
     find_library(OPENGL_LIB OpenGL)
-    target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIB} -"framework Cocoa")
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIB})
     target_include_directories(${PROJECT_NAME} PUBLIC /opt/homebrew/include)
-    message(STATUS "Configuring project for MacOS")
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
