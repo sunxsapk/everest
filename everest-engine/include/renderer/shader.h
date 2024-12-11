@@ -6,7 +6,6 @@
  */
 
 #pragma once
-#include "pch.h"
 
 #include "math/types.h"
 #include <glm/gtc/type_ptr.hpp>

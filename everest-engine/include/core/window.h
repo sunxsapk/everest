@@ -6,7 +6,6 @@
 
 #pragma once
 #include "events/event.h"
-#include "pch.h"
 
 namespace Everest {
 

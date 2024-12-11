@@ -9,7 +9,6 @@
 #pragma once
 
 #include "scene.h"
-#include "pch.h"
 
 namespace Everest {
 

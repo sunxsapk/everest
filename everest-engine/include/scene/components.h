@@ -8,7 +8,6 @@
 #include "camera.h"
 #include "renderer/sprite.h"
 #include "scriptable.h"
-#include "pch.h"
 
 namespace Everest {
 

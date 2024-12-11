@@ -6,7 +6,6 @@
  */
 
 #pragma once
-#include "pch.h"
 
 namespace Everest {
     enum TextureFormat{

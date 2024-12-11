@@ -7,7 +7,6 @@
  */
 
 #pragma once
-#include "pch.h"
 #include "keycode.h"
 #include "events/mouseevent.h"
 #include "core/application.h"

@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "pch.h"
-
 
 namespace Everest {
     using c_str_t = const char*;

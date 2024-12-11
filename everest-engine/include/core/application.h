@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "pch.h"
 #include "window.h"
 #include "layerstack.h"
 #include "events/windowevent.h"
