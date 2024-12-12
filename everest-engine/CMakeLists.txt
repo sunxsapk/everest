@@ -63,7 +63,7 @@ elseif (APPLE)
     target_compile_definitions(${PROJECT_NAME} PUBLIC APPLE)
     find_library(OPENGL_LIB OpenGL)
     target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIB})
-    target_include_directories(${PROJECT_NAME} PUBLIC /opt/homebrew/include)
+    target_include_directories(${PROJECT_NAME} PUBLIC /opt/homebrew/include /usr/local/include)
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE

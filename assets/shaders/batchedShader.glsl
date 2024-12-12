@@ -26,7 +26,7 @@ void main() {
 #type fragment
 #version 400 core
 
-#define MAX_TEXS 32
+#define MAX_TEXS 16
 
 out vec4 fragmentColor;
 
