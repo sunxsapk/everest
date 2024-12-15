@@ -28,7 +28,8 @@ void main() {
 
 #define MAX_TEXS 16
 
-out vec4 fragmentColor;
+layout(location = 0) out vec4 color0;
+layout(location = 1) out vec4 color1;
 
 in vec4 _color;
 in vec2 _uv;
@@ -40,6 +41,7 @@ uniform sampler2D u_textures[MAX_TEXS];
 void main() {
     int index = int(round(_textureInd));
     vec4 cl = texture(u_textures[index], _uv * _tilingFactor);
-    fragmentColor = cl * _color;
+    color0 = cl * _color;
+    color1 = vec4(color0.r, 0.f, 0.f, color0.a);
 }
 

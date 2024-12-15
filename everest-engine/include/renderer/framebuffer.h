@@ -9,10 +9,37 @@
 
 #pragma omce
 #include "math/types.h"
+#include "pch.h"
 
 namespace Everest {
+    enum class FrameBufferTextureFormat {
+        None = 0,
+        RGBA,
+        DEPTH24STENCIL8,
+    };
+
+    struct FrameBufferTextureSpecs {
+        FrameBufferTextureFormat textureFormat;
+        // TODO
+        // texture wrapMode, repeat
+
+        FrameBufferTextureSpecs():textureFormat(FrameBufferTextureFormat::None){}
+        FrameBufferTextureSpecs(FrameBufferTextureFormat fmt)
+            :textureFormat(fmt){}
+    };
+
+    struct FrameBufferAttachmentSpecs {
+        std::vector<FrameBufferTextureSpecs> values;
+
+        FrameBufferAttachmentSpecs(){}
+        // only one depth buffer is eligible here
+        FrameBufferAttachmentSpecs(std::initializer_list<FrameBufferTextureSpecs> _attchs)
+        :values(_attchs){}
+    };
+
     struct FramebufferSpecs {
         u32 width, height, samples=1;
+        FrameBufferAttachmentSpecs attachments;
         bool swapchainTarget = false;
     };
 
@@ -27,7 +54,9 @@ namespace Everest {
             /* resizes the framebuffer to new size */
             void resize(uvec2 size);
 
-            inline const u32 getColorAttachment(){return _colorAttachment;}
+            inline const u32 getColorAttachment(u32 index = 0){
+                ASSERT(index < _colorAttachments.size(), "Attempt to get invalid color attachment");
+                return _colorAttachments[index];}
             inline const u32 getDepthAttachment(){return _depthAttachment;}
 
             inline const FramebufferSpecs& getSpecs(){return _specs;}
@@ -36,6 +65,12 @@ namespace Everest {
             void invalidate();
         private:
             FramebufferSpecs _specs;
-            u32 _id, _colorAttachment, _depthAttachment;
+            u32 _id;
+
+            std::vector<FrameBufferTextureSpecs> _colorAttachmentSpecs;
+            std::vector<u32> _colorAttachments;
+
+            FrameBufferTextureSpecs _depthAttachmentSpecs;
+            u32 _depthAttachment;
     };
 }

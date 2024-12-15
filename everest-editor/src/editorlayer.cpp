@@ -19,7 +19,8 @@ namespace Everest {
 
         FramebufferSpecs specs{
             .width = 1280,
-                .height = 720
+            .height = 720,
+            .attachments = {FrameBufferTextureFormat::RGBA, FrameBufferTextureFormat::RGBA, FrameBufferTextureFormat::DEPTH24STENCIL8},
         };
         _framebuffer = createRef<Framebuffer>(specs);
         SceneManager::onSceneChanged([](ref<Scene>& scene){

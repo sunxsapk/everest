@@ -6,6 +6,8 @@
  */
 #pragma once 
 
+#include <GLFW/glfw3.h>
+
 namespace Everest{
 
     /*Keyboard input codes*/

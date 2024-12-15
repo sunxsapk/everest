@@ -37,7 +37,7 @@ namespace Everest {
             needResize = true;
         }
 
-        ImGui::Image(sceneRender->getColorAttachment(),
+        ImGui::Image(sceneRender->getColorAttachment(0),
                 ImVec2(_sceneViewPortSize.x, _sceneViewPortSize.y), uv0, uv1);
         auto off = ImGui::GetItemRectMin();
         _sceneOffset = {off.x, off.y};
