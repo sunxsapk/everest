@@ -15,7 +15,7 @@ namespace Everest {
 
         sceneSettings(sceneCamera);
         if(sceneViewport(sceneRender)){
-            //sceneRender->resize(_sceneViewPortSize); TODO
+            sceneRender->resize(_sceneViewPortSize);
             sceneCamera.onViewportResize(_sceneViewPortSize);
             auto _activeScene = SceneManager::getActiveScene();
             if(_activeScene) _activeScene->onViewportResize(_sceneViewPortSize);
@@ -105,9 +105,9 @@ namespace Everest {
         }
         ImGui::SameLine();
         gizmosSettings();
-        //vec3 dbgv(Input::mousePosition() - getSceneOffset(), 0.f);
-        //ImGui::SameLine();
-        //ImGui::Text("%.2f, %.2f, %.2f", dbgv.x, dbgv.y, dbgv.z);
+        vec3 dbgv(Input::mousePosition() - getSceneOffset(), 0.f);
+        ImGui::SameLine();
+        ImGui::Text("%.2f, %.2f, %.2f", dbgv.x, dbgv.y, dbgv.z);
     }
 
     void ScenePanel::gizmosSettings(){

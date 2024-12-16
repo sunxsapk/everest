@@ -20,7 +20,7 @@ namespace Everest {
         FramebufferSpecs specs{
             .width = 1280,
             .height = 720,
-            .attachments = {FrameBufferTextureFormat::RGBA, FrameBufferTextureFormat::RGBA, FrameBufferTextureFormat::DEPTH24STENCIL8},
+            .attachments = {FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INT, FrameBufferTextureFormat::DEPTH24STENCIL8},
         };
         _framebuffer = createRef<Framebuffer>(specs);
         SceneManager::onSceneChanged([](ref<Scene>& scene){
@@ -42,8 +42,9 @@ namespace Everest {
 
         Renderer::disableDepth();
         Gizmos::renderGrid(_camera);
-
         Renderer::enableDepth();
+
+        _framebuffer->clearAttachment(1, -1);
         auto _activeScene = SceneManager::getActiveScene();
         if(_activeScene){
             Renderer2D::beginScene(_camera.camera, _camera.transform);
@@ -51,6 +52,13 @@ namespace Everest {
             Renderer2D::endScene();
         }
 
+        ivec2 mp = Input::mousePosition() - ScenePanel::getSceneOffset();
+        mp.y = ScenePanel::getSceneViewportSize().y - mp.y;
+        if(mp.x >= 0 && mp.y >= 0 && mp.x < ScenePanel::getSceneViewportSize().x &&
+                mp.y < ScenePanel::getSceneViewportSize().y){
+            i32 pixd = _framebuffer->readPixel(1, mp.x, mp.y);
+            EVLog_Msg("%d", pixd);
+        }
         _framebuffer->unbind();
     }
 

@@ -14,7 +14,8 @@
 namespace Everest {
     enum class FrameBufferTextureFormat {
         None = 0,
-        RGBA,
+        RED_INT,
+        RGBA8,
         DEPTH24STENCIL8,
     };
 
@@ -53,6 +54,22 @@ namespace Everest {
 
             /* resizes the framebuffer to new size */
             void resize(uvec2 size);
+
+            i32 readPixel(u32 attIndex, i32 x, i32 y);
+
+            inline void clearAttachment(u32 attIndex, vec4 value){
+                ASSERT(attIndex < _colorAttachments.size(), "Invalid attachment index");
+                ASSERT(_colorAttachmentSpecs[attIndex].textureFormat == FrameBufferTextureFormat::RGBA8,
+                        "Invalid texture format for the attachment while clearing");
+                glClearBufferfv(GL_COLOR, attIndex, glm::value_ptr(value));
+            }
+
+            inline void clearAttachment(u32 attIndex, i32 value){
+                ASSERT(attIndex < _colorAttachments.size(), "Invalid attachment index");
+                ASSERT(_colorAttachmentSpecs[attIndex].textureFormat == FrameBufferTextureFormat::RED_INT,
+                        "Invalid texture format for the attachment while clearing");
+                glClearBufferiv(GL_COLOR, attIndex, &value);
+            }
 
             inline const u32 getColorAttachment(u32 index = 0){
                 ASSERT(index < _colorAttachments.size(), "Attempt to get invalid color attachment");

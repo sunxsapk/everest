@@ -12,6 +12,7 @@
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/quaternion.hpp>
+#include "glm/gtc/type_ptr.hpp"
 
 #include <imgui.h>
 #include <imgui_impl_glfw.h>

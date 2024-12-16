@@ -13,12 +13,12 @@ namespace Everest {
         }
     }
 
-    static void attachColorTex(u32 id, u32 samples, GLenum format, u32 width, u32 height, int index){
+    static void attachColorTex(u32 id, u32 samples, GLenum internalFormat, GLenum outformat, u32 width, u32 height, int index){
         bool msampled = samples > 1;
         if(msampled){
-            glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE);
+            glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internalFormat, width, height, GL_FALSE);
         }else{
-            glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, outformat, GL_UNSIGNED_BYTE, NULL);
             //TODO : from texture specs
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -30,13 +30,13 @@ namespace Everest {
         glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, getTarget(msampled), id, 0);
     }
 
-    static void attachDepthTex(u32 id, u32 samples, GLenum format, GLenum attachmentType, u32 width, u32 height){
+    static void attachDepthTex(u32 id, u32 samples, GLenum internalFormat, GLenum attachmentType, u32 width, u32 height){
         bool msampled = samples > 1;
         if(msampled){
-            glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE);
+            glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internalFormat, width, height, GL_FALSE);
         }else{
             //glTexStorage2D(GL_TEXTURE_2D, 1, GL_DEPTH24_STENCIL8, width, height);
-            glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
+            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
         }
         glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, getTarget(msampled), id, 0);
     }
@@ -82,6 +82,17 @@ namespace Everest {
         invalidate();
     }
 
+    i32 Framebuffer::readPixel(u32 attachmentIndex, i32 x, i32 y){
+        ASSERT(x >=  0 && y >= 0 && x < _specs.width && y < _specs.height, 
+                "Out of bounds Framebuffer pixel read attempt");
+        ASSERT(attachmentIndex<_colorAttachments.size(),
+                "Invalid color attachment read from framebuffer");
+        glReadBuffer(GL_COLOR_ATTACHMENT0+attachmentIndex);
+        i32 data;
+        glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &data);
+        return data;
+    }
+
     void Framebuffer::invalidate(){
         EV_profile_function();
 
@@ -105,8 +116,11 @@ namespace Everest {
                 glBindTexture(getTarget(msampled), _colorAttachments[i]);
 
                 switch(_colorAttachmentSpecs[i].textureFormat){
-                    case FrameBufferTextureFormat::RGBA:
-                        attachColorTex(_colorAttachments[i], _specs.samples, GL_RGBA, _specs.width, _specs.height, i);
+                    case FrameBufferTextureFormat::RED_INT:
+                        attachColorTex(_colorAttachments[i], _specs.samples, GL_R32I, GL_RED_INTEGER, _specs.width, _specs.height, i);
+                        break;
+                    case FrameBufferTextureFormat::RGBA8:
+                        attachColorTex(_colorAttachments[i], _specs.samples, GL_RGBA8, GL_RGBA, _specs.width, _specs.height, i);
                         break;
                     default: break;
                 }
