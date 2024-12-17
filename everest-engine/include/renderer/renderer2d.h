@@ -8,6 +8,7 @@
  * for those stuffs only.*/
 
 #pragma once
+
 #include "vao.h"
 #include "shader.h"
 #include "scene/camera.h"
@@ -36,6 +37,10 @@ namespace Everest {
         vec2 uv;
         f32 textureIndex;
         f32 tilingFactor;
+
+#ifdef EDITOR_BUILD
+        i32 id;
+#endif
     };
 
     struct RendererStats {
@@ -76,9 +81,17 @@ namespace Everest {
 
             static void drawQuad(const QuadProps& props);
 
-            static void drawSprite(mat4 transform, Sprite sprite, vec4 color);
+            static void drawSprite(mat4 transform, Sprite sprite, vec4 color
+#ifdef EDITOR_BUILD
+                    , i32 id = 0
+#endif
+                    );
             static void drawSprite(Sprite sprite, vec3 position, vec2 scale = vec2(1.f),
-                    f32 rotation = 0.f, vec4 color=vec4(1.f));
+                    f32 rotation = 0.f, vec4 color=vec4(1.f)
+#ifdef EDITOR_BUILD
+                    , i32 id = 0
+#endif
+                    );
 
             static inline const RendererStats& getStats(){return _stats;}
 

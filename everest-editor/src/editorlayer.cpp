@@ -52,13 +52,7 @@ namespace Everest {
             Renderer2D::endScene();
         }
 
-        ivec2 mp = Input::mousePosition() - ScenePanel::getSceneOffset();
-        mp.y = ScenePanel::getSceneViewportSize().y - mp.y;
-        if(mp.x >= 0 && mp.y >= 0 && mp.x < ScenePanel::getSceneViewportSize().x &&
-                mp.y < ScenePanel::getSceneViewportSize().y){
-            i32 pixd = _framebuffer->readPixel(1, mp.x, mp.y);
-            EVLog_Msg("%d", pixd);
-        }
+        ScenePanel::mousePickCheck(_framebuffer);
         _framebuffer->unbind();
     }
 

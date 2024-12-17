@@ -19,7 +19,10 @@ set(OUT_dir "${CMAKE_BINARY_DIR}/bin")
 set(Engine "Everest")
 set(ENGINE_BDIR "${OUT_dir}/${Engine}")
 file(MAKE_DIRECTORY ${ENGINE_BDIR})
-add_subdirectory(everest-engine ${ENGINE_BDIR})
+if (Target STREQUAL "Editor")
+    add_definitions(-DEDITOR_BUILD)
+    add_subdirectory(everest-engine ${ENGINE_BDIR})
+endif()
 
 
 if (Target STREQUAL "Editor")

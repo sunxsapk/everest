@@ -40,8 +40,18 @@ namespace Everest{
         u32 index = 0;
         for(const auto& item:layout){
             glEnableVertexAttribArray(index);
-            glVertexAttribPointer(index, item.getCount(), item.getPrimitive(),
-                    GL_FALSE, layout.getSize(), (const void*)(u64)item.offset);
+            switch(item.getPrimitive()){
+                case GL_INT:
+                case GL_BYTE:
+                case GL_UNSIGNED_INT:
+                case GL_UNSIGNED_BYTE:
+                    glVertexAttribIPointer(index, item.getCount(), item.getPrimitive(),
+                            layout.getSize(), (const void*)(u64)item.offset);
+                    break;
+                default:
+                    glVertexAttribPointer(index, item.getCount(), item.getPrimitive(),
+                            GL_FALSE, layout.getSize(), (const void*)(u64)item.offset);
+            }
             index++;
         }
     }

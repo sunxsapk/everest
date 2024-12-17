@@ -20,6 +20,9 @@ namespace Everest {
             static void renderGrid(EditorCamera& camera, vec2 size = {1000.f, 1000.f});
             static void renderTransformationGizmo(EditorCamera& cam);
 
+            static inline bool isUsing(){ return ImGuizmo::IsUsing() ||
+                    (showGizmos && ImGuizmo::IsOver());}
+
         private:
             static void initGrid();
             static ImGuizmo::OPERATION operation;

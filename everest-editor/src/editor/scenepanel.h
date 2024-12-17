@@ -23,6 +23,8 @@ namespace Everest {
             static void onGUIrender(ref<Framebuffer>& sceneRender, EditorCamera& sceneCamera);
             static inline bool isFocused(){return _focused;}
 
+            static void mousePickCheck(ref<Framebuffer>& sceneRenderBuffer);
+
             static inline vec2 getSceneOffset(){return _sceneOffset;}
             static inline vec2 getSceneViewportSize(){return _sceneViewPortSize;}
         private:

@@ -24,6 +24,9 @@ namespace Everest {
             {ShaderDataType::T_vec2, "uv"},
             {ShaderDataType::T_float, "textureIndex"},
             {ShaderDataType::T_float, "tilingFactor"},
+#ifdef EDITOR_BUILD
+            {ShaderDataType::T_int, "id"},
+#endif
         };
         qvb->setLayout(layout);
         _data->vertArray->addVertexBuffer(qvb);
@@ -45,7 +48,11 @@ namespace Everest {
         u32 whiteText_data = 0xffffffff;
         _data->whiteTexture->setData(&whiteText_data, 4);
 
+#ifdef EDITOR_BUILD
+        _data->textureShader = createRef<Shader>("assets/shaders/editor_batchedShader.glsl");
+#else
         _data->textureShader = createRef<Shader>("assets/shaders/batchedShader.glsl");
+#endif
         i32 samplerArr[MAX_TEXTURES];
         for(i32 i=0; i<_data->maxTexSlots; i++) samplerArr[i] = i;
         _data->textureShader->bind();
@@ -132,7 +139,11 @@ namespace Everest {
     }
 
     void Renderer2D::drawSprite(Sprite sprite, vec3 position, vec2 scale, f32 rotation,
-            vec4 color){
+            vec4 color
+#ifdef EDITOR_BUILD
+            , i32 id
+#endif
+            ){
         EV_profile_function();
 
         i32 tind = 0;
@@ -155,6 +166,9 @@ namespace Everest {
             _data->vertPtr->uv = uvs[i];
             _data->vertPtr->textureIndex = tind;
             _data->vertPtr->tilingFactor = tilingFactor;
+#ifdef EDITOR_BUILD
+            _data->vertPtr->id = id;
+#endif
             _data->vertPtr++;
         }
         _data->indexCount += 6;
@@ -163,7 +177,11 @@ namespace Everest {
         _stats.vertexCount += 4;
     }
 
-    void Renderer2D::drawSprite(mat4 transform, Sprite sprite, vec4 color){
+    void Renderer2D::drawSprite(mat4 transform, Sprite sprite, vec4 color
+#ifdef EDITOR_BUILD
+            , i32 id
+#endif
+            ){
         EV_profile_function();
 
         i32 tind = 0;
@@ -184,6 +202,9 @@ namespace Everest {
             _data->vertPtr->uv = uvs[i];
             _data->vertPtr->textureIndex = tind;
             _data->vertPtr->tilingFactor = tilingFactor;
+#ifdef EDITOR_BUILD
+            _data->vertPtr->id = id;
+#endif
             _data->vertPtr++;
         }
         _data->indexCount += 6;

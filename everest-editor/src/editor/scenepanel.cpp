@@ -1,5 +1,6 @@
 #include "scenepanel.h"
 #include "gizmos.h"
+#include "sceneheirarchy.h"
 
 
 namespace Everest {
@@ -143,6 +144,20 @@ namespace Everest {
         ImGui::SameLine();
         if(ImGui::RadioButton("Rotation", op == ImGuizmo::ROTATE)){
             op = ImGuizmo::ROTATE;
+        }
+    }
+
+    void ScenePanel::mousePickCheck(ref<Framebuffer>& sceneRenderBuffer){
+        if(!Input::mouseButtonDown(MouseButton_0)) return;
+        if(Gizmos::isUsing() && SceneHeirarchyUI::getSelectedEntity().isValid()) return;
+
+        ivec2 mp = Input::mousePosition() - ScenePanel::getSceneOffset();
+        mp.y = ScenePanel::getSceneViewportSize().y - mp.y;
+        if(mp.x >= 0 && mp.y >= 0 && mp.x < ScenePanel::getSceneViewportSize().x &&
+                mp.y < ScenePanel::getSceneViewportSize().y){
+            i32 pixd = sceneRenderBuffer->readPixel(1, mp.x, mp.y);
+            if(pixd == -1) SceneHeirarchyUI::_selectedEntity = {};
+            else SceneHeirarchyUI::selectEntity((entt::entity)pixd);;
         }
     }
 
