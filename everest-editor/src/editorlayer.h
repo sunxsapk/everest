@@ -15,6 +15,7 @@ namespace Everest {
             void onDetach() override;
         private:
             void handleSceneViewPort();
+            bool onMouseButtonDown(MouseButtonDownEvent& event);
 
         private:
             ref<Framebuffer> _framebuffer;

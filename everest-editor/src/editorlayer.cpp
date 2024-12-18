@@ -66,6 +66,7 @@ namespace Everest {
         EventDispatcher dispatcher(event);
 
         dispatcher.dispatch<KeyDownEvent>(MenuPanel::onKeyShortcuts);
+        dispatcher.dispatch<MouseButtonDownEvent>(BIND_EVENT_CB(onMouseButtonDown));
     }
 
     void EditorLayer::onGUIrender(){
@@ -80,5 +81,15 @@ namespace Everest {
         SceneHeirarchyUI::onGUIrender();
         PropertiesPanel::onGUIrender(SceneHeirarchyUI::getSelectedEntity());
         ScenePanel::onGUIrender(_framebuffer, _camera);
+    }
+
+    bool EditorLayer::onMouseButtonDown(MouseButtonDownEvent& event){
+        if(event.getButton() == MouseButton_0){
+            _framebuffer->bind();
+            ScenePanel::mousePickCheck(_framebuffer);
+            _framebuffer->unbind();
+            return true;
+        }
+        return false;
     }
 }
