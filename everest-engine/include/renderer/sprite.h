@@ -6,6 +6,8 @@
  */
 
 #pragma once
+#include "math/types.h"
+#include "core/utils.h"
 #include "texture.h"
 
 

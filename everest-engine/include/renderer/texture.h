@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "pch.h"
+
 namespace Everest {
     enum TextureFormat{
         RED = GL_RED,
@@ -47,8 +49,6 @@ namespace Everest {
             inline u32 getHeight(){return _size.y;}
             inline uvec2 getSize(){return _size;}
 
-            void setWrapMode(TextureWrapMode mode);
-            void setFilter(TextureFilter filter);
 
             void setData(void* data ,u32 size);
 
@@ -56,6 +56,9 @@ namespace Everest {
                 return _id ==  other.getID();
             }
 
+        private:
+            void setWrapMode(TextureWrapMode mode);
+            void setFilter(TextureFilter filter);
         private:
             u32 _id;
             std::string _path;

@@ -1,6 +1,4 @@
 #include "menupanel.h"
-#include "sceneheirarchy.h"
-
 
 namespace Everest {
 
@@ -34,7 +32,7 @@ namespace Everest {
     }
 
     inline void openSceneSeq(){
-        std::string scf = FileDialog::filters("*.everest", "*.evsc");
+        std::string scf = FileDialog::filters("*.everest");
         std::string filename = FileDialog::openFile(scf.c_str());
         if(!filename.empty()) sceneOpen(filename.c_str());
     }
@@ -49,7 +47,7 @@ namespace Everest {
     }
 
     inline void saveAsSeq(){
-        std::string scf = FileDialog::filters("*.everest", "*.evsc");
+        std::string scf = FileDialog::filters("*.everest");
         std::string filename = FileDialog::saveFile(scf.c_str());
         if(!filename.empty()) SceneManager::saveScene(filename.c_str());
     }

@@ -6,6 +6,7 @@
 #include "editor/sceneheirarchy.h"
 #include "editor/scenepanel.h"
 #include "editor/gizmos.h"
+#include "editor/contentBrowserPanel.h"
 
 namespace Everest {
 
@@ -27,6 +28,7 @@ namespace Everest {
                 SceneHeirarchyUI::setScene(scene);
             });
         SceneManager::loadScene("assets/scenes/scene.everest");
+        ContentBrowser::init();
         Gizmos::init();
     }
 
@@ -60,6 +62,7 @@ namespace Everest {
         EV_profile_function();
 
         Gizmos::quit();
+        ContentBrowser::quit();
     }
 
     void EditorLayer::onEvent(Event& event){
@@ -81,6 +84,7 @@ namespace Everest {
         SceneHeirarchyUI::onGUIrender();
         PropertiesPanel::onGUIrender(SceneHeirarchyUI::getSelectedEntity());
         ScenePanel::onGUIrender(_framebuffer, _camera);
+        ContentBrowser::onGUIrender();
     }
 
     bool EditorLayer::onMouseButtonDown(MouseButtonDownEvent& event){

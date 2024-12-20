@@ -39,7 +39,6 @@
 #include "core/utils.h"
 
 #include "math/types.h"
-#include "math/utils.h"
 
 #include "core/log.h"
 #include "core/dbghelper.h"

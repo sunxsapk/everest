@@ -1,5 +1,6 @@
 #include "renderer/renderer2d.h"
 #include "renderer/renderAPI.h"
+#include "math/utils.h"
 
 namespace Everest {
     Renderer2Ddata* Renderer2D::_data = new Renderer2Ddata;

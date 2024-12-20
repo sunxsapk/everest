@@ -11,6 +11,7 @@ namespace Everest {
     Sprite SpriteSheet::getSprite(uvec2 start, uvec2 size){
         Sprite sp;
         sp.texture = _texture;
+        size += start;
         sp.startUV = (vec2)(start * _unitSize) / (vec2)_texture->getSize();
         sp.sizeUV  = (vec2)(size  * _unitSize) / (vec2)_texture->getSize();
         return sp;
