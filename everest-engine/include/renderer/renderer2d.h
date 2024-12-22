@@ -77,7 +77,7 @@ namespace Everest {
             static void endScene();
 
             static void drawQuad(vec3 position, vec2 scale = vec2(1.f), f32 rotation = 0.f,
-                    vec4 color = vec4(1.f), ref<Texture> texture = NULL, f32 tilingFactor = 1.f);
+                    vec4 color = vec4(1.f), ref<Texture> texture = nullptr, f32 tilingFactor = 1.f);
 
             static void drawQuad(const QuadProps& props);
 

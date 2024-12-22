@@ -25,7 +25,9 @@ void main() {
 uniform vec4 u_camera;
 uniform int u_is2D;
 
-out vec4 FragColor;
+layout(location = 0) out vec4 color0;
+layout(location = 1) out int entityID;
+
 
 in vec3 pxPos;
 
@@ -42,36 +44,37 @@ float th(float x){
 }
 
 float getFogFc(float d){
-    if(d < ACT_VIEW_D) return 1.f;
-    return 1.f/ (d - ACT_VIEW_D + 0.01f);
+    if(d < ACT_VIEW_D) return 0.6f;
+    return 0.6f/ (d - ACT_VIEW_D + 0.01f);
 }
 
 void main(){
+    entityID = -1;
     vec3 fp = pxPos - round(pxPos);
 
-    if(isThick(fp.x)) FragColor = THICK_COLOR * th(fp.x);
-    else if(isThin(fp.x + 0.5f)) FragColor = THIN_COLOR;
+    if(isThick(fp.x)) color0 = THICK_COLOR * th(fp.x);
+    else if(isThin(fp.x + 0.5f)) color0 = THIN_COLOR;
     else if(u_is2D != 0){
-        if(isThick(fp.y)) FragColor = THICK_COLOR * th(fp.y);
-        else if(isThin(fp.y + 0.5f)) FragColor = THIN_COLOR;
+        if(isThick(fp.y)) color0 = THICK_COLOR * th(fp.y);
+        else if(isThin(fp.y + 0.5f)) color0 = THIN_COLOR;
         else {
-            FragColor = vec4(0.f);
+            color0 = vec4(0.f);
             return;
         }
-    } else if(isThick(fp.z)) FragColor = THICK_COLOR * th(fp.z);
-    else if(isThin(fp.z + 0.5f)) FragColor = THIN_COLOR;
+    } else if(isThick(fp.z)) color0 = THICK_COLOR * th(fp.z);
+    else if(isThin(fp.z + 0.5f)) color0 = THIN_COLOR;
     else {
-        FragColor = vec4(0.f);
+        color0 = vec4(0.f);
         return;
     }
 
-    if(isThick(pxPos.x) || isThick(u_is2D == 0? pxPos.z : pxPos.y)) FragColor = AXIS_COLOR;
+    if(isThick(pxPos.x) || isThick(u_is2D == 0? pxPos.z : pxPos.y)) color0 = AXIS_COLOR;
 
-    if(u_is2D != 0) FragColor.a = 0.6f;
+    if(u_is2D != 0) color0.a = 0.6f;
     else {
         //float d = distance(u_camera.xyz, pxPos);
         float d = distance(u_camera.xz, pxPos.xz); // ignore cam-height
-        FragColor.a *= getFogFc(d);
+        color0.a *= getFogFc(d);
     }
 }
 

@@ -29,7 +29,6 @@ void main() {
 #define MAX_TEXS 16
 
 layout(location = 0) out vec4 color0;
-layout(location = 1) out int color1;
 
 in vec4 _color;
 in vec2 _uv;
@@ -42,6 +41,5 @@ void main() {
     int index = int(round(_textureInd));
     vec4 cl = texture(u_textures[index], _uv * _tilingFactor);
     color0 = cl * _color;
-    color1 = 1224;
 }
 

@@ -42,10 +42,6 @@ namespace Everest {
         Renderer::issue_setClearColor(ScenePanel::sceneBackgroundColor);
         Renderer::issue_clear();
 
-        Renderer::disableDepth();
-        Gizmos::renderGrid(_camera);
-        Renderer::enableDepth();
-
         _framebuffer->clearAttachment(1, -1);
         auto _activeScene = SceneManager::getActiveScene();
         if(_activeScene){
@@ -53,6 +49,10 @@ namespace Everest {
             _activeScene->onUpdate();
             Renderer2D::endScene();
         }
+        //Renderer::disableDepth();
+        Gizmos::renderGrid(_camera);
+        //Renderer::enableDepth();
+
 
         ScenePanel::mousePickCheck(_framebuffer);
         _framebuffer->unbind();

@@ -21,7 +21,7 @@ namespace Everest {
         bool operator ==(Entity& other) const {return _id == other._id && _scene == other._scene;}
         bool operator !=(Entity& other) const {return !(*this == other);}
 
-        inline bool isValid(){return _id != entt::null;}
+        inline bool isValid(){return _id != entt::null && _scene->_registry.valid(_id);}
 
         template<typename... component_t>
         inline bool has(){

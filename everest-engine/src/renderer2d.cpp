@@ -228,6 +228,7 @@ namespace Everest {
             }
         }
         if(tind == 0){
+            if(_data->texCount == Renderer2Ddata::maxTexSlots) flush();
             tind = _data->texCount;
             _data->textures[_data->texCount++] = tex;
             _stats.textureCount++;

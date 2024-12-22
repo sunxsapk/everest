@@ -1,4 +1,5 @@
 #include "propspanel.h"
+#include <filesystem>
 
 
 namespace Everest {
@@ -130,9 +131,28 @@ namespace Everest {
         [](spriteRenderer_c& comp){
             _colorui("Color", comp.color);
             auto& spr = comp.sprite;
-            ImVec2 uv0 = ImVec2(spr.startUV.x, spr.sizeUV.y);
-            ImVec2 uv1 = ImVec2(spr.sizeUV.x, spr.startUV.y);
-            ImGui::Image(spr.texture? spr.texture->getID() : 0, ImVec2(64,64), uv0, uv1);
+
+            ImGui::Text("Texture");
+
+            constexpr f32 isize = 32.f;
+            ImGui::SameLine(0.f, 16.f);
+
+            ImGui::ImageButton("__texture__", spr.texture? spr.texture->getID() : 1,
+                    ImVec2(isize, isize), {spr.startUV.x, spr.sizeUV.y}, {spr.sizeUV.x, spr.startUV.y});
+            if(ImGui::BeginDragDropTarget()){
+                const ImGuiPayload* data = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
+                if(data && data->Data){
+                    const char* path_str = (const char*) data->Data;
+                    try {
+                        spr.texture = createRef<Texture>(path_str); // TODO: make an assets manager that fetched preloaded assets from path
+                    } catch(std::exception exc){
+                        // TODO: make this into a popup
+                        EVLog_Err("Error on loading texture: %s", exc.what());
+                    }
+                }
+                
+                ImGui::EndDragDropTarget();
+            }
         });
 
         if(ent.has<nativeScript_c>()) _componentUI<nativeScript_c>(ent, "Native Script",

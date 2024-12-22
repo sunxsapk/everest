@@ -1,3 +1,4 @@
+#include <filesystem>
 #include "scenepanel.h"
 #include "gizmos.h"
 #include "sceneheirarchy.h"
@@ -40,9 +41,27 @@ namespace Everest {
 
         ImGui::Image(sceneRender->getColorAttachment(0),
                 ImVec2(_sceneViewPortSize.x, _sceneViewPortSize.y), uv0, uv1);
+
+        if(ImGui::BeginDragDropTarget()){
+            const ImGuiPayload* data = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
+            if(data != nullptr && data->Data != nullptr){
+                const char* path_str = (const char*) data->Data;
+                std::filesystem::path path(path_str);
+                if(path.extension() == ".everest"){
+                    try {
+                        SceneManager::loadScene(path_str);
+                    } catch(YAML::Exception exc){
+                        // TODO: make this into a popup
+                        EVLog_Err("Error on loading scene: %s", exc.what());
+                    }
+                }
+            }
+            ImGui::EndDragDropTarget();
+        }
+
         auto off = ImGui::GetItemRectMin();
         _sceneOffset = {off.x, off.y};
-        _focused = ImGui::IsWindowFocused();
+        _focused = ImGui::IsWindowFocused() || ImGui::IsWindowHovered();
 
         return needResize;
     }
@@ -148,8 +167,8 @@ namespace Everest {
     }
 
     void ScenePanel::mousePickCheck(ref<Framebuffer>& sceneRenderBuffer){
-        if(!Input::mouseButtonDown(MouseButton_0)) return;
-        if(Gizmos::isUsing() && SceneHeirarchyUI::getSelectedEntity().isValid()) return;
+        if(!ImGui::IsMouseClicked(ImGuiMouseButton_Left)) return;
+        if(SceneHeirarchyUI::getSelectedEntity().isValid()) return;
 
         ivec2 mp = Input::mousePosition() - ScenePanel::getSceneOffset();
         mp.y = ScenePanel::getSceneViewportSize().y - mp.y;

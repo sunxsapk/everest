@@ -25,6 +25,8 @@ namespace Everest {
         glBindTexture(GL_TEXTURE_2D, _id);
         glTexImage2D(GL_TEXTURE_2D, 0, _format, _size.x, _size.y, 0,
                 _format, GL_UNSIGNED_BYTE, data);
+        
+        EVLog_Msg("Texture : %d", _id);
     }
 
     Texture::Texture(const char* filepath, TextureWrapMode wrap, TextureFilter filter)
