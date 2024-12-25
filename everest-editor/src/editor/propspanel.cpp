@@ -1,5 +1,4 @@
 #include "propspanel.h"
-#include <filesystem>
 
 
 namespace Everest {
@@ -32,8 +31,8 @@ namespace Everest {
         }
 
         if(ImGui::BeginPopup("_add_component_")){
-            if(ImGui::MenuItem("Camera")) ent.add<camera_c>();
-            if(ImGui::MenuItem("Sprite Renderer")) ent.add<spriteRenderer_c>();
+            if(ImGui::MenuItem("Camera")) ent.tryAdd<camera_c>();
+            if(ImGui::MenuItem("Sprite Renderer")) ent.tryAdd<spriteRenderer_c>();
 
             ImGui::EndPopup();
         }
@@ -134,25 +133,29 @@ namespace Everest {
 
             ImGui::Text("Texture");
 
-            constexpr f32 isize = 32.f;
+            constexpr f32 isize = 64.f;
             ImGui::SameLine(0.f, 16.f);
 
+            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
             ImGui::ImageButton("__texture__", spr.texture? spr.texture->getID() : 1,
                     ImVec2(isize, isize), {spr.startUV.x, spr.sizeUV.y}, {spr.sizeUV.x, spr.startUV.y});
             if(ImGui::BeginDragDropTarget()){
                 const ImGuiPayload* data = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
                 if(data && data->Data){
                     const char* path_str = (const char*) data->Data;
-                    try {
-                        spr.texture = createRef<Texture>(path_str); // TODO: make an assets manager that fetched preloaded assets from path
-                    } catch(std::exception exc){
-                        // TODO: make this into a popup
-                        EVLog_Err("Error on loading texture: %s", exc.what());
+                    if(AssetsManager::getAssetsType(path_str) == AssetsType::TEXTURE){
+                        try {
+                            spr.texture = AssetsManager::loadTexture(path_str);
+                        } catch(std::exception exc){
+                            // TODO: make this into a popup
+                            EVLog_Err("Error on loading texture: %s", exc.what());
+                        }
                     }
                 }
                 
                 ImGui::EndDragDropTarget();
             }
+            ImGui::PopStyleColor();
         });
 
         if(ent.has<nativeScript_c>()) _componentUI<nativeScript_c>(ent, "Native Script",

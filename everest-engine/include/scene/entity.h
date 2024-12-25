@@ -34,6 +34,12 @@ namespace Everest {
             return _scene->_registry.emplace<component_t>(_id, std::forward<args_t>(args)...);
         }
 
+        template<typename component_t, typename... args_t>
+        inline component_t& tryAdd(args_t&&... args){
+            if(has<component_t>()) return get<component_t>();
+            return _scene->_registry.emplace<component_t>(_id, std::forward<args_t>(args)...);
+        }
+
         template<typename component_t>
         inline component_t& get(){
             ASSERT(has<component_t>(), "Entity does not have the component");

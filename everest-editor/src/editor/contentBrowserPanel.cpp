@@ -10,7 +10,8 @@ namespace Everest {
         _instance->assetsDir = "assets";
         _instance->curDir = _instance->assetsDir;
 
-        SpriteSheet icons("assets/sprites/icons.png", {128, 128});
+        ref<Texture> icontex = AssetsManager::loadTexture("assets/sprites/icons.png");
+        SpriteSheet icons(icontex, {128, 128});
         _instance->i_directory = icons.getSprite({0, 7}, {1, 1});
         _instance->i_file = icons.getSprite({1, 7}, {1, 1});
         _instance->i_scene = icons.getSprite({2, 7}, {1, 1});
@@ -50,7 +51,7 @@ namespace Everest {
             std::string filename = path.filename().string();
 
             ImGui::PushID(filename.c_str());
-            Sprite& icon = _getIconForEntry(entry);
+            Sprite icon = _getIconForEntry(entry);
 
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
             ImGui::ImageButton("", icon.texture->getID(), {iconSize, iconSize},
@@ -62,14 +63,14 @@ namespace Everest {
 				ImGui::EndDragDropSource();
 			}
 
-            // TODO: drag and drop
             ImGui::PopStyleColor();
 
             if( ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)){
                 if(entry.is_directory()) _instance->curDir = path;
                 else if(path.extension() == ".everest"){
                     try {
-                        SceneManager::loadScene(path.c_str());
+                        ref<Scene> sc = AssetsManager::loadScene(path);
+                        SceneManager::activateScene(sc);
                     } catch(YAML::Exception exc){
                         // TODO: make this into a popup
                         EVLog_Err("Error on loading scene: %s", exc.what());
@@ -84,10 +85,14 @@ namespace Everest {
         ImGui::End();
     }
 
-    Sprite& ContentBrowser::_getIconForEntry(const std::filesystem::directory_entry& entry){
+    Sprite ContentBrowser::_getIconForEntry(const std::filesystem::directory_entry& entry){
         if(entry.is_directory()) return _instance->i_directory;
         std::filesystem::path path = entry.path();
         if(path.extension() == ".everest") return _instance->i_scene;
+        if(AssetsManager::getAssetsType(path) == AssetsType::TEXTURE){
+            Sprite spr{AssetsManager::loadTexture(path)};
+            return spr;
+        }
         return _instance->i_file;
     }
 

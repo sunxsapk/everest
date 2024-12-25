@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "core/utils.h"
 #include "scene.h"
 
 namespace Everest {
@@ -20,11 +21,14 @@ namespace Everest {
 
             static inline void onSceneChanged(sceneChangeCallback_t callback){
                 _instance->sceneChangecb = callback;}
+
             static inline ref<Scene> createScene(const char* name = "Untitled Scene"){
                 return createRef<Scene>(name); }
+
             static inline void activateScene(ref<Scene>& scene){
                 _instance->activeScene = scene;
                 if(_instance->sceneChangecb) _instance->sceneChangecb(_instance->activeScene);}
+
             static inline ref<Scene> createAndActivateScene(const char* name = "Untitled Scene"){
                 _instance->activeScene = createScene(name);
                 if(_instance->sceneChangecb) _instance->sceneChangecb(_instance->activeScene);
@@ -34,7 +38,6 @@ namespace Everest {
 
             static bool loadScene(const char* filepath);
             static void saveScene(const char* filepath);
-
 
         private:
             ref<Scene> activeScene;

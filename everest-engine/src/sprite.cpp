@@ -4,7 +4,7 @@ namespace Everest {
     SpriteSheet::SpriteSheet(const char* filepath, uvec2 unitSize)
     :_texture(createRef<Texture>(filepath)), _unitSize(unitSize){ }
 
-    SpriteSheet::SpriteSheet(ref<Texture> sourceTexture, uvec2 unitSize)
+    SpriteSheet::SpriteSheet(ref<Texture>& sourceTexture, uvec2 unitSize)
     :_texture(sourceTexture), _unitSize(unitSize){
     }
 

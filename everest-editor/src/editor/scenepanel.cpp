@@ -49,7 +49,8 @@ namespace Everest {
                 std::filesystem::path path(path_str);
                 if(path.extension() == ".everest"){
                     try {
-                        SceneManager::loadScene(path_str);
+                        ref<Scene> sc = AssetsManager::loadScene(path);
+                        SceneManager::activateScene(sc);
                     } catch(YAML::Exception exc){
                         // TODO: make this into a popup
                         EVLog_Err("Error on loading scene: %s", exc.what());
@@ -168,7 +169,8 @@ namespace Everest {
 
     void ScenePanel::mousePickCheck(ref<Framebuffer>& sceneRenderBuffer){
         if(!ImGui::IsMouseClicked(ImGuiMouseButton_Left)) return;
-        if(SceneHeirarchyUI::getSelectedEntity().isValid()) return;
+        if(ImGuizmo::IsUsing()) return;
+        //if(SceneHeirarchyUI::getSelectedEntity().isValid()) return;
 
         ivec2 mp = Input::mousePosition() - ScenePanel::getSceneOffset();
         mp.y = ScenePanel::getSceneViewportSize().y - mp.y;

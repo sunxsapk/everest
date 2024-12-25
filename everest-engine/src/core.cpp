@@ -7,6 +7,7 @@
 #include "core/uifontmanager.h"
 #include "math/random.h"
 #include "scene/scenemanager.h"
+#include "utils/assetsManager.h"
 
 namespace Everest {
     void Core::initDependencies(){
@@ -52,6 +53,7 @@ namespace Everest {
         Renderer::init();
         Time::init();
         UIFontManager::init();
+        AssetsManager::init();
         SceneManager::init();
 
         Random::init();
@@ -63,6 +65,7 @@ namespace Everest {
         Time::quit();
         Renderer::quit();
         UIFontManager::quit();
+        AssetsManager::quit();
         EVLog_Msg("Core quit");
 
         ImGui_ImplOpenGL3_Shutdown();

@@ -80,7 +80,7 @@ namespace Everest {
 
         if(ImGuizmo::IsUsing()){
             Math::decomposeTransform(transform, tmat);
-        } else if(ScenePanel::isFocused()) {
+        } else if(ScenePanel::isFocused() && Input::mouseButtonUp(MouseButton_1)) {
             if(Input::getKeyDown(K_w)){
                 Gizmos::operation = ImGuizmo::TRANSLATE;
             } else if(Input::getKeyDown(K_e)){

@@ -85,6 +85,12 @@ namespace Everest {
 
     void EditorCamera::mouseControls_2d(){
         vec3 mdel(0);
+
+        if(Input::mouseScrollY()){
+            f32 mulfct = Input::mouseScrollY() * scrollSensitivity * Time::getUnscaledDeltatime();
+            camera.setOrtho_size(camera.getOrtho_size() * (1.f - mulfct));
+        }
+
         if(_mouseHeld){
             mdel.x = _mouseLastPos.x - Input::mousePositionX();
             mdel.y = Input::mousePositionY() - _mouseLastPos.y;
@@ -98,9 +104,6 @@ namespace Everest {
 
         mdel *= camera.getOrtho_size() * mouseSensitivity * Time::getUnscaledDeltatime();
         transform.position += mdel;
-
-        f32 mulfct = Input::mouseScrollY() * scrollSensitivity * Time::getUnscaledDeltatime();
-        camera.setOrtho_size(camera.getOrtho_size() * (1.f - mulfct));
     }
 
     void EditorCamera::cam2d_ctrls(){

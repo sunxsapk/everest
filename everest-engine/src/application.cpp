@@ -91,6 +91,7 @@ namespace Everest {
                 this->guilayer->end();
             }
 
+            Input::clearScrollPoll();
             this->_window->update();
             Time::tick();
         }

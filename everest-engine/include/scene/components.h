@@ -33,7 +33,7 @@ namespace Everest {
 
     struct spriteRenderer_c{
         vec4 color{1.f}; 
-        Sprite sprite;
+        Sprite sprite; // TODO: single and multiple
     };
 
     struct camera_c {

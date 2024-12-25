@@ -29,7 +29,7 @@ namespace Everest {
             SpriteSheet(const char* sourcePath, uvec2 unitSize);
             /* creates a spritesheet from given source texture, with sprite unit-
              * size of "unitSize" */
-            SpriteSheet(ref<Texture> sourceTexture, uvec2 unitSize);
+            SpriteSheet(ref<Texture>& sourceTexture, uvec2 unitSize);
 
             /* takes the coordinate of bottom left corner and size of sprite in 
              * sprite atlas unit, and returns the uv coordinate in the form :

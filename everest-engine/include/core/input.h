@@ -31,7 +31,7 @@ namespace Everest {
             }
 
             static inline void update(){
-                s_scroll = {0,0};
+                //s_scroll = {0,0};
                 dvec2 mp;
                 glfwGetCursorPos(s_window, &mp.x, &mp.y);
                 s_mousePosition = glm::round(mp);
@@ -42,17 +42,20 @@ namespace Everest {
                     - (getKeyDown(InputAxisKeys::vertical_n) | getKeyDown(InputAxisKeys::vertical_an));
             }
 
+            static inline void clearScrollPoll(){
+                s_scroll = {0,0};}
+
             /*sets key-input mode to sticky*/
-            static void setStickyKeys(bool mode){
+            static inline void setStickyKeys(bool mode){
                 glfwSetInputMode(s_window, GLFW_STICKY_KEYS, mode); }
             /*returns true if the key is currently pressed down*/
-            static bool getKeyDown(Keycode keycode){
+            static inline bool getKeyDown(Keycode keycode){
                 return glfwGetKey(s_window, keycode) == GLFW_PRESS;}
             /*returns true if the pressed key is released*/
-            static bool getKeyUp(Keycode keycode){
+            static inline bool getKeyUp(Keycode keycode){
                 return glfwGetKey(s_window, keycode) == GLFW_RELEASE;}
             /*returns true if the key is held down*/
-            static bool getKeyRepeat(Keycode keycode){
+            static inline bool getKeyRepeat(Keycode keycode){
                 return glfwGetKey(s_window, keycode) == GLFW_REPEAT;}
             
             /*returns the input axis values*/

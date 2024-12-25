@@ -2,13 +2,13 @@ scene: Untitled
 entities:
   - entity: 2
     tag_c:
-      tag: Top
+      tag: Front
     transform_c:
-      position: [0, 0.5, 0]
-      rotation: [90, 45, 0]
+      position: [-0.34679416, 0, 0.3467944]
+      rotation: [0, -45.000004, 0]
       scale: [1, 1, 1]
     spriteRenderer_c:
-      color: [0.019607844, 0.7882353, 0.19607843, 1]
+      color: [0.8607595, 0.8607595, 0.8607595, 1]
   - entity: 1
     tag_c:
       tag: Right
@@ -17,13 +17,13 @@ entities:
       rotation: [0, 45.000004, 0]
       scale: [1, 1, 1]
     spriteRenderer_c:
-      color: [0.039025083, 0.5780591, 0.18913569, 1]
+      color: [0.79746836, 0.79746836, 0.79746836, 1]
   - entity: 0
     tag_c:
-      tag: Front
+      tag: Top
     transform_c:
-      position: [-0.34679416, 0, 0.3467944]
-      rotation: [0, -45.000004, 0]
+      position: [0, 0.5, 0]
+      rotation: [90, 45, 0]
       scale: [1, 1, 1]
     spriteRenderer_c:
-      color: [0.133579, 0.5189873, 0.23188151, 1]
+      color: [0.92043656, 0.92827004, 0.9222351, 1]
