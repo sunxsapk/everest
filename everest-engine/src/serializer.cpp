@@ -1,6 +1,24 @@
 #include "scene/serializer.h"
+#include "utils/assetsManager.h"
 
 namespace YAML {
+    template<>
+    struct convert<Everest::vec2> {
+        static Node encode(const Everest::vec2& rhs){
+            Node node;
+            node.push_back(rhs.x);
+            node.push_back(rhs.y);
+            return node;
+        }
+
+        static bool decode(const Node& node, Everest::vec2& rhs){
+            if(!node.IsSequence() || node.size() != 2) return false;
+            rhs.x = node[0].as<f32>();
+            rhs.y = node[1].as<f32>();
+            return true;
+        }
+    };
+
     template<>
     struct convert<Everest::vec3> {
         static Node encode(const Everest::vec3& rhs){
@@ -146,13 +164,27 @@ namespace Everest {
 
             auto spriteRenderer = entity["spriteRenderer_c"];
             if(spriteRenderer){
+                auto txpath = spriteRenderer["texturePath"];
                 auto& spr = n_ent.add<spriteRenderer_c>(spriteRenderer_c{
-                        .color = spriteRenderer["color"].as<vec4>()
+                        .color = spriteRenderer["color"].as<vec4>(),
+                        .sprite = {
+                            .texture = txpath ?
+                                AssetsManager::loadTexture(txpath.as<std::string>().c_str()) :
+                                nullptr,
+                            .startUV = spriteRenderer["startUV"].as<vec2>(),
+                            .sizeUV = spriteRenderer["sizeUV"].as<vec2>(),
+                        }
                     });
             }
         }
 
         return true;
+    }
+
+    YAML::Emitter& operator<<(YAML::Emitter& out, const vec2& v){
+        out << YAML::Flow;
+        out << YAML::BeginSeq << v.x << v.y << YAML::EndSeq;
+        return out;
     }
 
     YAML::Emitter& operator<<(YAML::Emitter& out, const vec3& v){
@@ -225,6 +257,10 @@ namespace Everest {
         out << BeginMap;
 
         out << Key << "color" << Value << spriteRenderer.color;
+        out << Key << "startUV" << Value << spriteRenderer.sprite.startUV;
+        out << Key << "sizeUV" << Value << spriteRenderer.sprite.sizeUV;
+        const ref<Texture>& tx = spriteRenderer.sprite.texture;
+        if(tx != nullptr) out << Key << "texturePath" << Value << tx->getPath();
 
         out << EndMap;
         return out;

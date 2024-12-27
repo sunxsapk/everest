@@ -139,7 +139,7 @@ namespace Everest {
         _stats.vertexCount += 4;
     }
 
-    void Renderer2D::drawSprite(Sprite sprite, vec3 position, vec2 scale, f32 rotation,
+    void Renderer2D::drawSprite(const Sprite& sprite, vec3 position, vec2 scale, f32 rotation,
             vec4 color
 #ifdef EDITOR_BUILD
             , i32 id
@@ -178,7 +178,7 @@ namespace Everest {
         _stats.vertexCount += 4;
     }
 
-    void Renderer2D::drawSprite(mat4 transform, Sprite sprite, vec4 color
+    void Renderer2D::drawSprite(mat4 transform, const Sprite& sprite, vec4 color
 #ifdef EDITOR_BUILD
             , i32 id
 #endif

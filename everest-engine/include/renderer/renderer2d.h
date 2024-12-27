@@ -81,12 +81,12 @@ namespace Everest {
 
             static void drawQuad(const QuadProps& props);
 
-            static void drawSprite(mat4 transform, Sprite sprite, vec4 color
+            static void drawSprite(mat4 transform, const Sprite& sprite, vec4 color
 #ifdef EDITOR_BUILD
                     , i32 id = 0
 #endif
                     );
-            static void drawSprite(Sprite sprite, vec3 position, vec2 scale = vec2(1.f),
+            static void drawSprite(const Sprite& sprite, vec3 position, vec2 scale = vec2(1.f),
                     f32 rotation = 0.f, vec4 color=vec4(1.f)
 #ifdef EDITOR_BUILD
                     , i32 id = 0

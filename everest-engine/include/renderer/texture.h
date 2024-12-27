@@ -48,6 +48,7 @@ namespace Everest {
             inline u32 getWidth(){return _size.x;}
             inline u32 getHeight(){return _size.y;}
             inline uvec2 getSize(){return _size;}
+            inline std::string getPath(){return _path;}
 
 
             void setData(void* data ,u32 size);
