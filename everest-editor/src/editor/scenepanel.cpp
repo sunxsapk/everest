@@ -2,6 +2,7 @@
 #include "scenepanel.h"
 #include "gizmos.h"
 #include "sceneheirarchy.h"
+#include "editorAssets.h"
 
 
 namespace Everest {
@@ -10,6 +11,7 @@ namespace Everest {
     uvec2 ScenePanel::_sceneViewPortSize = {1280, 720};
     bool ScenePanel::_focused = false;
     vec4 ScenePanel::sceneBackgroundColor = {.2f, .2f, .2f, 1.f};
+    SceneState ScenePanel::_sceneState = SceneState::EDIT;
 
     void ScenePanel::onGUIrender(ref<Framebuffer>& sceneRender, EditorCamera& sceneCamera){
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -22,7 +24,7 @@ namespace Everest {
             auto _activeScene = SceneManager::getActiveScene();
             if(_activeScene) _activeScene->onViewportResize(_sceneViewPortSize);
         }
-        Gizmos::renderTransformationGizmo(sceneCamera);
+        if(_sceneState == SceneState::EDIT) Gizmos::renderTransformationGizmo(sceneCamera);
 
         ImGui::End();
         ImGui::PopStyleVar();
@@ -69,6 +71,26 @@ namespace Everest {
 
     void ScenePanel::sceneSettings(EditorCamera& sceneCamera){
         Camera& cam = sceneCamera.camera;
+        ImGui::Spacing();
+        ImGui::PushStyleColor(ImGuiCol_Button, {0,0,0,0});
+
+        f32 size = 24.f;
+        ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+        Sprite& icon = EditorAssets::getIcon(_sceneState == SceneState::EDIT? IconType::PLAY : IconType::STOP);
+        if(ImGui::ImageButton("##play", icon.texture->getID(), {size, size}, 
+                    {icon.startUV.x, icon.sizeUV.y}, {icon.sizeUV.x, icon.startUV.y})){
+            if(_sceneState == SceneState::EDIT) onScenePlay();
+            else onSceneEdit();
+        }
+
+        ImGui::PopStyleColor();
+
+        ImVec2 secondRowStart = ImGui::GetCursorScreenPos();
+        ImGui::GetWindowDrawList()->AddRectFilled(
+            secondRowStart,
+            ImVec2(secondRowStart.x + ImGui::GetWindowWidth(), secondRowStart.y + 36),
+            IM_COL32(32, 32, 32, 255)
+        );
         ImGui::Spacing();
 
         bool is2D = cam.getType() == CameraType::Orthographic;
@@ -126,9 +148,9 @@ namespace Everest {
         }
         ImGui::SameLine();
         gizmosSettings();
-        vec3 dbgv(Input::mousePosition() - getSceneOffset(), 0.f);
-        ImGui::SameLine();
-        ImGui::Text("%.2f, %.2f, %.2f", dbgv.x, dbgv.y, dbgv.z);
+        //vec3 dbgv(Input::mousePosition() - getSceneOffset(), 0.f);
+        //ImGui::SameLine();
+        //ImGui::Text("%.2f, %.2f, %.2f", dbgv.x, dbgv.y, dbgv.z);
     }
 
     void ScenePanel::gizmosSettings(){
@@ -182,4 +204,12 @@ namespace Everest {
         }
     }
 
+    void ScenePanel::onSceneEdit(){
+        _sceneState = SceneState::EDIT;
+    }
+
+
+    void ScenePanel::onScenePlay(){
+        _sceneState = SceneState::PLAY;
+    }
 }

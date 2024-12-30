@@ -16,10 +16,16 @@
 
 namespace Everest {
 
+    enum class SceneState {
+        EDIT = 0,
+        PLAY,
+    };
+
     class ScenePanel {
         public:
             static vec4 sceneBackgroundColor;
         public:
+            static void init();
             static void onGUIrender(ref<Framebuffer>& sceneRender, EditorCamera& sceneCamera);
             static inline bool isFocused(){return _focused;}
 
@@ -27,11 +33,17 @@ namespace Everest {
 
             static inline vec2 getSceneOffset(){return _sceneOffset;}
             static inline vec2 getSceneViewportSize(){return _sceneViewPortSize;}
+
+            static inline SceneState getSceneState(){ return _sceneState;}
         private:
             static bool sceneViewport(ref<Framebuffer>& sceneRender);
             static void sceneSettings(EditorCamera& sceneCamera);
             static void gizmosSettings();
+
+            static void onSceneEdit();
+            static void onScenePlay();
         private:
+            static SceneState _sceneState;
             static vec2 _sceneOffset;
             static uvec2 _sceneViewPortSize;
             static bool _focused;

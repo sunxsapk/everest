@@ -7,6 +7,7 @@
 #include "editor/scenepanel.h"
 #include "editor/gizmos.h"
 #include "editor/contentBrowserPanel.h"
+#include "editor/editorAssets.h"
 
 namespace Everest {
 
@@ -28,7 +29,7 @@ namespace Everest {
                 SceneHeirarchyUI::setScene(scene);
             });
         SceneManager::loadScene("assets/scenes/scene.everest");
-        ContentBrowser::init();
+        EditorAssets::init();
         Gizmos::init();
     }
 
@@ -45,16 +46,21 @@ namespace Everest {
         _framebuffer->clearAttachment(1, -1);
         auto _activeScene = SceneManager::getActiveScene();
         if(_activeScene){
-            Renderer2D::beginScene(_camera.camera, _camera.transform);
-            _activeScene->onUpdate();
-            Renderer2D::endScene();
+            switch(ScenePanel::getSceneState()){
+                case SceneState::EDIT:
+                    _activeScene->onEditorRender(_camera.camera, _camera.transform);
+                    //Renderer::disableDepth();
+                    Gizmos::renderGrid(_camera);
+                    //Renderer::enableDepth();
+                    ScenePanel::mousePickCheck(_framebuffer);
+                    break;
+                case SceneState::PLAY:
+                    _activeScene->onUpdate();
+                    _activeScene->onRender();
+                    break;
+            }
         }
-        //Renderer::disableDepth();
-        Gizmos::renderGrid(_camera);
-        //Renderer::enableDepth();
 
-
-        ScenePanel::mousePickCheck(_framebuffer);
         _framebuffer->unbind();
     }
 
@@ -62,7 +68,7 @@ namespace Everest {
         EV_profile_function();
 
         Gizmos::quit();
-        ContentBrowser::quit();
+        EditorAssets::quit();
     }
 
     void EditorLayer::onEvent(Event& event){
@@ -76,7 +82,7 @@ namespace Everest {
         EV_profile_function();
         //ImGui::ShowDemoWindow();
 
-        MenuPanel::onGuiRender();
+        MenuPanel::onGUIRender();
 
         ImGui::DockSpaceOverViewport(0, ImGui::GetMainViewport());
 

@@ -8,7 +8,7 @@ namespace Everest {
 
     class MenuPanel {
         public:
-            static void onGuiRender();
+            static void onGUIRender();
             static bool onKeyShortcuts(KeyDownEvent& event);
 
         private:

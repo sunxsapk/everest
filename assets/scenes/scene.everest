@@ -1,16 +1,41 @@
 scene: Untitled
 entities:
-  - entity: 2
+  - entity: 3
     tag_c:
-      tag: Top
+      tag: Main Camera
     transform_c:
-      position: [0, 0.5, 0]
-      rotation: [90, 45, 0]
-      scale: [1, 1, 1]
+      position: [-2.0437114, 0.8254473, 1.7934625]
+      rotation: [-10.416037, -50.06587, 1.7102449]
+      scale: [0.9999887, 0.999993, 0.99999833]
+    camera_c:
+      fixedAspect: false
+      type: 1
+      perspective_d:
+        fov: 60
+        aspect: 1.828
+        near: 0.01
+        far: 1000
+      orthographic_d:
+        size: 4
+        aspect: 1
+        near: -100
+        far: 100
     spriteRenderer_c:
-      color: [0.92043656, 0.92827004, 0.9222351, 1]
+      color: [0.31049156, 0.60587496, 0.67510545, 1]
       startUV: [0, 0]
       sizeUV: [1, 1]
+  - entity: 2
+    tag_c:
+      tag: Front
+    transform_c:
+      position: [-0.34679416, 0, 0.3467944]
+      rotation: [0, -45.000004, 0]
+      scale: [1, 1, 1]
+    spriteRenderer_c:
+      color: [0.8607595, 0.8607595, 0.8607595, 1]
+      startUV: [0, 0]
+      sizeUV: [1, 1]
+      texturePath: assets/sprites/farm.png
   - entity: 1
     tag_c:
       tag: Right
@@ -25,13 +50,12 @@ entities:
       texturePath: assets/sprites/icons.png
   - entity: 0
     tag_c:
-      tag: Front
+      tag: Top
     transform_c:
-      position: [-0.34679416, 0, 0.3467944]
-      rotation: [0, -45.000004, 0]
+      position: [0, 0.5, 0]
+      rotation: [90, 45, 0]
       scale: [1, 1, 1]
     spriteRenderer_c:
-      color: [0.8607595, 0.8607595, 0.8607595, 1]
+      color: [0.92043656, 0.92827004, 0.9222351, 1]
       startUV: [0, 0]
       sizeUV: [1, 1]
-      texturePath: assets/sprites/farm.png

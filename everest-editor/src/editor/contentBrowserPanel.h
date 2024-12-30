@@ -15,17 +15,12 @@ namespace Everest {
     class ContentBrowser {
         public:
 
-            static void init();
             static void onGUIrender();
-            static void quit();
 
         private:
-            std::filesystem::path curDir, assetsDir;
-            Sprite i_directory, i_file, i_scene;
+            static std::filesystem::path curDir, assetsDir;
 
             static Sprite _getIconForEntry(const std::filesystem::directory_entry& entry);
-        private:
-            static ContentBrowser* _instance;
 
     };
 

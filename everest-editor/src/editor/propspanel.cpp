@@ -133,7 +133,7 @@ namespace Everest {
 
             ImGui::Text("Texture");
 
-            constexpr f32 isize = 64.f;
+            constexpr f32 isize = 128.f;
             ImGui::SameLine(0.f, 16.f);
 
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));

@@ -27,13 +27,13 @@ namespace Everest {
         else return AssetsType::NONE;
     }
 
-    ref<Texture> AssetsManager::loadTexture(std::filesystem::path path){
+    ref<Texture>& AssetsManager::loadTexture(std::filesystem::path path){
         if(_instance->textures.find(path) != _instance->textures.end()) return _instance->textures[path];
         _instance->textures[path] = createRef<Texture>(path.c_str());
         return _instance->textures[path];
     }
 
-    ref<Scene> AssetsManager::loadScene(std::filesystem::path path){
+    ref<Scene>& AssetsManager::loadScene(std::filesystem::path path){
         if(_instance->scenes.find(path) != _instance->scenes.end()) return _instance->scenes[path];
         ref<Scene> scene = createRef<Scene>();
         SceneSerializer::setSerializationContext(scene.get());

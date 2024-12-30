@@ -1,31 +1,16 @@
 #include "contentBrowserPanel.h"
+#include "editorAssets.h"
 
 namespace Everest {
 
-    ContentBrowser* ContentBrowser::_instance = nullptr;
-
-    void ContentBrowser::init(){
-        _instance = new ContentBrowser();
-
-        _instance->assetsDir = "assets";
-        _instance->curDir = _instance->assetsDir;
-
-        ref<Texture> icontex = AssetsManager::loadTexture("assets/sprites/icons.png");
-        SpriteSheet icons(icontex, {128, 128});
-        _instance->i_directory = icons.getSprite({0, 7}, {1, 1});
-        _instance->i_file = icons.getSprite({1, 7}, {1, 1});
-        _instance->i_scene = icons.getSprite({2, 7}, {1, 1});
-    }
-
-    void ContentBrowser::quit(){
-        delete _instance;
-    }
+    std::filesystem::path ContentBrowser::curDir = "assets";
+    std::filesystem::path ContentBrowser::assetsDir = "assets";
 
     void ContentBrowser::onGUIrender(){
         ImGui::Begin("Assets");
 
-        if(_instance->curDir != _instance->assetsDir){
-            if(ImGui::Button("Back")) _instance->curDir = _instance->curDir.parent_path();
+        if(curDir != assetsDir){
+            if(ImGui::Button("Back")) curDir = curDir.parent_path();
         } else {
             ImGui::Spacing();
         }
@@ -46,7 +31,7 @@ namespace Everest {
 
         ImGui::Columns(cols, nullptr, false);
 
-        for(const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(_instance->curDir)){
+        for(const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(curDir)){
             std::filesystem::path path = entry.path();
             std::string filename = path.filename().string();
 
@@ -66,7 +51,7 @@ namespace Everest {
             ImGui::PopStyleColor();
 
             if( ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)){
-                if(entry.is_directory()) _instance->curDir = path;
+                if(entry.is_directory()) curDir = path;
                 else if(path.extension() == ".everest"){
                     try {
                         ref<Scene> sc = AssetsManager::loadScene(path);
@@ -86,14 +71,13 @@ namespace Everest {
     }
 
     Sprite ContentBrowser::_getIconForEntry(const std::filesystem::directory_entry& entry){
-        if(entry.is_directory()) return _instance->i_directory;
+        if(entry.is_directory()) return EditorAssets::getIcon(IconType::DIRECTORY);
         std::filesystem::path path = entry.path();
-        if(path.extension() == ".everest") return _instance->i_scene;
+        if(path.extension() == ".everest") return EditorAssets::getIcon(IconType::SCENE);
         if(AssetsManager::getAssetsType(path) == AssetsType::TEXTURE){
-            Sprite spr{AssetsManager::loadTexture(path)};
-            return spr;
+            return {AssetsManager::loadTexture(path)};
         }
-        return _instance->i_file;
+        return EditorAssets::getIcon(IconType::FILE);
     }
 
 }

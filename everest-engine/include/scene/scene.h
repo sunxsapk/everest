@@ -8,6 +8,7 @@
 
 #include <entt.hpp>
 #include "math/types.h"
+#include "scene/camera.h"
 
 namespace Everest {
 
@@ -21,6 +22,8 @@ namespace Everest {
             Entity createEntity(const char * name = "Entity");
             void destroyEntity(Entity& entity);
 
+            void onRender();
+            void onEditorRender(Camera& camera, mat4 transform);
             void onUpdate();
             void onViewportResize(uvec2 viewportSize);
 

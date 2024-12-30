@@ -30,12 +30,12 @@ namespace Everest {
             static inline AssetsType getAssetsType(const char* path){
                 return getAssetsType(std::filesystem::path(path));}
 
-            static ref<Texture> loadTexture(std::filesystem::path path);
-            static ref<Scene> loadScene(std::filesystem::path path);
+            static ref<Texture>& loadTexture(std::filesystem::path path);
+            static ref<Scene>& loadScene(std::filesystem::path path);
 
-            static ref<Texture> loadTexture(const char* path){
+            static ref<Texture>& loadTexture(const char* path){
                 return loadTexture(std::filesystem::path(path));}
-            static ref<Scene> loadScene(const char* path){
+            static ref<Scene>& loadScene(const char* path){
                 return loadScene(std::filesystem::path(path));}
         private:
             std::unordered_map<std::filesystem::path, ref<Texture>> textures;

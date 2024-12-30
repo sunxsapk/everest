@@ -2,7 +2,7 @@
 
 namespace Everest {
 
-    void MenuPanel::onGuiRender(){
+    void MenuPanel::onGUIRender(){
         if(ImGui::BeginMainMenuBar()) {
             fileMenu();
             editMenu();
