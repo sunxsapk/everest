@@ -7,16 +7,27 @@ namespace Everest {
 
     Scene::Scene(const char* name): _name(name){
         EV_profile_function();
+    }
 
+    Scene::Scene(std::string name): _name(name){
+        EV_profile_function();
     }
 
     Entity Scene::createEntity(const char* name){
+        EV_profile_function();
+
+        return createEntityUUID(UUID(), name);
+    }
+
+
+    Entity Scene::createEntityUUID(UUID id, const char * name){
         EV_profile_function();
 
 
 
         Entity _en = {_registry.create(), this};
         _en.add<transform_c>();
+        _en.add<id_c>(id);
         _en.add<tag_c>(name);
         return _en;
     }
@@ -46,12 +57,13 @@ namespace Everest {
         Camera* mainCamera = nullptr;
         transform_c* camTransform = nullptr;
 
-        auto camgrp = _registry.group<camera_c>(entt::get<tag_c, transform_c>);
+        auto camgrp = _registry.group<camera_c>(entt::get<transform_c>);
         for (auto ent: camgrp){
-            auto [cam, tag, tfr] = camgrp.get(ent);
-            if(tag.tag.compare("Main Camera") == 0){
+            auto [cam, tfr] = camgrp.get(ent);
+            if(cam.isPrimary){
                 mainCamera = &cam.camera;
                 camTransform = &tfr;
+                break;
             }
         }
 
@@ -116,9 +128,38 @@ namespace Everest {
         for(auto ent : cams){
             auto& cam = cams->get(ent);
             if(!cam.fixedAspect){
-                if(cam.camera.getType() == Orthographic) cam.camera.setOrtho_aspect(aspect);
-                else cam.camera.setPersp_aspect(aspect);
+                cam.camera.setOrtho_aspect(aspect);
+                cam.camera.setPersp_aspect(aspect);
             }
         }
+    }
+
+    template<typename Comp>
+    void copyComponent(entt::registry& src, entt::entity srcID, entt::registry& dest, entt::entity destID){
+        if(src.all_of<Comp>(srcID)){
+            Comp& sc = src.get<Comp>(srcID);
+            Comp& dc = dest.all_of<Comp>(destID) ?
+                dest.get<Comp>(destID) : dest.emplace<Comp>(destID);
+            dc = sc;
+        }
+    }
+
+    ref<Scene> Scene::copy(ref<Scene>& other){
+        ref<Scene> newScene = createRef<Scene>(other->_name);
+        newScene->_viewportSize = other->_viewportSize;
+
+        entt::registry& srcReg = other->_registry;
+        entt::registry& desReg = newScene->_registry;
+
+        auto idv = srcReg.view<id_c>();
+        for(auto e : idv){
+            entt::entity id = newScene->createEntityUUID(srcReg.get<id_c>(e).id, srcReg.get<tag_c>(e).tag.c_str());
+            // TODO: copy each components into the entity in new Scene
+            copyComponent<transform_c>(srcReg, e, desReg, id);
+            copyComponent<spriteRenderer_c>(srcReg, e, desReg, id);
+            copyComponent<camera_c>(srcReg, e, desReg, id);
+        }
+
+        return newScene;
     }
 }

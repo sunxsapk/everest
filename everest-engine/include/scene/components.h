@@ -8,8 +8,15 @@
 #include "camera.h"
 #include "renderer/sprite.h"
 #include "scriptable.h"
+#include "utils/uuid.h"
 
 namespace Everest {
+
+    struct id_c {
+        UUID id;
+
+        operator u64() const {return id;}
+    };
 
     struct tag_c {
         std::string tag;
@@ -38,6 +45,7 @@ namespace Everest {
 
     struct camera_c {
         Camera camera;
+        bool isPrimary = false;
         bool fixedAspect = false;
 
         operator Camera&(){return camera;}

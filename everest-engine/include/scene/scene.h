@@ -7,8 +7,10 @@
 #pragma once
 
 #include <entt.hpp>
+#include "core/utils.h"
 #include "math/types.h"
 #include "scene/camera.h"
+#include "utils/uuid.h"
 
 namespace Everest {
 
@@ -17,15 +19,19 @@ namespace Everest {
         public:
             Scene() = default;
             Scene(const char* name);
+            Scene(std::string name);
             ~Scene();
 
             Entity createEntity(const char * name = "Entity");
+            Entity createEntityUUID(UUID id, const char * name = "Entity");
             void destroyEntity(Entity& entity);
 
             void onRender();
             void onEditorRender(Camera& camera, mat4 transform);
             void onUpdate();
             void onViewportResize(uvec2 viewportSize);
+
+            static ref<Scene> copy(ref<Scene>& other);
 
         private:
             entt::registry _registry;

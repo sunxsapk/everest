@@ -1,4 +1,5 @@
 #include "propspanel.h"
+#include "scenepanel.h"
 
 
 namespace Everest {
@@ -31,7 +32,13 @@ namespace Everest {
         }
 
         if(ImGui::BeginPopup("_add_component_")){
-            if(ImGui::MenuItem("Camera")) ent.tryAdd<camera_c>();
+            if(ImGui::MenuItem("Camera")) {
+                camera_c& cam = ent.tryAdd<camera_c>();
+                vec2 viewportSize = ScenePanel::getSceneViewportSize();
+                f32 aspect = (float)viewportSize.x / viewportSize.y;
+                cam.camera.setOrtho_aspect(aspect);
+                cam.camera.setPersp_aspect(aspect);
+            }
             if(ImGui::MenuItem("Sprite Renderer")) ent.tryAdd<spriteRenderer_c>();
 
             ImGui::EndPopup();
@@ -91,6 +98,8 @@ namespace Everest {
                     ImGui::EndCombo();
                 }
 
+                ImGui::Checkbox("Is Primary", &cam_c.isPrimary);
+                ImGui::SameLine();
                 ImGui::Checkbox("Fixed Aspect Ratio", &cam_c.fixedAspect);
             }
 

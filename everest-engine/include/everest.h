@@ -20,6 +20,7 @@
 #include "core/utils.h"
 #include "core/uifontmanager.h"
 #include "utils/assetsManager.h"
+#include "utils/uuid.h"
 
 #include "events/event.h"
 #include "events/keyevent.h"

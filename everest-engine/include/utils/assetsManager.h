@@ -37,6 +37,8 @@ namespace Everest {
                 return loadTexture(std::filesystem::path(path));}
             static ref<Scene>& loadScene(const char* path){
                 return loadScene(std::filesystem::path(path));}
+
+            static inline const char* getScene_ext(){ return scene_ext;}
         private:
             std::unordered_map<std::filesystem::path, ref<Texture>> textures;
             std::unordered_map<std::filesystem::path, ref<Scene>> scenes;

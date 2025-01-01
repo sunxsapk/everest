@@ -19,8 +19,10 @@ will proceed in following sequence :-
 - Serialization
 - Level Format
 - Tools (editor & stuff)
-- Scripting
 - Physics System
+- Scripting
+- Make a game run inside editor completely
+- Standalone game running
 
 =============== Current Activity =============
 
@@ -55,11 +57,9 @@ Now, let's talk about the current milestones of the project:
     of the sprites when resizing the screen. It is okay, if size differs but not
     the shapes. Also add support for texture/sprite atlas.
     ; Components: Orthographic camera, Renderer, Textures, Shaders, Sprite atlas,etc
-    ; Target: Make a non-physics involved game like Snake,
 
-- Develop an Entity Component System before actually going on with scene setup
++ Develop an Entity Component System before actually going on with scene setup
     ; Components: ECS, <Components : Transform, Sprite>
-    ; Target: Make a simple game like space invader or tetris
 
 - Make a scene editor layout and add a simple 2d scene editing and saving mechanism.
     Add gizmo to the scene for ease of editing and some mouse related functionalities
@@ -70,3 +70,12 @@ Now, let's talk about the current milestones of the project:
         position: world space & screen space, Gizmo, UI
     ; Target: Edit and setup a scene for simple 2d game(maybe copy of Predcave)
 
+- Play, Pause and Stop scenes, Reset scenes
+
+- Develop Physics system for 2D setup and pave a way for 3D physics too
+    - Static and Dynamic Rigidbodies
+    - Colliders
+    - Gravity
+    ; Target: Make a simple game like space invader or tetris
+
+- Develop 3D rendering system (mesh load and rendering, materials and shaders)

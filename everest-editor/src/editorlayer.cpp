@@ -27,7 +27,7 @@ namespace Everest {
         _framebuffer = createRef<Framebuffer>(specs);
         SceneManager::onSceneChanged([](ref<Scene>& scene){
                 SceneHeirarchyUI::setScene(scene);
-            });
+        });
         SceneManager::loadScene("assets/scenes/scene.everest");
         EditorAssets::init();
         Gizmos::init();
@@ -44,7 +44,7 @@ namespace Everest {
         Renderer::issue_clear();
 
         _framebuffer->clearAttachment(1, -1);
-        auto _activeScene = SceneManager::getActiveScene();
+        auto _activeScene = ScenePanel::getScene();
         if(_activeScene){
             switch(ScenePanel::getSceneState()){
                 case SceneState::EDIT:

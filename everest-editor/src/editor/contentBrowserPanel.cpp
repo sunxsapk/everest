@@ -1,4 +1,5 @@
 #include "contentBrowserPanel.h"
+#include "scenepanel.h"
 #include "editorAssets.h"
 
 namespace Everest {
@@ -52,8 +53,9 @@ namespace Everest {
 
             if( ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)){
                 if(entry.is_directory()) curDir = path;
-                else if(path.extension() == ".everest"){
+                else if(path.extension() == AssetsManager::getScene_ext()){
                     try {
+                        if(ScenePanel::getSceneState() != SceneState::EDIT) ScenePanel::onSceneStop();
                         ref<Scene> sc = AssetsManager::loadScene(path);
                         SceneManager::activateScene(sc);
                     } catch(YAML::Exception exc){
@@ -73,7 +75,7 @@ namespace Everest {
     Sprite ContentBrowser::_getIconForEntry(const std::filesystem::directory_entry& entry){
         if(entry.is_directory()) return EditorAssets::getIcon(IconType::DIRECTORY);
         std::filesystem::path path = entry.path();
-        if(path.extension() == ".everest") return EditorAssets::getIcon(IconType::SCENE);
+        if(path.extension() == AssetsManager::getScene_ext()) return EditorAssets::getIcon(IconType::SCENE);
         if(AssetsManager::getAssetsType(path) == AssetsType::TEXTURE){
             return {AssetsManager::loadTexture(path)};
         }

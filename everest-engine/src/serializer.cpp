@@ -67,7 +67,7 @@ namespace Everest {
     void serializeEntity(Entity entity, YAML::Emitter& out){
         using namespace YAML;
         out << BeginMap;
-        out << Key << "entity" << Value << (u64)entity;
+        out << Key << "entity" << Value << (u64)entity.get<id_c>();
 
         if(entity.has<tag_c>()){
             out << entity.get<tag_c>();
@@ -125,7 +125,7 @@ namespace Everest {
             auto tag = entity["tag_c"];
             if(tag) name = tag["tag"].as<std::string>();
 
-            Entity n_ent = _scene->createEntity(name.c_str());
+            Entity n_ent = _scene->createEntityUUID(uuid, name.c_str());
 
             auto transform = entity["transform_c"];
             if(transform){
@@ -138,7 +138,8 @@ namespace Everest {
             auto camera = entity["camera_c"];
             if(camera){
                 auto& cam = n_ent.add<camera_c>(camera_c{
-                        .fixedAspect = camera["fixedAspect"].as<bool>()
+                        .isPrimary = camera["isPrimary"]?camera["isPrimary"].as<bool>() : false,
+                        .fixedAspect = camera["fixedAspect"].as<bool>(),
                     });
                 
                 auto ortho = camera["orthographic_d"];
@@ -229,6 +230,7 @@ namespace Everest {
         out << BeginMap;
 
         out << Key << "fixedAspect" << Value << camera.fixedAspect;
+        out << Key << "isPrimary" << Value << camera.isPrimary;
         out << Key << "type" << Value << (u32)camera.camera.getType();
 
         out << Key << "perspective_d";

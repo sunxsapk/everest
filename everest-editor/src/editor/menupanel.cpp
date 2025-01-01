@@ -38,18 +38,20 @@ namespace Everest {
     }
 
     inline void openRecentSeq(){
-        if(ImGui::MenuItem("scene.everest")) sceneOpen("assets/scenes/scene.everest");
+        // TODO: remove or implement it on editor_state_manager type of thing later
+        if(ImGui::MenuItem("scene 1")) sceneOpen("assets/scenes/scene.everest");
         ImGui::EndMenu();
-    }
-
-    inline void saveSeq(){
-        SceneManager::saveScene("assets/scenes/scene.everest");
     }
 
     inline void saveAsSeq(){
         std::string scf = FileDialog::filters("*.everest");
         std::string filename = FileDialog::saveFile(scf.c_str());
         if(!filename.empty()) SceneManager::saveScene(filename.c_str());
+    }
+
+    inline void saveSeq(){
+        if(SceneManager::hasSaveTarget()) SceneManager::saveScene();
+        else saveAsSeq() ;
     }
 
     inline void newSceneSeq(){

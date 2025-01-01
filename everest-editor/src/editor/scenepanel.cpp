@@ -12,6 +12,7 @@ namespace Everest {
     bool ScenePanel::_focused = false;
     vec4 ScenePanel::sceneBackgroundColor = {.2f, .2f, .2f, 1.f};
     SceneState ScenePanel::_sceneState = SceneState::EDIT;
+    ref<Scene> ScenePanel::_runtimeScene = nullptr;
 
     void ScenePanel::onGUIrender(ref<Framebuffer>& sceneRender, EditorCamera& sceneCamera){
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -49,8 +50,9 @@ namespace Everest {
             if(data != nullptr && data->Data != nullptr){
                 const char* path_str = (const char*) data->Data;
                 std::filesystem::path path(path_str);
-                if(path.extension() == ".everest"){
+                if(path.extension() == AssetsManager::getScene_ext()){
                     try {
+                        if(ScenePanel::getSceneState() != SceneState::EDIT) ScenePanel::onSceneStop();
                         ref<Scene> sc = AssetsManager::loadScene(path);
                         SceneManager::activateScene(sc);
                     } catch(YAML::Exception exc){
@@ -80,7 +82,7 @@ namespace Everest {
         if(ImGui::ImageButton("##play", icon.texture->getID(), {size, size}, 
                     {icon.startUV.x, icon.sizeUV.y}, {icon.sizeUV.x, icon.startUV.y})){
             if(_sceneState == SceneState::EDIT) onScenePlay();
-            else onSceneEdit();
+            else onSceneStop();
         }
 
         ImGui::PopStyleColor();
@@ -204,12 +206,21 @@ namespace Everest {
         }
     }
 
-    void ScenePanel::onSceneEdit(){
+    void ScenePanel::onSceneStop(){
         _sceneState = SceneState::EDIT;
+        _runtimeScene.reset();
+        _runtimeScene = nullptr;
+        SceneHeirarchyUI::setScene(getScene());
     }
-
 
     void ScenePanel::onScenePlay(){
         _sceneState = SceneState::PLAY;
+        ref<Scene> rsc = SceneManager::getActiveScene();
+        if(rsc){
+            //_runtimeScene = Scene::copy(rsc).get();
+            ref<Scene> cp = Scene::copy(rsc);
+            _runtimeScene = cp;
+            SceneHeirarchyUI::setScene(_runtimeScene);
+        }
     }
 }

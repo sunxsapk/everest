@@ -1,5 +1,6 @@
 #include "utils/assetsManager.h"
 #include "scene/serializer.h"
+#include "scene/scenemanager.h"
 
 
 namespace Everest {
@@ -34,12 +35,16 @@ namespace Everest {
     }
 
     ref<Scene>& AssetsManager::loadScene(std::filesystem::path path){
-        if(_instance->scenes.find(path) != _instance->scenes.end()) return _instance->scenes[path];
+        if(_instance->scenes.find(path) != _instance->scenes.end()){
+            SceneManager::setSceneTarget(path);
+            return _instance->scenes[path];
+        }
         ref<Scene> scene = createRef<Scene>();
         SceneSerializer::setSerializationContext(scene.get());
         bool _success = SceneSerializer::deserialize(path.c_str());
-        ASSERT(_success, "Unable to load scene");
+        ASSERT(_success, "Unable to load scene"); // TODO: make an exception instead
         _instance->scenes[path] = scene;
+        SceneManager::setSceneTarget(path);
         return _instance->scenes[path];
     }
 
