@@ -100,6 +100,7 @@ namespace Everest {
                     );
         }
 
+        Renderer2D::drawCircle({4,0,0});
         Renderer2D::endScene();
     }
 
@@ -139,7 +140,7 @@ namespace Everest {
         if(src.all_of<Comp>(srcID)){
             Comp& sc = src.get<Comp>(srcID);
             Comp& dc = dest.all_of<Comp>(destID) ?
-                dest.get<Comp>(destID) : dest.emplace<Comp>(destID);
+                dest.get<Comp>(destID) : dest.emplace<Comp>(destID, sc);
             dc = sc;
         }
     }
@@ -152,7 +153,8 @@ namespace Everest {
         entt::registry& desReg = newScene->_registry;
 
         auto idv = srcReg.view<id_c>();
-        for(auto e : idv){
+        for(auto it = idv.rbegin(); it != idv.rend(); ++it){
+            entt::entity e = *it;
             entt::entity id = newScene->createEntityUUID(srcReg.get<id_c>(e).id, srcReg.get<tag_c>(e).tag.c_str());
             // TODO: copy each components into the entity in new Scene
             copyComponent<transform_c>(srcReg, e, desReg, id);

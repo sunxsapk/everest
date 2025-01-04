@@ -7,6 +7,8 @@
 
 #pragma once
 #include "buffer.h"
+#include "core/utils.h"
+#include "math/types.h"
 
 namespace Everest{
     class VAO {

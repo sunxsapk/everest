@@ -22,21 +22,24 @@
 #endif
 
 namespace Everest {
-    struct QuadProps {
-        ref<Texture> texture = NULL;
-        vec4 color = vec4(1.f);
-        vec3 position = vec3(0.f);
-        f32 rotation = 0.f;
-        vec2 scale = vec2(1.f);
-        f32 tilingFactor = 1.f;
-    };
-
     struct QuadVertex {
         vec3 position;
         vec4 color;
         vec2 uv;
         f32 textureIndex;
         f32 tilingFactor;
+
+#ifdef EDITOR_BUILD
+        i32 id;
+#endif
+    };
+
+    struct CircleVertex {
+        vec3 position;
+        vec4 color;
+        vec2 normCoord;
+        f32 thickness;
+        f32 fade;
 
 #ifdef EDITOR_BUILD
         i32 id;
@@ -58,14 +61,18 @@ namespace Everest {
 
         std::array<vec4, 4> quadVertPos;
 
-        QuadVertex *vertBase, *vertPtr;
+        QuadVertex *quadVertBase, *quadVertPtr;
+        ref<VAO> quadVertArray;
+        ref<Shader> quadShader;
 
-        ref<VAO> vertArray;
-        ref<Shader> textureShader;
+        CircleVertex *circleVertBase, *circleVertPtr;
+        ref<VAO> circleVertArray;
+        ref<Shader> circleShader;
+
         ref<Texture> whiteTexture;
         std::array<ref<Texture>, maxTexSlots> textures;
 
-        u32 indexCount, texCount;
+        u32 quadIndexCount, circleIndexCount, texCount;
     };
 
     class Renderer2D {
@@ -78,8 +85,9 @@ namespace Everest {
 
             static void drawQuad(vec3 position, vec2 scale = vec2(1.f), f32 rotation = 0.f,
                     vec4 color = vec4(1.f), ref<Texture> texture = nullptr, f32 tilingFactor = 1.f);
+            static void drawCircle(vec3 position, f32 diameter = 1.f, vec4 color = vec4(1.f),
+                    f32 thickness = 1.f, f32 fade = 1.f);
 
-            static void drawQuad(const QuadProps& props);
 
             static void drawSprite(mat4 transform, const Sprite& sprite, vec4 color
 #ifdef EDITOR_BUILD
@@ -96,7 +104,8 @@ namespace Everest {
             static inline const RendererStats& getStats(){return _stats;}
 
         private:
-            static void flush();
+            static void flushCircles();
+            static void flushQuads();
             static void _checkTexture(i32& texIndex, ref<Texture> texture);
         private:
             static Renderer2Ddata *_data;

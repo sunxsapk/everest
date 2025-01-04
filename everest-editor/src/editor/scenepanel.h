@@ -14,6 +14,8 @@
 #include "editorcamera.h"
 
 
+// TODO: key shortcuts for delete, duplicate, etc
+
 namespace Everest {
 
     enum class SceneState {
