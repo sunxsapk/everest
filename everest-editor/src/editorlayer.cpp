@@ -50,7 +50,9 @@ namespace Everest {
                 case SceneState::EDIT:
                     _activeScene->onEditorRender(_camera.camera, _camera.transform);
                     //Renderer::disableDepth();
+                    _framebuffer->setDrawBufferTargetCount(1); // render grid on only first one
                     Gizmos::renderGrid(_camera);
+                    _framebuffer->setDrawBufferTargetCount(-1); // reset render targets
                     //Renderer::enableDepth();
                     ScenePanel::mousePickCheck(_framebuffer);
                     break;

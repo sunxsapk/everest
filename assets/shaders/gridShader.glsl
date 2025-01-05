@@ -26,7 +26,6 @@ uniform vec4 u_camera;
 uniform int u_is2D;
 
 layout(location = 0) out vec4 color0;
-layout(location = 1) out int entityID;
 
 
 in vec3 pxPos;
@@ -49,7 +48,6 @@ float getFogFc(float d){
 }
 
 void main(){
-    entityID = -1;
     vec3 fp = pxPos - round(pxPos);
 
     if(isThick(fp.x)) color0 = THICK_COLOR * th(fp.x);

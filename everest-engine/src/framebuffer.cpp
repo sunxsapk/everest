@@ -138,16 +138,36 @@ namespace Everest {
             }
         }
 
-        if(_colorAttachments.size()){
-            ASSERT(_colorAttachments.size() <= 4, "Frame buffer attachments limit exceeded");
-            GLenum bufs[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
-            glDrawBuffers(_colorAttachments.size(), bufs);
-        } else {
-            glDrawBuffer(GL_NONE);
-        }
-
+        setDrawBufferTargetCount(-1);
         ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is not complete");
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    void Framebuffer::setDrawBufferTargetCount(i32 count){
+        if(count < 0) count = _colorAttachments.size();
+        if(count == 0) {
+            glDrawBuffer(GL_NONE);
+            return;
+        }
+        ASSERT(count <= _colorAttachments.size() && count <= 16, "Not enough color attachments provided for the framebuffers");
+        static constexpr GLenum bufs[16] {
+            GL_COLOR_ATTACHMENT0,
+            GL_COLOR_ATTACHMENT1,
+            GL_COLOR_ATTACHMENT2,
+            GL_COLOR_ATTACHMENT3,
+            GL_COLOR_ATTACHMENT4,
+            GL_COLOR_ATTACHMENT5,
+            GL_COLOR_ATTACHMENT6,
+            GL_COLOR_ATTACHMENT7,
+            GL_COLOR_ATTACHMENT8,
+            GL_COLOR_ATTACHMENT9,
+            GL_COLOR_ATTACHMENT10,
+            GL_COLOR_ATTACHMENT11,
+            GL_COLOR_ATTACHMENT12,
+            GL_COLOR_ATTACHMENT13,
+            GL_COLOR_ATTACHMENT14,
+            GL_COLOR_ATTACHMENT15,
+        };
+        glDrawBuffers(count, bufs);
     }
 }

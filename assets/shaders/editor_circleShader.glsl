@@ -38,15 +38,18 @@ in float _thickness;
 in float _fade;
 flat in int _id;
 
-float circlePixCalc(){
-    float d = 1.f - length(_normCoord);
+float circlePixCalc(float d){
+    d = 1.f - d;
     float fd = _fade + 0.0001f; //smoothstep returns 0 when _fade is exactly 0
     float x = smoothstep(0.f, fd, d) * smoothstep(_thickness+fd, _thickness, d);
     return x;
 }
 
 void main() {
-    color0 = _color * circlePixCalc();
+    float dis = length(_normCoord);
+    if(dis > 1.f) discard;
+    float c = circlePixCalc(dis);
+    color0 = _color * c;
     entityID = _id;
 }
 

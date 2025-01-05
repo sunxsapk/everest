@@ -57,6 +57,8 @@ namespace Everest {
 
             i32 readPixel(u32 attIndex, i32 x, i32 y);
 
+            void setDrawBufferTargetCount(i32 count = -1);
+
             inline void clearAttachment(u32 attIndex, vec4 value){
                 ASSERT(attIndex < _colorAttachments.size(), "Invalid attachment index");
                 ASSERT(_colorAttachmentSpecs[attIndex].textureFormat == FrameBufferTextureFormat::RGBA8,
