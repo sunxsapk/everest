@@ -85,6 +85,10 @@ namespace Everest {
             out << entity.get<spriteRenderer_c>();
         }
 
+        if(entity.has<circleRenderer_c>()){
+            out << entity.get<circleRenderer_c>();
+        }
+
         out << EndMap;
     }
 
@@ -166,7 +170,7 @@ namespace Everest {
             auto spriteRenderer = entity["spriteRenderer_c"];
             if(spriteRenderer){
                 auto txpath = spriteRenderer["texturePath"];
-                auto& spr = n_ent.add<spriteRenderer_c>(spriteRenderer_c{
+                n_ent.add<spriteRenderer_c>(spriteRenderer_c{
                         .color = spriteRenderer["color"].as<vec4>(),
                         .sprite = {
                             .texture = txpath ?
@@ -175,6 +179,15 @@ namespace Everest {
                             .startUV = spriteRenderer["startUV"].as<vec2>(),
                             .sizeUV = spriteRenderer["sizeUV"].as<vec2>(),
                         }
+                    });
+            }
+
+            auto circleRenderer = entity["circleRenderer_c"];
+            if(circleRenderer){
+                n_ent.add<circleRenderer_c>(circleRenderer_c{
+                        .color = circleRenderer["color"].as<vec4>(),
+                        .thickness = circleRenderer["thickness"].as<f32>(),
+                        .fade = circleRenderer["fade"].as<f32>(),
                     });
             }
         }
@@ -263,6 +276,19 @@ namespace Everest {
         out << Key << "sizeUV" << Value << spriteRenderer.sprite.sizeUV;
         const ref<Texture>& tx = spriteRenderer.sprite.texture;
         if(tx != nullptr) out << Key << "texturePath" << Value << tx->getPath();
+
+        out << EndMap;
+        return out;
+    }
+
+    YAML::Emitter& operator<<(YAML::Emitter& out, const circleRenderer_c& circleRenderer){
+        using namespace YAML;
+        out << Key << "circleRenderer_c";
+        out << BeginMap;
+
+        out << Key << "color" << Value << circleRenderer.color;
+        out << Key << "thickness" << Value << circleRenderer.thickness;
+        out << Key << "fade" << Value << circleRenderer.fade;
 
         out << EndMap;
         return out;

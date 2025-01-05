@@ -277,6 +277,32 @@ namespace Everest {
         _stats.vertexCount += 4;
     }
 
+    void Renderer2D::drawCircle(mat4 transform, vec4 color, f32 thickness, f32 fade
+#ifdef EDITOR_BUILD
+            , i32 id
+#endif
+            ){
+        EV_profile_function();
+
+        if(_data->circleIndexCount == _data->maxIndices) flushCircles();
+        constexpr u32 quadVertCount = 4;
+        for(int i=0; i<quadVertCount; i++){
+            vec4& qvp = _data->quadVertPos[i];
+            _data->circleVertPtr->position = transform * qvp;
+            _data->circleVertPtr->color = color;
+            _data->circleVertPtr->normCoord = {qvp.x * 2.f, qvp.y * 2.f};
+            _data->circleVertPtr->thickness = thickness;
+            _data->circleVertPtr->fade = fade;
+#ifdef EDITOR_BUILD
+            _data->circleVertPtr->id = id;
+#endif
+            _data->circleVertPtr++;
+        }
+        _data->circleIndexCount += 6;
+        _stats.quadCount++;
+        _stats.vertexCount += 4;
+    }
+
     void Renderer2D::_checkTexture(i32& tind, ref<Texture> tex){
         if(tex == nullptr) return;
 

@@ -86,7 +86,7 @@ namespace Everest {
             static void drawQuad(vec3 position, vec2 scale = vec2(1.f), f32 rotation = 0.f,
                     vec4 color = vec4(1.f), ref<Texture> texture = nullptr, f32 tilingFactor = 1.f);
             static void drawCircle(vec3 position, f32 diameter = 1.f, vec4 color = vec4(1.f),
-                    f32 thickness = 1.f, f32 fade = 1.f);
+                    f32 thickness = 1.f, f32 fade = 0.f);
 
 
             static void drawSprite(mat4 transform, const Sprite& sprite, vec4 color
@@ -100,6 +100,12 @@ namespace Everest {
                     , i32 id = 0
 #endif
                     );
+            static void drawCircle(mat4 transform, vec4 color, f32 thickness, f32 fade
+#ifdef EDITOR_BUILD
+                    , i32 id = 0
+#endif
+                    );
+
 
             static inline const RendererStats& getStats(){return _stats;}
 

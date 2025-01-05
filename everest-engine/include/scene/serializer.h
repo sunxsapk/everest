@@ -37,4 +37,5 @@ namespace Everest {
     YAML::Emitter& operator<<(YAML::Emitter& out, const tag_c& tag);
     YAML::Emitter& operator<<(YAML::Emitter& out, const camera_c& camera);
     YAML::Emitter& operator<<(YAML::Emitter& out, const spriteRenderer_c& spriteRenderer);
+    YAML::Emitter& operator<<(YAML::Emitter& out, const circleRenderer_c& circleRenderer);
 }

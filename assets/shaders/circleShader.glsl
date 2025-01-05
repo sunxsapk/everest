@@ -33,10 +33,15 @@ in vec2 _normCoord;
 in float _thickness;
 in float _fade;
 
+float circlePixCalc(){
+    float d = 1.f - length(_normCoord);
+    float fd = _fade + 0.0001f; //smoothstep returns 0 when _fade is exactly 0
+    float x = smoothstep(0.f, fd, d) * smoothstep(_thickness+fd, _thickness, d);
+    return x;
+}
+
 void main() {
-    float dist = sqrt(dot(_normCoord, _normCoord));
-    float ivalue = step(1.f-_thickness, dist) * step(dist, 1.f);
-    color0 = _color * ivalue;
+    color0 = _color * circlePixCalc();
 }
 
 

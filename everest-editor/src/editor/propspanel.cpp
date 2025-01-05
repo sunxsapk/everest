@@ -40,6 +40,7 @@ namespace Everest {
                 cam.camera.setPersp_aspect(aspect);
             }
             if(ImGui::MenuItem("Sprite Renderer")) ent.tryAdd<spriteRenderer_c>();
+            if(ImGui::MenuItem("Circle Renderer")) ent.tryAdd<circleRenderer_c>();
 
             ImGui::EndPopup();
         }
@@ -86,7 +87,7 @@ namespace Everest {
             {
                 const char* projTypes[] = {"Orthographic", "Perspective"};
                 const char* curType = projTypes[type];
-                if(ImGui::BeginCombo("Projection", curType)){
+                if(ImGui::BeginCombo("##proj", curType)){
                     for(i32 i=0; i<2; i++){
                         bool isSel = i == type;
                         if(ImGui::Selectable(projTypes[i], isSel)){
@@ -99,8 +100,6 @@ namespace Everest {
                 }
 
                 ImGui::Checkbox("Is Primary", &cam_c.isPrimary);
-                ImGui::SameLine();
-                ImGui::Checkbox("Fixed Aspect Ratio", &cam_c.fixedAspect);
             }
 
             ImGui::Separator();
@@ -110,26 +109,30 @@ namespace Everest {
                 case CameraType::Orthographic:
                     sz = cam.getOrtho_size(), asp = cam.getOrtho_aspect();
                     nr = cam.getOrtho_near(), fr = cam.getOrtho_far();
-                    if(ImGui::DragFloat("Ortho Size", &sz, 0.05f)) 
+                    if(_f32dragui("Ortho Size", sz, 0.05f, "##os"))
                         cam.setOrtho_size(glm::max(0.f, sz));
-                    if(ImGui::DragFloat("Aspect Ratio", &asp, 0.05f)) 
+                    if(_f32dragui("Aspect Ratio", asp, 0.05f, "##oar")) 
                         cam.setOrtho_aspect(glm::max(0.f, asp));
-                    if(ImGui::DragFloat("Near", &nr, 0.1f)) 
+                    ImGui::SameLine();
+                    ImGui::Checkbox("Fixed", &cam_c.fixedAspect);
+                    if(_f32dragui("Near", nr, 0.1f, "##on")) 
                         cam.setOrtho_near(nr);
-                    if(ImGui::DragFloat("Far", &fr, 0.5f)) 
+                    if(_f32dragui("Far", fr, 0.5f, "##of")) 
                         cam.setOrtho_far(fr);
                     break;
 
                 case CameraType::Perspective:
                     sz = cam.getPersp_fov(), asp = cam.getPersp_aspect();
                     nr = cam.getPersp_near(), fr = cam.getPersp_far(); 
-                    if(ImGui::SliderFloat("FOV", &sz, 0.01f, 180.f)) 
+                    if(_f32sliderui("FOV", sz, "##pv", 0.01f, 180.f)) 
                         cam.setPersp_fov(glm::max(0.f, sz));
-                    if(ImGui::DragFloat("Aspect Ratio", &asp, 0.05f)) 
+                    if(_f32dragui("Aspect Ratio", asp, 0.05f, "##par")) 
                         cam.setPersp_aspect(glm::max(0.f, asp));
-                    if(ImGui::DragFloat("Near", &nr, 0.05f)) 
+                    ImGui::SameLine();
+                    ImGui::Checkbox("Fixed", &cam_c.fixedAspect);
+                    if(_f32dragui("Near", nr, 0.05f, "##pn")) 
                         cam.setPersp_near(nr);
-                    if(ImGui::DragFloat("Far", &fr, 1.f)) 
+                    if(_f32dragui("Far", fr, 1.f, "##pf")) 
                         cam.setPersp_far(fr);
                     break;
             }
@@ -140,10 +143,9 @@ namespace Everest {
             _colorui("Color", comp.color);
             auto& spr = comp.sprite;
 
-            ImGui::Text("Texture");
-
-            constexpr f32 isize = 128.f;
-            ImGui::SameLine(0.f, 16.f);
+            //ImGui::Text("Texture");
+            constexpr f32 isize = 64.f;
+            //ImGui::SameLine(0.f, 16.f);
 
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
             ImGui::ImageButton("__texture__", spr.texture? spr.texture->getID() : 1,
@@ -165,6 +167,13 @@ namespace Everest {
                 ImGui::EndDragDropTarget();
             }
             ImGui::PopStyleColor();
+        });
+
+        if(ent.has<circleRenderer_c>()) _componentUI<circleRenderer_c>(ent, "Circle Renderer",
+        [](circleRenderer_c& comp){
+            _colorui("Color", comp.color);
+            _f32sliderui("Thickness", comp.thickness, "##th", 0.f, 1.f);
+            _f32sliderui("Fade", comp.fade, "##fd", 0.f, 1.f);
         });
 
         if(ent.has<nativeScript_c>()) _componentUI<nativeScript_c>(ent, "Native Script",
@@ -199,21 +208,48 @@ namespace Everest {
         ImGui::Spacing();
     }
 
-    void PropertiesPanel::_f32dragui(const char* label, f32& value, ImVec2 size, const char* id){
+    bool PropertiesPanel::_f32dragui(const char* label, f32& value, f32 speed, const char* id){
+        const f32 colwidth = 100.f;
+
+        ImGui::PushID(id);
+        ImGui::Columns(2);
+        ImGui::SetColumnWidth(0, colwidth);
+
+        ImGui::AlignTextToFramePadding();
+        ImGui::Text("%s", label);
+
+        ImGui::NextColumn();
+
+        bool x = ImGui::DragFloat("", &value, speed);
+        ImGui::Columns(1);
+        ImGui::PopID();
+        return x;
+    }
+
+    bool PropertiesPanel::_f32sliderui(const char* label, f32& value, const char* id, f32 min_, f32 max_){
+        const f32 colwidth = 100.f;
+
+        ImGui::PushID(id);
+        ImGui::Columns(2);
+        ImGui::SetColumnWidth(0, colwidth);
+
+        ImGui::Text("%s", label);
+        ImGui::NextColumn();
+
+        bool x = ImGui::SliderFloat("", &value, min_, max_);
+        ImGui::Columns(1);
+        ImGui::PopID();
+        return x;
+    }
+
+
+    void _vec3f32(const char* label, f32 &value, f32 speed, const char* id){
         ImGui::PushFont(UIFontManager::getDefaultBold());
         ImGui::AlignTextToFramePadding();
         ImGui::Text("%s", label);
         ImGui::PopFont();
-
-        ImGui::SameLine(0.f, 2.f);
-        ImGui::DragFloat(id, &value, 0.1f);
-        ImGui::PopItemWidth();
-    }
-
-    void PropertiesPanel::_f32sliderui(const char* label, f32& value, const char* id){
-        ImGui::Text("%s", label);
         ImGui::SameLine();
-        ImGui::SliderFloat(id, &value, 0.01f, 180.f);
+        ImGui::DragFloat(id, &value, speed);
     }
 
     void PropertiesPanel::_vec3ui(const char* label, vec3& value, f32 resetvalue){
@@ -233,11 +269,14 @@ namespace Everest {
         f32 lh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
         ImVec2 btnsz = {lh + 3.f, lh};
 
-        _f32dragui("x", value.x, btnsz, "##1");
+        _vec3f32("x", value.x, .1f, "##1");
+        ImGui::PopItemWidth();
         ImGui::SameLine(0.f, 4.f);
-        _f32dragui("y", value.y, btnsz, "##2");
+        _vec3f32("y", value.y, .1f, "##2");
+        ImGui::PopItemWidth();
         ImGui::SameLine(0.f, 4.f);
-        _f32dragui("z", value.z, btnsz, "##3");
+        _vec3f32("z", value.z, .1f, "##3");
+        ImGui::PopItemWidth();
 
         ImGui::PopStyleVar();
         ImGui::Columns(1);
@@ -245,11 +284,18 @@ namespace Everest {
         ImGui::PopID();
     }
 
-    void PropertiesPanel::_colorui(const char* label, vec4& value){
+    void PropertiesPanel::_colorui(const char* label, vec4& value, const char* id){
+        const f32 colwidth = 100.f;
+
+        ImGui::PushID(id ? id : label);
+        ImGui::Columns(2);
+        ImGui::SetColumnWidth(0, colwidth);
         ImGui::AlignTextToFramePadding();
         ImGui::Text("%s", label);
-        ImGui::SameLine();
+        ImGui::NextColumn();
         ImGui::ColorEdit4("##0", glm::value_ptr(value));
+        ImGui::Columns(1);
+        ImGui::PopID();
     }
 
 }

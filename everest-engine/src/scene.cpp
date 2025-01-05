@@ -70,15 +70,25 @@ namespace Everest {
         if(mainCamera){
             Renderer2D::beginScene(*mainCamera, *camTransform);
 
-            auto sprgrp = _registry.group<transform_c>(entt::get<spriteRenderer_c>);
+            auto sprgrp = _registry.group<spriteRenderer_c>(entt::get<transform_c>);
             for(auto ent : sprgrp){
-                auto [tfr, spr] = sprgrp.get(ent);
+                auto [spr, tfr] = sprgrp.get(ent);
                 Renderer2D::drawSprite(tfr, spr.sprite, spr.color
 #ifdef EDITOR_BUILD
                         , (u32)ent
 #endif
                         );
             }
+
+        auto cirgrp = _registry.group<circleRenderer_c>(entt::get<transform_c>);
+        for(auto ent : cirgrp){
+            auto [cir, tfr] = cirgrp.get(ent);
+            Renderer2D::drawCircle(tfr, cir.color, cir.thickness, cir.fade
+#ifdef EDITOR_BUILD
+                    , (u32)ent
+#endif
+                    );
+        }
 
             Renderer2D::endScene();
         }
@@ -90,9 +100,9 @@ namespace Everest {
 
         Renderer2D::beginScene(camera, transform);
 
-        auto sprgrp = _registry.group<transform_c>(entt::get<spriteRenderer_c>);
+        auto sprgrp = _registry.group<spriteRenderer_c>(entt::get<transform_c>);
         for(auto ent : sprgrp){
-            auto [tfr, spr] = sprgrp.get(ent);
+            auto [spr, tfr] = sprgrp.get(ent);
             Renderer2D::drawSprite(tfr, spr.sprite, spr.color
 #ifdef EDITOR_BUILD
                     , (u32)ent
@@ -100,7 +110,16 @@ namespace Everest {
                     );
         }
 
-        Renderer2D::drawCircle({4,0,0});
+        auto cirgrp = _registry.group<circleRenderer_c>(entt::get<transform_c>);
+        for(auto ent : cirgrp){
+            auto [cir, tfr] = cirgrp.get(ent);
+            Renderer2D::drawCircle(tfr, cir.color, cir.thickness, cir.fade
+#ifdef EDITOR_BUILD
+                    , (u32)ent
+#endif
+                    );
+        }
+
         Renderer2D::endScene();
     }
 
@@ -137,12 +156,11 @@ namespace Everest {
 
     template<typename Comp>
     void copyComponent(entt::registry& src, entt::entity srcID, entt::registry& dest, entt::entity destID){
-        if(src.all_of<Comp>(srcID)){
-            Comp& sc = src.get<Comp>(srcID);
-            Comp& dc = dest.all_of<Comp>(destID) ?
-                dest.get<Comp>(destID) : dest.emplace<Comp>(destID, sc);
-            dc = sc;
-        }
+        if(!src.all_of<Comp>(srcID)) return;
+        Comp& sc = src.get<Comp>(srcID);
+        Comp& dc = dest.all_of<Comp>(destID) ?
+            dest.get<Comp>(destID) : dest.emplace<Comp>(destID, sc);
+        dc = sc;
     }
 
     ref<Scene> Scene::copy(ref<Scene>& other){
@@ -159,6 +177,7 @@ namespace Everest {
             // TODO: copy each components into the entity in new Scene
             copyComponent<transform_c>(srcReg, e, desReg, id);
             copyComponent<spriteRenderer_c>(srcReg, e, desReg, id);
+            copyComponent<circleRenderer_c>(srcReg, e, desReg, id);
             copyComponent<camera_c>(srcReg, e, desReg, id);
         }
 

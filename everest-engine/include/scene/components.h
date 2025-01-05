@@ -43,6 +43,12 @@ namespace Everest {
         Sprite sprite; // TODO: single and multiple
     };
 
+    struct circleRenderer_c {
+        vec4 color{1.f};
+        f32 thickness = 1.f;
+        f32 fade = 0.f;
+    };
+
     struct camera_c {
         Camera camera;
         bool isPrimary = false;
