@@ -15,4 +15,10 @@ namespace Everest {
                 :vertexArray->getIndexBuffer()->getCount(), GL_UNSIGNED_INT, NULL);
         vertexArray->unbind();
     }
+
+    void RenderAPI::drawLines(ref<VAO>& vertexArray, u32 vertexCount){
+        vertexArray->bind();
+        glDrawArrays(GL_LINES, 0, vertexCount);
+    }
+     
 }

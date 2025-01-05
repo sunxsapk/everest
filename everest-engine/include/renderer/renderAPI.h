@@ -15,5 +15,6 @@ namespace Everest {
             static void clear();
             static void setClearColor(vec4 color);
             static void drawIndexed(ref<VAO>& vertexArray, u32 indexCount = 0);
+            static void drawLines(ref<VAO>& vertexArray, u32 vertexCount = 0);
     };
 }

@@ -27,7 +27,8 @@ namespace Everest {
     void StatsPanel::rendererStats(){
         if(ImGui::CollapsingHeader("Renderer Stats")){
             RendererStats stats = Renderer2D::getStats();
-            ImGui::Text("QuadCount      : %d", stats.quadCount);
+            ImGui::Text("Quad Count     : %d", stats.quadCount);
+            ImGui::Text("Line Count     : %d", stats.lineCount);
             ImGui::Text("VertexCount    : %d", stats.vertexCount);
             ImGui::Text("TextureCount   : %d", stats.textureCount);
             ImGui::Text("DrawCalls      : %d", stats.drawCalls);

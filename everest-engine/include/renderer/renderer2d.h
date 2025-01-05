@@ -46,8 +46,14 @@ namespace Everest {
 #endif
     };
 
+    struct LineVertex {
+        vec3 position;
+        vec4 color;
+    };
+
     struct RendererStats {
         u32 quadCount = 0;
+        u32 lineCount = 0;
         u32 vertexCount = 0;
         u32 textureCount = 0;
         u32 drawCalls = 0;
@@ -58,6 +64,7 @@ namespace Everest {
         const u32 maxVertices = maxQuads * 4;
         const u32 maxIndices = maxQuads * 6;
         static const i32 maxTexSlots = MAX_TEXTURES; // TODO: glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &_data->maxTexSlots);
+        const i32 maxLines = maxVertices / 2;
 
         std::array<vec4, 4> quadVertPos;
 
@@ -69,10 +76,14 @@ namespace Everest {
         ref<VAO> circleVertArray;
         ref<Shader> circleShader;
 
+        LineVertex *lineVertBase, *lineVertPtr;
+        ref<VAO> lineVertArray;
+        ref<Shader> lineShader;
+
         ref<Texture> whiteTexture;
         std::array<ref<Texture>, maxTexSlots> textures;
 
-        u32 quadIndexCount, circleIndexCount, texCount;
+        u32 quadIndexCount, circleIndexCount, lineCount, texCount;
     };
 
     class Renderer2D {
@@ -87,6 +98,7 @@ namespace Everest {
                     vec4 color = vec4(1.f), ref<Texture> texture = nullptr, f32 tilingFactor = 1.f);
             static void drawCircle(vec3 position, f32 diameter = 1.f, vec4 color = vec4(1.f),
                     f32 thickness = 1.f, f32 fade = 0.f);
+            static void drawLine(vec3 point1, vec3 point2, vec4 color = vec4(1.f));
 
 
             static void drawSprite(mat4 transform, const Sprite& sprite, vec4 color
@@ -112,6 +124,7 @@ namespace Everest {
         private:
             static void flushCircles();
             static void flushQuads();
+            static void flushLines();
             static void _checkTexture(i32& texIndex, ref<Texture> texture);
         private:
             static Renderer2Ddata *_data;
