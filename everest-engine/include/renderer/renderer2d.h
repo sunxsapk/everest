@@ -14,6 +14,7 @@
 #include "scene/camera.h"
 #include "texture.h"
 #include "sprite.h"
+#include "renderer/renderAPI.h"
 
 #ifdef APPLE
 #define MAX_TEXTURES 16
@@ -99,6 +100,8 @@ namespace Everest {
             static void drawCircle(vec3 position, f32 diameter = 1.f, vec4 color = vec4(1.f),
                     f32 thickness = 1.f, f32 fade = 0.f);
             static void drawLine(vec3 point1, vec3 point2, vec4 color = vec4(1.f));
+            static void drawRect(mat4 transform, vec4 color = vec4(1.f));
+            static void drawRect(vec3 pos, f32 rotation = 0.f, vec2 scale = vec2(1.f), vec4 color = vec4(1.f));
 
 
             static void drawSprite(mat4 transform, const Sprite& sprite, vec4 color
@@ -120,6 +123,8 @@ namespace Everest {
 
 
             static inline const RendererStats& getStats(){return _stats;}
+            static inline void setLineWidth(f32 width){
+                RenderAPI::setLineWidth(width);}
 
         private:
             static void flushCircles();

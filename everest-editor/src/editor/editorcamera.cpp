@@ -33,12 +33,7 @@ namespace Everest {
     }
 
     vec3 EditorCamera::getForward(){
-        f32 alpha = glm::radians(transform.rotation.x);
-        f32 beta   = glm::radians(transform.rotation.y);
-        f32 sinb = glm::sin(beta), cosb = glm::cos(beta),
-            sina = glm::sin(alpha), cosa = glm::cos(alpha);
-        vec3 forward = vec3(-cosa * sinb, sina, -cosa * cosb);
-        return glm::normalize(forward);
+        return Math::getCameraForward(transform);
     }
 
     vec3 EditorCamera::screenPointToDir(vec2 position){

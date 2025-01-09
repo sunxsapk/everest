@@ -72,4 +72,12 @@ namespace Everest {
 
 		return true;
     }
+    vec3 Math::getCameraForward(transform_c& transform){
+        f32 alpha = glm::radians(transform.rotation.x);
+        f32 beta   = glm::radians(transform.rotation.y);
+        f32 sinb = glm::sin(beta), cosb = glm::cos(beta),
+            sina = glm::sin(alpha), cosa = glm::cos(alpha);
+        vec3 forward = vec3(-cosa * sinb, sina, -cosa * cosb);
+        return glm::normalize(forward);
+    }
 }

@@ -16,5 +16,7 @@ namespace Everest {
             static void setClearColor(vec4 color);
             static void drawIndexed(ref<VAO>& vertexArray, u32 indexCount = 0);
             static void drawLines(ref<VAO>& vertexArray, u32 vertexCount = 0);
+            static inline void setLineWidth(f32 width){
+                glLineWidth(width);}
     };
 }

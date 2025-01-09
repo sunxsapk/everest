@@ -1,5 +1,4 @@
 #include "renderer/renderer2d.h"
-#include "renderer/renderAPI.h"
 #include "math/utils.h"
 
 namespace Everest {
@@ -8,6 +7,8 @@ namespace Everest {
 
     void Renderer2D::init(){
         EV_profile_function();
+
+        setLineWidth(2.f);
 
         _data->quadVertArray = createRef<VAO>();
         _data->quadVertBase = new QuadVertex[_data->maxVertices];
@@ -202,6 +203,32 @@ namespace Everest {
         _data->lineCount++;
         _stats.lineCount++;
         _stats.vertexCount+=2;
+    }
+
+    void Renderer2D::drawRect(mat4 transform, vec4 color){
+        constexpr u32 quadVertCount = 4;
+
+        vec3 coords[4];
+        for(int i=0; i<quadVertCount; i++){
+            coords[i] = transform * _data->quadVertPos[i];
+        }
+
+        for(int i=0; i < quadVertCount; i++){
+            drawLine(coords[i], coords[(i+1)%4], color);
+        }
+    }
+
+    void Renderer2D::drawRect(vec3 pos, f32 rotation, vec2 scale, vec4 color){
+        constexpr u32 quadVertCount = 4;
+
+        vec3 coords[4];
+        for(int i=0; i<quadVertCount; i++){
+            coords[i] = Math::transformOrtho(_data->quadVertPos[i], pos, scale, rotation);
+        }
+
+        for(int i=0; i < quadVertCount; i++){
+            drawLine(coords[i], coords[(i+1)%4], color);
+        }
     }
 
     void Renderer2D::drawQuad(vec3 position, vec2 scale, f32 rotation,

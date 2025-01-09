@@ -2,6 +2,7 @@
 #include "scene/components.h"
 #include "scene/entity.h"
 #include "renderer/renderer2d.h"
+#include "math/utils.h"
 
 namespace Everest {
 
@@ -95,6 +96,26 @@ namespace Everest {
 
     }
 
+    void drawCameraGizmo(transform_c& tfr, camera_c& cam, u32 id){
+        if(cam.camera.getType() == CameraType::Perspective){
+            vec3 scale(cam.camera.getPersp_aspect(), 1.f, 1.f);
+            transform_c btfr{tfr.position, tfr.rotation, scale*.2f};
+            Renderer2D::drawRect(btfr);
+            transform_c ftfr{tfr.position + Math::getCameraForward(tfr)*.1f, tfr.rotation, scale * 0.3f};
+            Renderer2D::drawRect(ftfr);
+            Renderer2D::drawLine(btfr.position, ftfr.position);
+            Renderer2D::drawSprite(btfr, {}, vec4(0.f)
+#ifdef EDITOR_BUILD
+                    , (u32)id
+#endif
+                    );
+        } else {
+            f32 sz = cam.camera.getOrtho_size() * 2;
+            Renderer2D::drawRect(tfr.position, tfr.rotation.z,
+                    vec2(sz * cam.camera.getOrtho_aspect(), sz));
+        }
+    }
+
     void Scene::onEditorRender(Camera& camera, mat4 transform){
         EV_profile_function();
 
@@ -118,6 +139,13 @@ namespace Everest {
                     , (u32)ent
 #endif
                     );
+        }
+
+
+        auto camgrp = _registry.group<camera_c>(entt::get<transform_c>);
+        for(auto ent : camgrp){
+            auto [cam, tfr] = camgrp.get(ent);
+            drawCameraGizmo(tfr, cam, (u32)ent);
         }
 
         Renderer2D::endScene();
