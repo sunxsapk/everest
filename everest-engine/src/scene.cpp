@@ -3,6 +3,8 @@
 #include "scene/entity.h"
 #include "renderer/renderer2d.h"
 #include "math/utils.h"
+#include "physics/physicsworld.h"
+#include "core/time.h"
 
 namespace Everest {
 
@@ -60,7 +62,7 @@ namespace Everest {
 
         auto camgrp = _registry.group<camera_c>(entt::get<transform_c>);
         for (auto ent: camgrp){
-            auto [cam, tfr] = camgrp.get(ent);
+            const auto& [cam, tfr] = camgrp.get(ent);
             if(cam.isPrimary){
                 mainCamera = &cam.camera;
                 camTransform = &tfr;
@@ -73,7 +75,7 @@ namespace Everest {
 
             auto sprgrp = _registry.group<spriteRenderer_c>(entt::get<transform_c>);
             for(auto ent : sprgrp){
-                auto [spr, tfr] = sprgrp.get(ent);
+                const auto& [spr, tfr] = sprgrp.get(ent);
                 Renderer2D::drawSprite(tfr, spr.sprite, spr.color
 #ifdef EDITOR_BUILD
                         , (u32)ent
@@ -83,7 +85,7 @@ namespace Everest {
 
         auto cirgrp = _registry.group<circleRenderer_c>(entt::get<transform_c>);
         for(auto ent : cirgrp){
-            auto [cir, tfr] = cirgrp.get(ent);
+            const auto& [cir, tfr] = cirgrp.get(ent);
             Renderer2D::drawCircle(tfr, cir.color, cir.thickness, cir.fade
 #ifdef EDITOR_BUILD
                     , (u32)ent
@@ -123,7 +125,7 @@ namespace Everest {
 
         auto sprgrp = _registry.group<spriteRenderer_c>(entt::get<transform_c>);
         for(auto ent : sprgrp){
-            auto [spr, tfr] = sprgrp.get(ent);
+            const auto& [spr, tfr] = sprgrp.get(ent);
             Renderer2D::drawSprite(tfr, spr.sprite, spr.color
 #ifdef EDITOR_BUILD
                     , (u32)ent
@@ -133,7 +135,7 @@ namespace Everest {
 
         auto cirgrp = _registry.group<circleRenderer_c>(entt::get<transform_c>);
         for(auto ent : cirgrp){
-            auto [cir, tfr] = cirgrp.get(ent);
+            const auto& [cir, tfr] = cirgrp.get(ent);
             Renderer2D::drawCircle(tfr, cir.color, cir.thickness, cir.fade
 #ifdef EDITOR_BUILD
                     , (u32)ent
@@ -144,16 +146,25 @@ namespace Everest {
 
         auto camgrp = _registry.group<camera_c>(entt::get<transform_c>);
         for(auto ent : camgrp){
-            auto [cam, tfr] = camgrp.get(ent);
+            const auto& [cam, tfr] = camgrp.get(ent);
             drawCameraGizmo(tfr, cam, (u32)ent);
         }
 
         Renderer2D::endScene();
     }
 
+    void Scene::onScenePlay(){
+        PhysicsHandler::init(6);
+    }
+
+    void Scene::onSceneStop(){
+        PhysicsHandler::quit();
+    }
 
     void Scene::onUpdate(){ 
         EV_profile_function();
+
+        PhysicsHandler::simulate(this, Time::getDeltatime());
 
         _registry.view<nativeScript_c>().each([=](auto ent, nativeScript_c& nscript){
                 if(!nscript._instance){
@@ -207,6 +218,8 @@ namespace Everest {
             copyComponent<spriteRenderer_c>(srcReg, e, desReg, id);
             copyComponent<circleRenderer_c>(srcReg, e, desReg, id);
             copyComponent<camera_c>(srcReg, e, desReg, id);
+            copyComponent<rigidbody2d_c>(srcReg, e, desReg, id);
+            copyComponent<rigidbody_c>(srcReg, e, desReg, id);
         }
 
         return newScene;

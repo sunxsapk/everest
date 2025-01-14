@@ -28,6 +28,8 @@ namespace Everest {
 
             void onRender();
             void onEditorRender(Camera& camera, mat4 transform);
+            void onScenePlay();
+            void onSceneStop();
             void onUpdate();
             void onViewportResize(uvec2 viewportSize);
 
@@ -41,5 +43,6 @@ namespace Everest {
             friend class Entity;
             friend class SceneHeirarchyUI;
             friend class SceneSerializer;
+            friend class PhysicsHandler;
     };
 }

@@ -89,6 +89,14 @@ namespace Everest {
             out << entity.get<circleRenderer_c>();
         }
 
+        if(entity.has<rigidbody2d_c>()){
+            out << entity.get<rigidbody2d_c>();
+        }
+
+        if(entity.has<rigidbody_c>()){
+            out << entity.get<rigidbody_c>();
+        }
+
         out << EndMap;
     }
 
@@ -190,6 +198,22 @@ namespace Everest {
                         .fade = circleRenderer["fade"].as<f32>(),
                     });
             }
+
+            auto rigidbody2d = entity["rigidbody2d_c"];
+            if(rigidbody2d){
+                auto& rb2d = n_ent.add<rigidbody2d_c>();
+                rb2d.velocity = rigidbody2d["velocity"].as<vec2>();
+                rb2d.drag = rigidbody2d["drag"].as<f32>();
+                rb2d.setInverseMass(rigidbody2d["inverseMass"].as<f32>());
+            }
+
+            auto rigidbody = entity["rigidbody_c"];
+            if(rigidbody){
+                auto& rb = n_ent.add<rigidbody_c>();
+                rb.velocity = rigidbody["velocity"].as<vec3>();
+                rb.drag = rigidbody["drag"].as<f32>();
+                rb.setInverseMass(rigidbody["inverseMass"].as<f32>());
+            }
         }
 
         return true;
@@ -289,6 +313,33 @@ namespace Everest {
         out << Key << "color" << Value << circleRenderer.color;
         out << Key << "thickness" << Value << circleRenderer.thickness;
         out << Key << "fade" << Value << circleRenderer.fade;
+
+        out << EndMap;
+        return out;
+    }
+
+
+    YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody2d_c& rb2d){
+        using namespace YAML;
+        out << Key << "rigidbody2d_c";
+        out << BeginMap;
+
+        out << Key << "inverseMass" << Value << rb2d._inverseMass;
+        out << Key << "drag" << Value << rb2d.drag;
+        out << Key << "velocity" << Value << rb2d.velocity;
+
+        out << EndMap;
+        return out;
+    }
+
+    YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody_c& rb){
+        using namespace YAML;
+        out << Key << "rigidbody_c";
+        out << BeginMap;
+
+        out << Key << "inverseMass" << Value << rb._inverseMass;
+        out << Key << "drag" << Value << rb.drag;
+        out << Key << "velocity" << Value << rb.velocity;
 
         out << EndMap;
         return out;

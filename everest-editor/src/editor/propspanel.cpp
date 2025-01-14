@@ -41,6 +41,7 @@ namespace Everest {
             }
             if(ImGui::MenuItem("Sprite Renderer")) ent.tryAdd<spriteRenderer_c>();
             if(ImGui::MenuItem("Circle Renderer")) ent.tryAdd<circleRenderer_c>();
+            if(ImGui::MenuItem("Rigidbody 2D")) ent.tryAdd<rigidbody2d_c>();
 
             ImGui::EndPopup();
         }
@@ -176,6 +177,15 @@ namespace Everest {
             _f32sliderui("Fade", comp.fade, "##fd", 0.f, 1.f);
         });
 
+        if(ent.has<rigidbody2d_c>()) _componentUI<rigidbody2d_c>(ent, "Rigidbody 2D",
+        [](rigidbody2d_c& comp){
+            f32 mass = comp.getMass();
+            f32 drag = comp.drag;
+            if(_f32dragui("Mass", mass, 0.01f, "##mass") && mass > 0.f) comp.setMass(mass);
+            if(_f32dragui("Drag", drag, 0.01f, "##drag") && drag >= 0.f) comp.drag = drag;
+            _vec2ui("velocity", comp.velocity, 0.f);
+        });
+
         if(ent.has<nativeScript_c>()) _componentUI<nativeScript_c>(ent, "Native Script",
         [](nativeScript_c& comp){
         });
@@ -250,6 +260,35 @@ namespace Everest {
         ImGui::PopFont();
         ImGui::SameLine();
         ImGui::DragFloat(id, &value, speed);
+    }
+
+    void PropertiesPanel::_vec2ui(const char* label, vec2& value, f32 resetvalue){
+        const f32 colwidth = 100.f;
+
+        ImGui::PushID(label);
+        ImGui::Columns(2);
+
+        ImGui::AlignTextToFramePadding();
+        ImGui::SetColumnWidth(0, colwidth);
+        ImGui::Text("%s", label);
+        ImGui::NextColumn();
+
+        ImGui::PushMultiItemsWidths(2, ImGui::CalcItemWidth());
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{0,0});
+
+        f32 lh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
+        ImVec2 btnsz = {lh + 3.f, lh};
+
+        _vec3f32("x", value.x, .1f, "##1");
+        ImGui::PopItemWidth();
+        ImGui::SameLine(0.f, 4.f);
+        _vec3f32("y", value.y, .1f, "##2");
+        ImGui::PopItemWidth();
+
+        ImGui::PopStyleVar();
+        ImGui::Columns(1);
+
+        ImGui::PopID();
     }
 
     void PropertiesPanel::_vec3ui(const char* label, vec3& value, f32 resetvalue){

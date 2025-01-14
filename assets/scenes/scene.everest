@@ -56,6 +56,10 @@ entities:
       startUV: [0, 0]
       sizeUV: [1, 1]
       texturePath: assets/sprites/farm.png
+    rigidbody2d_c:
+      inverseMass: 0.56497175
+      drag: 0.65
+      velocity: [6.2, 6.6]
   - entity: 12269478829406810161
     tag_c:
       tag: Camera 2

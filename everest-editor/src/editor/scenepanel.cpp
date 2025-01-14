@@ -208,6 +208,7 @@ namespace Everest {
 
     void ScenePanel::onSceneStop(){
         _sceneState = SceneState::EDIT;
+        _runtimeScene->onSceneStop();
         _runtimeScene.reset();
         _runtimeScene = nullptr;
         SceneHeirarchyUI::setScene(getScene());
@@ -217,10 +218,10 @@ namespace Everest {
         _sceneState = SceneState::PLAY;
         ref<Scene> rsc = SceneManager::getActiveScene();
         if(rsc){
-            //_runtimeScene = Scene::copy(rsc).get();
             ref<Scene> cp = Scene::copy(rsc);
             _runtimeScene = cp;
             SceneHeirarchyUI::setScene(_runtimeScene);
+            _runtimeScene->onScenePlay();
         }
     }
 }

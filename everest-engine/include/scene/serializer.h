@@ -11,7 +11,7 @@
 #include <yaml-cpp/yaml.h>
 
 #include "scene.h"
-#include "scene/components.h"
+#include "components.h"
 
 
 namespace Everest {
@@ -30,6 +30,7 @@ namespace Everest {
     };
 
 
+    YAML::Emitter& operator<<(YAML::Emitter& out, const vec2& v);
     YAML::Emitter& operator<<(YAML::Emitter& out, const vec3& v);
     YAML::Emitter& operator<<(YAML::Emitter& out, const vec4& v);
 
@@ -38,4 +39,6 @@ namespace Everest {
     YAML::Emitter& operator<<(YAML::Emitter& out, const camera_c& camera);
     YAML::Emitter& operator<<(YAML::Emitter& out, const spriteRenderer_c& spriteRenderer);
     YAML::Emitter& operator<<(YAML::Emitter& out, const circleRenderer_c& circleRenderer);
+    YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody2d_c& circleRenderer);
+    YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody_c& circleRenderer);
 }
