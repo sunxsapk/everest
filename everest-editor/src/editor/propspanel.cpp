@@ -41,7 +41,10 @@ namespace Everest {
             }
             if(ImGui::MenuItem("Sprite Renderer")) ent.tryAdd<spriteRenderer_c>();
             if(ImGui::MenuItem("Circle Renderer")) ent.tryAdd<circleRenderer_c>();
+            if(ImGui::MenuItem("Rigidbody")) ent.tryAdd<rigidbody_c>();
             if(ImGui::MenuItem("Rigidbody 2D")) ent.tryAdd<rigidbody2d_c>();
+            if(ImGui::MenuItem("Spring Joint")) ent.tryAdd<springJoint_c>();
+            if(ImGui::MenuItem("Spring Joint 2D")) ent.tryAdd<springJoint2d_c>();
 
             ImGui::EndPopup();
         }
@@ -175,6 +178,16 @@ namespace Everest {
             _f32sliderui("Fade", comp.fade, "##fd", 0.f, 1.f);
         });
 
+        if(ent.has<rigidbody_c>()) _componentUI<rigidbody_c>(ent, "Rigidbody",
+        [](rigidbody_c& comp){
+            f32 mass = comp.getMass();
+            f32 drag = comp.drag;
+            _vec3ui("velocity", comp.velocity, 0.f);
+            if(_f32dragui("Mass", mass, 0.01f, "##mass") && mass > 0.f) comp.setMass(mass);
+            if(_f32dragui("Drag", drag, 0.01f, "##drag") && drag >= 0.f) comp.drag = drag;
+            ImGui::Checkbox("Use Gravity", &comp.useGravity);
+        });
+
         if(ent.has<rigidbody2d_c>()) _componentUI<rigidbody2d_c>(ent, "Rigidbody 2D",
         [](rigidbody2d_c& comp){
             f32 mass = comp.getMass();
@@ -183,6 +196,20 @@ namespace Everest {
             if(_f32dragui("Mass", mass, 0.01f, "##mass") && mass > 0.f) comp.setMass(mass);
             if(_f32dragui("Drag", drag, 0.01f, "##drag") && drag >= 0.f) comp.drag = drag;
             ImGui::Checkbox("Use Gravity", &comp.useGravity);
+        });
+
+        if(ent.has<springJoint2d_c>()) _componentUI<springJoint2d_c>(ent, "Spring Joint 2D",
+        [](springJoint2d_c& comp){
+            _vec2ui("Anchor", comp.anchor, 0.f);
+            _f32dragui("Spring Constant", comp.springConstant, 0.01f, "##spk") ;
+            _f32dragui("Rest Length", comp.restLength, 0.01f, "##rl");
+        });
+
+        if(ent.has<springJoint_c>()) _componentUI<springJoint_c>(ent, "Spring Joint",
+        [](springJoint_c& comp){
+            _vec3ui("Anchor", comp.anchor, 0.f);
+            _f32dragui("Spring Constant", comp.springConstant, 0.01f, "##spk") ;
+            _f32dragui("Rest Length", comp.restLength, 0.01f, "##rl");
         });
 
         if(ent.has<nativeScript_c>()) _componentUI<nativeScript_c>(ent, "Native Script",

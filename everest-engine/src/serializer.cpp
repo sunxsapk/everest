@@ -214,6 +214,23 @@ namespace Everest {
                 rb.useGravity = rigidbody["useGravity"].as<bool>();
                 rb.setInverseMass(rigidbody["inverseMass"].as<f32>());
             }
+
+            auto springJoint2d = entity["springJoint2d_c"];
+            if(springJoint2d){
+                auto& rb2d = n_ent.add<springJoint2d_c>();
+                rb2d.anchor = springJoint2d["anchor"].as<vec2>();
+                rb2d.springConstant = springJoint2d["springConstant"].as<f32>();
+                rb2d.restLength = springJoint2d["restLength"].as<f32>();
+            }
+
+            auto springJoint = entity["springJoint_c"];
+            if(springJoint){
+                auto& rb = n_ent.add<springJoint_c>();
+                rb.anchor = springJoint["anchor"].as<vec3>();
+                rb.springConstant = springJoint["springConstant"].as<f32>();
+                rb.restLength = springJoint["restLength"].as<f32>();
+            }
+
         }
 
         return true;
@@ -342,6 +359,32 @@ namespace Everest {
         out << Key << "drag" << Value << rb.drag;
         out << Key << "velocity" << Value << rb.velocity;
         out << Key << "useGravity" << Value << rb.useGravity;
+
+        out << EndMap;
+        return out;
+    }
+
+    YAML::Emitter& operator<<(YAML::Emitter& out, const springJoint2d_c& spr){
+        using namespace YAML;
+        out << Key << "springJoint2d_c";
+        out << BeginMap;
+
+        out << Key << "anchor" << Value << spr.anchor;
+        out << Key << "springConstant" << Value << spr.springConstant;
+        out << Key << "restLength" << Value << spr.restLength;
+
+        out << EndMap;
+        return out;
+    }
+
+    YAML::Emitter& operator<<(YAML::Emitter& out, const springJoint_c& spr){
+        using namespace YAML;
+        out << Key << "springJoint_c";
+        out << BeginMap;
+
+        out << Key << "anchor" << Value << spr.anchor;
+        out << Key << "springConstant" << Value << spr.springConstant;
+        out << Key << "restLength" << Value << spr.restLength;
 
         out << EndMap;
         return out;

@@ -39,6 +39,8 @@ namespace Everest {
     YAML::Emitter& operator<<(YAML::Emitter& out, const camera_c& camera);
     YAML::Emitter& operator<<(YAML::Emitter& out, const spriteRenderer_c& spriteRenderer);
     YAML::Emitter& operator<<(YAML::Emitter& out, const circleRenderer_c& circleRenderer);
-    YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody2d_c& circleRenderer);
-    YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody_c& circleRenderer);
+    YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody2d_c& rigidbody2d);
+    YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody_c& rigidbody);
+    YAML::Emitter& operator<<(YAML::Emitter& out, const springJoint2d_c& springJoint2d);
+    YAML::Emitter& operator<<(YAML::Emitter& out, const springJoint_c& springJoint);
 }

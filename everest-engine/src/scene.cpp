@@ -220,6 +220,8 @@ namespace Everest {
             copyComponent<camera_c>(srcReg, e, desReg, id);
             copyComponent<rigidbody2d_c>(srcReg, e, desReg, id);
             copyComponent<rigidbody_c>(srcReg, e, desReg, id);
+            copyComponent<springJoint_c>(srcReg, e, desReg, id);
+            copyComponent<springJoint2d_c>(srcReg, e, desReg, id);
         }
 
         return newScene;

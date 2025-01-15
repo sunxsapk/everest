@@ -11,7 +11,7 @@
 #include "renderer/spriteRenderer.h"
 #include "renderer/circleRenderer.h"
 #include "physics/rigidbody.h"
-#include "physics/rigidbody2d.h"
+#include "physics/springJoint.h"
 
 namespace Everest {
 
@@ -60,4 +60,5 @@ namespace Everest {
     using CircleRenderer = circleRenderer_c;
     using Rigidbody = rigidbody_c;
     using Rigidbody2d = rigidbody2d_c;
+    using SpringJoint = springJoint_c;
 }
