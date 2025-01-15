@@ -29,10 +29,10 @@ namespace Everest {
             static void init();
             static void quit();
 
-            static Sprite& getIcon(IconType icon);
+            static spriteRenderer_c& getIcon(IconType icon);
 
         private:
-            std::vector<Sprite> icons;
+            std::vector<spriteRenderer_c> icons;
             static EditorAssets* _instance;
 
             EditorAssets();

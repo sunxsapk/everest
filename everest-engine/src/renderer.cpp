@@ -21,7 +21,7 @@ namespace Everest {
         Renderer2D::quit();
     }
 
-    void Renderer::beginScene(Camera& camera){
+    void Renderer::beginScene(camera_c& camera){
         EV_profile_function();
 
         _scene.viewProjectionMatrix = camera.getProjection();

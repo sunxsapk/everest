@@ -32,12 +32,12 @@ namespace Everest {
         }
 
         if(ImGui::BeginPopup("_add_component_")){
-            if(ImGui::MenuItem("Camera")) {
+            if(ImGui::MenuItem("camera_c")) {
                 camera_c& cam = ent.tryAdd<camera_c>();
                 vec2 viewportSize = ScenePanel::getSceneViewportSize();
                 f32 aspect = (float)viewportSize.x / viewportSize.y;
-                cam.camera.setOrtho_aspect(aspect);
-                cam.camera.setPersp_aspect(aspect);
+                cam.setOrtho_aspect(aspect);
+                cam.setPersp_aspect(aspect);
             }
             if(ImGui::MenuItem("Sprite Renderer")) ent.tryAdd<spriteRenderer_c>();
             if(ImGui::MenuItem("Circle Renderer")) ent.tryAdd<circleRenderer_c>();
@@ -81,9 +81,8 @@ namespace Everest {
     void PropertiesPanel::drawComponents(Entity& ent){
         if(ent.has<transform_c>()) _transform(ent);
 
-        if(ent.has<camera_c>()) _componentUI<camera_c>(ent, "Camera",
-        [](camera_c& cam_c) {
-            Camera& cam = cam_c.camera;
+        if(ent.has<camera_c>()) _componentUI<camera_c>(ent, "camera_c",
+        [](camera_c& cam) {
             CameraType type =  cam.getType();
             {
                 const char* projTypes[] = {"Orthographic", "Perspective"};
@@ -100,7 +99,7 @@ namespace Everest {
                     ImGui::EndCombo();
                 }
 
-                ImGui::Checkbox("Is Primary", &cam_c.isPrimary);
+                ImGui::Checkbox("Is Primary", &cam.isPrimary);
             }
 
             ImGui::Separator();
@@ -115,7 +114,7 @@ namespace Everest {
                     if(_f32dragui("Aspect Ratio", asp, 0.05f, "##oar")) 
                         cam.setOrtho_aspect(glm::max(0.f, asp));
                     ImGui::SameLine();
-                    ImGui::Checkbox("Fixed", &cam_c.fixedAspect);
+                    ImGui::Checkbox("Fixed", &cam.fixedAspect);
                     if(_f32dragui("Near", nr, 0.1f, "##on")) 
                         cam.setOrtho_near(nr);
                     if(_f32dragui("Far", fr, 0.5f, "##of")) 
@@ -130,7 +129,7 @@ namespace Everest {
                     if(_f32dragui("Aspect Ratio", asp, 0.05f, "##par")) 
                         cam.setPersp_aspect(glm::max(0.f, asp));
                     ImGui::SameLine();
-                    ImGui::Checkbox("Fixed", &cam_c.fixedAspect);
+                    ImGui::Checkbox("Fixed", &cam.fixedAspect);
                     if(_f32dragui("Near", nr, 0.05f, "##pn")) 
                         cam.setPersp_near(nr);
                     if(_f32dragui("Far", fr, 1.f, "##pf")) 
@@ -140,9 +139,8 @@ namespace Everest {
         });
 
         if(ent.has<spriteRenderer_c>()) _componentUI<spriteRenderer_c>(ent, "Sprite Renderer",
-        [](spriteRenderer_c& comp){
-            _colorui("Color", comp.color);
-            auto& spr = comp.sprite;
+        [](spriteRenderer_c& spr){
+            _colorui("Color", spr.color);
 
             //ImGui::Text("Texture");
             constexpr f32 isize = 64.f;
@@ -181,9 +179,10 @@ namespace Everest {
         [](rigidbody2d_c& comp){
             f32 mass = comp.getMass();
             f32 drag = comp.drag;
+            _vec2ui("velocity", comp.velocity, 0.f);
             if(_f32dragui("Mass", mass, 0.01f, "##mass") && mass > 0.f) comp.setMass(mass);
             if(_f32dragui("Drag", drag, 0.01f, "##drag") && drag >= 0.f) comp.drag = drag;
-            _vec2ui("velocity", comp.velocity, 0.f);
+            ImGui::Checkbox("Use Gravity", &comp.useGravity);
         });
 
         if(ent.has<nativeScript_c>()) _componentUI<nativeScript_c>(ent, "Native Script",

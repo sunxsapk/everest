@@ -57,14 +57,14 @@ namespace Everest {
     void Scene::onRender(){ 
         EV_profile_function();
 
-        Camera* mainCamera = nullptr;
+        camera_c* mainCamera = nullptr;
         transform_c* camTransform = nullptr;
 
         auto camgrp = _registry.group<camera_c>(entt::get<transform_c>);
         for (auto ent: camgrp){
             const auto& [cam, tfr] = camgrp.get(ent);
             if(cam.isPrimary){
-                mainCamera = &cam.camera;
+                mainCamera = &cam;
                 camTransform = &tfr;
                 break;
             }
@@ -76,7 +76,7 @@ namespace Everest {
             auto sprgrp = _registry.group<spriteRenderer_c>(entt::get<transform_c>);
             for(auto ent : sprgrp){
                 const auto& [spr, tfr] = sprgrp.get(ent);
-                Renderer2D::drawSprite(tfr, spr.sprite, spr.color
+                Renderer2D::drawSprite(tfr, spr
 #ifdef EDITOR_BUILD
                         , (u32)ent
 #endif
@@ -99,26 +99,26 @@ namespace Everest {
     }
 
     void drawCameraGizmo(transform_c& tfr, camera_c& cam, u32 id){
-        if(cam.camera.getType() == CameraType::Perspective){
-            vec3 scale(cam.camera.getPersp_aspect(), 1.f, 1.f);
+        if(cam.getType() == CameraType::Perspective){
+            vec3 scale(cam.getPersp_aspect(), 1.f, 1.f);
             transform_c btfr{tfr.position, tfr.rotation, scale*.2f};
             Renderer2D::drawRect(btfr);
             transform_c ftfr{tfr.position + Math::getCameraForward(tfr)*.1f, tfr.rotation, scale * 0.3f};
             Renderer2D::drawRect(ftfr);
             Renderer2D::drawLine(btfr.position, ftfr.position);
-            Renderer2D::drawSprite(btfr, {}, vec4(0.f)
+            Renderer2D::drawSprite(btfr, {}
 #ifdef EDITOR_BUILD
                     , (u32)id
 #endif
                     );
         } else {
-            f32 sz = cam.camera.getOrtho_size() * 2;
+            f32 sz = cam.getOrtho_size() * 2;
             Renderer2D::drawRect(tfr.position, tfr.rotation.z,
-                    vec2(sz * cam.camera.getOrtho_aspect(), sz));
+                    vec2(sz * cam.getOrtho_aspect(), sz));
         }
     }
 
-    void Scene::onEditorRender(Camera& camera, mat4 transform){
+    void Scene::onEditorRender(camera_c& camera, mat4 transform){
         EV_profile_function();
 
         Renderer2D::beginScene(camera, transform);
@@ -126,7 +126,7 @@ namespace Everest {
         auto sprgrp = _registry.group<spriteRenderer_c>(entt::get<transform_c>);
         for(auto ent : sprgrp){
             const auto& [spr, tfr] = sprgrp.get(ent);
-            Renderer2D::drawSprite(tfr, spr.sprite, spr.color
+            Renderer2D::drawSprite(tfr, spr
 #ifdef EDITOR_BUILD
                     , (u32)ent
 #endif
@@ -187,8 +187,8 @@ namespace Everest {
         for(auto ent : cams){
             auto& cam = cams->get(ent);
             if(!cam.fixedAspect){
-                cam.camera.setOrtho_aspect(aspect);
-                cam.camera.setPersp_aspect(aspect);
+                cam.setOrtho_aspect(aspect);
+                cam.setPersp_aspect(aspect);
             }
         }
     }

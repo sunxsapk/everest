@@ -16,19 +16,31 @@ namespace Everest {
     void PhysicsHandler::quit(){ }
 
     void PhysicsHandler::simulate(Scene* scene, f64 timeStep){
-        auto phygrp = scene->_registry.group<rigidbody2d_c>(entt::get<transform_c>);
-        
         f32 dt = timeStep / _simulationSteps;
-        for(int i=0; i<_simulationSteps; i++){
+        simulate2d(scene, dt);
+        simulate3d(scene, dt);
+    }
 
+    void PhysicsHandler::simulate2d(Scene* scene, f64 timeStep){
+        auto phygrp = scene->_registry.group<rigidbody2d_c>(entt::get<transform_c>);
+        for(int i=0; i<_simulationSteps; i++){
             for(auto ent:phygrp){
                 const auto& [rb2d, tfr] = phygrp.get(ent);
-
-                rb2d.addForce(_gravity);
-                vec2 dp = rb2d.integrate(dt);
+                if(rb2d.useGravity) rb2d.addForce(_gravity);
+                vec2 dp = rb2d.integrate(timeStep);
                 tfr.position += vec3(dp, 0);
             }
+        }
+    }
 
+    void PhysicsHandler::simulate3d(Scene* scene, f64 timeStep){
+        auto phygrp = scene->_registry.group<rigidbody_c>(entt::get<transform_c>);
+        for(int i=0; i<_simulationSteps; i++){
+            for(auto ent:phygrp){
+                const auto& [rb, tfr] = phygrp.get(ent);
+                if(rb.useGravity) rb.addForce(_gravity);
+                tfr.position += rb.integrate(timeStep);
+            }
         }
     }
 

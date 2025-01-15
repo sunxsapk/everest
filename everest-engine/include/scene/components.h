@@ -6,10 +6,12 @@
 #pragma once
 
 #include "camera.h"
-#include "renderer/sprite.h"
 #include "scriptable.h"
 #include "utils/uuid.h"
-#include "yaml-cpp/emitter.h"
+#include "renderer/spriteRenderer.h"
+#include "renderer/circleRenderer.h"
+#include "physics/rigidbody.h"
+#include "physics/rigidbody2d.h"
 
 namespace Everest {
 
@@ -35,69 +37,6 @@ namespace Everest {
 
     };
 
-    struct spriteRenderer_c{
-        vec4 color{1.f}; 
-        Sprite sprite; // TODO: single and multiple
-    };
-
-    struct circleRenderer_c {
-        vec4 color{1.f};
-        f32 thickness = 1.f;
-        f32 fade = 0.f;
-    };
-
-    struct camera_c {
-        Camera camera;
-        bool isPrimary = false;
-        bool fixedAspect = false;
-
-        operator Camera&(){return camera;}
-    };
-
-    enum class ForceMode {
-        Force, Acceleration, Impulse, VelocityChange
-    };
-
-    struct rigidbody_c {
-        vec3 velocity = vec3(0.f);
-        f32 drag = 1.f;
-
-        void addForce(const vec3 force, const ForceMode mode = ForceMode::Force);
-        void setMass(f32 value);
-        inline void setInverseMass(f32 invm){_inverseMass = invm;}
-        inline f32 getMass(){ return 1.f / _inverseMass; }
-
-        private:
-        f32 _inverseMass = 1.f;
-        vec3 _forceAccumulator = vec3(0.f);
-        vec3 _impulse = vec3(0.f);
-
-        // performs integration and returns the change in distance
-        vec3 integrate(const f32 timeStep);
-        friend class PhysicsHandler;
-        friend YAML::Emitter& operator<<(YAML::Emitter&, const rigidbody_c&);
-    };
-
-    struct rigidbody2d_c {
-        vec2 velocity = vec2(0.f);
-        f32 drag = 1.f;
-
-        void addForce(const vec2 force, const ForceMode mode = ForceMode::Force);
-        void setMass(f32 value);
-        inline void setInverseMass(f32 invm){_inverseMass = invm;}
-        inline f32 getMass(){ return 1.f / _inverseMass; }
-
-        private:
-        f32 _inverseMass = 1.f;
-        vec2 _forceAccumulator = vec2(0.f);
-        vec2 _impulse = vec2(0.f);
-
-        // performs integration and returns the change in distance
-        vec2 integrate(const f32 timeStep);
-        friend class PhysicsHandler;
-        friend YAML::Emitter& operator<<(YAML::Emitter&, const rigidbody2d_c&);
-    };
-
     struct nativeScript_c {
         Scriptable* _instance;
 
@@ -114,4 +53,11 @@ namespace Everest {
         }
     };
 
+    using Transform = transform_c;
+    using Tag = tag_c;
+    using Camera = camera_c;
+    using SpriteRenderer = spriteRenderer_c;
+    using CircleRenderer = circleRenderer_c;
+    using Rigidbody = rigidbody_c;
+    using Rigidbody2d = rigidbody2d_c;
 }

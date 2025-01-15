@@ -92,7 +92,7 @@ namespace Everest {
             static void init();
             static void quit();
 
-            static void beginScene(Camera& camera, mat4 cameraTransform);
+            static void beginScene(camera_c& camera, mat4 cameraTransform);
             static void endScene();
 
             static void drawQuad(vec3 position, vec2 scale = vec2(1.f), f32 rotation = 0.f,
@@ -104,13 +104,13 @@ namespace Everest {
             static void drawRect(vec3 pos, f32 rotation = 0.f, vec2 scale = vec2(1.f), vec4 color = vec4(1.f));
 
 
-            static void drawSprite(mat4 transform, const Sprite& sprite, vec4 color
+            static void drawSprite(mat4 transform, const spriteRenderer_c& sprite
 #ifdef EDITOR_BUILD
                     , i32 id = 0
 #endif
                     );
-            static void drawSprite(const Sprite& sprite, vec3 position, vec2 scale = vec2(1.f),
-                    f32 rotation = 0.f, vec4 color=vec4(1.f)
+            static void drawSprite(const spriteRenderer_c& sprite, vec3 position, vec2 scale = vec2(1.f),
+                    f32 rotation = 0.f
 #ifdef EDITOR_BUILD
                     , i32 id = 0
 #endif

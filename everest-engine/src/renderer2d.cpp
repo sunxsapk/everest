@@ -108,7 +108,7 @@ namespace Everest {
         delete _data;
     }
 
-    void Renderer2D::beginScene(Camera& camera, mat4 camTransform){
+    void Renderer2D::beginScene(camera_c& camera, mat4 camTransform){
         EV_profile_function();
 
         glm::mat4 vpmat = camera.getProjection() * glm::inverse(camTransform);
@@ -281,8 +281,7 @@ namespace Everest {
         _stats.vertexCount += 4;
     }
 
-    void Renderer2D::drawSprite(const Sprite& sprite, vec3 position, vec2 scale, f32 rotation,
-            vec4 color
+    void Renderer2D::drawSprite(const spriteRenderer_c& sprite, vec3 position, vec2 scale, f32 rotation
 #ifdef EDITOR_BUILD
             , i32 id
 #endif
@@ -305,7 +304,7 @@ namespace Everest {
             //_data->quadVertPtr->position = transform * _data->quadVertPos[i];
             _data->quadVertPtr->position = Math::transformOrtho(_data->quadVertPos[i],
                     position, scale, glm::radians(rotation));
-            _data->quadVertPtr->color = color;
+            _data->quadVertPtr->color = sprite.color;
             _data->quadVertPtr->uv = uvs[i];
             _data->quadVertPtr->textureIndex = tind;
             _data->quadVertPtr->tilingFactor = tilingFactor;
@@ -320,7 +319,7 @@ namespace Everest {
         _stats.vertexCount += 4;
     }
 
-    void Renderer2D::drawSprite(mat4 transform, const Sprite& sprite, vec4 color
+    void Renderer2D::drawSprite(mat4 transform, const spriteRenderer_c& sprite
 #ifdef EDITOR_BUILD
             , i32 id
 #endif
@@ -341,7 +340,7 @@ namespace Everest {
 
         for(int i=0; i<quadVertCount; i++){
             _data->quadVertPtr->position = transform * _data->quadVertPos[i];
-            _data->quadVertPtr->color = color;
+            _data->quadVertPtr->color = sprite.color;
             _data->quadVertPtr->uv = uvs[i];
             _data->quadVertPtr->textureIndex = tind;
             _data->quadVertPtr->tilingFactor = tilingFactor;

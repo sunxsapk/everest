@@ -150,9 +150,9 @@ namespace Everest {
             auto camera = entity["camera_c"];
             if(camera){
                 auto& cam = n_ent.add<camera_c>(camera_c{
-                        .isPrimary = camera["isPrimary"]?camera["isPrimary"].as<bool>() : false,
-                        .fixedAspect = camera["fixedAspect"].as<bool>(),
                     });
+                cam.isPrimary = camera["isPrimary"]?camera["isPrimary"].as<bool>() : false;
+                cam.fixedAspect = camera["fixedAspect"].as<bool>();
                 
                 auto ortho = camera["orthographic_d"];
                 OrthographicData odat{
@@ -161,7 +161,7 @@ namespace Everest {
                     .near = ortho["near"].as<f32>(),
                     .far = ortho["far"].as<f32>(),
                 };
-                cam.camera.setOrthographicData(odat);
+                cam.setOrthographicData(odat);
 
                 auto persp = camera["perspective_d"];
                 PerspectiveData pdat{
@@ -170,23 +170,21 @@ namespace Everest {
                     .near = persp["near"].as<f32>(),
                     .far = persp["far"].as<f32>(),
                 };
-                cam.camera.setPerspectiveData(pdat);
+                cam.setPerspectiveData(pdat);
 
-                cam.camera.setType((CameraType)camera["type"].as<u32>());
+                cam.setType((CameraType)camera["type"].as<u32>());
             }
 
             auto spriteRenderer = entity["spriteRenderer_c"];
             if(spriteRenderer){
                 auto txpath = spriteRenderer["texturePath"];
                 n_ent.add<spriteRenderer_c>(spriteRenderer_c{
+                        .texture = txpath ?
+                            AssetsManager::loadTexture(txpath.as<std::string>().c_str()) :
+                            nullptr,
                         .color = spriteRenderer["color"].as<vec4>(),
-                        .sprite = {
-                            .texture = txpath ?
-                                AssetsManager::loadTexture(txpath.as<std::string>().c_str()) :
-                                nullptr,
-                            .startUV = spriteRenderer["startUV"].as<vec2>(),
-                            .sizeUV = spriteRenderer["sizeUV"].as<vec2>(),
-                        }
+                        .startUV = spriteRenderer["startUV"].as<vec2>(),
+                        .sizeUV = spriteRenderer["sizeUV"].as<vec2>(),
                     });
             }
 
@@ -204,6 +202,7 @@ namespace Everest {
                 auto& rb2d = n_ent.add<rigidbody2d_c>();
                 rb2d.velocity = rigidbody2d["velocity"].as<vec2>();
                 rb2d.drag = rigidbody2d["drag"].as<f32>();
+                rb2d.useGravity = rigidbody2d["useGravity"].as<bool>();
                 rb2d.setInverseMass(rigidbody2d["inverseMass"].as<f32>());
             }
 
@@ -212,6 +211,7 @@ namespace Everest {
                 auto& rb = n_ent.add<rigidbody_c>();
                 rb.velocity = rigidbody["velocity"].as<vec3>();
                 rb.drag = rigidbody["drag"].as<f32>();
+                rb.useGravity = rigidbody["useGravity"].as<bool>();
                 rb.setInverseMass(rigidbody["inverseMass"].as<f32>());
             }
         }
@@ -268,22 +268,22 @@ namespace Everest {
 
         out << Key << "fixedAspect" << Value << camera.fixedAspect;
         out << Key << "isPrimary" << Value << camera.isPrimary;
-        out << Key << "type" << Value << (u32)camera.camera.getType();
+        out << Key << "type" << Value << (u32)camera.getType();
 
         out << Key << "perspective_d";
         out << BeginMap;
-        out << Key << "fov" << Value << camera.camera.getPersp_fov();
-        out << Key << "aspect" << Value << camera.camera.getPersp_aspect();
-        out << Key << "near" << Value << camera.camera.getPersp_near();
-        out << Key << "far" << Value << camera.camera.getPersp_far();
+        out << Key << "fov" << Value << camera.getPersp_fov();
+        out << Key << "aspect" << Value << camera.getPersp_aspect();
+        out << Key << "near" << Value << camera.getPersp_near();
+        out << Key << "far" << Value << camera.getPersp_far();
         out << EndMap;
 
         out << Key << "orthographic_d";
         out << BeginMap;
-        out << Key << "size" << Value << camera.camera.getOrtho_size();
-        out << Key << "aspect" << Value << camera.camera.getOrtho_aspect();
-        out << Key << "near" << Value << camera.camera.getOrtho_near();
-        out << Key << "far" << Value << camera.camera.getOrtho_far();
+        out << Key << "size" << Value << camera.getOrtho_size();
+        out << Key << "aspect" << Value << camera.getOrtho_aspect();
+        out << Key << "near" << Value << camera.getOrtho_near();
+        out << Key << "far" << Value << camera.getOrtho_far();
         out << EndMap;
 
         out << EndMap;
@@ -296,9 +296,9 @@ namespace Everest {
         out << BeginMap;
 
         out << Key << "color" << Value << spriteRenderer.color;
-        out << Key << "startUV" << Value << spriteRenderer.sprite.startUV;
-        out << Key << "sizeUV" << Value << spriteRenderer.sprite.sizeUV;
-        const ref<Texture>& tx = spriteRenderer.sprite.texture;
+        out << Key << "startUV" << Value << spriteRenderer.startUV;
+        out << Key << "sizeUV" << Value << spriteRenderer.sizeUV;
+        const ref<Texture>& tx = spriteRenderer.texture;
         if(tx != nullptr) out << Key << "texturePath" << Value << tx->getPath();
 
         out << EndMap;
@@ -327,6 +327,7 @@ namespace Everest {
         out << Key << "inverseMass" << Value << rb2d._inverseMass;
         out << Key << "drag" << Value << rb2d.drag;
         out << Key << "velocity" << Value << rb2d.velocity;
+        out << Key << "useGravity" << Value << rb2d.useGravity;
 
         out << EndMap;
         return out;
@@ -340,6 +341,7 @@ namespace Everest {
         out << Key << "inverseMass" << Value << rb._inverseMass;
         out << Key << "drag" << Value << rb.drag;
         out << Key << "velocity" << Value << rb.velocity;
+        out << Key << "useGravity" << Value << rb.useGravity;
 
         out << EndMap;
         return out;

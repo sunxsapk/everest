@@ -78,7 +78,7 @@ namespace Everest {
 
         f32 size = 24.f;
         ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
-        Sprite& icon = EditorAssets::getIcon(_sceneState == SceneState::EDIT? IconType::PLAY : IconType::STOP);
+        spriteRenderer_c& icon = EditorAssets::getIcon(_sceneState == SceneState::EDIT? IconType::PLAY : IconType::STOP);
         if(ImGui::ImageButton("##play", icon.texture->getID(), {size, size}, 
                     {icon.startUV.x, icon.sizeUV.y}, {icon.sizeUV.x, icon.startUV.y})){
             if(_sceneState == SceneState::EDIT) onScenePlay();

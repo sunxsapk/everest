@@ -27,7 +27,7 @@ namespace Everest {
             void destroyEntity(Entity& entity);
 
             void onRender();
-            void onEditorRender(Camera& camera, mat4 transform);
+            void onEditorRender(camera_c& camera, mat4 transform);
             void onScenePlay();
             void onSceneStop();
             void onUpdate();

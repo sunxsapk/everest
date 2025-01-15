@@ -13,7 +13,7 @@ namespace Everest {
         delete _instance;
     }
 
-    Sprite& EditorAssets::getIcon(IconType icon){
+    spriteRenderer_c& EditorAssets::getIcon(IconType icon){
         ASSERT(_instance != nullptr, "Uninitialized assest handler");
         ASSERT((int)icon < _instance->icons.size(), "Uninitialized icons");
         return _instance->icons[(int)icon];

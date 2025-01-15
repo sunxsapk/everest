@@ -26,5 +26,8 @@ namespace Everest {
         private:
             static u32 _simulationSteps;
             static vec3 _gravity;
+
+            static void simulate2d(Scene* scene, f64 timeStep);
+            static void simulate3d(Scene* scene, f64 timeStep);
     };
 }

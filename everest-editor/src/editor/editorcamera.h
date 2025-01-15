@@ -10,7 +10,7 @@ namespace Everest {
         public:
             f32 speed = 10.f, mouseSensitivity = 0.1f, scrollSensitivity = 10.f;
             transform_c transform;
-            Camera camera;
+            camera_c camera;
 
         public:
             EditorCamera();

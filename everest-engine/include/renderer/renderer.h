@@ -20,7 +20,7 @@ namespace Everest {
             static void init();
             static void quit();
 
-            static void beginScene(Camera& camera);
+            static void beginScene(camera_c& camera);
             static void endScene();
             static void submit(ref<VAO>& vertexArray,
                     ref<Shader>& shader, mat4 transform);

@@ -8,16 +8,9 @@
 #pragma once
 #include "math/types.h"
 #include "core/utils.h"
-#include "texture.h"
-
+#include "spriteRenderer.h"
 
 namespace Everest {
-    struct Sprite {
-        ref<Texture> texture = nullptr;
-        vec2 startUV = vec2(0.f);
-        vec2 sizeUV  = vec2(1.f);
-    };
-
     class SpriteSheet {
         public:
             SpriteSheet():_unitSize(0){}
@@ -34,7 +27,7 @@ namespace Everest {
             /* takes the coordinate of bottom left corner and size of sprite in 
              * sprite atlas unit, and returns the uv coordinate in the form :
              * (x, y, w, h)*/
-            Sprite getSprite(uvec2 start, uvec2 size);
+            spriteRenderer_c getSprite(uvec2 start, uvec2 size);
 
             inline uvec2 getUnitSize(){return _unitSize;}
             inline uvec2 getSpriteSize(){return _texture?

@@ -20,7 +20,7 @@ namespace Everest {
         private:
             static std::filesystem::path curDir, assetsDir;
 
-            static Sprite _getIconForEntry(const std::filesystem::directory_entry& entry);
+            static spriteRenderer_c _getIconForEntry(const std::filesystem::directory_entry& entry);
 
     };
 

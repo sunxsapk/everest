@@ -37,7 +37,7 @@ namespace Everest {
             std::string filename = path.filename().string();
 
             ImGui::PushID(filename.c_str());
-            Sprite icon = _getIconForEntry(entry);
+            spriteRenderer_c icon = _getIconForEntry(entry);
 
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
             ImGui::ImageButton("", icon.texture->getID(), {iconSize, iconSize},
@@ -72,7 +72,7 @@ namespace Everest {
         ImGui::End();
     }
 
-    Sprite ContentBrowser::_getIconForEntry(const std::filesystem::directory_entry& entry){
+    spriteRenderer_c ContentBrowser::_getIconForEntry(const std::filesystem::directory_entry& entry){
         if(entry.is_directory()) return EditorAssets::getIcon(IconType::DIRECTORY);
         std::filesystem::path path = entry.path();
         if(path.extension() == AssetsManager::getScene_ext()) return EditorAssets::getIcon(IconType::SCENE);
