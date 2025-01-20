@@ -1,24 +1,33 @@
 #include "physics/springJoint.h"
+#include "scene/components.h"
 
 
 
 namespace Everest {
 
-    void springJoint_c::updateForce(vec3 otherPosition, rigidbody_c& otherBody){
-        vec3 force = otherPosition - anchor;
-        f32 mag = glm::length(force);
-        mag = abs(mag - restLength) * springConstant;
-        force = glm::normalize(force);
-        force *= -mag;
-        otherBody.addForce(force);
+    void springJoint_c::updateForce(const transform_c& otherTransform, rigidbody_c& otherBody){
+        transform_c tmpt = otherTransform;
+        tmpt.position = {};
+        vec3 noff = (mat4)tmpt * vec4(offset, 0);
+        vec3 otherPosition = otherTransform.position + noff - anchor;
+        vec3 sf = -springConstant * glm::normalize(otherPosition) * 
+            (glm::length(otherPosition) - restLength);
+        vec3 df = -damping * otherBody.velocity;
+
+        otherBody.addForceAtOffset(sf + df, noff);
     }
 
-    void springJoint2d_c::updateForce(vec2 otherPosition, rigidbody2d_c& otherBody){
-        vec2 force = otherPosition - anchor;
-        f32 mag = glm::length(force);
-        mag = abs(mag - restLength) * springConstant;
-        force = glm::normalize(force);
-        force *= -mag;
-        otherBody.addForce(force);
+    void springJoint2d_c::updateForce(const transform_c& otherTransform, rigidbody2d_c& otherBody){
+        transform_c tmpt = otherTransform;
+        tmpt.position = {};
+        vec2 noff = (mat4)tmpt * vec4(offset, 0, 0);
+        vec2 otherPosition = otherTransform.position;
+        otherPosition += noff - anchor;
+
+        vec2 sf = -springConstant * glm::normalize(otherPosition) * 
+            (glm::length(otherPosition) - restLength);
+        vec2 df = -damping * otherBody.velocity;
+
+        otherBody.addForceAtOffset(sf + df, noff);
     }
 }

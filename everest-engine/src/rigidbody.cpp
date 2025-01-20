@@ -1,4 +1,5 @@
 #include "physics/rigidbody.h"
+#include "scene/components.h"
 
 namespace Everest {
 
@@ -8,32 +9,43 @@ namespace Everest {
                 _forceAccumulator += value;
                 break;
             case ForceMode::Acceleration:
-                _forceAccumulator += value / _inverseMass;
+                _forceAccumulator += value / inverseMass;
                 break;
             case ForceMode::Impulse:
                 _impulse += value;
                 break;
             case ForceMode::VelocityChange:
-                _impulse += value / _inverseMass;
+                _impulse += value / inverseMass;
         }
+    }
+
+    void rigidbody_c::addForceAtOffset(const vec3 force, const vec3 offset){
+        _torqueAccumulator += glm::cross(offset, force);
+        _forceAccumulator += force;
     }
 
     void rigidbody_c::setMass(f32 value){
         ASSERT(value > 0.f, "Mass cannot be zero or negative");
-        _inverseMass = 1.f / value;
+        inverseMass = 1.f / value;
     }
 
-    vec3 rigidbody_c::integrate(const f32 timeStep){
+    void rigidbody_c::integrate(transform_c& transform, const f32 timeStep){
         ASSERT(timeStep > 0.f, "Timestep for simulation cannot be negative or zero");
 
-        vec3 dp = velocity * timeStep;
-        vec3 acc = (_forceAccumulator - drag * velocity) * _inverseMass;
-        velocity += acc * timeStep + _impulse * _inverseMass;
+        transform.position += velocity * timeStep;
+
+        _acceleration = (_forceAccumulator - drag * velocity) * inverseMass;
+        vec3 iidv = _impulse * inverseMass;
+        velocity += _acceleration * timeStep + iidv;
+        _acceleration += iidv / timeStep;
+
+        // inertia is assumed to be equal to mass... i.e. ms-radius = 1
+        // Maybe, calculate it using what collider is used
+        angularVelocity += (_torqueAccumulator - drag * angularVelocity) * inverseMass * timeStep;
 
         _forceAccumulator = vec3(0.f);
+        _torqueAccumulator = vec3(0.f);
         _impulse = vec3(0.f);
-
-        return dp;
     }
 
 
@@ -43,31 +55,43 @@ namespace Everest {
                 _forceAccumulator += value;
                 break;
             case ForceMode::Acceleration:
-                _forceAccumulator += value / _inverseMass;
+                _forceAccumulator += value / inverseMass;
                 break;
             case ForceMode::Impulse:
                 _impulse += value;
                 break;
             case ForceMode::VelocityChange:
-                _impulse += value / _inverseMass;
+                _impulse += value / inverseMass;
         }
+    }
+
+    void rigidbody2d_c::addForceAtOffset(const vec2 force, const vec2 offset){
+        // we only need z component of torque for 2d world
+        _torqueAccumulator += glm::cross(vec3(offset, 0), vec3(force, 0)).z;
+        _forceAccumulator += force;
     }
 
     void rigidbody2d_c::setMass(f32 value){
         ASSERT(value > 0.f, "Mass cannot be zero or negative");
-        _inverseMass = 1.f / value;
+        inverseMass = 1.f / value;
     }
 
-    vec2 rigidbody2d_c::integrate(const f32 timeStep){
+    void rigidbody2d_c::integrate(transform_c& transform, const f32 timeStep){
         ASSERT(timeStep > 0.f, "Timestep for simulation cannot be negative or zero");
 
-        vec2 dp = velocity * timeStep;
-        vec2 acc = (_forceAccumulator - drag * velocity) * _inverseMass;
-        velocity += acc * timeStep + _impulse * _inverseMass;
+        transform.position += vec3(velocity * timeStep, 0.f);
+        transform.rotation.z += glm::degrees(angularVelocity * timeStep);
+
+        _acceleration = (_forceAccumulator - drag * velocity) * inverseMass;
+        vec2 iidv = _impulse * inverseMass;
+        velocity += _acceleration * timeStep + iidv;
+        _acceleration += iidv / timeStep;
+
+        angularVelocity += (_torqueAccumulator - drag * angularVelocity) * inverseMass * timeStep; // inertia is assumed to be equal to mass... i.e. ms-radius = 1
 
         _forceAccumulator = vec2(0.f);
+        _torqueAccumulator = 0.f;
         _impulse = vec2(0.f);
 
-        return dp;
     }
 }

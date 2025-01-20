@@ -10,17 +10,21 @@ namespace Everest {
         // TODO: store entity in runtime, which will be populated during serialization time
         // store reference to anchor *Entity*
         vec3 anchor = vec3(0.f);
-        f32 springConstant = 1.f;
-        f32 restLength = 1.f;
+        vec3 offset = vec3(0.f);
+        f32 springConstant = 20.f;
+        f32 damping = 20.f;
+        f32 restLength = 5.f;
 
-        void updateForce(vec3 otherPosition, rigidbody_c& otherBody);
+        void updateForce(const transform_c& otherTransform, rigidbody_c& otherBody);
     };
 
     struct springJoint2d_c {
         vec2 anchor = vec2(0.f); // store reference to anchor *Entity*
-        f32 springConstant = 1.f;
-        f32 restLength = 1.f;
+        vec2 offset = vec2(0.f);
+        f32 springConstant = 20.f;
+        f32 damping = 20.f;
+        f32 restLength = 5.f;
 
-        void updateForce(vec2 otherPosition, rigidbody2d_c& otherBody);
+        void updateForce(const transform_c& otherTransform, rigidbody2d_c& otherBody);
     };
 }

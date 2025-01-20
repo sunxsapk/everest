@@ -11,6 +11,7 @@
 
 
 #include "math/types.h"
+#include "physics/collisionResolver.h"
 #include "scene/scene.h"
 
 namespace Everest {
@@ -26,8 +27,12 @@ namespace Everest {
         private:
             static u32 _simulationSteps;
             static vec3 _gravity;
+            static ContactResolver _contactResolver;
+            static ContactResolver2D _contactResolver2d;
 
             static void simulate2d(Scene* scene, f64 timeStep);
             static void simulate3d(Scene* scene, f64 timeStep);
+            static std::vector<BodyContact> generateContacts(Scene* scene, f64 timeStep);
+            static std::vector<BodyContact2D> generateContacts2d(Scene* scene, f64 timeStep);
     };
 }

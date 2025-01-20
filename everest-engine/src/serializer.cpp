@@ -97,6 +97,14 @@ namespace Everest {
             out << entity.get<rigidbody_c>();
         }
 
+        if(entity.has<springJoint2d_c>()){
+            out << entity.get<springJoint2d_c>();
+        }
+
+        if(entity.has<springJoint_c>()){
+            out << entity.get<springJoint_c>();
+        }
+
         out << EndMap;
     }
 
@@ -203,7 +211,7 @@ namespace Everest {
                 rb2d.velocity = rigidbody2d["velocity"].as<vec2>();
                 rb2d.drag = rigidbody2d["drag"].as<f32>();
                 rb2d.useGravity = rigidbody2d["useGravity"].as<bool>();
-                rb2d.setInverseMass(rigidbody2d["inverseMass"].as<f32>());
+                rb2d.inverseMass = rigidbody2d["inverseMass"].as<f32>();
             }
 
             auto rigidbody = entity["rigidbody_c"];
@@ -212,14 +220,16 @@ namespace Everest {
                 rb.velocity = rigidbody["velocity"].as<vec3>();
                 rb.drag = rigidbody["drag"].as<f32>();
                 rb.useGravity = rigidbody["useGravity"].as<bool>();
-                rb.setInverseMass(rigidbody["inverseMass"].as<f32>());
+                rb.inverseMass = rigidbody["inverseMass"].as<f32>();
             }
 
             auto springJoint2d = entity["springJoint2d_c"];
             if(springJoint2d){
                 auto& rb2d = n_ent.add<springJoint2d_c>();
                 rb2d.anchor = springJoint2d["anchor"].as<vec2>();
+                rb2d.offset = springJoint2d["offset"].as<vec2>();
                 rb2d.springConstant = springJoint2d["springConstant"].as<f32>();
+                rb2d.damping = springJoint2d["damping"].as<f32>();
                 rb2d.restLength = springJoint2d["restLength"].as<f32>();
             }
 
@@ -227,7 +237,9 @@ namespace Everest {
             if(springJoint){
                 auto& rb = n_ent.add<springJoint_c>();
                 rb.anchor = springJoint["anchor"].as<vec3>();
+                rb.offset = springJoint["offset"].as<vec3>();
                 rb.springConstant = springJoint["springConstant"].as<f32>();
+                rb.damping = springJoint2d["damping"].as<f32>();
                 rb.restLength = springJoint["restLength"].as<f32>();
             }
 
@@ -341,7 +353,7 @@ namespace Everest {
         out << Key << "rigidbody2d_c";
         out << BeginMap;
 
-        out << Key << "inverseMass" << Value << rb2d._inverseMass;
+        out << Key << "inverseMass" << Value << rb2d.inverseMass;
         out << Key << "drag" << Value << rb2d.drag;
         out << Key << "velocity" << Value << rb2d.velocity;
         out << Key << "useGravity" << Value << rb2d.useGravity;
@@ -355,7 +367,7 @@ namespace Everest {
         out << Key << "rigidbody_c";
         out << BeginMap;
 
-        out << Key << "inverseMass" << Value << rb._inverseMass;
+        out << Key << "inverseMass" << Value << rb.inverseMass;
         out << Key << "drag" << Value << rb.drag;
         out << Key << "velocity" << Value << rb.velocity;
         out << Key << "useGravity" << Value << rb.useGravity;
@@ -370,7 +382,9 @@ namespace Everest {
         out << BeginMap;
 
         out << Key << "anchor" << Value << spr.anchor;
+        out << Key << "offset" << Value << spr.offset;
         out << Key << "springConstant" << Value << spr.springConstant;
+        out << Key << "damping" << Value << spr.damping;
         out << Key << "restLength" << Value << spr.restLength;
 
         out << EndMap;
@@ -383,7 +397,9 @@ namespace Everest {
         out << BeginMap;
 
         out << Key << "anchor" << Value << spr.anchor;
+        out << Key << "offset" << Value << spr.offset;
         out << Key << "springConstant" << Value << spr.springConstant;
+        out << Key << "damping" << Value << spr.damping;
         out << Key << "restLength" << Value << spr.restLength;
 
         out << EndMap;

@@ -201,14 +201,18 @@ namespace Everest {
         if(ent.has<springJoint2d_c>()) _componentUI<springJoint2d_c>(ent, "Spring Joint 2D",
         [](springJoint2d_c& comp){
             _vec2ui("Anchor", comp.anchor, 0.f);
+            _vec2ui("Offset", comp.offset, 0.f);
             _f32dragui("Spring Constant", comp.springConstant, 0.01f, "##spk") ;
+            _f32dragui("Damping", comp.damping, 0.01f, "##dmp") ;
             _f32dragui("Rest Length", comp.restLength, 0.01f, "##rl");
         });
 
         if(ent.has<springJoint_c>()) _componentUI<springJoint_c>(ent, "Spring Joint",
         [](springJoint_c& comp){
             _vec3ui("Anchor", comp.anchor, 0.f);
+            _vec3ui("Offset", comp.offset, 0.f);
             _f32dragui("Spring Constant", comp.springConstant, 0.01f, "##spk") ;
+            _f32dragui("Damping", comp.damping, 0.01f, "##dmp") ;
             _f32dragui("Rest Length", comp.restLength, 0.01f, "##rl");
         });
 
