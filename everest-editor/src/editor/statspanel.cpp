@@ -48,7 +48,7 @@ namespace Everest {
             ImGui::Text("scaled-d-time  : %.7f sec", Time::getDeltatime());
 
             static f32 _scale = 1.f;
-            ImGui::SliderFloat("Time scale", &_scale, 0.f, 10.f);
+            ImGui::SliderFloat("Time scale", &_scale, 0.001f, 2.f);
             Time::setScale(_scale);
 
             if(ImGui::Button("Pause")) Time::setPauseState(!Time::isPaused());

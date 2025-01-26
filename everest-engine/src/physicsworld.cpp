@@ -17,25 +17,26 @@ namespace Everest {
 
     void PhysicsHandler::quit(){ }
 
-    void PhysicsHandler::simulate(Scene* scene, f64 timeStep){
-        simulate2d(scene, timeStep);
-        simulate3d(scene, timeStep);
+    void PhysicsHandler::simulate(registry_t& registry, f64 timeStep){
+        simulate2d(registry, timeStep);
+        simulate3d(registry, timeStep);
     }
 
-    //TODO: I am here
-    std::vector<BodyContact> PhysicsHandler::generateContacts(Scene* scene, f64 timeStep){
+    std::vector<BodyContact> PhysicsHandler::generateContacts(registry_t& registry, f64 timeStep){
         std::vector<BodyContact> contacts;
         return  contacts;
     }
 
-    std::vector<BodyContact2D> PhysicsHandler::generateContacts2d(Scene* scene, f64 timeStep){
+    std::vector<BodyContact2D> PhysicsHandler::generateContacts2d(registry_t& registry, f64 timeStep){
         std::vector<BodyContact2D> contacts;
+       //TODO: I am here
+
         return  contacts;
     }
 
-    void PhysicsHandler::simulate2d(Scene* scene, f64 timeStep){
-        auto sprgrp = scene->_registry.group<springJoint2d_c>(entt::get<transform_c, rigidbody2d_c>);
-        auto phygrp = scene->_registry.group<rigidbody2d_c>(entt::get<transform_c>);
+    void PhysicsHandler::simulate2d(registry_t& registry, f64 timeStep){
+        auto sprgrp = registry.group<springJoint2d_c>(entt::get<transform_c, rigidbody2d_c>);
+        auto phygrp = registry.group<rigidbody2d_c>(entt::get<transform_c>);
 
         for(auto ent:sprgrp){
             const auto& [spr, tfr, rb] = sprgrp.get(ent);
@@ -48,13 +49,13 @@ namespace Everest {
             rb2d.integrate(tfr, timeStep);
         }
 
-        std::vector<BodyContact2D> contacts = generateContacts2d(scene, timeStep);
+        std::vector<BodyContact2D> contacts = generateContacts2d(registry, timeStep);
         _contactResolver2d.resolveContacts(contacts, timeStep);
     }
 
-    void PhysicsHandler::simulate3d(Scene* scene, f64 timeStep){
-        auto sprgrp = scene->_registry.group<springJoint_c>(entt::get<transform_c, rigidbody_c>);
-        auto phygrp = scene->_registry.group<rigidbody_c>(entt::get<transform_c>);
+    void PhysicsHandler::simulate3d(registry_t& registry, f64 timeStep){
+        auto sprgrp = registry.group<springJoint_c>(entt::get<transform_c, rigidbody_c>);
+        auto phygrp = registry.group<rigidbody_c>(entt::get<transform_c>);
 
         for(auto ent:sprgrp){
             const auto& [spr, tfr, rb] = sprgrp.get(ent);
@@ -67,7 +68,7 @@ namespace Everest {
             rb.integrate(tfr, timeStep);
         }
 
-        std::vector<BodyContact> contacts = generateContacts(scene, timeStep);
+        std::vector<BodyContact> contacts = generateContacts(registry, timeStep);
         _contactResolver.resolveContacts(contacts, timeStep);
     }
 

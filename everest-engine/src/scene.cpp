@@ -164,7 +164,7 @@ namespace Everest {
     void Scene::onUpdate(){ 
         EV_profile_function();
 
-        PhysicsHandler::simulate(this, Time::getDeltatime());
+        PhysicsHandler::simulate(_registry, Time::getDeltatime());
 
         _registry.view<nativeScript_c>().each([=](auto ent, nativeScript_c& nscript){
                 if(!nscript._instance){
