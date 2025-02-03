@@ -32,12 +32,13 @@ namespace Everest {
 
     template<typename ObjectType>
     struct AABBTreeNode {
-        ref<AABBTreeNode> left, right;
-        ref<ObjectType> object;
+        ref<AABBTreeNode> left = nullptr, right = nullptr;
+        ref<ObjectType> object = nullptr;
         AABB2D bounds;
 
         // returns true if the node is a leaf node
         inline bool isLeaf(){return object != nullptr;}
+        inline bool overlaps(AABB2D other){return bounds.overlaps(other);}
     };
 
 
@@ -47,7 +48,7 @@ namespace Everest {
         public:
             // inserts object with the provided bounds in the tree
             inline void insert(ref<ObjectType>& object, const AABB2D& bounds){
-                root = insert(root, object, bounds) ; }
+                root = insert(root, object, bounds); }
             // returns the vector of objects which overlaps with the provided bounds
             inline void query(const AABB2D& qBounds, std::vector<ref<ObjectType>>& results){
                 query(root, qBounds, results); }
@@ -87,11 +88,12 @@ namespace Everest {
                 return node;
             }
 
-            void query(ref<nodetype>& node, const AABB2D& qBounds, std::vector<ref<nodetype>>& results){
+            void query(ref<nodetype>& node, const AABB2D& qBounds, std::vector<ref<ObjectType>>& results){
                 if(!node) return;
                 if(!node->overlaps(qBounds)) return;
-                if(node->isLeaf()) results.push_back(root->object);
-                else {
+                if(node->isLeaf()){
+                    results.push_back(node->object);
+                } else {
                     query(node->left, qBounds, results);
                     query(node->right, qBounds, results);
                 }

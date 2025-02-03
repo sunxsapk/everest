@@ -80,4 +80,15 @@ namespace Everest {
         vec3 forward = vec3(-cosa * sinb, sina, -cosa * cosb);
         return glm::normalize(forward);
     }
+
+    vec2 Math::rotate2d(vec2 point, f32 angle){
+        const f32 _sn = glm::sin(angle);
+        const f32 _cs = glm::cos(angle);
+
+        return {
+            point.x * _cs - point.y * _sn,
+            point.x * _sn + point.y * _cs
+        };
+
+    }
 }

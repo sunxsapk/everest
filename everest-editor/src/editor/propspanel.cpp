@@ -32,7 +32,7 @@ namespace Everest {
         }
 
         if(ImGui::BeginPopup("_add_component_")){
-            if(ImGui::MenuItem("camera_c")) {
+            if(ImGui::MenuItem("Camera")) {
                 camera_c& cam = ent.tryAdd<camera_c>();
                 vec2 viewportSize = ScenePanel::getSceneViewportSize();
                 f32 aspect = (float)viewportSize.x / viewportSize.y;
@@ -45,6 +45,8 @@ namespace Everest {
             if(ImGui::MenuItem("Rigidbody 2D")) ent.tryAdd<rigidbody2d_c>();
             if(ImGui::MenuItem("Spring Joint")) ent.tryAdd<springJoint_c>();
             if(ImGui::MenuItem("Spring Joint 2D")) ent.tryAdd<springJoint2d_c>();
+            if(ImGui::MenuItem("Box Collider 2D")) ent.tryAdd<boxCollider2d_c>();
+            if(ImGui::MenuItem("Circle Collider 2D")) ent.tryAdd<circleCollider2d_c>();
 
             ImGui::EndPopup();
         }
@@ -215,6 +217,20 @@ namespace Everest {
             _f32dragui("Damping", comp.damping, 0.01f, "##dmp") ;
             _f32dragui("Rest Length", comp.restLength, 0.01f, "##rl");
         });
+
+        if(ent.has<boxCollider2d_c>()) _componentUI<boxCollider2d_c>(ent, "Box Collider 2D",
+        [](boxCollider2d_c& comp){
+            _vec2ui("Offset", comp.box.offset, 0.f);
+            _vec2ui("Half Extents", comp.box.halfExtents, 0.5f);
+        });
+
+        if(ent.has<circleCollider2d_c>()) _componentUI<circleCollider2d_c>(ent, "Circle Collider 2D",
+        [](circleCollider2d_c& comp){
+            _vec2ui("Offset", comp.circle.offset, 0.f);
+            _f32dragui("Radius", comp.circle.radius, 0.5f);
+        });
+
+
 
         if(ent.has<nativeScript_c>()) _componentUI<nativeScript_c>(ent, "Native Script",
         [](nativeScript_c& comp){

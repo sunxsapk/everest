@@ -164,7 +164,7 @@ namespace Everest {
     void Scene::onUpdate(){ 
         EV_profile_function();
 
-        PhysicsHandler::simulate(_registry, Time::getDeltatime());
+        PhysicsHandler::simulate(*this, Time::getDeltatime());
 
         _registry.view<nativeScript_c>().each([=](auto ent, nativeScript_c& nscript){
                 if(!nscript._instance){
@@ -222,6 +222,8 @@ namespace Everest {
             copyComponent<rigidbody_c>(srcReg, e, desReg, id);
             copyComponent<springJoint_c>(srcReg, e, desReg, id);
             copyComponent<springJoint2d_c>(srcReg, e, desReg, id);
+            copyComponent<boxCollider2d_c>(srcReg, e, desReg, id);
+            copyComponent<circleCollider2d_c>(srcReg, e, desReg, id);
         }
 
         return newScene;

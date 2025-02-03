@@ -14,5 +14,8 @@ namespace Everest {
         vec3 transformOrtho(vec3 point, vec3 position, vec2 scale, f32 rotation);
         bool decomposeTransform(transform_c& transform, mat4& transformMatrix);
         vec3 getCameraForward(transform_c& camTransform);
+
+        //rotate a 2d point by an 'angle' (in radians)
+        vec2 rotate2d(vec2 point, f32 angle);
     }
 }

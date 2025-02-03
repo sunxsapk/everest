@@ -28,7 +28,7 @@ namespace Everest {
         SceneManager::onSceneChanged([](ref<Scene>& scene){
                 SceneHeirarchyUI::setScene(scene);
         });
-        SceneManager::loadScene("assets/scenes/scene.everest");
+        SceneManager::loadScene("assets/scenes/physics2d.everest");
         EditorAssets::init();
         Gizmos::init();
     }

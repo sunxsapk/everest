@@ -6,6 +6,7 @@
 #pragma once
 
 #include "camera.h"
+#include "physics/colliders2d.h"
 #include "scriptable.h"
 #include "utils/uuid.h"
 #include "renderer/spriteRenderer.h"
@@ -61,4 +62,7 @@ namespace Everest {
     using Rigidbody = rigidbody_c;
     using Rigidbody2d = rigidbody2d_c;
     using SpringJoint = springJoint_c;
+    using BoxCollider2d = boxCollider2d_c;
+    using CircleCollider2d = circleCollider2d_c;
+    using Collider2D = collider2d_c;
 }

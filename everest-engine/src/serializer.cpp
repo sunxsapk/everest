@@ -105,6 +105,16 @@ namespace Everest {
             out << entity.get<springJoint_c>();
         }
 
+        if(entity.has<boxCollider2d_c>()){
+            out << entity.get<boxCollider2d_c>();
+        }
+
+        if(entity.has<circleCollider2d_c>()){
+            out << entity.get<circleCollider2d_c>();
+        }
+
+
+
         out << EndMap;
     }
 
@@ -225,23 +235,39 @@ namespace Everest {
 
             auto springJoint2d = entity["springJoint2d_c"];
             if(springJoint2d){
-                auto& rb2d = n_ent.add<springJoint2d_c>();
-                rb2d.anchor = springJoint2d["anchor"].as<vec2>();
-                rb2d.offset = springJoint2d["offset"].as<vec2>();
-                rb2d.springConstant = springJoint2d["springConstant"].as<f32>();
-                rb2d.damping = springJoint2d["damping"].as<f32>();
-                rb2d.restLength = springJoint2d["restLength"].as<f32>();
+                auto& spr2d = n_ent.add<springJoint2d_c>();
+                spr2d.anchor = springJoint2d["anchor"].as<vec2>();
+                spr2d.offset = springJoint2d["offset"].as<vec2>();
+                spr2d.springConstant = springJoint2d["springConstant"].as<f32>();
+                spr2d.damping = springJoint2d["damping"].as<f32>();
+                spr2d.restLength = springJoint2d["restLength"].as<f32>();
             }
 
             auto springJoint = entity["springJoint_c"];
             if(springJoint){
-                auto& rb = n_ent.add<springJoint_c>();
-                rb.anchor = springJoint["anchor"].as<vec3>();
-                rb.offset = springJoint["offset"].as<vec3>();
-                rb.springConstant = springJoint["springConstant"].as<f32>();
-                rb.damping = springJoint2d["damping"].as<f32>();
-                rb.restLength = springJoint["restLength"].as<f32>();
+                auto& spr = n_ent.add<springJoint_c>();
+                spr.anchor = springJoint["anchor"].as<vec3>();
+                spr.offset = springJoint["offset"].as<vec3>();
+                spr.springConstant = springJoint["springConstant"].as<f32>();
+                spr.damping = springJoint2d["damping"].as<f32>();
+                spr.restLength = springJoint["restLength"].as<f32>();
             }
+
+            auto boxCollider2d = entity["boxCollider2d_c"];
+            if(boxCollider2d){
+                auto& bc2d = n_ent.add<boxCollider2d_c>();
+                bc2d.box.offset = boxCollider2d["offset"].as<vec2>();
+                bc2d.box.halfExtents = boxCollider2d["halfExtents"].as<vec2>();
+            }
+
+            auto circleCollider2d = entity["circleCollider2d_c"];
+            if(circleCollider2d){
+                auto& cc2d = n_ent.add<circleCollider2d_c>();
+                cc2d.circle.offset = circleCollider2d["offset"].as<vec2>();
+                cc2d.circle.radius = circleCollider2d["radius"].as<f32>();
+            }
+
+
 
         }
 
@@ -401,6 +427,30 @@ namespace Everest {
         out << Key << "springConstant" << Value << spr.springConstant;
         out << Key << "damping" << Value << spr.damping;
         out << Key << "restLength" << Value << spr.restLength;
+
+        out << EndMap;
+        return out;
+    }
+
+    YAML::Emitter& operator<<(YAML::Emitter& out, const boxCollider2d_c& boxCollider2d){
+        using namespace YAML;
+        out << Key << "boxCollider2d_c";
+        out << BeginMap;
+
+        out << Key << "offset" << Value << boxCollider2d.box.offset;
+        out << Key << "halfExtents" << Value << boxCollider2d.box.halfExtents;
+
+        out << EndMap;
+        return out;
+    }
+
+    YAML::Emitter& operator<<(YAML::Emitter& out, const circleCollider2d_c& circleCollider2d){
+        using namespace YAML;
+        out << Key << "circleCollider2d_c";
+        out << BeginMap;
+
+        out << Key << "offset" << Value << circleCollider2d.circle.offset;
+        out << Key << "radius" << Value << circleCollider2d.circle.radius;
 
         out << EndMap;
         return out;

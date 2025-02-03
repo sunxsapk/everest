@@ -11,10 +11,10 @@
 namespace Everest {
 
     struct BodyContact {
-        transform_c& transform1;
-        transform_c& transform2;
-        rigidbody_c& body1;
-        rigidbody_c& body2;
+        transform_c* transform1;
+        transform_c* transform2;
+        rigidbody_c* body1;
+        rigidbody_c* body2;
 
         vec3 contactNormal;
         f32 restitution;
@@ -28,10 +28,10 @@ namespace Everest {
     };
 
     struct BodyContact2D {
-        transform_c& transform1;
-        transform_c& transform2;
-        rigidbody2d_c& body1;
-        rigidbody2d_c& body2;
+        transform_c* transform1;
+        transform_c* transform2;
+        rigidbody2d_c* body1;
+        rigidbody2d_c* body2;
 
         vec2 contactNormal;
         f32 restitution;

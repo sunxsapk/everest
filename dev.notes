@@ -79,3 +79,16 @@ Now, let's talk about the current milestones of the project:
     ; Target: Make a simple game like space invader or tetris
 
 - Develop 3D rendering system (mesh load and rendering, materials and shaders)
+
+
+
+================== API test =========================
+
+user's POV:
+    - entity.get<boxCollider2d>()
+    - entity.get<circleCollider2d>()
+engine's usage:
+    - registry.view<boxCollider2d>()
+    - for each 'boxCollider2d', insert 'collider2d' into AABB2D tree
+    - registry.view<circleCollider2d>()
+    - for each 'circleCollider2d', insert 'collider2d' into AABB2D tree

@@ -43,4 +43,6 @@ namespace Everest {
     YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody_c& rigidbody);
     YAML::Emitter& operator<<(YAML::Emitter& out, const springJoint2d_c& springJoint2d);
     YAML::Emitter& operator<<(YAML::Emitter& out, const springJoint_c& springJoint);
+    YAML::Emitter& operator<<(YAML::Emitter& out, const boxCollider2d_c& boxCollider2d);
+    YAML::Emitter& operator<<(YAML::Emitter& out, const circleCollider2d_c& circleCollider2d);
 }
