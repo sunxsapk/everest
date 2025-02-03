@@ -48,7 +48,8 @@ namespace Everest {
         if(_activeScene){
             switch(ScenePanel::getSceneState()){
                 case SceneState::EDIT:
-                    _activeScene->onEditorRender(_camera.camera, _camera.transform);
+                    _activeScene->onEditorRender(_camera.camera, _camera.transform,
+                            Gizmos::showPhysicsShapes);
                     //Renderer::disableDepth();
                     _framebuffer->setDrawBufferTargetCount(1); // render grid on only first one
                     Gizmos::renderGrid(_camera);

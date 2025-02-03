@@ -14,6 +14,7 @@ namespace Everest {
     class Gizmos {
         public:
             static bool showGizmos;
+            static bool showPhysicsShapes;
         public:
             static void init();
             static void quit();

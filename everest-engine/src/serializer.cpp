@@ -157,118 +157,137 @@ namespace Everest {
 
             Entity n_ent = _scene->createEntityUUID(uuid, name.c_str());
 
-            auto transform = entity["transform_c"];
-            if(transform){
-                auto& tfr = n_ent.get<transform_c>();
-                tfr.position = transform["position"].as<vec3>();
-                tfr.rotation = transform["rotation"].as<vec3>();
-                tfr.scale = transform["scale"].as<vec3>();
+            {
+                auto transform = entity["transform_c"];
+                if(transform){
+                    auto& tfr = n_ent.get<transform_c>();
+                    tfr.position = transform["position"].as<vec3>();
+                    tfr.rotation = transform["rotation"].as<vec3>();
+                    tfr.scale = transform["scale"].as<vec3>();
+                }
             }
 
-            auto camera = entity["camera_c"];
-            if(camera){
-                auto& cam = n_ent.add<camera_c>(camera_c{
-                    });
-                cam.isPrimary = camera["isPrimary"]?camera["isPrimary"].as<bool>() : false;
-                cam.fixedAspect = camera["fixedAspect"].as<bool>();
-                
-                auto ortho = camera["orthographic_d"];
-                OrthographicData odat{
-                    .orthoSize = ortho["size"].as<f32>(),
-                    .aspect = ortho["aspect"].as<f32>(),
-                    .near = ortho["near"].as<f32>(),
-                    .far = ortho["far"].as<f32>(),
-                };
-                cam.setOrthographicData(odat);
+            {
+                auto camera = entity["camera_c"];
+                if(camera){
+                    auto& cam = n_ent.add<camera_c>(camera_c{
+                        });
+                    cam.isPrimary = camera["isPrimary"]?camera["isPrimary"].as<bool>() : false;
+                    cam.fixedAspect = camera["fixedAspect"].as<bool>();
+                    
+                    auto ortho = camera["orthographic_d"];
+                    OrthographicData odat{
+                        .orthoSize = ortho["size"].as<f32>(),
+                        .aspect = ortho["aspect"].as<f32>(),
+                        .near = ortho["near"].as<f32>(),
+                        .far = ortho["far"].as<f32>(),
+                    };
+                    cam.setOrthographicData(odat);
 
-                auto persp = camera["perspective_d"];
-                PerspectiveData pdat{
-                    .fov = persp["fov"].as<f32>(),
-                    .aspect = persp["aspect"].as<f32>(),
-                    .near = persp["near"].as<f32>(),
-                    .far = persp["far"].as<f32>(),
-                };
-                cam.setPerspectiveData(pdat);
+                    auto persp = camera["perspective_d"];
+                    PerspectiveData pdat{
+                        .fov = persp["fov"].as<f32>(),
+                        .aspect = persp["aspect"].as<f32>(),
+                        .near = persp["near"].as<f32>(),
+                        .far = persp["far"].as<f32>(),
+                    };
+                    cam.setPerspectiveData(pdat);
 
-                cam.setType((CameraType)camera["type"].as<u32>());
+                    cam.setType((CameraType)camera["type"].as<u32>());
+                }
             }
 
-            auto spriteRenderer = entity["spriteRenderer_c"];
-            if(spriteRenderer){
-                auto txpath = spriteRenderer["texturePath"];
-                n_ent.add<spriteRenderer_c>(spriteRenderer_c{
-                        .texture = txpath ?
-                            AssetsManager::loadTexture(txpath.as<std::string>().c_str()) :
-                            nullptr,
-                        .color = spriteRenderer["color"].as<vec4>(),
-                        .startUV = spriteRenderer["startUV"].as<vec2>(),
-                        .sizeUV = spriteRenderer["sizeUV"].as<vec2>(),
-                    });
+            {
+                auto spriteRenderer = entity["spriteRenderer_c"];
+                if(spriteRenderer){
+                    auto txpath = spriteRenderer["texturePath"];
+                    n_ent.add<spriteRenderer_c>(spriteRenderer_c{
+                            .texture = txpath ?
+                                AssetsManager::loadTexture(txpath.as<std::string>().c_str()) :
+                                nullptr,
+                            .color = spriteRenderer["color"].as<vec4>(),
+                            .startUV = spriteRenderer["startUV"].as<vec2>(),
+                            .sizeUV = spriteRenderer["sizeUV"].as<vec2>(),
+                        });
+                }
             }
 
-            auto circleRenderer = entity["circleRenderer_c"];
-            if(circleRenderer){
-                n_ent.add<circleRenderer_c>(circleRenderer_c{
-                        .color = circleRenderer["color"].as<vec4>(),
-                        .thickness = circleRenderer["thickness"].as<f32>(),
-                        .fade = circleRenderer["fade"].as<f32>(),
-                    });
+            {
+                auto circleRenderer = entity["circleRenderer_c"];
+                if(circleRenderer){
+                    n_ent.add<circleRenderer_c>(circleRenderer_c{
+                            .color = circleRenderer["color"].as<vec4>(),
+                            .thickness = circleRenderer["thickness"].as<f32>(),
+                            .fade = circleRenderer["fade"].as<f32>(),
+                        });
+                }
             }
 
-            auto rigidbody2d = entity["rigidbody2d_c"];
-            if(rigidbody2d){
-                auto& rb2d = n_ent.add<rigidbody2d_c>();
-                rb2d.velocity = rigidbody2d["velocity"].as<vec2>();
-                rb2d.drag = rigidbody2d["drag"].as<f32>();
-                rb2d.useGravity = rigidbody2d["useGravity"].as<bool>();
-                rb2d.inverseMass = rigidbody2d["inverseMass"].as<f32>();
+            {
+                auto rigidbody2d = entity["rigidbody2d_c"];
+                if(rigidbody2d){
+                    auto& rb2d = n_ent.add<rigidbody2d_c>();
+                    rb2d.velocity = rigidbody2d["velocity"].as<vec2>();
+                    rb2d.drag = rigidbody2d["drag"].as<f32>();
+                    rb2d.useGravity = rigidbody2d["useGravity"].as<bool>();
+                    rb2d.inverseMass = rigidbody2d["inverseMass"].as<f32>();
+                }
             }
 
-            auto rigidbody = entity["rigidbody_c"];
-            if(rigidbody){
-                auto& rb = n_ent.add<rigidbody_c>();
-                rb.velocity = rigidbody["velocity"].as<vec3>();
-                rb.drag = rigidbody["drag"].as<f32>();
-                rb.useGravity = rigidbody["useGravity"].as<bool>();
-                rb.inverseMass = rigidbody["inverseMass"].as<f32>();
+            {
+                auto rigidbody = entity["rigidbody_c"];
+                if(rigidbody){
+                    auto& rb = n_ent.add<rigidbody_c>();
+                    rb.velocity = rigidbody["velocity"].as<vec3>();
+                    rb.drag = rigidbody["drag"].as<f32>();
+                    rb.useGravity = rigidbody["useGravity"].as<bool>();
+                    rb.inverseMass = rigidbody["inverseMass"].as<f32>();
+                }
             }
 
-            auto springJoint2d = entity["springJoint2d_c"];
-            if(springJoint2d){
-                auto& spr2d = n_ent.add<springJoint2d_c>();
-                spr2d.anchor = springJoint2d["anchor"].as<vec2>();
-                spr2d.offset = springJoint2d["offset"].as<vec2>();
-                spr2d.springConstant = springJoint2d["springConstant"].as<f32>();
-                spr2d.damping = springJoint2d["damping"].as<f32>();
-                spr2d.restLength = springJoint2d["restLength"].as<f32>();
+            {
+                auto springJoint2d = entity["springJoint2d_c"];
+                if(springJoint2d){
+                    auto& spr2d = n_ent.add<springJoint2d_c>();
+                    spr2d.anchor = springJoint2d["anchor"].as<vec2>();
+                    spr2d.offset = springJoint2d["offset"].as<vec2>();
+                    spr2d.springConstant = springJoint2d["springConstant"].as<f32>();
+                    spr2d.damping = springJoint2d["damping"].as<f32>();
+                    spr2d.restLength = springJoint2d["restLength"].as<f32>();
+                }
             }
 
-            auto springJoint = entity["springJoint_c"];
-            if(springJoint){
-                auto& spr = n_ent.add<springJoint_c>();
-                spr.anchor = springJoint["anchor"].as<vec3>();
-                spr.offset = springJoint["offset"].as<vec3>();
-                spr.springConstant = springJoint["springConstant"].as<f32>();
-                spr.damping = springJoint2d["damping"].as<f32>();
-                spr.restLength = springJoint["restLength"].as<f32>();
+            {
+                auto springJoint = entity["springJoint_c"];
+                if(springJoint){
+                    auto& spr = n_ent.add<springJoint_c>();
+                    spr.anchor = springJoint["anchor"].as<vec3>();
+                    spr.offset = springJoint["offset"].as<vec3>();
+                    spr.springConstant = springJoint["springConstant"].as<f32>();
+                    spr.damping = springJoint["damping"].as<f32>();
+                    spr.restLength = springJoint["restLength"].as<f32>();
+                }
             }
 
-            auto boxCollider2d = entity["boxCollider2d_c"];
-            if(boxCollider2d){
-                auto& bc2d = n_ent.add<boxCollider2d_c>();
-                bc2d.box.offset = boxCollider2d["offset"].as<vec2>();
-                bc2d.box.halfExtents = boxCollider2d["halfExtents"].as<vec2>();
+            {
+                auto boxCollider2d = entity["boxCollider2d_c"];
+                if(boxCollider2d){
+                    auto& bc2d = n_ent.add<boxCollider2d_c>();
+                    bc2d.box.offset = boxCollider2d["offset"].as<vec2>();
+                    bc2d.box.halfExtents = boxCollider2d["halfExtents"].as<vec2>();
+                    bc2d.restitution = boxCollider2d["restitution"].as<f32>();
+                }
             }
 
-            auto circleCollider2d = entity["circleCollider2d_c"];
-            if(circleCollider2d){
-                auto& cc2d = n_ent.add<circleCollider2d_c>();
-                cc2d.circle.offset = circleCollider2d["offset"].as<vec2>();
-                cc2d.circle.radius = circleCollider2d["radius"].as<f32>();
+            {
+                auto circleCollider2d = entity["circleCollider2d_c"];
+                if(circleCollider2d){
+                    auto& cc2d = n_ent.add<circleCollider2d_c>();
+                    cc2d.circle.offset = circleCollider2d["offset"].as<vec2>();
+                    cc2d.circle.radius = circleCollider2d["radius"].as<f32>();
+                    cc2d.restitution = circleCollider2d["restitution"].as<f32>();
+                }
             }
-
-
-
         }
 
         return true;
@@ -439,6 +458,7 @@ namespace Everest {
 
         out << Key << "offset" << Value << boxCollider2d.box.offset;
         out << Key << "halfExtents" << Value << boxCollider2d.box.halfExtents;
+        out << Key << "restitution" << Value << boxCollider2d.restitution;
 
         out << EndMap;
         return out;
@@ -451,6 +471,7 @@ namespace Everest {
 
         out << Key << "offset" << Value << circleCollider2d.circle.offset;
         out << Key << "radius" << Value << circleCollider2d.circle.radius;
+        out << Key << "restitution" << Value << circleCollider2d.restitution;
 
         out << EndMap;
         return out;

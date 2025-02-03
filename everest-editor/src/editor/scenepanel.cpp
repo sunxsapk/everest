@@ -160,6 +160,10 @@ namespace Everest {
             Gizmos::showGizmos = !Gizmos::showGizmos;
         }
         ImGui::SameLine();
+        if(ImGui::RadioButton("Phy-Gizmo", Gizmos::showPhysicsShapes)){
+            Gizmos::showPhysicsShapes = !Gizmos::showPhysicsShapes;
+        }
+        ImGui::SameLine();
 
         float lineh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
         ImVec4 cl{sceneBackgroundColor.x, sceneBackgroundColor.y, sceneBackgroundColor.z, sceneBackgroundColor.w};

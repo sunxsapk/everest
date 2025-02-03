@@ -222,12 +222,14 @@ namespace Everest {
         [](boxCollider2d_c& comp){
             _vec2ui("Offset", comp.box.offset, 0.f);
             _vec2ui("Half Extents", comp.box.halfExtents, 0.5f);
+            _f32sliderui("Restitution", comp.restitution, "##brst");
         });
 
         if(ent.has<circleCollider2d_c>()) _componentUI<circleCollider2d_c>(ent, "Circle Collider 2D",
         [](circleCollider2d_c& comp){
             _vec2ui("Offset", comp.circle.offset, 0.f);
             _f32dragui("Radius", comp.circle.radius, 0.5f);
+            _f32sliderui("Restitution", comp.restitution, "##crst");
         });
 
 

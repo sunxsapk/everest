@@ -15,7 +15,7 @@ namespace Everest {
         if(body2) tim += body2->inverseMass;
         if(tim <= 0.f) return;
 
-        f32 nsvel = - svel * restitution;
+        f32 nsvel = -svel * restitution;
         vec3 accvel = body1?body1->getAcceleration():vec3(0);
         if(body2) accvel -= body2->getAcceleration();
         f32 acsv = glm::dot(accvel, contactNormal) * duration;

@@ -7,6 +7,7 @@
 namespace Everest {
 
     bool Gizmos::showGizmos = true;
+    bool Gizmos::showPhysicsShapes = false;
     Gizmos *Gizmos::_instance = nullptr;
     ImGuizmo::OPERATION Gizmos::operation = ImGuizmo::OPERATION::TRANSLATE;
     bool Gizmos::isLocalTransform = true;

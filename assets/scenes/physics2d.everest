@@ -1,43 +1,25 @@
 scene: Untitled
 entities:
-  - entity: 16960775384149006254
+  - entity: 8247603304027634396
     tag_c:
-      tag: Circle
+      tag: Circle2
     transform_c:
-      position: [-2.335355, 1.5912412, 0]
+      position: [-1.7766447, -0.43261552, 6.1035156e-05]
       rotation: [0, -0, 0]
       scale: [1, 1, 1]
     circleRenderer_c:
-      color: [1, 1, 1, 1]
+      color: [0, 0.6877637, 0.6268225, 1]
       thickness: 1
       fade: 0
     rigidbody2d_c:
       inverseMass: 1
       drag: 1
       velocity: [0, 0]
-      useGravity: true
+      useGravity: false
     circleCollider2d_c:
       offset: [0, 0]
       radius: 0.5
-  - entity: 15981530553222275560
-    tag_c:
-      tag: Floor
-    transform_c:
-      position: [0, 0, 0]
-      rotation: [0, -0, 0]
-      scale: [20, 1, 1]
-    spriteRenderer_c:
-      color: [0.039534584, 0.02925101, 0.13080168, 1]
-      startUV: [0, 0]
-      sizeUV: [1, 1]
-    rigidbody2d_c:
-      inverseMass: 0.001
-      drag: 1000
-      velocity: [0, 0]
-      useGravity: false
-    boxCollider2d_c:
-      offset: [0, 0]
-      halfExtents: [0.5, 0.5]
+      restitution: 0.484
   - entity: 3323808619384364124
     tag_c:
       tag: Main Camera
@@ -59,3 +41,58 @@ entities:
         aspect: 1.8456014
         near: -100
         far: 100
+  - entity: 15981530553222275560
+    tag_c:
+      tag: Floor
+    transform_c:
+      position: [0, -2.0208826, 0]
+      rotation: [0, -0, 0]
+      scale: [15.1, 2, 1]
+    spriteRenderer_c:
+      color: [0.039534584, 0.02925101, 0.13080168, 1]
+      startUV: [0, 0]
+      sizeUV: [1, 1]
+    boxCollider2d_c:
+      offset: [0, 0]
+      halfExtents: [0.5, 0.5]
+      restitution: 0.668
+  - entity: 11533996910625064423
+    tag_c:
+      tag: Circle
+    transform_c:
+      position: [0.12567353, 3.3213654, 0]
+      rotation: [0, -0, 0]
+      scale: [1, 1, 1]
+    circleRenderer_c:
+      color: [0.51476794, 0.17378885, 0.006516055, 1]
+      thickness: 1
+      fade: 0
+    rigidbody2d_c:
+      inverseMass: 1
+      drag: 1
+      velocity: [0, 0]
+      useGravity: true
+    circleCollider2d_c:
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.511
+  - entity: 10161523350350551490
+    tag_c:
+      tag: Box
+    transform_c:
+      position: [-4.3985634, 0.41292793, 0]
+      rotation: [0, -0, 0]
+      scale: [1, 1, 1]
+    spriteRenderer_c:
+      color: [1, 1, 1, 1]
+      startUV: [0, 0]
+      sizeUV: [1, 1]
+    rigidbody2d_c:
+      inverseMass: 1
+      drag: 0.35
+      velocity: [1, 0]
+      useGravity: false
+    boxCollider2d_c:
+      offset: [0, 0]
+      halfExtents: [0.5, 0.5]
+      restitution: 0.69

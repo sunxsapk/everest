@@ -118,10 +118,11 @@ namespace Everest {
         }
     }
 
-    void Scene::onEditorRender(camera_c& camera, mat4 transform){
+    void Scene::onEditorRender(camera_c& camera, mat4 transform, bool renderPhysicsShapes){
         EV_profile_function();
 
         Renderer2D::beginScene(camera, transform);
+
 
         auto sprgrp = _registry.group<spriteRenderer_c>(entt::get<transform_c>);
         for(auto ent : sprgrp){
@@ -149,6 +150,32 @@ namespace Everest {
             const auto& [cam, tfr] = camgrp.get(ent);
             drawCameraGizmo(tfr, cam, (u32)ent);
         }
+
+        if(renderPhysicsShapes){
+            constexpr vec4 _phyColor = vec4(0.f, 1.f, 0.7f, 1.f);
+            auto boxClds = _registry.group<boxCollider2d_c>(entt::get<transform_c>);
+            for(auto ent : boxClds){
+                const auto& [box, tfr] = boxClds.get(ent);
+                Renderer2D::drawRect(
+                        tfr.position + vec3(box.box.offset, 0.001f),
+                        glm::radians(tfr.rotation.z),
+                        tfr.scale * vec3(box.box.halfExtents*2.f, 1.f),
+                        _phyColor
+                    );
+            }
+
+            auto cirClds = _registry.group<circleCollider2d_c>(entt::get<transform_c>);
+            for(auto ent : cirClds){
+                const auto& [cir, tfr] = cirClds.get(ent);
+                Renderer2D::drawCircle(
+                        tfr.position + vec3(cir.circle.offset, 0.001f),
+                        glm::max(tfr.scale.x, tfr.scale.y) * cir.circle.radius * 2.f,
+                        _phyColor,
+                        0.04f
+                    );
+            }
+        }
+
 
         Renderer2D::endScene();
     }

@@ -33,29 +33,32 @@ namespace Everest {
 
 
     bool CollisionDetector2D::circle_circle(collider2d_c& body1, collider2d_c& body2, result_t& results){
-        CircleProps& c1 = body1.props.circle;
-        transform_c& p1 = body1.entity.get<transform_c>();
-        f32 r1 = glm::max(p1.scale.x, p1.scale.y) * c1.radius;
+        EVLog_Msg("circle_circle");
+        CircleProps c1 = body1.props.circle;
+        transform_c& t1 = body1.entity.get<transform_c>();
+        c1.offset += vec2(t1.position.x, t1.position.y);
+        c1.radius *= glm::max(t1.scale.x, t1.scale.y);
 
-        CircleProps& c2 = body2.props.circle;
-        transform_c& p2 = body2.entity.get<transform_c>();
-        f32 r2 = glm::max(p2.scale.x, p2.scale.y) * c2.radius;
+        CircleProps c2 = body2.props.circle;
+        transform_c& t2 = body2.entity.get<transform_c>();
+        c2.offset += vec2(t2.position.x, t2.position.y);
+        c2.radius *= glm::max(t2.scale.x, t2.scale.y);
 
-        vec2 midline = vec2(p1.position.x, p1.position.y) + c1.offset - vec2(p2.position.x, p2.position.y) - c2.offset;
-        f32 len = midline.length();
+        vec2 midline = Math::rotate2d(c1.offset - c2.offset, -glm::radians(t1.rotation.z));
+        f32 len = glm::length(midline);
 
-        if(len <= 0 || len > (r1+r2)) return false;
+        if(len <= 0 || len > (c1.radius + c2.radius)) return false;
         midline /= len;
 
         BodyContact2D bc {
-            .transform1 = &p1,
-            .transform2 = &p2,
-            .contactNormal = midline,
-            .restitution = (body1.restitution + body2.restitution)/2,
-            .penetration = r1 + r2 - len,
+            .transform1 = &t1,
+            .transform2 = &t2,
+            .body1 = body1.entity.has<rigidbody2d_c>()?&body1.entity.get<rigidbody2d_c>():nullptr,
+            .body2 = body2.entity.has<rigidbody2d_c>()?&body2.entity.get<rigidbody2d_c>():nullptr,
+            .contactNormal = Math::rotate2d(midline, glm::radians(t1.rotation.z)),
+            .restitution = glm::min(body1.restitution, body2.restitution),
+            .penetration = c1.radius + c2.radius - len,
         };
-        bc.body1 = body1.entity.has<rigidbody2d_c>()?&body1.entity.get<rigidbody2d_c>():nullptr;
-        bc.body2 = body2.entity.has<rigidbody2d_c>()?&body2.entity.get<rigidbody2d_c>():nullptr;
         results.push_back(bc);
         return true;
     }
@@ -68,35 +71,24 @@ namespace Everest {
 
         CircleProps c2 = body2.props.circle;
         transform_c& t2 = body2.entity.get<transform_c>();
-        c2.radius *= glm::max(t2.scale.x, t2.scale.y);
         c2.offset += vec2(t2.position.x, t2.position.y);
+        c2.radius *= glm::max(t2.scale.x, t2.scale.y);
 
-        vec2 midline = Math::rotate2d(b1.offset - c2.offset, glm::radians(-t1.rotation.z));
-
-        // TODO: penetration is not calculated efficiently
-        midline -= glm::normalize(midline) * c2.radius;
-        vec2 aml = glm::abs(midline);
-        if(aml.x >= b1.halfExtents.x) return false;
-        if(aml.y >= b1.halfExtents.y) return false;
-
-        bool xfoc = aml.y > aml.x;
-        if(xfoc) {
-            midline.x = midline.x > 0? 1.f : -1.f;
-            midline.y = 0.f;
-        } else{
-            midline.x = 0.f;
-            midline.y = midline.y > 0? 1.f : -1.f;
-        }
+        vec2 offset = Math::rotate2d(c2.offset - b1.offset, -glm::radians(t1.rotation.z));
+        vec2 contact = glm::clamp(offset, -b1.halfExtents, b1.halfExtents) - offset;
+        f32 plen = c2.radius - glm::length(contact);
+        if(plen < 0.f) return false;
 
         BodyContact2D bc {
             .transform1 = &t1,
             .transform2 = &t2,
-            .contactNormal = midline,
-            .restitution = (body1.restitution + body2.restitution)/2,
-            .penetration = xfoc ? (b1.halfExtents.x-aml.x) : (b1.halfExtents.y-aml.y)
+            .body1 = body1.entity.has<rigidbody2d_c>()?&body1.entity.get<rigidbody2d_c>():nullptr,
+            .body2 = body2.entity.has<rigidbody2d_c>()?&body2.entity.get<rigidbody2d_c>():nullptr,
+            .contactNormal = Math::rotate2d(contact/(c2.radius-plen), glm::radians(t1.rotation.z)),
+            .restitution = glm::min(body1.restitution, body2.restitution),
+            .penetration = plen,
         };
-        bc.body1 = body1.entity.has<rigidbody2d_c>()?&body1.entity.get<rigidbody2d_c>():nullptr;
-        bc.body2 = body2.entity.has<rigidbody2d_c>()?&body2.entity.get<rigidbody2d_c>():nullptr;
+
         results.push_back(bc);
         return true;
     }
