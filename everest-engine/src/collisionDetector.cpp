@@ -93,8 +93,8 @@ namespace Everest {
         return true;
     }
 
+
     bool CollisionDetector2D::box_box(collider2d_c& body1, collider2d_c& body2, result_t& results){
-        /*
         Box2DProps b1 = body1.props.box;
         transform_c& t1 = body1.entity.get<transform_c>();
         b1.halfExtents *= vec2(t1.scale.x, t1.scale.y);
@@ -105,19 +105,45 @@ namespace Everest {
         b2.halfExtents *= vec2(t2.scale.x, t2.scale.y);
         b2.offset += vec2(t2.position.x, t2.position.y);
 
-        vec2 _tp = Math::rotate2d(vec2(1,0), glm::radians(t2.rotation.z - t1.rotation.z));
-        vec2 axes[4] {
-            {1, 0},
-            {0, 1},
-            _tp,
-            {-_tp.y, _tp.x}
+        vec2 off = b2.offset - b1.offset;
+
+        vec2 axes[4];
+        axes[0] = Math::rotate2d(vec2(1,0), glm::radians(t1.rotation.z));
+        axes[1] = vec2(-axes[0].y, axes[0].x);
+        axes[2] = Math::rotate2d(vec2(1,0), glm::radians(t2.rotation.z));
+        axes[3] = vec2(-axes[2].y, axes[2].x);
+
+        auto sepAxis = [=](vec2 axis){
+            f32 pa = abs(b1.halfExtents.x * glm::dot(axes[0], axis)) + abs(b1.halfExtents.y * glm::dot(axes[1], axis));
+            f32 pb = abs(b2.halfExtents.x * glm::dot(axes[2], axis)) + abs(b2.halfExtents.y * glm::dot(axes[3], axis));
+            return pa+pb;
         };
 
-        auto checkAxis = [&](int x){
-            axes[1].x += 1;
-        };
-        */
+        f32 minOverlap = std::numeric_limits<float>::max();
+        vec2 normal = axes[0];
+        for(auto& axis : axes){
+            f32 overlap = sepAxis(axis);
+            f32 d = glm::dot(off, axis);
 
-        return false;
+            overlap -= abs(d);
+            if(overlap <= 0.f) return false;
+            if(overlap < minOverlap) {
+                minOverlap = overlap;
+                normal = d<0? axis: -axis;
+            }
+        }
+
+        BodyContact2D bc {
+            .transform1 = &t1,
+            .transform2 = &t2,
+            .body1 = body1.entity.has<rigidbody2d_c>()?&body1.entity.get<rigidbody2d_c>():nullptr,
+            .body2 = body2.entity.has<rigidbody2d_c>()?&body2.entity.get<rigidbody2d_c>():nullptr,
+            .contactNormal = normal,
+            .restitution = glm::min(body1.restitution, body2.restitution),
+            .penetration = minOverlap,
+        };
+
+        results.push_back(bc);
+        return true;
     }
 }
