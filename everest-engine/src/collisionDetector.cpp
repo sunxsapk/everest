@@ -77,6 +77,7 @@ namespace Everest {
         vec2 offset = Math::rotate2d(c2.offset - b1.offset, -glm::radians(t1.rotation.z));
         vec2 contact = glm::clamp(offset, -b1.halfExtents, b1.halfExtents) - offset;
         f32 plen = c2.radius - glm::length(contact);
+
         if(plen < 0.f) return false;
 
         BodyContact2D bc {

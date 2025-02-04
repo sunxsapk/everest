@@ -1,4 +1,5 @@
 #include "physics/colliders2d.h"
+#include "math/utils.h"
 #include "scene/components.h"
 
 
@@ -32,15 +33,18 @@ namespace Everest {
         props.circle = circleCollider.circle;
     }
 
-    AABB2D getBoxAABB2D(transform_c& parentTransform, Box2DProps& box){
+    AABB2D getBoxAABB2D(const transform_c& parentTransform, const Box2DProps& box){
         f32 a = glm::radians(parentTransform.rotation.z);
-        f32 _sin = glm::sin(a);
-        f32 _cos = glm::cos(a);
-        vec2 nhe = parentTransform.scale;
-        nhe *= box.halfExtents;
-        nhe = {
-            nhe.x * _cos + nhe.y * _sin,
-            nhe.x * _sin + nhe.y * _cos
+
+        vec2 e1 = parentTransform.scale;
+        e1 *= box.halfExtents;
+        vec2 e2(-e1.x, e1.y);
+        e1 = glm::abs(Math::rotate2d(e1, a));
+        e2 = glm::abs(Math::rotate2d(e2, a));
+
+        vec2 nhe {
+            glm::max(e1.x, e2.x),
+            glm::max(e1.y, e2.y),
         };
 
         vec2 np = parentTransform.position;
@@ -51,7 +55,7 @@ namespace Everest {
         };
     }
 
-    AABB2D getCircleAABB2D(transform_c& parentTransform, CircleProps& circle){
+    AABB2D getCircleAABB2D(const transform_c& parentTransform, const CircleProps& circle){
         vec2 np = parentTransform.position;
         np += circle.offset;
         f32 s = glm::max(parentTransform.scale.x, parentTransform.scale.y) * circle.radius;

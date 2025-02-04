@@ -45,6 +45,8 @@ namespace Everest {
             boxCollider2d_c& comp = bc2d->get(ent);
             ref<collider2d_c> cld = createRef<collider2d_c>(comp, Entity{ent, &scene});
             colliderBounds.push_back(cld->getBounds());
+
+            auto bb = colliderBounds.back(); 
             tree.insert(cld, colliderBounds.back());
         }
 
