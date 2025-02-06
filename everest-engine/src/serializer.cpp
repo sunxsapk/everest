@@ -228,6 +228,7 @@ namespace Everest {
                 if(rigidbody2d){
                     auto& rb2d = n_ent.add<rigidbody2d_c>();
                     rb2d.velocity = rigidbody2d["velocity"].as<vec2>();
+                    rb2d.angularVelocity = rigidbody2d["angularVelocity"].as<f32>();
                     rb2d.drag = rigidbody2d["drag"].as<f32>();
                     rb2d.useGravity = rigidbody2d["useGravity"].as<bool>();
                     rb2d.inverseMass = rigidbody2d["inverseMass"].as<f32>();
@@ -239,6 +240,7 @@ namespace Everest {
                 if(rigidbody){
                     auto& rb = n_ent.add<rigidbody_c>();
                     rb.velocity = rigidbody["velocity"].as<vec3>();
+                    rb.angularVelocity = rigidbody["angularVelocity"].as<vec3>();
                     rb.drag = rigidbody["drag"].as<f32>();
                     rb.useGravity = rigidbody["useGravity"].as<bool>();
                     rb.inverseMass = rigidbody["inverseMass"].as<f32>();
@@ -401,6 +403,7 @@ namespace Everest {
         out << Key << "inverseMass" << Value << rb2d.inverseMass;
         out << Key << "drag" << Value << rb2d.drag;
         out << Key << "velocity" << Value << rb2d.velocity;
+        out << Key << "angularVelocity" << Value << rb2d.angularVelocity;
         out << Key << "useGravity" << Value << rb2d.useGravity;
 
         out << EndMap;
@@ -415,6 +418,7 @@ namespace Everest {
         out << Key << "inverseMass" << Value << rb.inverseMass;
         out << Key << "drag" << Value << rb.drag;
         out << Key << "velocity" << Value << rb.velocity;
+        out << Key << "angularVelocity" << Value << rb.angularVelocity;
         out << Key << "useGravity" << Value << rb.useGravity;
 
         out << EndMap;

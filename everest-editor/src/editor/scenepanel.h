@@ -26,6 +26,7 @@ namespace Everest {
     class ScenePanel {
         public:
             static vec4 sceneBackgroundColor;
+            static bool gameView;
         public:
             static void onGUIrender(ref<Framebuffer>& sceneRender, EditorCamera& sceneCamera);
             static inline bool isFocused(){return _focused;}

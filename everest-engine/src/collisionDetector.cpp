@@ -50,15 +50,19 @@ namespace Everest {
         if(len <= 0 || len > (c1.radius + c2.radius)) return false;
         midline /= len;
 
+        vec2 normal = Math::rotate2d(midline, glm::radians(t1.rotation.z));
+
         BodyContact2D bc {
             .transform1 = &t1,
             .transform2 = &t2,
             .body1 = body1.entity.has<rigidbody2d_c>()?&body1.entity.get<rigidbody2d_c>():nullptr,
             .body2 = body2.entity.has<rigidbody2d_c>()?&body2.entity.get<rigidbody2d_c>():nullptr,
-            .contactNormal = Math::rotate2d(midline, glm::radians(t1.rotation.z)),
+            .contactNormal = normal,
             .restitution = glm::min(body1.restitution, body2.restitution),
             .penetration = c1.radius + c2.radius - len,
         };
+        bc.rb = normal * c2.radius;
+        bc.ra = c2.offset + bc.rb - c1.offset; // not proud of this line
         results.push_back(bc);
         return true;
     }
@@ -80,15 +84,19 @@ namespace Everest {
 
         if(plen < 0.f) return false;
 
+        vec2 normal = Math::rotate2d(contact/(c2.radius-plen), glm::radians(t1.rotation.z));
+
         BodyContact2D bc {
             .transform1 = &t1,
             .transform2 = &t2,
             .body1 = body1.entity.has<rigidbody2d_c>()?&body1.entity.get<rigidbody2d_c>():nullptr,
             .body2 = body2.entity.has<rigidbody2d_c>()?&body2.entity.get<rigidbody2d_c>():nullptr,
-            .contactNormal = Math::rotate2d(contact/(c2.radius-plen), glm::radians(t1.rotation.z)),
+            .contactNormal = normal,
             .restitution = glm::min(body1.restitution, body2.restitution),
             .penetration = plen,
         };
+        bc.rb = normal * c2.radius;
+        bc.ra = c2.offset + bc.rb - b1.offset; // not proud of this line: TODO: after penetration resolved
 
         results.push_back(bc);
         return true;
@@ -143,6 +151,9 @@ namespace Everest {
             .restitution = glm::min(body1.restitution, body2.restitution),
             .penetration = minOverlap,
         };
+        // TODO:
+        bc.rb = normal * b2.halfExtents; // not proud of this line
+        bc.ra = b2.offset + bc.rb - b1.offset; // not proud of this line: TODO: after penetration resolved
 
         results.push_back(bc);
         return true;

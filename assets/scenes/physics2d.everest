@@ -45,6 +45,7 @@ entities:
       inverseMass: 1
       drag: 1
       velocity: [0, 0]
+      angularVelocity: 0
       useGravity: true
     circleCollider2d_c:
       offset: [0, 0]
@@ -65,6 +66,7 @@ entities:
       inverseMass: 1
       drag: 1
       velocity: [0, 0]
+      angularVelocity: 0
       useGravity: true
     boxCollider2d_c:
       offset: [0, 0]
@@ -95,7 +97,7 @@ entities:
     tag_c:
       tag: Floor
     transform_c:
-      position: [-4.5382695, -0.59989595, -0.8]
+      position: [-1.6451153, -1.4297156, -0.1]
       rotation: [0, -0, -23.1]
       scale: [11.7, 1, 1]
     spriteRenderer_c:
@@ -113,14 +115,15 @@ entities:
       position: [-4.7123804, 2.0544295, 0]
       rotation: [0, -0, 3.899978]
       scale: [1, 1, 1]
-    circleRenderer_c:
-      color: [1, 1, 1, 1]
-      thickness: 1
-      fade: 0
+    spriteRenderer_c:
+      color: [0.8649789, 0.2956257, 0.2956257, 1]
+      startUV: [0, 0]
+      sizeUV: [1, 1]
     rigidbody2d_c:
       inverseMass: 1
       drag: 0.35
       velocity: [1, 0]
+      angularVelocity: 0
       useGravity: true
     circleCollider2d_c:
       offset: [0, 0]

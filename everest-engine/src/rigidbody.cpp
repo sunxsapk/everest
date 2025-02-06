@@ -67,7 +67,9 @@ namespace Everest {
 
     void rigidbody2d_c::addForceAtOffset(const vec2 force, const vec2 offset){
         // we only need z component of torque for 2d world
-        _torqueAccumulator += glm::cross(vec3(offset, 0), vec3(force, 0)).z;
+        // TODO: optimizable
+        //_torqueAccumulator += glm::cross(vec3(offset, 0), vec3(force, 0)).z;
+        _torqueAccumulator += (offset.x * force.y - offset.y * force.x);
         _forceAccumulator += force;
     }
 
@@ -87,6 +89,7 @@ namespace Everest {
         velocity += _acceleration * timeStep + iidv;
         _acceleration += iidv / timeStep;
 
+        // TODO: maybe calculate inertia using collider too
         angularVelocity += (_torqueAccumulator - drag * angularVelocity) * inverseMass * timeStep; // inertia is assumed to be equal to mass... i.e. ms-radius = 1
 
         _forceAccumulator = vec2(0.f);

@@ -48,23 +48,34 @@ namespace Everest {
         if(_activeScene){
             switch(ScenePanel::getSceneState()){
                 case SceneState::EDIT:
-                    _activeScene->onEditorRender(_camera.camera, _camera.transform,
-                            Gizmos::showPhysicsShapes);
-                    //Renderer::disableDepth();
-                    _framebuffer->setDrawBufferTargetCount(1); // render grid on only first one
-                    Gizmos::renderGrid(_camera);
-                    _framebuffer->setDrawBufferTargetCount(-1); // reset render targets
-                    //Renderer::enableDepth();
-                    ScenePanel::mousePickCheck(_framebuffer);
+                    editorView(_activeScene);
                     break;
                 case SceneState::PLAY:
-                    _activeScene->onUpdate();
-                    _activeScene->onRender();
+                    if(ScenePanel::gameView){
+                        _activeScene->onRender();
+                        _activeScene->onUpdate();
+                    } else {
+                        editorView(_activeScene, true);
+                    }
                     break;
             }
         }
 
         _framebuffer->unbind();
+    }
+
+    void EditorLayer::editorView(ref<Scene>& _activeScene, bool update){
+        _activeScene->onEditorBeginRender(_camera.camera, _camera.transform);
+        _activeScene->onEditorRender(Gizmos::showPhysicsShapes);
+        if(update) _activeScene->onUpdate();
+        _activeScene->onEditorEndRender();
+
+        //Renderer::disableDepth();
+        _framebuffer->setDrawBufferTargetCount(1); // render grid on only first one
+        Gizmos::renderGrid(_camera);
+        _framebuffer->setDrawBufferTargetCount(-1); // reset render targets
+        //Renderer::enableDepth();
+        ScenePanel::mousePickCheck(_framebuffer);
     }
 
     void EditorLayer::onDetach(){

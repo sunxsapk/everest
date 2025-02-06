@@ -34,8 +34,11 @@ namespace Everest {
         rigidbody2d_c* body2;
 
         vec2 contactNormal;
-        f32 restitution;
-        f32 penetration;
+        vec2 ra = vec2(0.f);
+        vec2 rb = vec2(0.f);
+        f32 restitution = 1.f;
+        f32 friction = 0.3f;
+        f32 penetration = 0.f;
 
         void resolve(f32 duration);
         f32 calcSeparateVelocity() const;

@@ -14,6 +14,7 @@
 
 namespace Everest {
 
+    struct transform_c;
     struct Entity;
     class Scene {
         public:
@@ -27,7 +28,9 @@ namespace Everest {
             void destroyEntity(Entity& entity);
 
             void onRender();
-            void onEditorRender(camera_c& camera, mat4 transform, bool renderPhysicsShapes = false);
+            void onEditorBeginRender(camera_c& camera, mat4 transform);
+            void onEditorRender(bool renderPhysicsShapes = false);
+            void onEditorEndRender();
             void onScenePlay();
             void onSceneStop();
             void onUpdate();
@@ -40,6 +43,13 @@ namespace Everest {
             uvec2 _viewportSize;
             std::string _name;
         private:
+            struct RendererCamera {
+                camera_c* camera = nullptr;
+                transform_c* transform = nullptr;
+            } mainCamera;
+
+            void fetchTargetCamera();
+
             friend class Entity;
             friend class SceneHeirarchyUI;
             friend class SceneSerializer;

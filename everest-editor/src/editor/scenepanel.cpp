@@ -13,6 +13,7 @@ namespace Everest {
     vec4 ScenePanel::sceneBackgroundColor = {.2f, .2f, .2f, 1.f};
     SceneState ScenePanel::_sceneState = SceneState::EDIT;
     ref<Scene> ScenePanel::_runtimeScene = nullptr;
+    bool ScenePanel::gameView = true;
 
     void ScenePanel::onGUIrender(ref<Framebuffer>& sceneRender, EditorCamera& sceneCamera){
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
@@ -150,6 +151,10 @@ namespace Everest {
         }
         ImGui::SameLine();
         gizmosSettings();
+        if(_sceneState == SceneState::PLAY){
+            ImGui::SameLine();
+            if(ImGui::Button(gameView ? "Game View" : "Scene View")) gameView = !gameView;
+        }
         //vec3 dbgv(Input::mousePosition() - getSceneOffset(), 0.f);
         //ImGui::SameLine();
         //ImGui::Text("%.2f, %.2f, %.2f", dbgv.x, dbgv.y, dbgv.z);

@@ -28,7 +28,7 @@ namespace Everest {
 
 
 
-        Entity _en = {_registry.create(), this};
+        Entity _en {_registry.create(), this};
         _en.add<transform_c>();
         _en.add<id_c>(id);
         _en.add<tag_c>(name);
@@ -54,34 +54,38 @@ namespace Everest {
         _registry.clear();
     }
 
-    void Scene::onRender(){ 
+    void Scene::fetchTargetCamera(){
         EV_profile_function();
-
-        camera_c* mainCamera = nullptr;
-        transform_c* camTransform = nullptr;
 
         auto camgrp = _registry.group<camera_c>(entt::get<transform_c>);
         for (auto ent: camgrp){
             const auto& [cam, tfr] = camgrp.get(ent);
             if(cam.isPrimary){
-                mainCamera = &cam;
-                camTransform = &tfr;
+                mainCamera.camera = &cam;
+                mainCamera.transform = &tfr;
                 break;
             }
         }
 
-        if(mainCamera){
-            Renderer2D::beginScene(*mainCamera, *camTransform);
+    }
 
-            auto sprgrp = _registry.group<spriteRenderer_c>(entt::get<transform_c>);
-            for(auto ent : sprgrp){
-                const auto& [spr, tfr] = sprgrp.get(ent);
-                Renderer2D::drawSprite(tfr, spr
+    void Scene::onRender(){ 
+        EV_profile_function();
+
+        if(mainCamera.camera == nullptr) fetchTargetCamera();
+        if(mainCamera.camera == nullptr) return;
+
+        Renderer2D::beginScene(*mainCamera.camera, *mainCamera.transform);
+
+        auto sprgrp = _registry.group<spriteRenderer_c>(entt::get<transform_c>);
+        for(auto ent : sprgrp){
+            const auto& [spr, tfr] = sprgrp.get(ent);
+            Renderer2D::drawSprite(tfr, spr
 #ifdef EDITOR_BUILD
-                        , (u32)ent
+                    , (u32)ent
 #endif
-                        );
-            }
+                    );
+        }
 
         auto cirgrp = _registry.group<circleRenderer_c>(entt::get<transform_c>);
         for(auto ent : cirgrp){
@@ -93,8 +97,7 @@ namespace Everest {
                     );
         }
 
-            Renderer2D::endScene();
-        }
+        Renderer2D::endScene();
 
     }
 
@@ -118,11 +121,14 @@ namespace Everest {
         }
     }
 
-    void Scene::onEditorRender(camera_c& camera, mat4 transform, bool renderPhysicsShapes){
+    void Scene::onEditorBeginRender(camera_c& camera, mat4 transform){
         EV_profile_function();
 
         Renderer2D::beginScene(camera, transform);
+    }
 
+    void Scene::onEditorRender(bool renderPhysicsShapes){
+        EV_profile_function();
 
         auto sprgrp = _registry.group<spriteRenderer_c>(entt::get<transform_c>);
         for(auto ent : sprgrp){
@@ -176,15 +182,20 @@ namespace Everest {
             }
         }
 
+    }
 
+    void Scene::onEditorEndRender(){
+        EV_profile_function();
         Renderer2D::endScene();
     }
 
     void Scene::onScenePlay(){
+        EV_profile_function();
         PhysicsHandler::init(6);
     }
 
     void Scene::onSceneStop(){
+        EV_profile_function();
         PhysicsHandler::quit();
     }
 

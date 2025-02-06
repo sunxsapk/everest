@@ -17,6 +17,8 @@ namespace Everest {
             void handleSceneViewPort();
             bool onMouseButtonDown(MouseButtonDownEvent& event);
 
+            void editorView(ref<Scene>& activeScene, bool update = false);
+
         private:
             ref<Framebuffer> _framebuffer;
         private:

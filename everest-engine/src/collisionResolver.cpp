@@ -4,16 +4,16 @@ namespace Everest {
 
     void BodyContact::resolve(f32 duration){
         if(!body1 && !body2) return;
-        resolveVelocity(duration);
         resolvePenetration(duration);
+        resolveVelocity(duration);
     }
 
     void BodyContact::resolveVelocity(f32 duration){
         f32 svel = calcSeparateVelocity();
         if(svel > 0.f) return;
-        f32 tim = body1?body1->inverseMass:0.f;
-        if(body2) tim += body2->inverseMass;
-        if(tim <= 0.f) return;
+        f32 t_im = body1?body1->inverseMass:0.f;
+        if(body2) t_im += body2->inverseMass;
+        if(t_im <= 0.f) return;
 
         f32 nsvel = -svel * restitution;
         vec3 accvel = body1?body1->getAcceleration():vec3(0);
@@ -23,7 +23,7 @@ namespace Everest {
 
         f32 dvel = nsvel - svel;
 
-        f32 impulse = dvel / tim;
+        f32 impulse = dvel / t_im;
         vec3 impulsePerInvMass = contactNormal * impulse;
         if(body1) body1->velocity += impulsePerInvMass * body1->inverseMass;
         if(body2) body2->velocity -= impulsePerInvMass * body2->inverseMass;
@@ -32,11 +32,11 @@ namespace Everest {
     void BodyContact::resolvePenetration(f32 duration){
         if(penetration <= 0) return;
 
-        f32 tim = (body1?body1->inverseMass:0);
-        if(body2) tim += body2->inverseMass;
-        if(tim <= 0.f) return;
+        f32 t_im = (body1?body1->inverseMass:0);
+        if(body2) t_im += body2->inverseMass;
+        if(t_im <= 0.f) return;
 
-        vec3 mvPerMass = contactNormal * (penetration / tim);
+        vec3 mvPerMass = contactNormal * (penetration / t_im);
         if(body1) transform1->position += mvPerMass * body1->inverseMass;
         if(body2) transform2->position -= mvPerMass * body2->inverseMass;
     }
@@ -48,34 +48,82 @@ namespace Everest {
 
     void BodyContact2D::resolve(f32 duration){
         if(!body1 && !body2) return;
-        resolveVelocity(duration);
         resolvePenetration(duration);
+        resolveVelocity(duration);
     }
 
     void BodyContact2D::resolveVelocity(f32 duration){
-        f32 svel = calcSeparateVelocity();
+        // TODO: this whole thing
+        bool _b1 = body1 != nullptr;
+        bool _b2 = body2 != nullptr;
+
+        vec2 relv(0.f);
+        if(_b1) relv += body1->velocity + body1->angularVelocity * ra;
+        if(_b2) relv -= body2->velocity + body2->angularVelocity * rb;
+        f32 svel = glm::dot(relv, contactNormal);
         if(svel > 0.f) return;
-        f32 tim = body1?body1->inverseMass:0;
-        if(body2) tim += body2->inverseMass;
-        if(tim <= 0.f) return;
 
-        f32 nsvel = - svel * restitution;
-        f32 dvel = nsvel - svel;
+        f32 t_im = 0;
+        if(_b1) t_im += body1->inverseMass;
+        if(_b2) t_im += body2->inverseMass;
+        if(t_im <= 0.f) return;
 
-        f32 impulse = dvel / tim;
+        f32 t_ii = 0;
+        f32 ran = 0, rbn = 0;
+        if(_b1) {
+            ran = (ra.x * contactNormal.y - ra.y * contactNormal.x);
+            t_ii += ran * ran * body1->inverseMass;
+        }
+        if(_b2) {
+            rbn = (rb.x * contactNormal.y - rb.y * contactNormal.x);
+            t_ii += rbn * rbn * body2->inverseMass;
+        }
+
+        f32 impulse = -(1+restitution) * svel / (t_im + t_ii);
         vec2 impulsePerInvMass = contactNormal * impulse;
-        if(body1) body1->velocity += impulsePerInvMass * body1->inverseMass;
-        if(body2) body2->velocity -= impulsePerInvMass * body2->inverseMass;
+        if(_b1){
+            body1->velocity += impulsePerInvMass * body1->inverseMass;
+            body1->angularVelocity += ran * impulse * body1->inverseMass;
+        }
+        if(_b2){
+            body2->velocity -= impulsePerInvMass * body2->inverseMass;
+            body2->angularVelocity -= rbn * impulse * body2->inverseMass;
+        }
+
+        vec2 tangent = glm::normalize(relv - glm::dot(relv, contactNormal) * contactNormal);
+        f32 _fr_impulse = friction * impulse;
+
+        t_ii = 0;
+        if(_b1){
+            ran = (ra.x * tangent.y - ra.y * tangent.x);
+            t_ii += ran * ran * body1->inverseMass;
+        }
+        if(_b2){
+            ran = (rb.x * tangent.y - rb.y * tangent.x);
+            t_ii += rbn * rbn * body2->inverseMass;
+        }
+
+        _fr_impulse = glm::clamp(-glm::dot(relv, tangent) / (t_im + t_ii), -_fr_impulse, _fr_impulse);
+        impulsePerInvMass = _fr_impulse * tangent;
+        EVLog_Wrn("{%f, %f}", impulsePerInvMass.x, impulsePerInvMass.y);
+        if(_b1){
+            body1->velocity += impulsePerInvMass * body1->inverseMass;
+            body1->angularVelocity += ran * _fr_impulse * body1->inverseMass;
+        }
+        if(_b2){
+            body2->velocity -= impulsePerInvMass * body2->inverseMass;
+            body2->angularVelocity -= rbn * _fr_impulse * body2->inverseMass;
+        }
     }
 
     void BodyContact2D::resolvePenetration(f32 duration){
         if(penetration <= 0) return;
 
-        f32 tim = body1?body1->inverseMass:0;
-        if(body2) tim += body2->inverseMass;
-        if(tim <= 0.f) return;
+        f32 t_im = body1?body1->inverseMass:0;
+        if(body2) t_im += body2->inverseMass;
+        if(t_im <= 0.f) return;
 
-        vec2 mvPerMass = contactNormal * (penetration / tim);
+        vec2 mvPerMass = contactNormal * (penetration / t_im);
         if(body1) transform1->position += vec3(mvPerMass * body1->inverseMass, 0);
         if(body2) transform2->position -= vec3(mvPerMass * body2->inverseMass, 0);
     }

@@ -184,7 +184,8 @@ namespace Everest {
         [](rigidbody_c& comp){
             f32 mass = comp.getMass();
             f32 drag = comp.drag;
-            _vec3ui("velocity", comp.velocity, 0.f);
+            _vec3ui("Velocity", comp.velocity, 0.f);
+            _vec3ui("Angular Velocity", comp.angularVelocity, 0.f);
             if(_f32dragui("Mass", mass, 0.01f, "##mass") && mass > 0.f) comp.setMass(mass);
             if(_f32dragui("Drag", drag, 0.01f, "##drag") && drag >= 0.f) comp.drag = drag;
             ImGui::Checkbox("Use Gravity", &comp.useGravity);
@@ -195,6 +196,7 @@ namespace Everest {
             f32 mass = comp.getMass();
             f32 drag = comp.drag;
             _vec2ui("velocity", comp.velocity, 0.f);
+            _f32dragui("Angular Velocity", comp.angularVelocity, 0.01f, "##angv");
             if(_f32dragui("Mass", mass, 0.01f, "##mass") && mass > 0.f) comp.setMass(mass);
             if(_f32dragui("Drag", drag, 0.01f, "##drag") && drag >= 0.f) comp.drag = drag;
             ImGui::Checkbox("Use Gravity", &comp.useGravity);
