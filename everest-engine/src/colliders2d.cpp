@@ -5,6 +5,12 @@
 
 namespace Everest {
 
+    bool Box2DProps::contains(vec2 point){
+        point -= offset;
+
+        return abs(point.x) <= halfExtents.x && abs(point.y) <= halfExtents.y;
+    }
+
     collider2d_c::collider2d_c(Collider2DType type_)
     : type(type_) {
 

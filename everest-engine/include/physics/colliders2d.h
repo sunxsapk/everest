@@ -23,6 +23,8 @@ namespace Everest {
     struct Box2DProps {
         vec2 offset = vec2(0.f);
         vec2 halfExtents = vec2(0.5f);
+
+        bool contains(vec2 point);
     };
 
     struct CircleProps {
@@ -32,12 +34,14 @@ namespace Everest {
 
     struct boxCollider2d_c {
         Box2DProps box;
-        f32 restitution = 1.f;
+
+        f32 restitution = 0.5f;
     };
 
     struct circleCollider2d_c {
         CircleProps circle;
-        f32 restitution = 1.f;
+
+        f32 restitution = 0.5f;
     };
 
     struct collider2d_c {

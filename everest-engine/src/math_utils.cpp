@@ -91,4 +91,8 @@ namespace Everest {
         };
 
     }
+
+    f32 Math::cross(vec2 a, vec2 b){
+        return a.x * b.y - a.y * b.x;
+    }
 }

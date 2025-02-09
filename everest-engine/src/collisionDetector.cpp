@@ -1,5 +1,6 @@
 #include "physics/collisionDetector.h"
 #include "math/utils.h"
+#include "renderer/renderer2d.h"
 
 
 namespace Everest {
@@ -51,6 +52,7 @@ namespace Everest {
         midline /= len;
 
         vec2 normal = Math::rotate2d(midline, glm::radians(t1.rotation.z));
+        vec2 contactPoint = normal * c2.radius + c2.offset;
 
         BodyContact2D bc {
             .transform1 = &t1,
@@ -58,11 +60,14 @@ namespace Everest {
             .body1 = body1.entity.has<rigidbody2d_c>()?&body1.entity.get<rigidbody2d_c>():nullptr,
             .body2 = body2.entity.has<rigidbody2d_c>()?&body2.entity.get<rigidbody2d_c>():nullptr,
             .contactNormal = normal,
+            .ra = contactPoint - c1.offset,
+            .rb = contactPoint - c2.offset,
             .restitution = glm::min(body1.restitution, body2.restitution),
             .penetration = c1.radius + c2.radius - len,
         };
-        bc.rb = normal * c2.radius;
-        bc.ra = c2.offset + bc.rb - c1.offset; // not proud of this line
+        Renderer2D::drawLine(vec3(c2.offset, 1), vec3(contactPoint, 1), vec4(1.f, 1.f, 0.f, 1.f));
+        Renderer2D::drawLine(vec3(c1.offset, 1), vec3(contactPoint, 1), vec4(1.f, 0.f, 0.f, 1.f));
+
         results.push_back(bc);
         return true;
     }
@@ -85,6 +90,7 @@ namespace Everest {
         if(plen < 0.f) return false;
 
         vec2 normal = Math::rotate2d(contact/(c2.radius-plen), glm::radians(t1.rotation.z));
+        contact = Math::rotate2d(contact + offset, glm::radians(t1.rotation.z)) + b1.offset;
 
         BodyContact2D bc {
             .transform1 = &t1,
@@ -92,16 +98,77 @@ namespace Everest {
             .body1 = body1.entity.has<rigidbody2d_c>()?&body1.entity.get<rigidbody2d_c>():nullptr,
             .body2 = body2.entity.has<rigidbody2d_c>()?&body2.entity.get<rigidbody2d_c>():nullptr,
             .contactNormal = normal,
+            .ra = contact - b1.offset,
+            .rb = contact - c2.offset,
             .restitution = glm::min(body1.restitution, body2.restitution),
             .penetration = plen,
         };
-        bc.rb = normal * c2.radius;
-        bc.ra = c2.offset + bc.rb - b1.offset; // not proud of this line: TODO: after penetration resolved
+        Renderer2D::drawLine(vec3(c2.offset, 1), vec3(contact, 1), vec4(1.f, 1.f, 0.f, 1.f));
+        Renderer2D::drawLine(vec3(b1.offset, 1), vec3(contact, 1), vec4(1.f, 0.f, 0.f, 1.f));
+        Renderer2D::drawCircle(vec3(contact, 1), 0.2f, vec4(1.f, 0.f, 0.f, 1.f));
 
         results.push_back(bc);
         return true;
     }
 
+    /*
+    void getBoxAxes(f32 rotation, vec2& axis1, vec2& axis2) {
+        float cosTheta = cos(rotation);
+        float sinTheta = sin(rotation);
+
+        axis1 = vec2(cosTheta, sinTheta); 
+        axis2 = vec2(-sinTheta, cosTheta);
+    }
+
+    void getTransformedBoxCoords(vec2 offset, vec2 size, f32 rotation, vec2* result){
+        f32 sina = sin(rotation);
+        f32 cosa = cos(rotation);
+
+        result[0] = vec2(size.x * cosa - size.y * sina, size.x * sina + size.y * cosa);
+        result[1] = vec2(-size.x * cosa - size.y * sina, -size.x * sina + size.y * cosa);
+        result[2] = -result[0];
+        result[3] = -result[1];
+
+        for(int i=0; i<4; i++){
+            result[i] += offset;
+        }
+    }
+
+    vec2 getContact(Box2DProps& box1, Box2DProps& box2, f32 box1Rotation, f32 box2Rotation){
+        vec2 coords[4];
+        getTransformedBoxCoords(box2.offset, box2.halfExtents, box2Rotation-box1Rotation, coords);
+
+        vec2 cp = coords[0];
+        f32 md = abs(cp.x) + abs(cp.y);
+        bool isFirst = true;
+        for(auto& point : coords){
+            if(!box1.contains(point)) continue;
+            f32 _md = abs(point.x) + abs(point.y);
+            if(_md < md){
+                cp = point;
+                md = _md;
+            }
+            Renderer2D::drawCircle(vec3(Math::rotate2d(cp, box1Rotation) + box1.offset, 2.f), 0.3f, vec4(1.f, 0.f, 1.f, 1.f));
+        }
+
+        getTransformedBoxCoords(box1.offset, box1.halfExtents, box1Rotation-box2Rotation, coords);
+        for(auto& point : coords){
+            if(!box2.contains(point)) continue;
+            f32 _md = abs(point.x) + abs(point.y);
+            if(_md < md){
+                cp = point;
+                md = _md;
+                isFirst = false;
+            }
+            Renderer2D::drawCircle(vec3(Math::rotate2d(cp, box2Rotation) + box2.offset, 1.f), 0.3f);
+        }
+
+        vec2 contact = isFirst ?
+            Math::rotate2d(cp, box1Rotation) :
+            Math::rotate2d(cp, box2Rotation) ;
+
+        return contact;
+    }
 
     bool CollisionDetector2D::box_box(collider2d_c& body1, collider2d_c& body2, result_t& results){
         Box2DProps b1 = body1.props.box;
@@ -117,10 +184,8 @@ namespace Everest {
         vec2 off = b2.offset - b1.offset;
 
         vec2 axes[4];
-        axes[0] = Math::rotate2d(vec2(1,0), glm::radians(t1.rotation.z));
-        axes[1] = vec2(-axes[0].y, axes[0].x);
-        axes[2] = Math::rotate2d(vec2(1,0), glm::radians(t2.rotation.z));
-        axes[3] = vec2(-axes[2].y, axes[2].x);
+        getBoxAxes(glm::radians(t1.rotation.z), axes[0], axes[1]);
+        getBoxAxes(glm::radians(t2.rotation.z), axes[2], axes[3]);
 
         auto sepAxis = [=](vec2 axis){
             f32 pa = abs(b1.halfExtents.x * glm::dot(axes[0], axis)) + abs(b1.halfExtents.y * glm::dot(axes[1], axis));
@@ -129,33 +194,172 @@ namespace Everest {
         };
 
         f32 minOverlap = std::numeric_limits<float>::max();
-        vec2 normal = axes[0];
-        for(auto& axis : axes){
+        vec2 normal;
+        i32 refIndex = 0;
+        for(int i=0; i<4; i++){
+            vec2& axis = axes[i];
             f32 overlap = sepAxis(axis);
             f32 d = glm::dot(off, axis);
 
             overlap -= abs(d);
-            if(overlap <= 0.f) return false;
+            if(overlap < 0.f) return false;
             if(overlap < minOverlap) {
                 minOverlap = overlap;
-                normal = d<0? axis: -axis;
+                normal = d < 0.f? axis: -axis;
+                refIndex = i;
             }
         }
 
+        vec2 contactPoint = refIndex < 2?
+            getContact(b1, b2, glm::radians(t1.rotation.z), glm::radians(t2.rotation.z)):
+            getContact(b2, b1, glm::radians(t2.rotation.z), glm::radians(t1.rotation.z));
+
         BodyContact2D bc {
             .transform1 = &t1,
-            .transform2 = &t2,
-            .body1 = body1.entity.has<rigidbody2d_c>()?&body1.entity.get<rigidbody2d_c>():nullptr,
-            .body2 = body2.entity.has<rigidbody2d_c>()?&body2.entity.get<rigidbody2d_c>():nullptr,
-            .contactNormal = normal,
-            .restitution = glm::min(body1.restitution, body2.restitution),
-            .penetration = minOverlap,
+                .transform2 = &t2,
+                .body1 = body1.entity.has<rigidbody2d_c>()?&body1.entity.get<rigidbody2d_c>():nullptr,
+                .body2 = body2.entity.has<rigidbody2d_c>()?&body2.entity.get<rigidbody2d_c>():nullptr,
+                .contactNormal = normal,
+                .ra = contactPoint - b1.offset,
+                .rb = contactPoint - b2.offset,
+                .restitution = glm::min(body1.restitution, body2.restitution),
+                .penetration = minOverlap,
         };
-        // TODO:
-        bc.rb = normal * b2.halfExtents; // not proud of this line
-        bc.ra = b2.offset + bc.rb - b1.offset; // not proud of this line: TODO: after penetration resolved
+
+        Renderer2D::drawLine(vec3(b2.offset, 1), vec3(contactPoint, 1), vec4(1.f, 1.f, 0.f, 1.f));
+        Renderer2D::drawLine(vec3(b1.offset, 1), vec3(contactPoint, 1), vec4(1.f, 0.f, 0.f, 1.f));
+        //Renderer2D::drawCircle(vec3(contactPoint, 1), 0.2f, vec4(1.f, 0.f, 0.f, 1.f));
 
         results.push_back(bc);
         return true;
+    }
+*/
+
+
+    struct supporting_point_t {
+        vec2 point = vec2(0.f);
+        vec2 normal = vec2(0.f);
+        f32 minDistance = -std::numeric_limits<f32>::max();
+    };
+
+    struct temp_edge_t {
+        vec2 a;
+        vec2 normal;
+
+        static temp_edge_t fromVerticesPair(vec2 a, vec2 b){
+            vec2 v = glm::normalize(a-b);
+            return {
+                .a = a,
+                .normal = vec2(-v.y, v.x)
+            };
+        }
+    };
+
+    bool getClosestSupportingPoint(temp_edge_t *edges, vec2 *vertices, supporting_point_t& supportingPoint){
+        for(i32 i=0; i<4; i++){
+            temp_edge_t& edge = edges[i];
+            supporting_point_t sup{.minDistance = 0.f};
+            bool allpos = true;
+            for(i32 j=0; j<4; j++){
+                vec2& v = vertices[j];
+                f32 dist = glm::dot(edge.normal, v-edge.a);
+                if(dist < sup.minDistance) {
+                    allpos = false;
+                    sup = {v, edge.normal, dist};
+                }
+            }
+            if(allpos){
+                supportingPoint.minDistance = 0.f;
+                return false;
+            }
+            
+            if(sup.minDistance > supportingPoint.minDistance){
+                supportingPoint = sup;
+            }
+        }
+
+        return true;
+    };
+
+    inline void generateBoxEdges(vec2* vertices, temp_edge_t* result){
+        for(i32 i=0; i<4; i++){
+            result[i] = temp_edge_t::fromVerticesPair(vertices[i], vertices[i==3?0:i+1]);
+        }
+    }
+
+    void getTransformedBoxCoords(vec2 offset, vec2 size, f32 rotation, vec2* result){
+        f32 sina = sin(rotation);
+        f32 cosa = cos(rotation);
+
+        result[0] = vec2( size.x * cosa - size.y * sina,  size.x * sina + size.y * cosa);
+        result[1] = vec2(-size.x * cosa - size.y * sina, -size.x * sina + size.y * cosa);
+        result[2] = -result[0];
+        result[3] = -result[1];
+
+        for(int i=0; i<4; i++){
+            result[i] += offset;
+        }
+    }
+
+    bool CollisionDetector2D::box_box(collider2d_c& body1, collider2d_c& body2, result_t& results){
+        Box2DProps b1 = body1.props.box;
+        transform_c* t1 = &body1.entity.get<transform_c>();
+        b1.halfExtents *= vec2(t1->scale.x, t1->scale.y);
+        b1.offset += vec2(t1->position.x, t1->position.y);
+
+        Box2DProps b2 = body2.props.box;
+        transform_c* t2 = &body2.entity.get<transform_c>();
+        b2.halfExtents *= vec2(t2->scale.x, t2->scale.y);
+        b2.offset += vec2(t2->position.x, t2->position.y);
+
+
+        vec2 verticesA[4];
+        temp_edge_t edgesA[4];
+        getTransformedBoxCoords(b1.offset, b1.halfExtents, glm::radians(t1->rotation.z), verticesA);
+        generateBoxEdges(verticesA, edgesA);
+
+        vec2 verticesB[4];
+        temp_edge_t edgesB[4];
+        getTransformedBoxCoords(b2.offset, b2.halfExtents, glm::radians(t2->rotation.z), verticesB);
+        generateBoxEdges(verticesB, edgesB);
+
+        supporting_point_t resultA, resultB;
+        bool _fa = getClosestSupportingPoint(edgesA, verticesB, resultA);
+        bool _fb = getClosestSupportingPoint(edgesB, verticesA, resultB);
+        if(!_fa || !_fb) return false;
+
+        rigidbody2d_c *rb1 = body1.entity.has<rigidbody2d_c>()?&body1.entity.get<rigidbody2d_c>():nullptr;
+        rigidbody2d_c *rb2 = body2.entity.has<rigidbody2d_c>()?&body2.entity.get<rigidbody2d_c>():nullptr;
+
+        vec2 contactPoint = resultA.point;
+        vec2 normal = resultA.normal;
+        f32 penetration = resultA.minDistance;
+
+        if(resultB.minDistance > penetration){
+            contactPoint = resultB.point;
+            normal = resultB.normal;
+            penetration = resultB.minDistance;
+        }
+        penetration = -penetration;
+
+        BodyContact2D bc {
+            .transform1 = t1,
+            .transform2 = t2,
+            .body1 = rb1,
+            .body2 = rb2,
+            .contactNormal = normal,
+            .ra = contactPoint - b1.offset,
+            .rb = contactPoint - b2.offset,
+            .restitution = glm::min(body1.restitution, body2.restitution),
+            .penetration = penetration,
+        };
+
+        //Renderer2D::drawLine(vec3(b2.offset, 1), vec3(contactPoint, 1), vec4(1.f, 1.f, 0.f, 1.f));
+        //Renderer2D::drawLine(vec3(b1.offset, 1), vec3(contactPoint, 1), vec4(1.f, 0.f, 0.f, 1.f));
+        Renderer2D::drawCircle(vec3(contactPoint, 1), 0.2f, vec4(1.f, 0.f, 0.f, 1.f));
+        Renderer2D::drawLine(vec3(contactPoint, 1), vec3(contactPoint + normal * penetration, 1), vec4(1.f, 0.f, 0.f, 1.f));
+
+        results.push_back(bc);
+        return false;
     }
 }

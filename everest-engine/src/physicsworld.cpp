@@ -40,7 +40,6 @@ namespace Everest {
         AABBTree2D<collider2d_c> tree;
         std::vector<AABB2D> colliderBounds(ccount); 
 
-        EVLog_Msg("\n==== creating tree for %d colliders", ccount);
         for(entt::entity ent : bc2d){
             boxCollider2d_c& comp = bc2d->get(ent);
             ref<collider2d_c> cld = createRef<collider2d_c>(comp, Entity{ent, &scene});
@@ -57,7 +56,6 @@ namespace Everest {
             tree.insert(cld, colliderBounds.back());
         }
 
-        EVLog_Msg("\n==== contacts check");
         std::vector<BodyContact2D> contacts;
 
         for(auto bounds : colliderBounds){
@@ -65,13 +63,10 @@ namespace Everest {
             tree.query(bounds, candidates);
 
             if(candidates.size() < 2) continue;
-            EVLog_Msg("==== Contacts candidates size : %d", candidates.size());
 
             for(int i=0; i<candidates.size(); i++){
                 for(int j=i+1; j<candidates.size(); j++){
-                    if(CollisionDetector2D::checkForContacts(candidates[i], candidates[j], contacts)){
-                        EVLog_Wrn("colliding: %u %u", (u32)candidates[i]->entity, (u32)candidates[j]->entity);
-                    }
+                    CollisionDetector2D::checkForContacts(candidates[i], candidates[j], contacts);
                 }
             }
         }

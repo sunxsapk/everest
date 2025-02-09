@@ -100,7 +100,7 @@ namespace Everest {
             /* returns the time elapsed since the beginning of the program */
             inline static f64 getTime(){ return _clock->getElapsedTime();}
             /* returns the scaled-time between the frames */
-            inline static f64 getDeltatime(){ return _clock->getTimeBetweenTicks();}
+            inline static f64 getDeltatime(){ return _paused? 0.f : _clock->getTimeBetweenTicks();}
             /* sets the current time-scale */
             inline static void setScale(f32 scale){_clock->setScale(scale);}
             /* returns the current time-scale */
@@ -111,7 +111,7 @@ namespace Everest {
             /* pauses the time to allow manual tick */
             inline static void setPauseState(bool pause){_paused = pause;}
             /* returns true if time is paused */
-            inline static bool isPaused(){return _paused;}
+            inline static bool isPaused(){return _paused && !_manualTick;}
 
             /* returns the current frame rate in frames-per-seconds */
             inline static int getFrameRate(){return _unscaledClock->getTickRate();}

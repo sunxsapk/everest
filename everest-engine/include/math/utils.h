@@ -17,5 +17,6 @@ namespace Everest {
 
         //rotate a 2d point by an 'angle' (in radians)
         vec2 rotate2d(vec2 point, f32 angle);
+        f32 cross(vec2 a, vec2 b);
     }
 }

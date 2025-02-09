@@ -30,7 +30,7 @@ namespace Everest {
     }
 
     void rigidbody_c::integrate(transform_c& transform, const f32 timeStep){
-        ASSERT(timeStep > 0.f, "Timestep for simulation cannot be negative or zero");
+        ASSERT(timeStep >= 0.f, "Timestep for simulation cannot be negative");
 
         transform.position += velocity * timeStep;
 
@@ -39,9 +39,7 @@ namespace Everest {
         velocity += _acceleration * timeStep + iidv;
         _acceleration += iidv / timeStep;
 
-        // inertia is assumed to be equal to mass... i.e. ms-radius = 1
-        // Maybe, calculate it using what collider is used
-        angularVelocity += (_torqueAccumulator - drag * angularVelocity) * inverseMass * timeStep;
+        angularVelocity += (_torqueAccumulator - drag * angularVelocity) * inverseInertia * timeStep;
 
         _forceAccumulator = vec3(0.f);
         _torqueAccumulator = vec3(0.f);
@@ -79,7 +77,7 @@ namespace Everest {
     }
 
     void rigidbody2d_c::integrate(transform_c& transform, const f32 timeStep){
-        ASSERT(timeStep > 0.f, "Timestep for simulation cannot be negative or zero");
+        ASSERT(timeStep >= 0.f, "Timestep for simulation cannot be negative");
 
         transform.position += vec3(velocity * timeStep, 0.f);
         transform.rotation.z += glm::degrees(angularVelocity * timeStep);
@@ -89,8 +87,7 @@ namespace Everest {
         velocity += _acceleration * timeStep + iidv;
         _acceleration += iidv / timeStep;
 
-        // TODO: maybe calculate inertia using collider too
-        angularVelocity += (_torqueAccumulator - drag * angularVelocity) * inverseMass * timeStep; // inertia is assumed to be equal to mass... i.e. ms-radius = 1
+        angularVelocity += (_torqueAccumulator - drag * angularVelocity) * inverseInertia * timeStep;
 
         _forceAccumulator = vec2(0.f);
         _torqueAccumulator = 0.f;

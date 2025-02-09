@@ -30,12 +30,11 @@ namespace Everest {
     struct BodyContact2D {
         transform_c* transform1;
         transform_c* transform2;
-        rigidbody2d_c* body1;
-        rigidbody2d_c* body2;
+        rigidbody2d_c* body1 = nullptr;
+        rigidbody2d_c* body2 = nullptr;
 
         vec2 contactNormal;
-        vec2 ra = vec2(0.f);
-        vec2 rb = vec2(0.f);
+        vec2 ra, rb;
         f32 restitution = 1.f;
         f32 friction = 0.3f;
         f32 penetration = 0.f;
@@ -45,6 +44,7 @@ namespace Everest {
         private:
         void resolvePenetration(f32 duration);
         void resolveVelocity(f32 duration);
+        vec2 calcRelativeVelocity() const;
     };
 
     class ContactResolver {

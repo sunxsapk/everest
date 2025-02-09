@@ -151,10 +151,10 @@ namespace Everest {
         }
         ImGui::SameLine();
         gizmosSettings();
-        if(_sceneState == SceneState::PLAY){
+        //if(_sceneState == SceneState::PLAY){
             ImGui::SameLine();
             if(ImGui::Button(gameView ? "Game View" : "Scene View")) gameView = !gameView;
-        }
+        //}
         //vec3 dbgv(Input::mousePosition() - getSceneOffset(), 0.f);
         //ImGui::SameLine();
         //ImGui::Text("%.2f, %.2f, %.2f", dbgv.x, dbgv.y, dbgv.z);

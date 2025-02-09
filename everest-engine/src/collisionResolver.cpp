@@ -1,4 +1,5 @@
 #include "physics/collisionResolver.h"
+#include "math/utils.h"
 
 namespace Everest {
 
@@ -52,7 +53,7 @@ namespace Everest {
         resolveVelocity(duration);
     }
 
-    void BodyContact2D::resolveVelocity(f32 duration){
+    /*void BodyContact2D::resolveVelocity(f32 duration){
         // TODO: this whole thing
         bool _b1 = body1 != nullptr;
         bool _b2 = body2 != nullptr;
@@ -116,7 +117,53 @@ namespace Everest {
         }
     }
 
+
+        f32 nsvel = - svel * restitution;
+        f32 dvel = nsvel - svel;
+
+        f32 impulse = dvel / tim;
+        vec2 impulsePerInvMass = contactNormal * impulse;
+        if(body1) {
+            body1->velocity += impulsePerInvMass * body1->inverseMass;
+            body1->angularVelocity += Math::cross(ra, impulsePerInvMass) * body1->inverseInertia;
+        }
+        if(body2) {
+            body2->velocity -= impulsePerInvMass * body2->inverseMass;
+            body2->angularVelocity -= Math::cross(rb, impulsePerInvMass) * body2->inverseInertia;
+        }
+
+*/
+
+    void BodyContact2D::resolveVelocity(f32 duration){
+        vec2 relv = calcRelativeVelocity();
+        f32 svel = glm::dot(relv, contactNormal);
+        if(svel > 0.f) return;
+
+        f32 raxn = Math::cross(ra, contactNormal);
+        f32 rbxn = Math::cross(rb, contactNormal);
+
+        f32 tim = 0;
+        if(body1){
+            tim += body1->inverseMass + raxn * raxn * body1->inverseInertia;
+        }
+        if(body2){
+            tim += body2->inverseMass + rbxn * rbxn * body2->inverseInertia;
+        }
+        if(tim <= 0.f) return;
+
+        vec2 j = -(1+restitution) * svel / tim * contactNormal;
+        if(body1){
+            body1->velocity += j * body1->inverseMass;
+            body1->angularVelocity += Math::cross(ra, j) * body1->inverseInertia;
+        }
+        if(body2){
+            body2->velocity -= j * body2->inverseMass;
+            body2->angularVelocity -= Math::cross(rb, j) * body2->inverseInertia;
+        }
+    }
+
     void BodyContact2D::resolvePenetration(f32 duration){
+        // TODO: penetration is not resolved properly when one box is at edge of other
         if(penetration <= 0) return;
 
         f32 t_im = body1?body1->inverseMass:0;
@@ -129,11 +176,22 @@ namespace Everest {
     }
 
     f32 BodyContact2D::calcSeparateVelocity() const {
-        vec2 relv = body1?body1->velocity:vec2(0);
-        if(body2) relv -= body2->velocity;
-        return glm::dot(relv, contactNormal);
+        return glm::dot(calcRelativeVelocity(), contactNormal);
     }
 
+    vec2 BodyContact2D::calcRelativeVelocity() const {
+        vec2 relv(0.f);
+        if(body1){
+            relv.x += body1->velocity.x - body1->angularVelocity * ra.y;
+            relv.y += body1->velocity.y + body1->angularVelocity * ra.x;
+        }
+
+        if(body2){
+            relv.x -= body2->velocity.x - body2->angularVelocity * rb.y;
+            relv.y -= body2->velocity.y + body2->angularVelocity * rb.x;
+        }
+        return relv;
+    }
 
     ContactResolver::ContactResolver(u32 iterations)
         : _iterations(iterations){ }

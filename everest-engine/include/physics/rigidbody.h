@@ -15,6 +15,7 @@ namespace Everest {
         vec3 angularVelocity = vec3(0.f);
         f32 drag = 1.f;
         f32 inverseMass = 1.f;
+        f32 inverseInertia = 1.f;
         bool useGravity = true;
 
         void addForce(const vec3 force, const ForceMode mode = ForceMode::Force);
@@ -40,6 +41,7 @@ namespace Everest {
         f32 angularVelocity = 0.f;
         f32 drag = 1.f;
         f32 inverseMass = 1.f;
+        f32 inverseInertia = 1.f;
         bool useGravity = true;
 
         void addForce(const vec2 force, const ForceMode mode = ForceMode::Force);
