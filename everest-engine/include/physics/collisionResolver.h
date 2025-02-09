@@ -64,7 +64,9 @@ namespace Everest {
 
         public:
             ContactResolver2D(u32 iterations = 0);
-
+            // TODO: resolve collisions(velocities) first and then penetrations
+            // resolve velocities in linear order
+            // resolve penetrations in descending order of penetration
             void resolveContacts(std::vector<BodyContact2D>& contactRegistry, f32 duration);
 
         protected:

@@ -52,7 +52,7 @@ namespace Everest {
         midline /= len;
 
         vec2 normal = Math::rotate2d(midline, glm::radians(t1.rotation.z));
-        vec2 contactPoint = normal * c2.radius + c2.offset;
+        vec2 contact = normal * c2.radius + c2.offset;
 
         BodyContact2D bc {
             .transform1 = &t1,
@@ -60,13 +60,13 @@ namespace Everest {
             .body1 = body1.entity.has<rigidbody2d_c>()?&body1.entity.get<rigidbody2d_c>():nullptr,
             .body2 = body2.entity.has<rigidbody2d_c>()?&body2.entity.get<rigidbody2d_c>():nullptr,
             .contactNormal = normal,
-            .ra = contactPoint - c1.offset,
-            .rb = contactPoint - c2.offset,
+            .ra = contact - c1.offset,
+            .rb = contact - c2.offset,
             .restitution = glm::min(body1.restitution, body2.restitution),
             .penetration = c1.radius + c2.radius - len,
         };
-        Renderer2D::drawLine(vec3(c2.offset, 1), vec3(contactPoint, 1), vec4(1.f, 1.f, 0.f, 1.f));
-        Renderer2D::drawLine(vec3(c1.offset, 1), vec3(contactPoint, 1), vec4(1.f, 0.f, 0.f, 1.f));
+        Renderer2D::drawLine(vec3(c2.offset, 1), vec3(contact, 1), vec4(1.f, 1.f, 0.f, 1.f));
+        Renderer2D::drawLine(vec3(c1.offset, 1), vec3(contact, 1), vec4(1.f, 0.f, 0.f, 1.f));
 
         results.push_back(bc);
         return true;
@@ -85,11 +85,11 @@ namespace Everest {
 
         vec2 offset = Math::rotate2d(c2.offset - b1.offset, -glm::radians(t1.rotation.z));
         vec2 contact = glm::clamp(offset, -b1.halfExtents, b1.halfExtents) - offset;
-        f32 plen = c2.radius - glm::length(contact);
+        f32 penetration = c2.radius - glm::length(contact);
 
-        if(plen < 0.f) return false;
+        if(penetration < 0.f) return false;
 
-        vec2 normal = Math::rotate2d(contact/(c2.radius-plen), glm::radians(t1.rotation.z));
+        vec2 normal = Math::rotate2d(contact/(c2.radius-penetration), glm::radians(t1.rotation.z));
         contact = Math::rotate2d(contact + offset, glm::radians(t1.rotation.z)) + b1.offset;
 
         BodyContact2D bc {
@@ -101,11 +101,11 @@ namespace Everest {
             .ra = contact - b1.offset,
             .rb = contact - c2.offset,
             .restitution = glm::min(body1.restitution, body2.restitution),
-            .penetration = plen,
+            .penetration = penetration,
         };
-        Renderer2D::drawLine(vec3(c2.offset, 1), vec3(contact, 1), vec4(1.f, 1.f, 0.f, 1.f));
-        Renderer2D::drawLine(vec3(b1.offset, 1), vec3(contact, 1), vec4(1.f, 0.f, 0.f, 1.f));
+
         Renderer2D::drawCircle(vec3(contact, 1), 0.2f, vec4(1.f, 0.f, 0.f, 1.f));
+        Renderer2D::drawLine(vec3(contact, 1), vec3(contact + normal, 1), vec4(1.f, 0.f, 0.f, 1.f));
 
         results.push_back(bc);
         return true;
@@ -210,7 +210,7 @@ namespace Everest {
             }
         }
 
-        vec2 contactPoint = refIndex < 2?
+        vec2 contact = refIndex < 2?
             getContact(b1, b2, glm::radians(t1.rotation.z), glm::radians(t2.rotation.z)):
             getContact(b2, b1, glm::radians(t2.rotation.z), glm::radians(t1.rotation.z));
 
@@ -220,15 +220,15 @@ namespace Everest {
                 .body1 = body1.entity.has<rigidbody2d_c>()?&body1.entity.get<rigidbody2d_c>():nullptr,
                 .body2 = body2.entity.has<rigidbody2d_c>()?&body2.entity.get<rigidbody2d_c>():nullptr,
                 .contactNormal = normal,
-                .ra = contactPoint - b1.offset,
-                .rb = contactPoint - b2.offset,
+                .ra = contact - b1.offset,
+                .rb = contact - b2.offset,
                 .restitution = glm::min(body1.restitution, body2.restitution),
                 .penetration = minOverlap,
         };
 
-        Renderer2D::drawLine(vec3(b2.offset, 1), vec3(contactPoint, 1), vec4(1.f, 1.f, 0.f, 1.f));
-        Renderer2D::drawLine(vec3(b1.offset, 1), vec3(contactPoint, 1), vec4(1.f, 0.f, 0.f, 1.f));
-        //Renderer2D::drawCircle(vec3(contactPoint, 1), 0.2f, vec4(1.f, 0.f, 0.f, 1.f));
+        Renderer2D::drawLine(vec3(b2.offset, 1), vec3(contact, 1), vec4(1.f, 1.f, 0.f, 1.f));
+        Renderer2D::drawLine(vec3(b1.offset, 1), vec3(contact, 1), vec4(1.f, 0.f, 0.f, 1.f));
+        //Renderer2D::drawCircle(vec3(contact, 1), 0.2f, vec4(1.f, 0.f, 0.f, 1.f));
 
         results.push_back(bc);
         return true;
@@ -239,7 +239,7 @@ namespace Everest {
     struct supporting_point_t {
         vec2 point = vec2(0.f);
         vec2 normal = vec2(0.f);
-        f32 minDistance = -std::numeric_limits<f32>::max();
+        f64 minDistance = -std::numeric_limits<f32>::max();
     };
 
     struct temp_edge_t {
@@ -262,7 +262,7 @@ namespace Everest {
             bool allpos = true;
             for(i32 j=0; j<4; j++){
                 vec2& v = vertices[j];
-                f32 dist = glm::dot(edge.normal, v-edge.a);
+                f64 dist = glm::dot(edge.normal, v-edge.a);
                 if(dist < sup.minDistance) {
                     allpos = false;
                     sup = {v, edge.normal, dist};
@@ -331,33 +331,37 @@ namespace Everest {
         rigidbody2d_c *rb1 = body1.entity.has<rigidbody2d_c>()?&body1.entity.get<rigidbody2d_c>():nullptr;
         rigidbody2d_c *rb2 = body2.entity.has<rigidbody2d_c>()?&body2.entity.get<rigidbody2d_c>():nullptr;
 
-        vec2 contactPoint = resultA.point;
+        vec2 contact = resultA.point;
         vec2 normal = resultA.normal;
+        vec2 ra = contact - b1.offset;
+        vec2 rb = contact - b2.offset;
         f32 penetration = resultA.minDistance;
 
         if(resultB.minDistance > penetration){
-            contactPoint = resultB.point;
+            contact = resultB.point;
             normal = resultB.normal;
             penetration = resultB.minDistance;
+
+            std::swap(t1, t2);
+            std::swap(rb1, rb2);
+            ra = contact - b2.offset;
+            rb = contact - b1.offset;
         }
-        penetration = -penetration;
 
         BodyContact2D bc {
             .transform1 = t1,
             .transform2 = t2,
             .body1 = rb1,
             .body2 = rb2,
-            .contactNormal = normal,
-            .ra = contactPoint - b1.offset,
-            .rb = contactPoint - b2.offset,
+            .contactNormal = -normal,
+            .ra = ra,
+            .rb = rb,
             .restitution = glm::min(body1.restitution, body2.restitution),
-            .penetration = penetration,
+            .penetration = -penetration,
         };
 
-        //Renderer2D::drawLine(vec3(b2.offset, 1), vec3(contactPoint, 1), vec4(1.f, 1.f, 0.f, 1.f));
-        //Renderer2D::drawLine(vec3(b1.offset, 1), vec3(contactPoint, 1), vec4(1.f, 0.f, 0.f, 1.f));
-        Renderer2D::drawCircle(vec3(contactPoint, 1), 0.2f, vec4(1.f, 0.f, 0.f, 1.f));
-        Renderer2D::drawLine(vec3(contactPoint, 1), vec3(contactPoint + normal * penetration, 1), vec4(1.f, 0.f, 0.f, 1.f));
+        Renderer2D::drawCircle(vec3(contact, 1), 0.2f, vec4(1.f, 0.f, 0.f, 1.f));
+        Renderer2D::drawLine(vec3(contact, 1), vec3(contact + normal, 1), vec4(1.f, 0.f, 0.f, 1.f));
 
         results.push_back(bc);
         return false;

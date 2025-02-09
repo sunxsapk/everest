@@ -11,6 +11,8 @@ namespace Everest {
     vec3 PhysicsHandler::_gravity = vec3(0.f, -9.8f, 0.f);
     ContactResolver PhysicsHandler::_contactResolver;
     ContactResolver2D PhysicsHandler::_contactResolver2d;
+    std::vector<BodyContact2D> PhysicsHandler::contacts2d(16);
+    std::vector<BodyContact> PhysicsHandler::contacts(16);
 
     void PhysicsHandler::init(u32 simulationSteps, vec3 gravity) {
         _simulationSteps = simulationSteps;
@@ -24,13 +26,13 @@ namespace Everest {
         simulate3d(scene, timeStep);
     }
 
-    std::vector<BodyContact> PhysicsHandler::generateContacts(Scene& scene, f64 timeStep){
-        std::vector<BodyContact> contacts;
+    void PhysicsHandler::generateContacts(Scene& scene, f64 timeStep){
         // TODO: 3d collision detection and resolution
-        return  contacts;
+        contacts.clear();
     }
 
-    std::vector<BodyContact2D> PhysicsHandler::generateContacts2d(Scene& scene, f64 timeStep){
+    void PhysicsHandler::generateContacts2d(Scene& scene, f64 timeStep){
+        contacts2d.clear();
         registry_t& registry = scene._registry;
 
         auto bc2d = registry.view<boxCollider2d_c>();
@@ -56,8 +58,6 @@ namespace Everest {
             tree.insert(cld, colliderBounds.back());
         }
 
-        std::vector<BodyContact2D> contacts;
-
         for(auto bounds : colliderBounds){
             std::vector<ref<collider2d_c>> candidates;
             tree.query(bounds, candidates);
@@ -66,12 +66,10 @@ namespace Everest {
 
             for(int i=0; i<candidates.size(); i++){
                 for(int j=i+1; j<candidates.size(); j++){
-                    CollisionDetector2D::checkForContacts(candidates[i], candidates[j], contacts);
+                    CollisionDetector2D::checkForContacts(candidates[i], candidates[j], contacts2d);
                 }
             }
         }
-
-        return  contacts;
     }
 
     void PhysicsHandler::simulate2d(Scene& scene, f64 timeStep){
@@ -90,8 +88,8 @@ namespace Everest {
             rb2d.integrate(tfr, timeStep);
         }
 
-        std::vector<BodyContact2D> contacts = generateContacts2d(scene, timeStep);
-        _contactResolver2d.resolveContacts(contacts, timeStep);
+        generateContacts2d(scene, timeStep);
+        _contactResolver2d.resolveContacts(contacts2d, timeStep);
     }
 
     void PhysicsHandler::simulate3d(Scene& scene, f64 timeStep){
@@ -110,7 +108,7 @@ namespace Everest {
             rb.integrate(tfr, timeStep);
         }
 
-        std::vector<BodyContact> contacts = generateContacts(scene, timeStep);
+        generateContacts(scene, timeStep);
         _contactResolver.resolveContacts(contacts, timeStep);
     }
 

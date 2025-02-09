@@ -1,14 +1,14 @@
 scene: Untitled
 entities:
-  - entity: 5058175940559422469
+  - entity: 14027523388066651253
     tag_c:
-      tag: Entity
+      tag: Circle2
     transform_c:
-      position: [0, 0, 0]
-      rotation: [0, 0, 0]
+      position: [-4.2871137, 2.4727118, 0]
+      rotation: [0, -0, 0]
       scale: [1, 1, 1]
     spriteRenderer_c:
-      color: [0.14865851, 0.542773, 0.70464134, 1]
+      color: [0.22912993, 0.6962025, 0.6784655, 1]
       startUV: [0, 0]
       sizeUV: [1, 1]
     rigidbody2d_c:
@@ -20,14 +20,14 @@ entities:
     boxCollider2d_c:
       offset: [0, 0]
       halfExtents: [0.5, 0.5]
-      restitution: 1
-  - entity: 11980484270659665048
+      restitution: 0.418
+  - entity: 4248582499467332154
     tag_c:
-      tag: Wall2
+      tag: Wall
     transform_c:
-      position: [-7.5462513, -0.20630562, 0]
-      rotation: [0, -0, 0]
-      scale: [1, 7.1, 1]
+      position: [4.3626657, -1.718247, 0]
+      rotation: [0, -0, -44.2]
+      scale: [1, 11.800001, 1]
     spriteRenderer_c:
       color: [0, 0, 0, 1]
       startUV: [0, 0]
@@ -36,21 +36,6 @@ entities:
       offset: [0, 0]
       halfExtents: [0.5, 0.5]
       restitution: 1
-  - entity: 15981530553222275560
-    tag_c:
-      tag: Floor
-    transform_c:
-      position: [-2.5008984, -1.0874025, -0.1]
-      rotation: [0, -0, -23.100008]
-      scale: [9.105251, 0.9999998, 1]
-    spriteRenderer_c:
-      color: [0.039534584, 0.02925101, 0.13080168, 1]
-      startUV: [0, 0]
-      sizeUV: [1, 1]
-    boxCollider2d_c:
-      offset: [0, 0]
-      halfExtents: [0.5, 0.5]
-      restitution: 0.668
   - entity: 3323808619384364124
     tag_c:
       tag: Main Camera
@@ -72,13 +57,28 @@ entities:
         aspect: 1.8456014
         near: -100
         far: 100
-  - entity: 4248582499467332154
+  - entity: 15981530553222275560
     tag_c:
-      tag: Wall
+      tag: Floor
     transform_c:
-      position: [4.3626657, -1.718247, 0]
-      rotation: [0, -0, -44.2]
-      scale: [1, 11.800001, 1]
+      position: [-2.5008984, -1.0874025, -0.1]
+      rotation: [0, -0, -23.100008]
+      scale: [9.105251, 0.9999998, 1]
+    spriteRenderer_c:
+      color: [0.039534584, 0.02925101, 0.13080168, 1]
+      startUV: [0, 0]
+      sizeUV: [1, 1]
+    boxCollider2d_c:
+      offset: [0, 0]
+      halfExtents: [0.5, 0.5]
+      restitution: 0.408
+  - entity: 11980484270659665048
+    tag_c:
+      tag: Wall2
+    transform_c:
+      position: [-7.5462513, -0.20630562, 0]
+      rotation: [0, -0, 0]
+      scale: [1, 7.1, 1]
     spriteRenderer_c:
       color: [0, 0, 0, 1]
       startUV: [0, 0]
@@ -87,24 +87,24 @@ entities:
       offset: [0, 0]
       halfExtents: [0.5, 0.5]
       restitution: 1
-  - entity: 14027523388066651253
+  - entity: 5058175940559422469
     tag_c:
-      tag: Circle2
+      tag: Entity
     transform_c:
-      position: [-4.2871137, 2.4727118, 0]
-      rotation: [0, -0, 0]
+      position: [0, 0, 0]
+      rotation: [0, 0, 0]
       scale: [1, 1, 1]
     spriteRenderer_c:
-      color: [0.22912993, 0.6962025, 0.6784655, 1]
+      color: [0.14865851, 0.542773, 0.70464134, 1]
       startUV: [0, 0]
       sizeUV: [1, 1]
     rigidbody2d_c:
       inverseMass: 1
-      drag: 1
+      drag: 2.35
       velocity: [0, 0]
       angularVelocity: 0
       useGravity: true
     boxCollider2d_c:
       offset: [0, 0]
       halfExtents: [0.5, 0.5]
-      restitution: 1
+      restitution: 0.451
