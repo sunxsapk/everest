@@ -70,7 +70,9 @@ namespace Everest {
         }
         if(tim <= 0.f) return;
 
-        vec2 j = -(1+restitution) * svel / tim * contactNormal;
+        f32 jlen = -(1+restitution) * svel / tim;
+        vec2 j = jlen * contactNormal;
+
         if(body1){
             body1->velocity += j * body1->inverseMass;
             body1->angularVelocity += Math::cross(ra, j) * body1->inverseInertia;
@@ -79,6 +81,26 @@ namespace Everest {
             body2->velocity -= j * body2->inverseMass;
             body2->angularVelocity -= Math::cross(rb, j) * body2->inverseInertia;
         }
+
+        vec2 vt = relv - svel * contactNormal;
+        if( abs(vt.x) < std::numeric_limits<f32>::epsilon() ||
+            abs(vt.y) < std::numeric_limits<f32>::epsilon()) return; 
+
+        vt = glm::normalize(vt);
+        f32 jtlen = -glm::dot(vt, relv) / tim;
+        f32 maxFriction = friction * jlen;
+        jtlen = glm::clamp(jtlen, -maxFriction, maxFriction);
+        vec2 jt = jtlen * vt;
+
+        if(body1){
+            body1->velocity += jt * body1->inverseMass;
+            body1->angularVelocity += Math::cross(ra, jt) * body1->inverseInertia;
+        }
+        if(body2){
+            body2->velocity -= jt * body2->inverseMass;
+            body2->angularVelocity -= Math::cross(rb, jt) * body2->inverseInertia;
+        }
+
     }
 
     void BodyContact2D::resolvePenetration(f32 duration){
