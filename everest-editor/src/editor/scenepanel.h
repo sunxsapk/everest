@@ -39,6 +39,13 @@ namespace Everest {
             static inline SceneState getSceneState(){ return _sceneState;}
             static inline ref<Scene> getScene(){return _sceneState == SceneState::EDIT?
                 SceneManager::getActiveScene() : _runtimeScene;}
+
+            static inline void onSceneStateToggle(){
+                if(_sceneState == SceneState::EDIT) onScenePlay();
+                else onSceneStop();
+            }
+
+            static bool onKeyShortcuts(KeyDownEvent& event);
         private:
             static bool sceneViewport(ref<Framebuffer>& sceneRender);
             static void sceneSettings(EditorCamera& sceneCamera);

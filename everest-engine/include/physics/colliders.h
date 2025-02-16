@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "aabbtree.h"
+#include "scene/entity.h"
 
 namespace Everest {
 
@@ -17,5 +17,9 @@ namespace Everest {
     };
 
     //TODO: test 2d colliders first and then work on 3d colliders 
-
+    struct collider_c {
+        Entity entity;
+        ColliderType type;
+        f32 restitution = 1.f;
+    };
 }

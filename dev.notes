@@ -81,5 +81,7 @@ Now, let's talk about the current milestones of the project:
 - Develop 3D rendering system (mesh load and rendering, materials and shaders)
 
 
-=============== TEMP ============
-- maybe make a way to visualize everything... i.e. call render API from anywhere during editing
+=============== TODO ============
+[+] no collision if no rigidbody attached to any collider
+[ ] multi-stage contact resolver: prepare -> separate -> physics
+[ ] contact_data_t should be made more memory efficient

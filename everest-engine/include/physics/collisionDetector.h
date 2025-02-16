@@ -13,7 +13,7 @@
 namespace Everest {
 
     class CollisionDetector2D {
-        using result_t = std::vector<BodyContact2D>;
+        using result_t = std::vector<body_contact2d_t>;
         public:
 
             static bool checkForContacts(ref<collider2d_c>& body1, ref<collider2d_c>& body2, result_t& results);

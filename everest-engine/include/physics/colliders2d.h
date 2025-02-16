@@ -14,52 +14,52 @@
 
 namespace Everest {
 
-    enum class Collider2DType {
+    enum class collider2d_type_t {
         Box,
         Circle
     };
 
 
-    struct Box2DProps {
+    struct box2dprops_t {
         vec2 offset = vec2(0.f);
         vec2 halfExtents = vec2(0.5f);
 
         bool contains(vec2 point);
     };
 
-    struct CircleProps {
+    struct circleprops_t {
         vec2 offset = vec2(0.0f);
         f32 radius = 0.5f;
     };
 
     struct boxCollider2d_c {
-        Box2DProps box;
+        box2dprops_t box;
 
         f32 restitution = 0.5f;
     };
 
     struct circleCollider2d_c {
-        CircleProps circle;
+        circleprops_t circle;
 
         f32 restitution = 0.5f;
     };
 
     struct collider2d_c {
         Entity entity;
-        Collider2DType type;
+        collider2d_type_t type;
         f32 restitution = 1.f;
 
         union Props {
-            Box2DProps box;
-            CircleProps circle;
+            box2dprops_t box;
+            circleprops_t circle;
 
             constexpr Props() : box{}{}
         } props;
 
-        collider2d_c(Collider2DType type);
+        collider2d_c(collider2d_type_t type);
         collider2d_c(const boxCollider2d_c& boxCollider, Entity entity);
         collider2d_c(const circleCollider2d_c& circleCollider, Entity entity);
-        AABB2D getBounds();
+        aabb2d_t getBounds();
     };
 
 }

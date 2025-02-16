@@ -5,41 +5,41 @@
 
 namespace Everest {
 
-    bool Box2DProps::contains(vec2 point){
+    bool box2dprops_t::contains(vec2 point){
         point -= offset;
 
         return abs(point.x) <= halfExtents.x && abs(point.y) <= halfExtents.y;
     }
 
-    collider2d_c::collider2d_c(Collider2DType type_)
+    collider2d_c::collider2d_c(collider2d_type_t type_)
     : type(type_) {
 
         switch(type){
-            case Collider2DType::Box:
+            case collider2d_type_t::Box:
                 props.box = {vec2(0.f), vec2(0.5f)};
                 break;
 
-            case Collider2DType::Circle:
+            case collider2d_type_t::Circle:
                 props.circle = {vec2(0.f), 0.5f};
                 break;
         }
     }
 
     collider2d_c::collider2d_c(const boxCollider2d_c& boxCollider, Entity entity_){
-        type = Collider2DType::Box;
+        type = collider2d_type_t::Box;
         entity = entity_;
         restitution = boxCollider.restitution;
         props.box = boxCollider.box;
     }
 
     collider2d_c::collider2d_c(const circleCollider2d_c& circleCollider, Entity entity_){
-        type = Collider2DType::Circle;
+        type = collider2d_type_t::Circle;
         entity = entity_;
         restitution = circleCollider.restitution;
         props.circle = circleCollider.circle;
     }
 
-    AABB2D getBoxAABB2D(const transform_c& parentTransform, const Box2DProps& box){
+    aabb2d_t getBoxAABB2D(const transform_c& parentTransform, const box2dprops_t& box){
         f32 a = glm::radians(parentTransform.rotation.z);
 
         vec2 e1 = parentTransform.scale;
@@ -61,7 +61,7 @@ namespace Everest {
         };
     }
 
-    AABB2D getCircleAABB2D(const transform_c& parentTransform, const CircleProps& circle){
+    aabb2d_t getCircleAABB2D(const transform_c& parentTransform, const circleprops_t& circle){
         vec2 np = parentTransform.position;
         np += circle.offset;
         f32 s = glm::max(parentTransform.scale.x, parentTransform.scale.y) * circle.radius;
@@ -71,12 +71,12 @@ namespace Everest {
         };
     }
 
-    AABB2D collider2d_c::getBounds(){
+    aabb2d_t collider2d_c::getBounds(){
         switch(type){
-            case Collider2DType::Box:
+            case collider2d_type_t::Box:
                 return getBoxAABB2D(entity.get<transform_c>(), props.box);
 
-            case Collider2DType::Circle:
+            case collider2d_type_t::Circle:
                 return getCircleAABB2D(entity.get<transform_c>(), props.circle);
         }
 

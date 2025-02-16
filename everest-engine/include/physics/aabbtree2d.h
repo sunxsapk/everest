@@ -1,7 +1,7 @@
 /*
- * ============ AABBTree2D ================
+ * ============ aabb2d_tree_t ================
  * Author: Sunil Sapkota
- * Description: AABBTree2D is a spatial partitioning data structure similar to AABBTree but is
+ * Description: aabb2d_tree_t is a spatial partitioning data structure similar to AABBTree but is
  * applied only in 2d space.
  */
 
@@ -15,47 +15,52 @@
 
 namespace Everest {
 
-    struct AABB2D {
+    struct aabb2d_t {
         vec2 min, max;
 
 
-        // returns true if the AABB2D overlaps with other
-        bool overlaps(const AABB2D& other) const;
-        // returns the area of the AABB2D
+        // returns true if the aabb2d_t overlaps with other
+        bool overlaps(const aabb2d_t& other) const;
+        // returns the area of the aabb2d_t
         f32 area() const;
-        // returns the new area increment after merging to other AABB2D
-        inline f32 getDiff(const AABB2D& other){
-            return AABB2D::merge(*this, other).area() - area();}
+        // returns the new area increment after merging to other aabb2d_t
+        inline f32 getDiff(const aabb2d_t& other){
+            return aabb2d_t::merge(*this, other).area() - area();}
         // merges two AABBs and returns the new one
-        static AABB2D merge(const AABB2D& a, const AABB2D& b);
+        static aabb2d_t merge(const aabb2d_t& a, const aabb2d_t& b);
     };
 
-    template<typename ObjectType>
-    struct AABBTreeNode {
-        ref<AABBTreeNode> left = nullptr, right = nullptr;
-        ref<ObjectType> object = nullptr;
-        AABB2D bounds;
+    template<typename object_t>
+    struct aabb2d_tree_node_t {
+        ref<aabb2d_tree_node_t> left = nullptr, right = nullptr;
+        ref<object_t> object = nullptr;
+        aabb2d_t bounds;
 
         // returns true if the node is a leaf node
         inline bool isLeaf(){return object != nullptr;}
-        inline bool overlaps(AABB2D other){return bounds.overlaps(other);}
+        inline bool overlaps(aabb2d_t other){return bounds.overlaps(other);}
     };
 
 
-    template<typename ObjectType>
-    class AABBTree2D {
-        using nodetype = AABBTreeNode<ObjectType>;
+    template<typename object_t>
+    class aabb2d_tree_t {
+        using nodetype = aabb2d_tree_node_t<object_t>;
         public:
             // inserts object with the provided bounds in the tree
-            inline void insert(ref<ObjectType>& object, const AABB2D& bounds){
+            inline void insert(ref<object_t>& object, const aabb2d_t& bounds){
                 root = insert(root, object, bounds); }
             // returns the vector of objects which overlaps with the provided bounds
-            inline void query(const AABB2D& qBounds, std::vector<ref<ObjectType>>& results){
+            inline void query(const aabb2d_t& qBounds, std::vector<ref<object_t>>& results){
                 query(root, qBounds, results); }
+
+            inline void clear() {
+                root.reset();
+                root = nullptr;
+            }
          private:
             ref<nodetype> root;
 
-            ref<nodetype> insert(ref<nodetype>& node, ref<ObjectType>& object, const AABB2D& bounds){
+            ref<nodetype> insert(ref<nodetype>& node, ref<object_t>& object, const aabb2d_t& bounds){
                 if(!node){
                     ref<nodetype> leaf = createRef<nodetype>();
                     leaf->object = object;
@@ -65,7 +70,7 @@ namespace Everest {
 
                 if(node->isLeaf()){
                     ref<nodetype> nnode = createRef<nodetype>();
-                    nnode->bounds = AABB2D::merge(node->bounds, bounds);
+                    nnode->bounds = aabb2d_t::merge(node->bounds, bounds);
                     nnode->left = node;
                     
                     ref<nodetype> rnode = createRef<nodetype>();
@@ -84,11 +89,11 @@ namespace Everest {
                 } else {
                     node->right = insert(node->right, object, bounds);
                 }
-                node->bounds = AABB2D::merge(node->left->bounds, node->right->bounds);
+                node->bounds = aabb2d_t::merge(node->left->bounds, node->right->bounds);
                 return node;
             }
 
-            void query(ref<nodetype>& node, const AABB2D& qBounds, std::vector<ref<ObjectType>>& results){
+            void query(ref<nodetype>& node, const aabb2d_t& qBounds, std::vector<ref<object_t>>& results){
                 if(!node) return;
                 if(!node->overlaps(qBounds)) return;
                 if(node->isLeaf()){
@@ -99,6 +104,5 @@ namespace Everest {
                 }
             }
     };
-
 }
 

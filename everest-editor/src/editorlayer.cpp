@@ -89,6 +89,7 @@ namespace Everest {
         EventDispatcher dispatcher(event);
 
         dispatcher.dispatch<KeyDownEvent>(MenuPanel::onKeyShortcuts);
+        dispatcher.dispatch<KeyDownEvent>(ScenePanel::onKeyShortcuts);
         dispatcher.dispatch<MouseButtonDownEvent>(BIND_EVENT_CB(onMouseButtonDown));
     }
 

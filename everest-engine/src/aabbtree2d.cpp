@@ -2,7 +2,7 @@
 
 namespace Everest {
     
-    bool AABB2D::overlaps(const AABB2D& other) const {
+    bool aabb2d_t::overlaps(const aabb2d_t& other) const {
         return !(
                 other.min.x > max.x ||
                 other.min.y > max.y ||
@@ -11,13 +11,13 @@ namespace Everest {
             );
     }
 
-    f32 AABB2D::area() const {
+    f32 aabb2d_t::area() const {
         vec2 del = max - min;
         return abs(del.x * del.y);
     }
 
-    AABB2D AABB2D::merge(const AABB2D& a, const AABB2D& b){
-        AABB2D n;
+    aabb2d_t aabb2d_t::merge(const aabb2d_t& a, const aabb2d_t& b){
+        aabb2d_t n;
 
         n.min.x = glm::min(a.min.x, b.min.x);
         n.max.x = glm::max(a.max.x, b.max.x);

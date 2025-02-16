@@ -1,6 +1,6 @@
 /*
  * ========= Collision Resolver =============
- * Description: Provides things for collision resolution
+ * Description: Provides things for collision/contact resolution
  */
 
 #pragma once
@@ -10,49 +10,68 @@
 
 namespace Everest {
 
-    struct BodyContact {
-        transform_c* transform1;
-        transform_c* transform2;
-        rigidbody_c* body1;
-        rigidbody_c* body2;
+    struct contact_body_t {
+        transform_c* transform;
+        rigidbody_c* rigidbody;
+        vec3 relativeContactPoint;
+
+        // calculated inside
+        vec3 angularInertia;
+
+        operator bool(){return rigidbody != nullptr;}
+    };
+
+    struct body_contact_t {
+        contact_body_t body1;
+        contact_body_t body2;
 
         vec3 contactNormal;
-        f32 restitution;
-        f32 penetration;
-
-        void resolve(f32 duration);
-        f32 calcSeparateVelocity() const;
-        private:
-        void resolvePenetration(f32 duration);
-        void resolveVelocity(f32 duration);
-    };
-
-    struct BodyContact2D {
-        transform_c* transform1;
-        transform_c* transform2;
-        rigidbody2d_c* body1 = nullptr;
-        rigidbody2d_c* body2 = nullptr;
-
-        vec2 contactNormal;
-        vec2 ra, rb;
+        f32 penetration = 0.f;
         f32 restitution = 1.f;
         f32 friction = 0.3f;
-        f32 penetration = 0.f;
 
         void resolve(f32 duration);
-        f32 calcSeparateVelocity() const;
+        f32 getSeparationVelocity() const;
+
         private:
         void resolvePenetration(f32 duration);
         void resolveVelocity(f32 duration);
-        vec2 calcRelativeVelocity() const;
+        vec3 getRelativeVelocity() const;
     };
 
-    class ContactResolver {
+
+    struct body_contact2d_t {
+        transform_c* transformA;
+        transform_c* transformB;
+
+        rigidbody2d_c* rigidbody2dA;
+        rigidbody2d_c* rigidbody2dB;
+
+        vec2 contactNormal;
+        vec2 relativeContactPointA;
+        vec2 relativeContactPointB;
+
+        f32 angularInertiaA = 0.f;
+        f32 angularInertiaB = 0.f;
+
+        f32 penetration = 0.f;
+        f32 restitution = 1.f;
+        f32 friction = 0.3f;
+
+        void prepareContacts();
+        void resolvePenetration();
+        void resolveVelocity();
+        f32 getSeparationVelocity() const;
+        private:
+        vec2 getRelativeVelocity() const;
+    };
+
+    class contact_resolver_t {
 
         public:
-            ContactResolver(u32 iterations = 0);
+            contact_resolver_t(u32 iterations = 0);
 
-            void resolveContacts(std::vector<BodyContact>& contactRegistry, f32 duration);
+            void resolveContacts(std::vector<body_contact_t>& contactRegistry, f32 duration);
 
         protected:
             u32 _iterations, _iterationsUsed;
@@ -60,17 +79,20 @@ namespace Everest {
     };
 
 
-    class ContactResolver2D {
+    class contact2d_resolver_t {
 
         public:
-            ContactResolver2D(u32 iterations = 0);
-            // TODO: resolve collisions(velocities) first and then penetrations
-            // resolve velocities in linear order
-            // resolve penetrations in descending order of penetration
-            void resolveContacts(std::vector<BodyContact2D>& contactRegistry, f32 duration);
+            contact2d_resolver_t(u32 iterations = 0);
+            void resolveContacts(std::vector<body_contact2d_t>& contactRegistry);
 
         protected:
             u32 _iterations, _iterationsUsed;
+            void prepareContacts(std::vector<body_contact2d_t>& contactRegistry);
+            void resolvePenetration(std::vector<body_contact2d_t>& contactRegistry);
+            void resolveVelocities(std::vector<body_contact2d_t>& contactRegistry);
 
     };
 }
+    struct AABB;
+    struct AABB2D;
+

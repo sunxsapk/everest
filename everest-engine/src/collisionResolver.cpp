@@ -3,150 +3,123 @@
 
 namespace Everest {
 
-    void BodyContact::resolve(f32 duration){
-        if(!body1 && !body2) return;
-        resolvePenetration(duration);
-        resolveVelocity(duration);
+    void body_contact_t::resolve(f32 duration){
     }
 
-    void BodyContact::resolveVelocity(f32 duration){
-        f32 svel = calcSeparateVelocity();
-        if(svel > 0.f) return;
-        f32 t_im = body1?body1->inverseMass:0.f;
-        if(body2) t_im += body2->inverseMass;
-        if(t_im <= 0.f) return;
-
-        f32 nsvel = -svel * restitution;
-        vec3 accvel = body1?body1->getAcceleration():vec3(0);
-        if(body2) accvel -= body2->getAcceleration();
-        f32 acsv = glm::dot(accvel, contactNormal) * duration;
-        if(acsv < 0.f) nsvel = glm::max(0.f, nsvel + restitution * acsv);
-
-        f32 dvel = nsvel - svel;
-
-        f32 impulse = dvel / t_im;
-        vec3 impulsePerInvMass = contactNormal * impulse;
-        if(body1) body1->velocity += impulsePerInvMass * body1->inverseMass;
-        if(body2) body2->velocity -= impulsePerInvMass * body2->inverseMass;
+    void body_contact_t::resolveVelocity(f32 duration){
     }
 
-    void BodyContact::resolvePenetration(f32 duration){
-        if(penetration <= 0) return;
-
-        f32 t_im = (body1?body1->inverseMass:0);
-        if(body2) t_im += body2->inverseMass;
-        if(t_im <= 0.f) return;
-
-        vec3 mvPerMass = contactNormal * (penetration / t_im);
-        if(body1) transform1->position += mvPerMass * body1->inverseMass;
-        if(body2) transform2->position -= mvPerMass * body2->inverseMass;
+    void body_contact_t::resolvePenetration(f32 duration){
     }
 
-    f32 BodyContact::calcSeparateVelocity() const {
-        vec3 relv = body1?body1->velocity:vec3(0) - (body2?body2->velocity:vec3(0));
-        return glm::dot(relv, contactNormal);
+    f32 body_contact_t::getSeparationVelocity() const {
+        return 0.f;
     }
 
-    void BodyContact2D::resolve(f32 duration){
-        if(!body1 && !body2) return;
-        resolveVelocity(duration);
-        resolvePenetration(duration);
+    void body_contact2d_t::prepareContacts(){
+        if(!rigidbody2dA){
+            contactNormal = -contactNormal;
+            std::swap(relativeContactPointA, relativeContactPointB);
+            std::swap(rigidbody2dA, rigidbody2dB);
+            std::swap(transformA, transformB);
+        }
+        ASSERT(rigidbody2dA != nullptr, "No rigidbodies for contact resolution");
+
+        f32 raxn = Math::cross(relativeContactPointA, contactNormal);
+        angularInertiaA = rigidbody2dA->inverseInertia * raxn * raxn;
+
+        if(rigidbody2dB){
+            f32 rbxn = Math::cross(relativeContactPointB, contactNormal);
+            angularInertiaB = rigidbody2dB->inverseInertia * rbxn * rbxn;
+        }
     }
 
-    void BodyContact2D::resolveVelocity(f32 duration){
-        vec2 relv = calcRelativeVelocity();
+    void body_contact2d_t::resolveVelocity(){
+        vec2 relv = getRelativeVelocity();
         f32 svel = glm::dot(relv, contactNormal);
-        if(svel > 0.f) return;
+        if(svel >= 0.f) return;
 
-        f32 raxn = Math::cross(ra, contactNormal);
-        f32 rbxn = Math::cross(rb, contactNormal);
+        f32 totalInertia = rigidbody2dA->inverseMass + angularInertiaA;
+        if(rigidbody2dB) totalInertia += rigidbody2dB->inverseMass + angularInertiaB;
+        if(totalInertia <= 0.f) return;
 
-        f32 tim = 0;
-        if(body1){
-            tim += body1->inverseMass + raxn * raxn * body1->inverseInertia;
-        }
-        if(body2){
-            tim += body2->inverseMass + rbxn * rbxn * body2->inverseInertia;
-        }
-        if(tim <= 0.f) return;
-
-        f32 jlen = -(1+restitution) * svel / tim;
+        f32 jlen = -(1+restitution) * svel / totalInertia;
         vec2 j = jlen * contactNormal;
 
-        if(body1){
-            body1->velocity += j * body1->inverseMass;
-            body1->angularVelocity += Math::cross(ra, j) * body1->inverseInertia;
-        }
-        if(body2){
-            body2->velocity -= j * body2->inverseMass;
-            body2->angularVelocity -= Math::cross(rb, j) * body2->inverseInertia;
+        rigidbody2dA->velocity += j * rigidbody2dA->inverseMass;
+        rigidbody2dA->angularVelocity += Math::cross(relativeContactPointA, j) * rigidbody2dA->inverseInertia;
+
+        if(rigidbody2dB){
+            rigidbody2dB->velocity -= j * rigidbody2dB->inverseMass;
+            rigidbody2dB->angularVelocity -= Math::cross(relativeContactPointB, j) * rigidbody2dB->inverseInertia;
         }
 
         vec2 vt = relv - svel * contactNormal;
-        if( abs(vt.x) < std::numeric_limits<f32>::epsilon() ||
-            abs(vt.y) < std::numeric_limits<f32>::epsilon()) return; 
+        if(glm::length(vt) < 0.001f) return; 
 
         vt = glm::normalize(vt);
-        f32 jtlen = -glm::dot(vt, relv) / tim;
+        f32 jtlen = -glm::dot(vt, relv) / totalInertia;
         f32 maxFriction = friction * jlen;
         jtlen = glm::clamp(jtlen, -maxFriction, maxFriction);
         vec2 jt = jtlen * vt;
 
-        if(body1){
-            body1->velocity += jt * body1->inverseMass;
-            body1->angularVelocity += Math::cross(ra, jt) * body1->inverseInertia;
-        }
-        if(body2){
-            body2->velocity -= jt * body2->inverseMass;
-            body2->angularVelocity -= Math::cross(rb, jt) * body2->inverseInertia;
+        rigidbody2dA->velocity += jt * rigidbody2dA->inverseMass;
+        rigidbody2dA->angularVelocity += Math::cross(relativeContactPointA, jt) * rigidbody2dA->inverseInertia;
+
+        if(rigidbody2dB){
+            rigidbody2dB->velocity -= jt * rigidbody2dB->inverseMass;
+            rigidbody2dB->angularVelocity -= Math::cross(relativeContactPointB, jt) * rigidbody2dB->inverseInertia;
         }
 
     }
 
-    void BodyContact2D::resolvePenetration(f32 duration){
-        // TODO: penetration is not resolved properly when one box is at edge of other
+    void body_contact2d_t::resolvePenetration(){
         if(penetration <= 0) return;
 
-        f32 t_im = body1?body1->inverseMass:0;
-        if(body2) t_im += body2->inverseMass;
-        if(t_im <= 0.f) return;
+        f32 totalInertia = rigidbody2dA->inverseMass + angularInertiaA;
+        if(rigidbody2dB) totalInertia += rigidbody2dB->inverseMass + angularInertiaB;
+        if(totalInertia <= 0.f) return;
 
-        vec2 mvPerMass = contactNormal * (penetration / t_im) * 0.8f;
-        if(body1) transform1->position += vec3(mvPerMass * body1->inverseMass, 0);
-        if(body2) transform2->position -= vec3(mvPerMass * body2->inverseMass, 0);
-    }
+        f32 dp = penetration / totalInertia;
+        vec2 mvPerMass = contactNormal * dp;
 
-    f32 BodyContact2D::calcSeparateVelocity() const {
-        return glm::dot(calcRelativeVelocity(), contactNormal);
-    }
-
-    vec2 BodyContact2D::calcRelativeVelocity() const {
-        vec2 relv(0.f);
-        if(body1){
-            relv.x += body1->velocity.x - body1->angularVelocity * ra.y;
-            relv.y += body1->velocity.y + body1->angularVelocity * ra.x;
+        transformA->position += vec3(mvPerMass * rigidbody2dA->inverseMass, 0);
+        transformA->rotation.z += dp * angularInertiaA;
+        if(rigidbody2dB){
+            transformB->position -= vec3(mvPerMass * rigidbody2dB->inverseMass, 0);
+            transformB->rotation.z -= dp * angularInertiaB;
         }
+    }
 
-        if(body2){
-            relv.x -= body2->velocity.x - body2->angularVelocity * rb.y;
-            relv.y -= body2->velocity.y + body2->angularVelocity * rb.x;
+    f32 body_contact2d_t::getSeparationVelocity() const {
+        return glm::dot(getRelativeVelocity(), contactNormal);
+    }
+
+    vec2 body_contact2d_t::getRelativeVelocity() const {
+        vec2 relv(0.f);
+
+        relv.x += rigidbody2dA->velocity.x - rigidbody2dA->angularVelocity * relativeContactPointA.y;
+        relv.y += rigidbody2dA->velocity.y + rigidbody2dA->angularVelocity * relativeContactPointA.x;
+
+        if(rigidbody2dB){
+            relv.x -= rigidbody2dB->velocity.x - rigidbody2dB->angularVelocity * relativeContactPointB.y;
+            relv.y -= rigidbody2dB->velocity.y + rigidbody2dB->angularVelocity * relativeContactPointB.x;
         }
         return relv;
     }
 
-    ContactResolver::ContactResolver(u32 iterations)
+    contact_resolver_t::contact_resolver_t(u32 iterations)
         : _iterations(iterations){ }
 
-    void ContactResolver::resolveContacts(std::vector<BodyContact>& contactRegistry, f32 duration){
-        // TODO!: search for optimal way. This is shit way
+    void contact_resolver_t::resolveContacts(std::vector<body_contact_t>& contactRegistry, f32 duration){
         if(!_iterations) _iterations = contactRegistry.size();
         _iterationsUsed = 0;
         while(_iterationsUsed++ < _iterations){
-            f32 mx = 0;
+            f32 mx = 0.f;
             u32 mIndex = -1;
 
             for(int i=0; i<contactRegistry.size(); i++){
-                f32 svel = contactRegistry[i].calcSeparateVelocity();
+                f32 svel = contactRegistry[i].penetration;
                 if(svel < mx){
                     mx = svel;
                     mIndex = i;
@@ -158,11 +131,11 @@ namespace Everest {
         }
     }
 
-    ContactResolver2D::ContactResolver2D(u32 iterations)
+    contact2d_resolver_t::contact2d_resolver_t(u32 iterations)
         : _iterations(iterations){ }
 
-    void ContactResolver2D::resolveContacts(std::vector<BodyContact2D>& contactRegistry, f32 duration){
-        // TODO!: search for optimal way. This is shit way
+    void contact2d_resolver_t::resolvePenetration(std::vector<body_contact2d_t>& contactRegistry){
+        // TODO: explore another method
         if(!_iterations) _iterations = contactRegistry.size();
         _iterationsUsed = 0;
         while(_iterationsUsed++ < _iterations){
@@ -170,7 +143,7 @@ namespace Everest {
             u32 mIndex = -1;
 
             for(int i=0; i<contactRegistry.size(); i++){
-                f32 svel = contactRegistry[i].calcSeparateVelocity();
+                f32 svel = contactRegistry[i].getSeparationVelocity();
                 if(svel < mx){
                     mx = svel;
                     mIndex = i;
@@ -178,8 +151,26 @@ namespace Everest {
             }
 
             if(mIndex == -1) return;
-            contactRegistry[mIndex].resolve(duration);
+            contactRegistry[mIndex].resolvePenetration();
         }
+    }
+
+    void contact2d_resolver_t::prepareContacts(std::vector<body_contact2d_t>& contactRegistry){
+        for(auto& contact : contactRegistry){
+            contact.prepareContacts();
+        }
+    }
+
+    void contact2d_resolver_t::resolveVelocities(std::vector<body_contact2d_t>& contactRegistry){
+        for(auto& contact : contactRegistry){
+            contact.resolveVelocity();
+        }
+    }
+
+    void contact2d_resolver_t::resolveContacts(std::vector<body_contact2d_t>& contactRegistry){
+        prepareContacts(contactRegistry);
+        resolvePenetration(contactRegistry);
+        resolveVelocities(contactRegistry);
     }
 
 }

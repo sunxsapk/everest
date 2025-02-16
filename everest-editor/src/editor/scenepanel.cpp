@@ -72,21 +72,40 @@ namespace Everest {
         return needResize;
     }
 
+    bool ScenePanel::onKeyShortcuts(KeyDownEvent& event){
+        auto key = event.getKey();
+
+        if(key == K_f5){
+            onSceneStateToggle();
+            return true;
+        }
+
+        return false;
+    }
+
     void ScenePanel::sceneSettings(EditorCamera& sceneCamera){
         Camera& cam = sceneCamera.camera;
         ImGui::Spacing();
-        ImGui::PushStyleColor(ImGuiCol_Button, {0,0,0,0});
 
+        /*ImGui::PushStyleColor(ImGuiCol_Button, {0,0,0,0});
         f32 size = 24.f;
         ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
         spriteRenderer_c& icon = EditorAssets::getIcon(_sceneState == SceneState::EDIT? IconType::PLAY : IconType::STOP);
         if(ImGui::ImageButton("##play", icon.texture->getID(), {size, size}, 
-                    {icon.startUV.x, icon.sizeUV.y}, {icon.sizeUV.x, icon.startUV.y})){
-            if(_sceneState == SceneState::EDIT) onScenePlay();
-            else onSceneStop();
+                    {icon.startUV.x, icon.sizeUV.y}, {icon.sizeUV.x, icon.startUV.y}
+                )
+            ){
+            onSceneStateToggle();
         }
+        ImGui::PopStyleColor();*/
 
-        ImGui::PopStyleColor();
+        const f32 size = 172.f; // magic number from hit n trial
+        ImGui::SetCursorPosX((ImGui::GetWindowContentRegionMax().x * 0.5f) - (size * 0.5f));
+        if(ImGui::Button(_sceneState == SceneState::EDIT? "Run" : "Stop")) onSceneStateToggle();
+        ImGui::SameLine();
+        if(ImGui::Button("Pause")) Time::setPauseState(!Time::isPaused());
+        ImGui::SameLine();
+        if(ImGui::Button(gameView ? "Game View" : "Scene View")) gameView = !gameView;
 
         ImVec2 secondRowStart = ImGui::GetCursorScreenPos();
         ImGui::GetWindowDrawList()->AddRectFilled(
@@ -151,10 +170,6 @@ namespace Everest {
         }
         ImGui::SameLine();
         gizmosSettings();
-        //if(_sceneState == SceneState::PLAY){
-            ImGui::SameLine();
-            if(ImGui::Button(gameView ? "Game View" : "Scene View")) gameView = !gameView;
-        //}
         //vec3 dbgv(Input::mousePosition() - getSceneOffset(), 0.f);
         //ImGui::SameLine();
         //ImGui::Text("%.2f, %.2f, %.2f", dbgv.x, dbgv.y, dbgv.z);
