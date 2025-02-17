@@ -3,18 +3,28 @@
 
 namespace Everest {
 
-    void body_contact_t::resolve(f32 duration){
+
+    void body_contact_t::prepareContacts(){
     }
 
-    void body_contact_t::resolveVelocity(f32 duration){
+    void body_contact_t::resolvePenetration(){
     }
 
-    void body_contact_t::resolvePenetration(f32 duration){
+    void body_contact_t::resolveVelocity(){
     }
 
-    f32 body_contact_t::getSeparationVelocity() const {
-        return 0.f;
+    f32 body_contact_t::getSeparationVelocity() const{
+        return glm::dot(getRelativeVelocity(), contactNormal);
     }
+
+    vec3 body_contact_t::getRelativeVelocity() const{
+        vec3 relv = rigidbodyA->velocity + glm::cross(rigidbodyA->angularVelocity, relativeContactPointA);
+        if(rigidbodyB){
+            relv += rigidbodyB->velocity + glm::cross(rigidbodyB->angularVelocity, relativeContactPointB);
+        }
+        return relv;
+    }
+
 
     void body_contact2d_t::prepareContacts(){
         if(!rigidbody2dA){
@@ -37,7 +47,7 @@ namespace Everest {
     void body_contact2d_t::resolveVelocity(){
         vec2 relv = getRelativeVelocity();
         f32 svel = glm::dot(relv, contactNormal);
-        if(svel >= 0.f) return;
+        if(svel >= 0.1f) return;
 
         f32 totalInertia = rigidbody2dA->inverseMass + angularInertiaA;
         if(rigidbody2dB) totalInertia += rigidbody2dB->inverseMass + angularInertiaB;
@@ -80,7 +90,8 @@ namespace Everest {
         if(rigidbody2dB) totalInertia += rigidbody2dB->inverseMass + angularInertiaB;
         if(totalInertia <= 0.f) return;
 
-        f32 dp = penetration / totalInertia;
+        const f32 PEN_BIAS = 0.1f;
+        f32 dp = penetration / totalInertia * PEN_BIAS;
         vec2 mvPerMass = contactNormal * dp;
 
         transformA->position += vec3(mvPerMass * rigidbody2dA->inverseMass, 0);
@@ -89,6 +100,7 @@ namespace Everest {
             transformB->position -= vec3(mvPerMass * rigidbody2dB->inverseMass, 0);
             transformB->rotation.z -= dp * angularInertiaB;
         }
+        penetration = -std::numeric_limits<f32>::epsilon();
     }
 
     f32 body_contact2d_t::getSeparationVelocity() const {
@@ -108,66 +120,62 @@ namespace Everest {
         return relv;
     }
 
-    contact_resolver_t::contact_resolver_t(u32 iterations)
-        : _iterations(iterations){ }
-
-    void contact_resolver_t::resolveContacts(std::vector<body_contact_t>& contactRegistry, f32 duration){
-        if(!_iterations) _iterations = contactRegistry.size();
-        _iterationsUsed = 0;
-        while(_iterationsUsed++ < _iterations){
-            f32 mx = 0.f;
-            u32 mIndex = -1;
-
-            for(int i=0; i<contactRegistry.size(); i++){
-                f32 svel = contactRegistry[i].penetration;
-                if(svel < mx){
-                    mx = svel;
-                    mIndex = i;
-                }
-            }
-
-            if(mIndex == -1) return;
-            contactRegistry[mIndex].resolve(duration);
+    void contact_resolver_t::resolvePenetration(std::vector<body_contact_t>& contactRegistry){
+        EV_profile_function();
+        for(auto& contact : contactRegistry){
+            contact.resolvePenetration();
         }
     }
 
-    contact2d_resolver_t::contact2d_resolver_t(u32 iterations)
-        : _iterations(iterations){ }
+    void contact_resolver_t::prepareContacts(std::vector<body_contact_t>& contactRegistry){
+        EV_profile_function();
+        for(auto& contact : contactRegistry){
+            contact.prepareContacts();
+        }
+    }
+
+    void contact_resolver_t::resolveVelocities(std::vector<body_contact_t>& contactRegistry){
+        EV_profile_function();
+        for(auto& contact : contactRegistry){
+            contact.resolveVelocity();
+        }
+    }
+
+    void contact_resolver_t::resolveContacts(std::vector<body_contact_t>& contactRegistry){
+        EV_profile_function();
+        if(contactRegistry.size() == 0) return;
+        std::sort(contactRegistry.begin(), contactRegistry.end(),
+                [](body_contact_t& a, body_contact_t& b){ return a.penetration > b.penetration; });
+        prepareContacts(contactRegistry);
+        resolvePenetration(contactRegistry);
+        resolveVelocities(contactRegistry);
+    }
+
 
     void contact2d_resolver_t::resolvePenetration(std::vector<body_contact2d_t>& contactRegistry){
-        // TODO: explore another method
-        if(!_iterations) _iterations = contactRegistry.size();
-        _iterationsUsed = 0;
-        while(_iterationsUsed++ < _iterations){
-            f32 mx = 0;
-            u32 mIndex = -1;
-
-            for(int i=0; i<contactRegistry.size(); i++){
-                f32 svel = contactRegistry[i].getSeparationVelocity();
-                if(svel < mx){
-                    mx = svel;
-                    mIndex = i;
-                }
-            }
-
-            if(mIndex == -1) return;
-            contactRegistry[mIndex].resolvePenetration();
+        EV_profile_function();
+        for(auto& contact : contactRegistry){
+            contact.resolvePenetration();
         }
     }
 
     void contact2d_resolver_t::prepareContacts(std::vector<body_contact2d_t>& contactRegistry){
+        EV_profile_function();
         for(auto& contact : contactRegistry){
             contact.prepareContacts();
         }
     }
 
     void contact2d_resolver_t::resolveVelocities(std::vector<body_contact2d_t>& contactRegistry){
+        EV_profile_function();
         for(auto& contact : contactRegistry){
             contact.resolveVelocity();
         }
     }
 
     void contact2d_resolver_t::resolveContacts(std::vector<body_contact2d_t>& contactRegistry){
+        EV_profile_function();
+        if(contactRegistry.size() == 0) return;
         prepareContacts(contactRegistry);
         resolvePenetration(contactRegistry);
         resolveVelocities(contactRegistry);

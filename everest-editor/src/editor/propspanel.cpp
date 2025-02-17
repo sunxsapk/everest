@@ -146,11 +146,9 @@ namespace Everest {
         if(ent.has<spriteRenderer_c>()) _componentUI<spriteRenderer_c>(ent, "Sprite Renderer",
         [](spriteRenderer_c& spr){
             _colorui("Color", spr.color);
-
             //ImGui::Text("Texture");
             constexpr f32 isize = 64.f;
             //ImGui::SameLine(0.f, 16.f);
-
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
             ImGui::ImageButton("__texture__", spr.texture? spr.texture->getID() : 1,
                     ImVec2(isize, isize), {spr.startUV.x, spr.sizeUV.y}, {spr.sizeUV.x, spr.startUV.y});
@@ -186,7 +184,9 @@ namespace Everest {
             f32 drag = comp.drag;
             _vec3ui("Velocity", comp.velocity, 0.f);
             _vec3ui("Angular Velocity", comp.angularVelocity, 0.f);
-            if(_f32dragui("Mass", mass, 0.01f, "##mass") && mass > 0.f) comp.setMass(mass);
+            if(_f32dragui("Mass", mass, 0.01f, "##mass",
+                        std::numeric_limits<f32>::min(),
+                        std::numeric_limits<f32>::max())) comp.setMass(mass);
             _f32dragui("Inverse Inertia", comp.inverseInertia, 0.01f, "#invin");
             if(_f32dragui("Drag", drag, 0.01f, "##drag") && drag >= 0.f) comp.drag = drag;
             ImGui::Checkbox("Use Gravity", &comp.useGravity);
@@ -198,9 +198,11 @@ namespace Everest {
             f32 drag = comp.drag;
             _vec2ui("Velocity", comp.velocity, 0.f);
             _f32dragui("Angular Velocity", comp.angularVelocity, 0.01f, "##angv");
-            if(_f32dragui("Mass", mass, 0.01f, "##mass") && mass > 0.f) comp.setMass(mass);
-            _f32dragui("Inverse Inertia", comp.inverseInertia, 0.01f, "#invin");
-            if(_f32dragui("Drag", drag, 0.01f, "##drag") && drag >= 0.f) comp.drag = drag;
+            if(_f32dragui("Mass", mass, 0.01f, "##mass",
+                        std::numeric_limits<f32>::min(),
+                        std::numeric_limits<f32>::max())) comp.setMass(mass);
+            _f32dragui("Inverse Inertia", comp.inverseInertia, 0.01f, "#invin", std::numeric_limits<f32>::min(), std::numeric_limits<f32>::max());
+            if(_f32dragui("Drag", drag, 0.01f, "##drag", 0.f, std::numeric_limits<f32>::max())) comp.drag = drag;
             ImGui::Checkbox("Use Gravity", &comp.useGravity);
         });
 
@@ -209,10 +211,11 @@ namespace Everest {
             _vec2ui("Anchor", comp.anchor, 0.f);
             _vec2ui("Offset", comp.offset, 0.f);
             _f32dragui("Spring Constant", comp.springConstant, 0.01f, "##spk") ;
-            _f32dragui("Damping", comp.damping, 0.01f, "##dmp") ;
+            _f32dragui("Damping", comp.damping, 0.01f, "##dmp", 0.f, std::numeric_limits<f32>::max());
             _f32dragui("Rest Length", comp.restLength, 0.01f, "##rl");
         });
 
+#if 0
         if(ent.has<springJoint_c>()) _componentUI<springJoint_c>(ent, "Spring Joint",
         [](springJoint_c& comp){
             _vec3ui("Anchor", comp.anchor, 0.f);
@@ -221,11 +224,12 @@ namespace Everest {
             _f32dragui("Damping", comp.damping, 0.01f, "##dmp") ;
             _f32dragui("Rest Length", comp.restLength, 0.01f, "##rl");
         });
+#endif
 
         if(ent.has<boxCollider2d_c>()) _componentUI<boxCollider2d_c>(ent, "Box Collider 2D",
         [](boxCollider2d_c& comp){
             _vec2ui("Offset", comp.box.offset, 0.f);
-            _vec2ui("Half Extents", comp.box.halfExtents, 0.5f);
+            _vec2ui("Half Extents", comp.box.halfExtents, 0.5f, 0.f, std::numeric_limits<f32>::max());
             _f32sliderui("Restitution", comp.restitution, "##brst");
         });
 
@@ -263,14 +267,14 @@ namespace Everest {
 
             _vec3ui("Position", tfr.position, 0.f);
             _vec3ui("Rotation", tfr.rotation, 0.f);
-            _vec3ui("Scale", tfr.scale, 1.f);
+            _vec3ui("Scale", tfr.scale, 1.f, 0.f, std::numeric_limits<f32>::max());
 
             ImGui::TreePop();
         }
         ImGui::Spacing();
     }
 
-    bool PropertiesPanel::_f32dragui(const char* label, f32& value, f32 speed, const char* id){
+    bool PropertiesPanel::_f32dragui(const char* label, f32& value, f32 speed, const char* id, f32 min, f32 max){
         const f32 colwidth = 100.f;
 
         ImGui::PushID(id);
@@ -282,7 +286,7 @@ namespace Everest {
 
         ImGui::NextColumn();
 
-        bool x = ImGui::DragFloat("", &value, speed);
+        bool x = ImGui::DragFloat("", &value, speed, min, max);
         ImGui::Columns(1);
         ImGui::PopID();
         return x;
@@ -305,16 +309,16 @@ namespace Everest {
     }
 
 
-    void _vec3f32(const char* label, f32 &value, f32 speed, const char* id){
+    void _vec3f32(const char* label, f32 &value, f32 speed, const char* id, f32 min = 0.f, f32 max = 0.f){
         ImGui::PushFont(UIFontManager::getDefaultBold());
         ImGui::AlignTextToFramePadding();
         ImGui::Text("%s", label);
         ImGui::PopFont();
         ImGui::SameLine();
-        ImGui::DragFloat(id, &value, speed);
+        ImGui::DragFloat(id, &value, speed, min, max);
     }
 
-    void PropertiesPanel::_vec2ui(const char* label, vec2& value, f32 resetvalue){
+    void PropertiesPanel::_vec2ui(const char* label, vec2& value, f32 resetvalue, f32 min, f32 max){
         const f32 colwidth = 100.f;
 
         ImGui::PushID(label);
@@ -331,10 +335,10 @@ namespace Everest {
         f32 lh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
         ImVec2 btnsz = {lh + 3.f, lh};
 
-        _vec3f32("x", value.x, .1f, "##1");
+        _vec3f32("x", value.x, .1f, "##1", min, max);
         ImGui::PopItemWidth();
         ImGui::SameLine(0.f, 4.f);
-        _vec3f32("y", value.y, .1f, "##2");
+        _vec3f32("y", value.y, .1f, "##2", min, max);
         ImGui::PopItemWidth();
 
         ImGui::PopStyleVar();
@@ -343,7 +347,7 @@ namespace Everest {
         ImGui::PopID();
     }
 
-    void PropertiesPanel::_vec3ui(const char* label, vec3& value, f32 resetvalue){
+    void PropertiesPanel::_vec3ui(const char* label, vec3& value, f32 resetvalue, f32 min, f32 max){
         const f32 colwidth = 100.f;
 
         ImGui::PushID(label);
@@ -360,13 +364,13 @@ namespace Everest {
         f32 lh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
         ImVec2 btnsz = {lh + 3.f, lh};
 
-        _vec3f32("x", value.x, .1f, "##1");
+        _vec3f32("x", value.x, .1f, "##1", min, max);
         ImGui::PopItemWidth();
         ImGui::SameLine(0.f, 4.f);
-        _vec3f32("y", value.y, .1f, "##2");
+        _vec3f32("y", value.y, .1f, "##2", min, max);
         ImGui::PopItemWidth();
         ImGui::SameLine(0.f, 4.f);
-        _vec3f32("z", value.z, .1f, "##3");
+        _vec3f32("z", value.z, .1f, "##3", min, max);
         ImGui::PopItemWidth();
 
         ImGui::PopStyleVar();

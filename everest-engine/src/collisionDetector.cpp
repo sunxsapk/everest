@@ -68,7 +68,7 @@ namespace Everest {
             // TODO: friction from physics material
         };
 
-#ifdef DEBUG
+#if 0
         Renderer2D::drawLine(vec3(c2.offset, 1), vec3(contact, 1), vec4(1.f, 1.f, 0.f, 1.f));
         Renderer2D::drawLine(vec3(c1.offset, 1), vec3(contact, 1), vec4(1.f, 0.f, 0.f, 1.f));
 #endif
@@ -110,8 +110,10 @@ namespace Everest {
             // TODO: friction from physics material
         };
 
+#if 0
         Renderer2D::drawCircle(vec3(contact, 1), 0.2f, vec4(1.f, 0.f, 0.f, 1.f));
         Renderer2D::drawLine(vec3(contact, 1), vec3(contact + normal, 1), vec4(1.f, 0.f, 0.f, 1.f));
+#endif
 
         results.push_back(bodycontact);
         return true;
@@ -242,8 +244,10 @@ namespace Everest {
             // TODO: friction from physics material
         };
 
+#if 0
         Renderer2D::drawCircle(vec3(contact, 1), 0.2f, vec4(1.f, 0.f, 0.f, 1.f));
         Renderer2D::drawLine(vec3(contact, 1), vec3(contact + normal, 1), vec4(1.f, 0.f, 0.f, 1.f));
+#endif
 
         results.push_back(bodycontact);
         return false;

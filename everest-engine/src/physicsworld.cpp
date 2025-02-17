@@ -16,18 +16,23 @@ namespace Everest {
     std::vector<body_contact2d_t> PhysicsHandler::contacts2d(16);
 
     void PhysicsHandler::init(u32 simulationSteps, vec3 gravity) {
+        EV_profile_function();
         _simulationSteps = simulationSteps;
         _gravity = gravity;
     }
 
-    void PhysicsHandler::quit(){ }
+    void PhysicsHandler::quit(){
+        EV_profile_function();
+    }
 
     void PhysicsHandler::simulate(Scene& scene, f64 timeStep){
+        EV_profile_function();
         simulate2d(scene, timeStep);
         simulate3d(scene, timeStep);
     }
 
     void PhysicsHandler::generateContacts(Scene& scene, f64 timeStep){
+        EV_profile_function();
         static std::vector<aabb_t> colliderBounds(16);
         static aabb2d_tree_t<collider_c> tree;
 
@@ -39,6 +44,7 @@ namespace Everest {
     }
 
     void PhysicsHandler::generateContacts2d(Scene& scene, f64 timeStep){
+        EV_profile_function();
         static std::vector<aabb2d_t> collider2dBounds(16);
         static aabb2d_tree_t<collider2d_c> tree2d;
 
@@ -82,6 +88,7 @@ namespace Everest {
     }
 
     void PhysicsHandler::simulate2d(Scene& scene, f64 timeStep){
+        EV_profile_function();
         registry_t& registry = scene._registry;
         auto spjgrp = registry.group<springJoint2d_c>(entt::get<transform_c, rigidbody2d_c>);
         auto phygrp = registry.group<rigidbody2d_c>(entt::get<transform_c>);
@@ -102,6 +109,7 @@ namespace Everest {
     }
 
     void PhysicsHandler::simulate3d(Scene& scene, f64 timeStep){
+        EV_profile_function();
         registry_t& registry = scene._registry;
         auto spjgrp = registry.group<springJoint_c>(entt::get<transform_c, rigidbody_c>);
         auto phygrp = registry.group<rigidbody_c>(entt::get<transform_c>);
@@ -118,7 +126,7 @@ namespace Everest {
         }
 
         generateContacts(scene, timeStep);
-        _contactResolver.resolveContacts(contacts, timeStep);
+        _contactResolver.resolveContacts(contacts);
     }
 
 }

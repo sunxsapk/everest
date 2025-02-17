@@ -22,20 +22,28 @@ namespace Everest {
     };
 
     struct body_contact_t {
-        contact_body_t body1;
-        contact_body_t body2;
+        transform_c* transformA;
+        transform_c* transformB;
+
+        rigidbody_c* rigidbodyA;
+        rigidbody_c* rigidbodyB;
 
         vec3 contactNormal;
+        vec3 relativeContactPointA;
+        vec3 relativeContactPointB;
+
+        f32 angularInertiaA = 0.f;
+        f32 angularInertiaB = 0.f;
+
         f32 penetration = 0.f;
         f32 restitution = 1.f;
         f32 friction = 0.3f;
 
-        void resolve(f32 duration);
+        void prepareContacts();
+        void resolvePenetration();
+        void resolveVelocity();
         f32 getSeparationVelocity() const;
-
         private:
-        void resolvePenetration(f32 duration);
-        void resolveVelocity(f32 duration);
         vec3 getRelativeVelocity() const;
     };
 
@@ -69,12 +77,12 @@ namespace Everest {
     class contact_resolver_t {
 
         public:
-            contact_resolver_t(u32 iterations = 0);
-
-            void resolveContacts(std::vector<body_contact_t>& contactRegistry, f32 duration);
+            void resolveContacts(std::vector<body_contact_t>& contactRegistry);
 
         protected:
-            u32 _iterations, _iterationsUsed;
+            void prepareContacts(std::vector<body_contact_t>& contactRegistry);
+            void resolvePenetration(std::vector<body_contact_t>& contactRegistry);
+            void resolveVelocities(std::vector<body_contact_t>& contactRegistry);
 
     };
 
@@ -82,11 +90,9 @@ namespace Everest {
     class contact2d_resolver_t {
 
         public:
-            contact2d_resolver_t(u32 iterations = 0);
             void resolveContacts(std::vector<body_contact2d_t>& contactRegistry);
 
         protected:
-            u32 _iterations, _iterationsUsed;
             void prepareContacts(std::vector<body_contact2d_t>& contactRegistry);
             void resolvePenetration(std::vector<body_contact2d_t>& contactRegistry);
             void resolveVelocities(std::vector<body_contact2d_t>& contactRegistry);
