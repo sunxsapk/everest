@@ -25,6 +25,7 @@ namespace Everest {
 
             Entity createEntity(const char * name = "Entity");
             Entity createEntityUUID(UUID id, const char * name = "Entity");
+            Entity duplicateEntity(Entity& entity);
             void destroyEntity(Entity& entity);
 
             void onRender();

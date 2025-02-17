@@ -1,4 +1,5 @@
 #include "sceneheirarchy.h"
+#include "scenepanel.h"
 
 
 namespace Everest {
@@ -38,6 +39,9 @@ namespace Everest {
         bool deleteEntity = false;
         if(ImGui::BeginPopupContextItem()){
             if(ImGui::MenuItem("Delete Entity")) deleteEntity = true;
+            if(ImGui::MenuItem("Duplicate Entity")) {
+                _scene->duplicateEntity(entity);
+            }
             ImGui::EndPopup();
         }
 
@@ -59,4 +63,19 @@ namespace Everest {
         }
     }
 
+    bool SceneHeirarchyUI::onKeyShortcuts(KeyDownEvent& event){
+        if(ScenePanel::getSceneState() != SceneState::EDIT) return false;
+        if(!_selectedEntity.isValid()) return false;
+
+        if(event.getKey() == K_delete){
+            _scene->destroyEntity(_selectedEntity);
+            return true;
+        }
+
+        bool isctrl = Input::getKeyDown(K_left_control) || Input::getKeyDown(K_right_control);
+        if(!isctrl) return false;
+
+        if(event.getKey() == K_d) _scene->duplicateEntity(_selectedEntity);
+        return true;
+    }
 }

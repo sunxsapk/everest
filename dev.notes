@@ -61,27 +61,28 @@ Now, let's talk about the current milestones of the project:
 + Develop an Entity Component System before actually going on with scene setup
     ; Components: ECS, <Components : Transform, Sprite>
 
-- Make a scene editor layout and add a simple 2d scene editing and saving mechanism.
++ Make a scene editor layout and add a simple 2d scene editing and saving mechanism.
     Add gizmo to the scene for ease of editing and some mouse related functionalities
     for moving and selecting things. Make everything ready for big things to come next.
     Also experiment with the instanced renderer2d.
-    ; Components: Sprite atlas, Scene editor, Scene loader & serializer (partial),
-        IMGUI docked layout and Menu, Mouse, Tilemap
+    ; Components: Scene editor, Scene loader & serializer, IMGUI docked layout and Menu, Mouse, 
         position: world space & screen space, Gizmo, UI
     ; Target: Edit and setup a scene for simple 2d game(maybe copy of Predcave)
 
-- Play, Pause and Stop scenes, Reset scenes
++ Play, Pause and Stop scenes, Reset scenes
 
 - Develop Physics system for 2D setup and pave a way for 3D physics too
     - Static and Dynamic Rigidbodies
-    - Colliders
-    - Gravity
+    + Colliders
+    + Gravity
     ; Target: Make a simple game like space invader or tetris
+
+- Scripting
 
 - Develop 3D rendering system (mesh load and rendering, materials and shaders)
 
 
 =============== TODO ============
 [+] no collision if no rigidbody attached to any collider
-[ ] multi-stage contact resolver: prepare -> separate -> physics
-[ ] contact_data_t should be made more memory efficient
+[+] multi-stage contact resolver: prepare -> separate -> physics
+[+] contact_data_t should be made more memory efficient

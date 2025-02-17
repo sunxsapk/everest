@@ -26,8 +26,6 @@ namespace Everest {
     Entity Scene::createEntityUUID(UUID id, const char * name){
         EV_profile_function();
 
-
-
         Entity _en {_registry.create(), this};
         _en.add<transform_c>();
         _en.add<id_c>(id);
@@ -98,7 +96,6 @@ namespace Everest {
         }
 
         Renderer2D::endScene();
-
     }
 
     void drawCameraGizmo(transform_c& tfr, camera_c& cam, u32 id){
@@ -129,27 +126,6 @@ namespace Everest {
 
     void Scene::onEditorRender(bool renderPhysicsShapes){
         EV_profile_function();
-
-        auto sprgrp = _registry.group<spriteRenderer_c>(entt::get<transform_c>);
-        for(auto ent : sprgrp){
-            const auto& [spr, tfr] = sprgrp.get(ent);
-            Renderer2D::drawSprite(tfr, spr
-#ifdef EDITOR_BUILD
-                    , (u32)ent
-#endif
-                    );
-        }
-
-        auto cirgrp = _registry.group<circleRenderer_c>(entt::get<transform_c>);
-        for(auto ent : cirgrp){
-            const auto& [cir, tfr] = cirgrp.get(ent);
-            Renderer2D::drawCircle(tfr, cir.color, cir.thickness, cir.fade
-#ifdef EDITOR_BUILD
-                    , (u32)ent
-#endif
-                    );
-        }
-
 
         auto camgrp = _registry.group<camera_c>(entt::get<transform_c>);
         for(auto ent : camgrp){
@@ -182,6 +158,27 @@ namespace Everest {
             }
         }
 
+
+        auto sprgrp = _registry.group<spriteRenderer_c>(entt::get<transform_c>);
+        for(auto ent : sprgrp){
+            const auto& [spr, tfr] = sprgrp.get(ent);
+            Renderer2D::drawSprite(tfr, spr
+#ifdef EDITOR_BUILD
+                    , (u32)ent
+#endif
+                    );
+        }
+
+        auto cirgrp = _registry.group<circleRenderer_c>(entt::get<transform_c>);
+        for(auto ent : cirgrp){
+            const auto& [cir, tfr] = cirgrp.get(ent);
+            Renderer2D::drawCircle(tfr, cir.color, cir.thickness, cir.fade
+#ifdef EDITOR_BUILD
+                    , (u32)ent
+#endif
+                    );
+        }
+
     }
 
     void Scene::onEditorEndRender(){
@@ -202,8 +199,6 @@ namespace Everest {
     void Scene::onUpdate(){ 
         EV_profile_function();
 
-        PhysicsHandler::simulate(*this, Time::getDeltatime());
-
         _registry.view<nativeScript_c>().each([=](auto ent, nativeScript_c& nscript){
                 if(!nscript._instance){
                     nscript._instance = nscript.create();
@@ -212,6 +207,8 @@ namespace Everest {
                 }
                 nscript._instance->onUpdate();
             });
+
+        PhysicsHandler::simulate(*this, Time::getDeltatime());
     }
 
     void Scene::onViewportResize(uvec2 viewportSize){
@@ -265,5 +262,34 @@ namespace Everest {
         }
 
         return newScene;
+    }
+
+    template<typename Comp>
+    void duplicateComponent(Entity& src, Entity& dest){
+        if(!src.has<Comp>()) return;
+        Comp& sc = src.get<Comp>();
+        if(dest.has<Comp>()){
+            Comp& dc = dest.get<Comp>();
+            dc = sc;
+        } else {
+            dest.add<Comp>(sc);
+        }
+    }
+
+    Entity Scene::duplicateEntity(Entity& entity){
+        Entity ent = createEntity(entity.get<tag_c>().tag.c_str());
+
+        duplicateComponent<transform_c>(entity, ent);
+        duplicateComponent<spriteRenderer_c>(entity, ent);
+        duplicateComponent<circleRenderer_c>(entity, ent);
+        duplicateComponent<camera_c>(entity, ent);
+        duplicateComponent<rigidbody2d_c>(entity, ent);
+        duplicateComponent<rigidbody_c>(entity, ent);
+        duplicateComponent<springJoint_c>(entity, ent);
+        duplicateComponent<springJoint2d_c>(entity, ent);
+        duplicateComponent<boxCollider2d_c>(entity, ent);
+        duplicateComponent<circleCollider2d_c>(entity, ent);
+
+        return ent;
     }
 }

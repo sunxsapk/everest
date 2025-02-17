@@ -60,16 +60,17 @@ namespace Everest {
     }
 
     bool MenuPanel::onKeyShortcuts(KeyDownEvent& event){
-        if(ScenePanel::getSceneState() != SceneState::EDIT){
-            EVLog_Wrn("Cannot save the running scene");
-            return false;
-        }
         auto key = event.getKey();
 
         bool isctrl = Input::getKeyDown(K_left_control) || Input::getKeyDown(K_right_control);
         if(!isctrl) return false;
 
         bool isshft = Input::getKeyDown(K_left_shift) || Input::getKeyDown(K_right_shift);
+
+        if(ScenePanel::getSceneState() != SceneState::EDIT){
+            EVLog_Wrn("Cannot modify or save the scene during runtime");
+            return false;
+        }
 
         switch(key){
             case K_n:

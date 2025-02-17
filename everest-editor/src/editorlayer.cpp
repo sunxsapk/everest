@@ -52,8 +52,8 @@ namespace Everest {
                     break;
                 case SceneState::PLAY:
                     if(ScenePanel::gameView){
-                        _activeScene->onRender();
                         _activeScene->onUpdate();
+                        _activeScene->onRender();
                     } else {
                         editorView(_activeScene, true);
                     }
@@ -67,7 +67,15 @@ namespace Everest {
     void EditorLayer::editorView(ref<Scene>& _activeScene, bool update){
         _activeScene->onEditorBeginRender(_camera.camera, _camera.transform);
         _activeScene->onEditorRender(Gizmos::showPhysicsShapes);
+
         if(update) _activeScene->onUpdate();
+
+        Entity ent = SceneHeirarchyUI::getSelectedEntity();
+        if(ent.isValid()){
+            transform_c& tfr = ent.get<transform_c>();
+            Renderer2D::drawRect((mat4)tfr);
+        }
+
         _activeScene->onEditorEndRender();
 
         //Renderer::disableDepth();
@@ -89,6 +97,7 @@ namespace Everest {
         EventDispatcher dispatcher(event);
 
         dispatcher.dispatch<KeyDownEvent>(MenuPanel::onKeyShortcuts);
+        dispatcher.dispatch<KeyDownEvent>(SceneHeirarchyUI::onKeyShortcuts);
         dispatcher.dispatch<KeyDownEvent>(ScenePanel::onKeyShortcuts);
         dispatcher.dispatch<MouseButtonDownEvent>(BIND_EVENT_CB(onMouseButtonDown));
     }

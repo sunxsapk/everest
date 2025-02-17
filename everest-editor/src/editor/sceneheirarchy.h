@@ -11,7 +11,7 @@ namespace Everest {
             static void setScene(const ref<Scene>& scene);
 
             static void onGUIrender();
-
+            static bool onKeyShortcuts(KeyDownEvent& event);
             static inline Entity getSelectedEntity(){return _selectedEntity;}
 
         private:

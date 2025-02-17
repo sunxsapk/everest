@@ -2,7 +2,6 @@
 #include "scenepanel.h"
 #include "gizmos.h"
 #include "sceneheirarchy.h"
-#include "editorAssets.h"
 
 
 namespace Everest {
@@ -26,7 +25,7 @@ namespace Everest {
             auto _activeScene = SceneManager::getActiveScene();
             if(_activeScene) _activeScene->onViewportResize(_sceneViewPortSize);
         }
-        if(_sceneState == SceneState::EDIT) Gizmos::renderTransformationGizmo(sceneCamera);
+        if(!gameView || _sceneState == SceneState::EDIT) Gizmos::renderTransformationGizmo(sceneCamera);
 
         ImGui::End();
         ImGui::PopStyleVar();
