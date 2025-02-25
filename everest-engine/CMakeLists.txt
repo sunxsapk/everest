@@ -4,7 +4,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 project(everest VERSION 1.0 LANGUAGES CXX)
 
 # Set the C++ standard
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -31,6 +31,7 @@ add_library(${PROJECT_NAME} STATIC ${SRC_FILES} ${EXTERNALS})
 target_include_directories(${PROJECT_NAME} PUBLIC
     ${PROJECT_BINARY_DIR}
     include
+    externals/sources/sol
     externals/sources/glad/include
     externals/sources/imgui/include
     externals/sources/stb_image/include
@@ -41,7 +42,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 )
 
 # libraries
-target_link_libraries(${PROJECT_NAME} PRIVATE glfw yaml-cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE glfw yaml-cpp lua)
 
 # precompiled headers
 target_precompile_headers(${PROJECT_NAME} PRIVATE include/pch.h)

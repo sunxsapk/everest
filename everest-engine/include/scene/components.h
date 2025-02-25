@@ -13,6 +13,7 @@
 #include "renderer/circleRenderer.h"
 #include "physics/rigidbody.h"
 #include "physics/springJoint.h"
+#include "scripting/evscript.h"
 
 namespace Everest {
 
@@ -65,4 +66,5 @@ namespace Everest {
     using BoxCollider2d = boxCollider2d_c;
     using CircleCollider2d = circleCollider2d_c;
     using Collider2D = collider2d_c;
+    using EvScript = Scripting::evscript_c;
 }

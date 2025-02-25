@@ -41,12 +41,13 @@ namespace Everest {
             }
             if(ImGui::MenuItem("Sprite Renderer")) ent.tryAdd<spriteRenderer_c>();
             if(ImGui::MenuItem("Circle Renderer")) ent.tryAdd<circleRenderer_c>();
-            if(ImGui::MenuItem("Rigidbody")) ent.tryAdd<rigidbody_c>();
+            //if(ImGui::MenuItem("Rigidbody")) ent.tryAdd<rigidbody_c>();
             if(ImGui::MenuItem("Rigidbody 2D")) ent.tryAdd<rigidbody2d_c>();
-            if(ImGui::MenuItem("Spring Joint")) ent.tryAdd<springJoint_c>();
+            //if(ImGui::MenuItem("Spring Joint")) ent.tryAdd<springJoint_c>();
             if(ImGui::MenuItem("Spring Joint 2D")) ent.tryAdd<springJoint2d_c>();
             if(ImGui::MenuItem("Box Collider 2D")) ent.tryAdd<boxCollider2d_c>();
             if(ImGui::MenuItem("Circle Collider 2D")) ent.tryAdd<circleCollider2d_c>();
+            if(ImGui::MenuItem("Everest Script")) ent.tryAdd<EvScript>(ent);
 
             ImGui::EndPopup();
         }
@@ -178,6 +179,7 @@ namespace Everest {
             _f32sliderui("Fade", comp.fade, "##fd", 0.f, 1.f);
         });
 
+#if 0
         if(ent.has<rigidbody_c>()) _componentUI<rigidbody_c>(ent, "Rigidbody",
         [](rigidbody_c& comp){
             f32 mass = comp.getMass();
@@ -191,6 +193,7 @@ namespace Everest {
             if(_f32dragui("Drag", drag, 0.01f, "##drag") && drag >= 0.f) comp.drag = drag;
             ImGui::Checkbox("Use Gravity", &comp.useGravity);
         });
+#endif
 
         if(ent.has<rigidbody2d_c>()) _componentUI<rigidbody2d_c>(ent, "Rigidbody 2D",
         [](rigidbody2d_c& comp){
@@ -240,11 +243,39 @@ namespace Everest {
             _f32sliderui("Restitution", comp.restitution, "##crst");
         });
 
+        if(ent.has<EvScript>()) _componentUI<EvScript>(ent, "Everest Script",
+        [](EvScript& comp){
+            ImGui::Text("Script Path");
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7f, 1.f, 1.f, 1.f));
+            ImGui::Text("Path: %s", comp.scriptpath.empty()? "None" : comp.scriptpath.c_str());
 
+            if(ImGui::BeginDragDropTarget()){
+                const ImGuiPayload* data = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
+                if(data && data->Data){
+                    const char* path_str = (const char*) data->Data;
+                    EVLog_Msg("Drag n Drop Item %s", path_str);
+                    if(AssetsManager::getAssetsType(path_str) == AssetsType::SCRIPT){
+                        try {
+                            comp.setScriptPath(std::filesystem::path(path_str));
+                        } catch(std::exception exc){
+                            // TODO: make this into a popup
+                            EVLog_Err("Error on loading Script: %s", exc.what());
+                        }
+                    }
+                }
+                
+                ImGui::EndDragDropTarget();
+            }
+            ImGui::Text("Script: %s", comp.scriptpath.empty()? "None" : comp.getScriptName());
+            ImGui::PopStyleColor();
+        });
 
+#if 0
         if(ent.has<nativeScript_c>()) _componentUI<nativeScript_c>(ent, "Native Script",
         [](nativeScript_c& comp){
         });
+#endif
+
     }
 
     void PropertiesPanel::_tag(Entity& ent){

@@ -199,16 +199,23 @@ namespace Everest {
     void Scene::onUpdate(){ 
         EV_profile_function();
 
-        _registry.view<nativeScript_c>().each([=](auto ent, nativeScript_c& nscript){
+        double dt = Time::getDeltatime();
+        _registry.view<nativeScript_c>().each([this, dt](auto ent, nativeScript_c& nscript){
                 if(!nscript._instance){
                     nscript._instance = nscript.create();
                     nscript._instance->_entity = {ent, this};
                     nscript._instance->onCreate();
                 }
-                nscript._instance->onUpdate();
+                nscript._instance->onUpdate(dt);
             });
 
-        PhysicsHandler::simulate(*this, Time::getDeltatime());
+        using namespace Scripting;
+        auto scripts = _registry.view<evscript_c>();
+        scripts.each([this, dt](auto ent, evscript_c& nscript){
+                nscript.update(dt);
+            });
+
+        PhysicsHandler::simulate(*this, dt);
     }
 
     void Scene::onViewportResize(uvec2 viewportSize){
@@ -254,11 +261,14 @@ namespace Everest {
             copyComponent<circleRenderer_c>(srcReg, e, desReg, id);
             copyComponent<camera_c>(srcReg, e, desReg, id);
             copyComponent<rigidbody2d_c>(srcReg, e, desReg, id);
-            copyComponent<rigidbody_c>(srcReg, e, desReg, id);
-            copyComponent<springJoint_c>(srcReg, e, desReg, id);
             copyComponent<springJoint2d_c>(srcReg, e, desReg, id);
             copyComponent<boxCollider2d_c>(srcReg, e, desReg, id);
             copyComponent<circleCollider2d_c>(srcReg, e, desReg, id);
+            copyComponent<EvScript>(srcReg, e, desReg, id);
+
+            // 3d components
+            //copyComponent<rigidbody_c>(srcReg, e, desReg, id);
+            //copyComponent<springJoint_c>(srcReg, e, desReg, id);
         }
 
         return newScene;

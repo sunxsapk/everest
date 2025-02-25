@@ -36,7 +36,7 @@ namespace Everest {
 
         protected:
             virtual void onCreate(){}
-            virtual void onUpdate(){}
+            virtual void onUpdate(f32 deltaTime){}
             virtual void onDestroy(){}
         private:
             Entity _entity;

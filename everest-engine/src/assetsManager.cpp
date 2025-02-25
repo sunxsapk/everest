@@ -9,6 +9,7 @@ namespace Everest {
 
     const char* AssetsManager::scene_ext = ".everest";
     const char* AssetsManager::shader_ext = ".glsl";
+    const char* AssetsManager::script_ext = ".lua";
     std::vector<std::string> AssetsManager::texture_exts {".png", ".jpg", ".jpeg"};
 
 
@@ -23,6 +24,7 @@ namespace Everest {
     AssetsType AssetsManager::getAssetsType(std::filesystem::path path){
         if(path.extension() == scene_ext) return AssetsType::SCENE;
         else if(path.extension() == shader_ext) return AssetsType::SHADER;
+        else if(path.extension() == script_ext) return AssetsType::SCRIPT;
         else if( std::find(texture_exts.begin(), texture_exts.end(), path.extension())
                 != texture_exts.end()) return AssetsType::TEXTURE;
         else return AssetsType::NONE;
