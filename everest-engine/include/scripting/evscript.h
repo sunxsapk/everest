@@ -18,8 +18,8 @@ namespace Everest {
 namespace Scripting {
 
     struct evscript_c {
-        Entity entity;
         std::filesystem::path scriptpath;
+        Entity _entity;
 
         evscript_c();
         evscript_c(Entity entity);
@@ -52,7 +52,7 @@ namespace Scripting {
         std::function<void(double)> onUpdate;
         std::function<void(/*TODO: collision Data*/)> onCollision;
 
-        friend void registerTypes(evscript_c);
+        friend class Scene;
     };
 
 }

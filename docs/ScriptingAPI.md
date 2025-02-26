@@ -23,15 +23,30 @@ ground rules you have to follow for writing a proper script.
     - ___OnCreate___
         This function is executed whenever the script instance is created on the object. You can put
         some initialization code on here.
+        ```lua
+            function OnCreate() 
+                -- your code
+            end
+        ```
 
     - ___OnUpdate___
         This function is called every frame. This is where you put code to continously update the
         script. Like handling inputs, custom behaviour and whatnot.
+        ```lua
+            function OnUpdate(deltaTime) 
+                -- your code
+            end
+        ```
 
     - ___OnCollision___
         This function is called everytime the entity collides with another one. Some information about
         collision is passed as an arguments to the function which you can then utilize to do some crazy
         stuff.
+        ```lua
+            function OnCollision(collisionData) 
+                -- your code
+            end
+        ```
 
 2. __Constructors__
     Whenever you want to instantiate a object or type provided by engine, you have to follow the syntax:
@@ -42,14 +57,14 @@ ground rules you have to follow for writing a proper script.
     `instance:function(...args)`
 
 4. __entity__
-    You can access the Entity which holds the script by using `entity`
-    variable. For all the scripting API provided for Entity look [here](#Entity)
+    You can access the Entity which holds the script by using the global variable `entity`.
+    For all the scripting API provided for Entity look [here](#Entity)
 
 __Example Script__
 ```lua
     -- Player Behaviour
     OnCreate = function()
-        rigidbody = entity:get("Rigidbody")
+        rigidbody = entity:get("Rigidbody") -- TODO
     end
 
     OnUpdate = function(deltaTime)
@@ -74,9 +89,30 @@ __Example Script__
 
 ## Extended Types
 
-1. __Vec2__
-2. __Vec3__
-3. __Vec4__
+1. __vec2__
+    - __Constructor__
+    - __Members__
+        - s
+        - s
+    - __Methods__
+        - s
+        - s
+2. __vec3__
+    - __Constructor__
+    - __Members__
+        - s
+        - s
+    - __Methods__
+        - s
+        - s
+3. __vec4__
+    - __Constructor__
+    - __Members__
+        - s
+        - s
+    - __Methods__
+        - s
+        - s
 
 
 ### Entity

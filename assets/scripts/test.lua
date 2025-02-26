@@ -1,9 +1,7 @@
 OnCreate = function()
-    print("Create called")
+    pos = entity:get_transform().position
 end
 
 OnUpdate = function(dt)
-    print("Update called with dt " .. dt)
+    pos.y = pos.y + 5 * dt
 end
-
-print("Loading ....")

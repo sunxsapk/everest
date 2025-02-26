@@ -250,7 +250,7 @@ namespace Everest {
         EvScript& dc = dest.all_of<EvScript>(destID) ?
             dest.get<EvScript>(destID) : dest.emplace<EvScript>(destID, sc);
         dc = sc;
-        dc.entity = destID;
+        dc._entity = destID;
         dc.init();
     }
 

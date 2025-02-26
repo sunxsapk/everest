@@ -25,6 +25,8 @@ namespace Everest {
 
     struct tag_c {
         std::string tag;
+
+        tag_c(const char* tag_ = "Entity"):tag(tag_){}
     };
     
     struct transform_c {

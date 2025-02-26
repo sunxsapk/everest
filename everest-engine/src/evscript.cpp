@@ -8,7 +8,7 @@ namespace Scripting {
     }
 
     evscript_c::evscript_c(Entity entity_){
-        entity = entity_;
+        _entity = entity_;
     }
 
     evscript_c::evscript_c(const evscript_c& other){
@@ -26,7 +26,7 @@ namespace Scripting {
     }
 
     void evscript_c::init() {
-        if(!entity.isValid()) return; // TODO: after fixing above
+        if(!_entity.isValid()) return;
         if( !scriptpath.has_extension() ||
             AssetsManager::getAssetsType(scriptpath) != AssetsType::SCRIPT
         ) return;
@@ -40,7 +40,7 @@ namespace Scripting {
             throw std::invalid_argument("Unable to load lua script");
         }
         lres();
-        // state["entity"] = &entity;
+        state["entity"] = _entity;
 
         sol::protected_function _tmp = state["OnCreate"];
         if(_tmp.valid()) {
