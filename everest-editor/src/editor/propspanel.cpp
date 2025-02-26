@@ -245,9 +245,22 @@ namespace Everest {
 
         if(ent.has<EvScript>()) _componentUI<EvScript>(ent, "Everest Script",
         [](EvScript& comp){
-            ImGui::Text("Script Path");
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.7f, 1.f, 1.f, 1.f));
-            ImGui::Text("Path: %s", comp.scriptpath.empty()? "None" : comp.scriptpath.c_str());
+            ImGui::PushFont(UIFontManager::getDefaultBold());
+
+            const char* sn = comp.scriptpath.empty()? "None" : comp.scriptpath.c_str();
+            auto style = ImGui::GetStyle();
+            f32 height = UIFontManager::getDefaultBold()->FontSize;
+            f32 width = ImGui::GetContentRegionAvail().x;
+            ImVec2 beg = ImGui::GetCursorScreenPos();
+            ImGui::GetWindowDrawList()->AddRectFilled(beg, {beg.x + width, beg.y + height + 2 * style.FramePadding.y},
+                    ImColor(.4f, .4f, .4f, .5f));
+
+            beg.x += style.FramePadding.x;
+            beg.y += style.FramePadding.y;
+            ImGui::SetCursorScreenPos(beg);
+            ImGui::InvisibleButton("##dndtrg", {width - style.WindowPadding.x, height});
+
+            ImGui::SetItemAllowOverlap();
 
             if(ImGui::BeginDragDropTarget()){
                 const ImGuiPayload* data = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
@@ -266,8 +279,14 @@ namespace Everest {
                 
                 ImGui::EndDragDropTarget();
             }
-            ImGui::Text("Script: %s", comp.scriptpath.empty()? "None" : comp.getScriptName());
+
+            ImGui::SetCursorScreenPos(beg);
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 1.f, 1.f, 1.f));
+
+            ImGui::Text("[ %s ] >> %s", comp.scriptpath.empty() ? "--" : comp.getScriptName(), sn);
+
             ImGui::PopStyleColor();
+            ImGui::PopFont();
         });
 
 #if 0

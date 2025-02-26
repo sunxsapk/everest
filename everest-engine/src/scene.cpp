@@ -244,6 +244,16 @@ namespace Everest {
         dc = sc;
     }
 
+    void copyScript(entt::registry& src, entt::entity srcID, entt::registry& dest, Entity destID){
+        if(!src.all_of<EvScript>(srcID)) return;
+        EvScript& sc = src.get<EvScript>(srcID);
+        EvScript& dc = dest.all_of<EvScript>(destID) ?
+            dest.get<EvScript>(destID) : dest.emplace<EvScript>(destID, sc);
+        dc = sc;
+        dc.entity = destID;
+        dc.init();
+    }
+
     ref<Scene> Scene::copy(ref<Scene>& other){
         ref<Scene> newScene = createRef<Scene>(other->_name);
         newScene->_viewportSize = other->_viewportSize;
@@ -254,21 +264,22 @@ namespace Everest {
         auto idv = srcReg.view<id_c>();
         for(auto it = idv.rbegin(); it != idv.rend(); ++it){
             entt::entity e = *it;
-            entt::entity id = newScene->createEntityUUID(srcReg.get<id_c>(e).id, srcReg.get<tag_c>(e).tag.c_str());
+            Entity _ent = newScene->createEntityUUID(srcReg.get<id_c>(e).id, srcReg.get<tag_c>(e).tag.c_str());
             // TODO: copy each components into the entity in new Scene
-            copyComponent<transform_c>(srcReg, e, desReg, id);
-            copyComponent<spriteRenderer_c>(srcReg, e, desReg, id);
-            copyComponent<circleRenderer_c>(srcReg, e, desReg, id);
-            copyComponent<camera_c>(srcReg, e, desReg, id);
-            copyComponent<rigidbody2d_c>(srcReg, e, desReg, id);
-            copyComponent<springJoint2d_c>(srcReg, e, desReg, id);
-            copyComponent<boxCollider2d_c>(srcReg, e, desReg, id);
-            copyComponent<circleCollider2d_c>(srcReg, e, desReg, id);
-            copyComponent<EvScript>(srcReg, e, desReg, id);
+            copyComponent<transform_c>(srcReg, e, desReg, _ent);
+            copyComponent<spriteRenderer_c>(srcReg, e, desReg, _ent);
+            copyComponent<circleRenderer_c>(srcReg, e, desReg, _ent);
+            copyComponent<camera_c>(srcReg, e, desReg, _ent);
+            copyComponent<rigidbody2d_c>(srcReg, e, desReg, _ent);
+            copyComponent<springJoint2d_c>(srcReg, e, desReg, _ent);
+            copyComponent<boxCollider2d_c>(srcReg, e, desReg, _ent);
+            copyComponent<circleCollider2d_c>(srcReg, e, desReg, _ent);
+
+            copyScript(srcReg, e, desReg, _ent);
 
             // 3d components
-            //copyComponent<rigidbody_c>(srcReg, e, desReg, id);
-            //copyComponent<springJoint_c>(srcReg, e, desReg, id);
+            //copyComponent<rigidbody_c>(srcReg, e, desReg, _ent);
+            //copyComponent<springJoint_c>(srcReg, e, desReg, _ent);
         }
 
         return newScene;

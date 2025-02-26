@@ -17,20 +17,16 @@ namespace Scripting {
 
     evscript_c& evscript_c::operator=(const evscript_c& other){
         if(this == &other) return *this;
-
-        // entity = other.entity; // TODO: fix this case.. copy the script from one entity to another
         scriptpath = other.scriptpath;
         onUpdate = nullptr;
         onCreate = nullptr;
         onCollision = nullptr;
         _initialized = false;
-
-        init();
         return *this;
     }
 
     void evscript_c::init() {
-        // if(!entity.isValid()) return; // TODO: after fixing above
+        if(!entity.isValid()) return; // TODO: after fixing above
         if( !scriptpath.has_extension() ||
             AssetsManager::getAssetsType(scriptpath) != AssetsType::SCRIPT
         ) return;
