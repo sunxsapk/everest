@@ -7,7 +7,7 @@ namespace Everest {
     struct transform_c;
 
     enum class ForceMode {
-        Force, Acceleration, Impulse, VelocityChange
+        Force = 0, Acceleration, Impulse, VelocityChange
     };
 
     struct rigidbody_c {

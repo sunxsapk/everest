@@ -30,6 +30,8 @@ namespace Everest {
     struct circleprops_t {
         vec2 offset = vec2(0.0f);
         f32 radius = 0.5f;
+
+        bool contains(vec2 point);
     };
 
     struct boxCollider2d_c {

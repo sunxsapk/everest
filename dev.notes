@@ -49,4 +49,7 @@ Now, let's talk about the current milestones of the project:
 
 =============== TODO ============
 [ ] rigidbodies types
-[ ] write a rough lua-scripting api for entity
+[.] write a rough lua-scripting api for entity
+    [ ] on collision
+    [ ] ray cast api
+

@@ -62,11 +62,13 @@ namespace Everest {
     using Camera = camera_c;
     using SpriteRenderer = spriteRenderer_c;
     using CircleRenderer = circleRenderer_c;
-    using Rigidbody = rigidbody_c;
     using Rigidbody2d = rigidbody2d_c;
-    using SpringJoint = springJoint_c;
+    using SpringJoint2d = springJoint2d_c;
     using BoxCollider2d = boxCollider2d_c;
     using CircleCollider2d = circleCollider2d_c;
-    using Collider2D = collider2d_c;
     using EvScript = Scripting::evscript_c;
+    // using Rigidbody = rigidbody_c;
+    // using SpringJoint = springJoint_c;
+
+    using Collider2D = collider2d_c;
 }

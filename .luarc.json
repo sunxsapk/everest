@@ -1,0 +1,11 @@
+{
+    "diagnostics.globals": [
+        "vec2",
+        "ForceMode",
+        "entity",
+        "vec4"
+    ],
+    "diagnostics.disable": [
+        "lowercase-global"
+    ]
+}

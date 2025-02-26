@@ -19,7 +19,7 @@ namespace Everest {
     };
 
     struct springJoint2d_c {
-        vec2 anchor = vec2(0.f); // store reference to anchor *Entity*
+        vec2 anchor = vec2(0.f); // TODO: store reference to anchor *Entity*. DON'T forget to change lua_registry accordingly
         vec2 offset = vec2(0.f);
         f32 springConstant = 20.f;
         f32 damping = 20.f;
