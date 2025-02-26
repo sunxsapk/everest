@@ -129,6 +129,15 @@ namespace Scripting {
                 );
     }
 
+    void reg_collision(luastate_t& lua){
+        lua.new_usertype<Collision2D>("Collision2D",
+                "other", &Collision2D::other,
+                "contact", &Collision2D::contact,
+                "normal", &Collision2D::normal,
+                "penetration", &Collision2D::penetration
+                );
+    }
+
     template<typename T>
     T* _getc(Entity& ent){
         return ent.has<T>()?&ent.get<T>():nullptr;

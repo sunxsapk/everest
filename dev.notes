@@ -49,7 +49,13 @@ Now, let's talk about the current milestones of the project:
 
 =============== TODO ============
 [ ] rigidbodies types
-[.] write a rough lua-scripting api for entity
-    [ ] on collision
-    [ ] ray cast api
+[ ] ray cast api
+[ ] write a rough lua-scripting api for entity
+    - camera component
+    - serialize serializable fields
+    - update api docs
+[ ] scripting api for input fields
+[ ] scripting api for component add and remove
+[ ] scripting api for entity create and destroy
+[ ] scripting api for scene props [main-cam, load-new]
 

@@ -69,5 +69,12 @@ namespace Scripting {
             onUpdate(deltaTime);
         }
     }
+
+    void evscript_c::collisionCallback(Collision2D& data){
+        if(onCollision){
+            onCollision(data);
+        }
+    }
+
 }
 }

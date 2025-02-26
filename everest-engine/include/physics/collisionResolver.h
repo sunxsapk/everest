@@ -99,6 +99,4 @@ namespace Everest {
 
     };
 }
-    struct AABB;
-    struct AABB2D;
 

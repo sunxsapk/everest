@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "physics/collision.h"
 #include "scene/entity.h"
 #include "scripting/typeregistry.h"
 #include <filesystem>
@@ -28,6 +29,7 @@ namespace Scripting {
 
         void init();
         void update(double deltaTime);
+        void collisionCallback(Collision2D& data);
 
         inline void setScriptPath(std::filesystem::path path){
             if(scriptpath == path) return;
@@ -50,7 +52,7 @@ namespace Scripting {
 
         std::function<void()> onCreate;
         std::function<void(double)> onUpdate;
-        std::function<void(/*TODO: collision Data*/)> onCollision;
+        std::function<void(Collision2D)> onCollision;
 
         friend class Scene;
     };

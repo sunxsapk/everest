@@ -1,19 +1,27 @@
 #include "physics/physicsworld.h"
-#include "physics/aabbtree.h"
 #include "physics/aabbtree2d.h"
-#include "physics/colliders.h"
+#include "physics/collision.h"
 #include "scene/components.h"
 #include "physics/collisionDetector.h"
 
+#ifndef NO_3D
+#include "physics/aabbtree.h"
+#include "physics/colliders.h"
+#endif
 
 namespace Everest {
 
     u32 PhysicsHandler::_simulationSteps = 4;
     vec3 PhysicsHandler::_gravity = vec3(0.f, -9.8f, 0.f);
-    contact_resolver_t PhysicsHandler::_contactResolver;
     contact2d_resolver_t PhysicsHandler::_contactResolver2d;
-    std::vector<body_contact_t> PhysicsHandler::contacts(16);
     std::vector<body_contact2d_t> PhysicsHandler::contacts2d(16);
+    aabb2d_tree_t<collider2d_c> PhysicsHandler::tree2d;
+
+#ifndef NO_3D
+    contact_resolver_t PhysicsHandler::_contactResolver3d;
+    std::vector<body_contact_t> PhysicsHandler::contacts(16);
+    aabb_tree_t<collider_c> PhysicsHandler::tree2d;
+#endif
 
     void PhysicsHandler::init(u32 simulationSteps, vec3 gravity) {
         EV_profile_function();
@@ -28,13 +36,16 @@ namespace Everest {
     void PhysicsHandler::simulate(Scene& scene, f64 timeStep){
         EV_profile_function();
         simulate2d(scene, timeStep);
+#ifndef NO_3D
         simulate3d(scene, timeStep);
+#endif
     }
 
+#ifndef NO_3D
     void PhysicsHandler::generateContacts(Scene& scene, f64 timeStep){
         EV_profile_function();
         static std::vector<aabb_t> colliderBounds(16);
-        static aabb2d_tree_t<collider_c> tree;
+        static aabb_tree_t<collider_c> tree;
 
         tree.clear();
         contacts.clear();
@@ -43,10 +54,34 @@ namespace Everest {
         // TODO: 3d collision detection and resolution
     }
 
+
+
+    void PhysicsHandler::simulate3d(Scene& scene, f64 timeStep){
+        EV_profile_function();
+        registry_t& registry = scene._registry;
+        auto spjgrp = registry.group<springJoint_c>(entt::get<transform_c, rigidbody_c>);
+        auto phygrp = registry.group<rigidbody_c>(entt::get<transform_c>);
+
+        for(auto ent:spjgrp){
+            const auto& [spr, tfr, rb] = spjgrp.get(ent);
+            spr.updateForce(tfr, rb);
+        }
+
+        for(auto ent:phygrp){
+            const auto& [rb, tfr] = phygrp.get(ent);
+            if(rb.useGravity) rb.addForce(_gravity, ForceMode::Acceleration);
+            rb.integrate(tfr, timeStep);
+        }
+
+        generateContacts(scene, timeStep);
+        _contactResolver3d.resolveContacts(contacts);
+    }
+
+#endif
+
     void PhysicsHandler::generateContacts2d(Scene& scene, f64 timeStep){
         EV_profile_function();
         static std::vector<aabb2d_t> collider2dBounds(16);
-        static aabb2d_tree_t<collider2d_c> tree2d;
 
         tree2d.clear();
         contacts2d.clear();
@@ -81,7 +116,26 @@ namespace Everest {
             if(candidates.size() < 2) continue;
             for(int i=0; i<candidates.size(); i++){
                 for(int j=i+1; j<candidates.size(); j++){
-                    CollisionDetector2D::checkForContacts(candidates[i], candidates[j], contacts2d);
+                    bool col = CollisionDetector2D::checkForContacts(candidates[i], candidates[j], contacts2d);
+                    if(col){
+                        body_contact2d_t& cd = contacts2d.back();
+
+                        Collision2D col{
+                            .contact = cd.relativeContactPointA + vec2{cd.transformA->position},
+                            .normal = cd.contactNormal,
+                            .penetration = cd.penetration
+                        };
+
+                        if(candidates[i]->entity.has<EvScript>()){
+                            col.other = candidates[j]->entity;
+                            candidates[i]->entity.get<EvScript>().collisionCallback(col);
+                        }
+
+                        if(candidates[j]->entity.has<EvScript>()){
+                            col.other = candidates[i]->entity;
+                            candidates[j]->entity.get<EvScript>().collisionCallback(col);
+                        }
+                    }
                 }
             }
         }
@@ -107,26 +161,4 @@ namespace Everest {
         generateContacts2d(scene, timeStep);
         _contactResolver2d.resolveContacts(contacts2d);
     }
-
-    void PhysicsHandler::simulate3d(Scene& scene, f64 timeStep){
-        EV_profile_function();
-        registry_t& registry = scene._registry;
-        auto spjgrp = registry.group<springJoint_c>(entt::get<transform_c, rigidbody_c>);
-        auto phygrp = registry.group<rigidbody_c>(entt::get<transform_c>);
-
-        for(auto ent:spjgrp){
-            const auto& [spr, tfr, rb] = spjgrp.get(ent);
-            spr.updateForce(tfr, rb);
-        }
-
-        for(auto ent:phygrp){
-            const auto& [rb, tfr] = phygrp.get(ent);
-            if(rb.useGravity) rb.addForce(_gravity, ForceMode::Acceleration);
-            rb.integrate(tfr, timeStep);
-        }
-
-        generateContacts(scene, timeStep);
-        _contactResolver.resolveContacts(contacts);
-    }
-
 }

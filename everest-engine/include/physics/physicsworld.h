@@ -13,6 +13,8 @@
 #include "math/types.h"
 #include "physics/collisionResolver.h"
 
+#define NO_3D
+
 namespace Everest {
 
     using registry_t = entt::registry;
@@ -29,13 +31,19 @@ namespace Everest {
             static u32 _simulationSteps;
             static vec3 _gravity;
             static std::vector<body_contact2d_t> contacts2d;
-            static std::vector<body_contact_t> contacts;
-            static contact_resolver_t _contactResolver;
             static contact2d_resolver_t _contactResolver2d;
+            static aabb2d_tree_t<collider2d_c> tree2d;
 
             static void simulate2d(Scene& scene, f64 timeStep);
+            static void generateContacts2d(Scene& scene, f64 timeStep);
+
+#ifndef NO_3D
+            static std::vector<body_contact_t> contacts;
+            static contact_resolver_t _contactResolver3d;
+            static aabb_tree_t<collider_c> tree3d;
+
             static void simulate3d(Scene& scene, f64 timeStep);
             static void generateContacts(Scene& scene, f64 timeStep);
-            static void generateContacts2d(Scene& scene, f64 timeStep);
+#endif
     };
 }

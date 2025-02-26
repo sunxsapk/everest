@@ -27,11 +27,14 @@ namespace Scripting {
     void reg_springJoint2d(luastate_t& lua);
     void reg_circleCollider2d(luastate_t& lua);
     void reg_boxCollider2d(luastate_t& lua);
+    void reg_collision(luastate_t& lua);
+
     
 
     static const std::vector<std::function<void(luastate_t&)>> Registry{
         // types
         reg_vecx,
+        reg_collision,
 
         // components
         reg_transform,
