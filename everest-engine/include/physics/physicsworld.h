@@ -13,7 +13,7 @@
 #include "math/types.h"
 #include "physics/collisionResolver.h"
 
-#define NO_3D
+#include "physics/phyconfig.h"
 
 namespace Everest {
 
@@ -37,7 +37,7 @@ namespace Everest {
             static void simulate2d(Scene& scene, f64 timeStep);
             static void generateContacts2d(Scene& scene, f64 timeStep);
 
-#ifndef NO_3D
+#ifndef __NO_3D__
             static std::vector<body_contact_t> contacts;
             static contact_resolver_t _contactResolver3d;
             static aabb_tree_t<collider_c> tree3d;

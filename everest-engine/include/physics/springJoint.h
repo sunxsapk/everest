@@ -3,9 +3,11 @@
 
 #include "math/types.h"
 #include "physics/rigidbody.h"
+#include "physics/phyconfig.h"
 
 namespace Everest {
 
+#ifndef __NO_3D__
     struct springJoint_c {
         // TODO: store entity in runtime, which will be populated during serialization time
         // store reference to anchor *Entity*
@@ -17,6 +19,7 @@ namespace Everest {
 
         void updateForce(const transform_c& otherTransform, rigidbody_c& otherBody);
     };
+#endif
 
     struct springJoint2d_c {
         vec2 anchor = vec2(0.f); // TODO: store reference to anchor *Entity*. DON'T forget to change lua_registry accordingly

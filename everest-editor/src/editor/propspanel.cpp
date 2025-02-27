@@ -178,6 +178,11 @@ namespace Everest {
         [](rigidbody2d_c& comp){
             f32 mass = comp.getMass();
             f32 drag = comp.drag;
+            bool ug = comp.definition&BodyDefBits::UseGravity, st = comp.definition&Static;
+
+            if(ImGui::Checkbox("Static", &st)) comp.definition ^= Static;
+            if(st) return;
+
             _vec2ui("Velocity", comp.velocity, 0.f);
             _f32dragui("Angular Velocity", comp.angularVelocity, 0.01f, "##angv");
             if(_f32dragui("Mass", mass, 0.01f, "##mass",
@@ -185,7 +190,7 @@ namespace Everest {
                         std::numeric_limits<f32>::max())) comp.setMass(mass);
             _f32dragui("Inverse Inertia", comp.inverseInertia, 0.01f, "#invin", std::numeric_limits<f32>::min(), std::numeric_limits<f32>::max());
             if(_f32dragui("Drag", drag, 0.01f, "##drag", 0.f, std::numeric_limits<f32>::max())) comp.drag = drag;
-            ImGui::Checkbox("Use Gravity", &comp.useGravity);
+            if(ImGui::Checkbox("Use Gravity", &ug)) comp.definition ^= UseGravity;
         });
 
         if(ent.has<springJoint2d_c>()) _componentUI<springJoint2d_c>(ent, "Spring Joint 2D",

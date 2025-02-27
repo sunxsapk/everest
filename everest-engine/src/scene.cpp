@@ -276,9 +276,10 @@ namespace Everest {
 
             copyScript(srcReg, e, desReg, _ent);
 
-            // 3d components
-            //copyComponent<rigidbody_c>(srcReg, e, desReg, _ent);
-            //copyComponent<springJoint_c>(srcReg, e, desReg, _ent);
+#ifndef __NO_3D__
+            copyComponent<rigidbody_c>(srcReg, e, desReg, _ent);
+            copyComponent<springJoint_c>(srcReg, e, desReg, _ent);
+#endif
         }
 
         return newScene;
@@ -304,12 +305,14 @@ namespace Everest {
         duplicateComponent<circleRenderer_c>(entity, ent);
         duplicateComponent<camera_c>(entity, ent);
         duplicateComponent<rigidbody2d_c>(entity, ent);
-        duplicateComponent<rigidbody_c>(entity, ent);
-        duplicateComponent<springJoint_c>(entity, ent);
         duplicateComponent<springJoint2d_c>(entity, ent);
         duplicateComponent<boxCollider2d_c>(entity, ent);
         duplicateComponent<circleCollider2d_c>(entity, ent);
 
+#ifndef __NO_3D__
+        duplicateComponent<rigidbody_c>(entity, ent);
+        duplicateComponent<springJoint_c>(entity, ent);
+#endif
         return ent;
     }
 }

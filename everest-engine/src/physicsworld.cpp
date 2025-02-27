@@ -4,7 +4,7 @@
 #include "scene/components.h"
 #include "physics/collisionDetector.h"
 
-#ifndef NO_3D
+#ifndef __NO_3D__
 #include "physics/aabbtree.h"
 #include "physics/colliders.h"
 #endif
@@ -17,7 +17,7 @@ namespace Everest {
     std::vector<body_contact2d_t> PhysicsHandler::contacts2d(16);
     aabb2d_tree_t<collider2d_c> PhysicsHandler::tree2d;
 
-#ifndef NO_3D
+#ifndef __NO_3D__
     contact_resolver_t PhysicsHandler::_contactResolver3d;
     std::vector<body_contact_t> PhysicsHandler::contacts(16);
     aabb_tree_t<collider_c> PhysicsHandler::tree2d;
@@ -36,12 +36,12 @@ namespace Everest {
     void PhysicsHandler::simulate(Scene& scene, f64 timeStep){
         EV_profile_function();
         simulate2d(scene, timeStep);
-#ifndef NO_3D
+#ifndef __NO_3D__
         simulate3d(scene, timeStep);
 #endif
     }
 
-#ifndef NO_3D
+#ifndef __NO_3D__
     void PhysicsHandler::generateContacts(Scene& scene, f64 timeStep){
         EV_profile_function();
         static std::vector<aabb_t> colliderBounds(16);
@@ -135,6 +135,10 @@ namespace Everest {
                             col.other = candidates[i]->entity;
                             candidates[j]->entity.get<EvScript>().collisionCallback(col);
                         }
+
+                        if( (cd.rigidbody2dA == nullptr || cd.rigidbody2dA->definition & BodyDefBits::Static) &&
+                            (cd.rigidbody2dB == nullptr || cd.rigidbody2dB->definition & BodyDefBits::Static) )
+                            contacts2d.pop_back();
                     }
                 }
             }
@@ -154,7 +158,7 @@ namespace Everest {
 
         for(auto ent:phygrp){
             const auto& [rb2d, tfr] = phygrp.get(ent);
-            if(rb2d.useGravity) rb2d.addForce(_gravity, ForceMode::Acceleration);
+            if(rb2d.definition & BodyDefBits::UseGravity) rb2d.addForce(_gravity, ForceMode::Acceleration);
             rb2d.integrate(tfr, timeStep);
         }
 

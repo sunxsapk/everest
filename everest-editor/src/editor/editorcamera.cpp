@@ -82,8 +82,8 @@ namespace Everest {
             mdel.y = Input::mousePositionY() - _mouseLastPos.y;
 
             _mouseLastPos = Input::mousePosition();
-            if(Input::mouseButtonUp(MouseButton_1)) _mouseHeld = false;
-        } else if(Input::mouseButtonDown(MouseButton_1)) {
+            if(Input::mouseButtonUp(M_1)) _mouseHeld = false;
+        } else if(Input::mouseButtonDown(M_1)) {
             _mouseHeld = true;
             _mouseLastPos = Input::mousePosition(); 
         } else return;
@@ -94,7 +94,7 @@ namespace Everest {
 
     void EditorCamera::cam2d_ctrls(){
         mouseControls_2d();
-        if(Input::mouseButtonDown(MouseButton_1)) keyControls_2d();
+        if(Input::mouseButtonDown(M_1)) keyControls_2d();
     }
 
 
@@ -118,8 +118,8 @@ namespace Everest {
             mdel.y = Input::mousePositionY() - _mouseLastPos.y;
 
             _mouseLastPos = Input::mousePosition();
-            if(Input::mouseButtonUp(MouseButton_1)) _mouseHeld = false;
-        } else if(Input::mouseButtonDown(MouseButton_1)) {
+            if(Input::mouseButtonUp(M_1)) _mouseHeld = false;
+        } else if(Input::mouseButtonDown(M_1)) {
             _mouseHeld = true;
             _mouseLastPos = Input::mousePosition(); 
         } else return;
@@ -132,7 +132,7 @@ namespace Everest {
 
     void EditorCamera::cam3d_ctrls(){
         mouseControls_3d();
-        if(Input::mouseButtonDown(MouseButton_1)) keyControls_3d();
+        if(Input::mouseButtonDown(M_1)) keyControls_3d();
     }
 
     void EditorCamera::onViewportResize(uvec2 viewportSize){

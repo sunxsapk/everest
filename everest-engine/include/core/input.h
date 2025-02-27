@@ -22,29 +22,6 @@ namespace Everest {
 
     class Input {
         public:
-            /*-------NOT TO BE USED OUTSIDE ENGINE--------
-             * initializes and binds input system with current window*/
-            static void init(){
-                s_window = Application::getAppWindow().getWindow();
-                ASSERT(s_window != NULL, "No window set for input");
-                setStickyKeys(false);
-            }
-
-            static inline void update(){
-                //s_scroll = {0,0};
-                dvec2 mp;
-                glfwGetCursorPos(s_window, &mp.x, &mp.y);
-                s_mousePosition = glm::round(mp);
-
-                s_axis.x = (getKeyDown(InputAxisKeys::horizontal_p) | getKeyDown(InputAxisKeys::horizontal_ap))
-                    - (getKeyDown(InputAxisKeys::horizontal_n) | getKeyDown(InputAxisKeys::horizontal_an));
-                s_axis.y = (getKeyDown(InputAxisKeys::vertical_p) | getKeyDown(InputAxisKeys::vertical_ap))
-                    - (getKeyDown(InputAxisKeys::vertical_n) | getKeyDown(InputAxisKeys::vertical_an));
-            }
-
-            static inline void clearScrollPoll(){
-                s_scroll = {0,0};}
-
             /*sets key-input mode to sticky*/
             static inline void setStickyKeys(bool mode){
                 glfwSetInputMode(s_window, GLFW_STICKY_KEYS, mode); }
@@ -86,12 +63,37 @@ namespace Everest {
             /*returns the mouse scroll direction in y-axis*/
             static inline f32 mouseScrollY(){return s_scroll.y;}
 
-            static bool _scrollPoll(MouseScrolledEvent& event);
         private:
             static GLFWwindow* s_window;
             static vec2 s_axis;
             static vec2 s_mousePosition;
             static vec2 s_scroll;
+
+            /*-------NOT TO BE USED OUTSIDE ENGINE--------
+             * initializes and binds input system with current window*/
+            static inline void init(){
+                s_window = Application::getAppWindow().getWindow();
+                ASSERT(s_window != NULL, "No window set for input");
+                setStickyKeys(false);
+            }
+
+            static inline void update(){
+                //s_scroll = {0,0};
+                dvec2 mp;
+                glfwGetCursorPos(s_window, &mp.x, &mp.y);
+                s_mousePosition = glm::round(mp);
+
+                s_axis.x = (getKeyDown(InputAxisKeys::horizontal_p) | getKeyDown(InputAxisKeys::horizontal_ap))
+                    - (getKeyDown(InputAxisKeys::horizontal_n) | getKeyDown(InputAxisKeys::horizontal_an));
+                s_axis.y = (getKeyDown(InputAxisKeys::vertical_p) | getKeyDown(InputAxisKeys::vertical_ap))
+                    - (getKeyDown(InputAxisKeys::vertical_n) | getKeyDown(InputAxisKeys::vertical_an));
+            }
+
+            static inline void clearScrollPoll(){ s_scroll = {0,0};}
+            static bool _scrollPoll(MouseScrolledEvent& event);
+
+            friend class Application;
+            friend class Core;
     };
 }
 

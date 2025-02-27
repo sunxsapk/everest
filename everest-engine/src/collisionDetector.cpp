@@ -1,6 +1,5 @@
 #include "physics/collisionDetector.h"
 #include "math/utils.h"
-#include "renderer/renderer2d.h"
 
 
 namespace Everest {

@@ -93,17 +93,19 @@ namespace Everest {
             out << entity.get<rigidbody2d_c>();
         }
 
-        if(entity.has<rigidbody_c>()){
-            out << entity.get<rigidbody_c>();
-        }
-
         if(entity.has<springJoint2d_c>()){
             out << entity.get<springJoint2d_c>();
+        }
+
+#ifndef __NO_3D__
+        if(entity.has<rigidbody_c>()){
+            out << entity.get<rigidbody_c>();
         }
 
         if(entity.has<springJoint_c>()){
             out << entity.get<springJoint_c>();
         }
+#endif
 
         if(entity.has<boxCollider2d_c>()){
             out << entity.get<boxCollider2d_c>();
@@ -227,20 +229,8 @@ namespace Everest {
                     rb2d.velocity = rigidbody2d["velocity"].as<vec2>();
                     rb2d.angularVelocity = rigidbody2d["angularVelocity"].as<f32>();
                     rb2d.drag = rigidbody2d["drag"].as<f32>();
-                    rb2d.useGravity = rigidbody2d["useGravity"].as<bool>();
+                    rb2d.definition = rigidbody2d["definition"].as<int>();
                     rb2d.inverseMass = rigidbody2d["inverseMass"].as<f32>();
-                }
-            }
-
-            {
-                auto rigidbody = entity["rigidbody_c"];
-                if(rigidbody){
-                    auto& rb = n_ent.add<rigidbody_c>();
-                    rb.velocity = rigidbody["velocity"].as<vec3>();
-                    rb.angularVelocity = rigidbody["angularVelocity"].as<vec3>();
-                    rb.drag = rigidbody["drag"].as<f32>();
-                    rb.useGravity = rigidbody["useGravity"].as<bool>();
-                    rb.inverseMass = rigidbody["inverseMass"].as<f32>();
                 }
             }
 
@@ -256,6 +246,19 @@ namespace Everest {
                 }
             }
 
+#ifndef __NO_3D__
+            {
+                auto rigidbody = entity["rigidbody_c"];
+                if(rigidbody){
+                    auto& rb = n_ent.add<rigidbody_c>();
+                    rb.velocity = rigidbody["velocity"].as<vec3>();
+                    rb.angularVelocity = rigidbody["angularVelocity"].as<vec3>();
+                    rb.drag = rigidbody["drag"].as<f32>();
+                    rb.useGravity = rigidbody["useGravity"].as<bool>();
+                    rb.inverseMass = rigidbody["inverseMass"].as<f32>();
+                }
+            }
+
             {
                 auto springJoint = entity["springJoint_c"];
                 if(springJoint){
@@ -267,6 +270,7 @@ namespace Everest {
                     spr.restLength = springJoint["restLength"].as<f32>();
                 }
             }
+#endif
 
             {
                 auto boxCollider2d = entity["boxCollider2d_c"];
@@ -390,22 +394,7 @@ namespace Everest {
         out << Key << "drag" << Value << rb2d.drag;
         out << Key << "velocity" << Value << rb2d.velocity;
         out << Key << "angularVelocity" << Value << rb2d.angularVelocity;
-        out << Key << "useGravity" << Value << rb2d.useGravity;
-
-        out << EndMap;
-        return out;
-    }
-
-    YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody_c& rb){
-        using namespace YAML;
-        out << Key << "rigidbody_c";
-        out << BeginMap;
-
-        out << Key << "inverseMass" << Value << rb.inverseMass;
-        out << Key << "drag" << Value << rb.drag;
-        out << Key << "velocity" << Value << rb.velocity;
-        out << Key << "angularVelocity" << Value << rb.angularVelocity;
-        out << Key << "useGravity" << Value << rb.useGravity;
+        out << Key << "definition" << Value << rb2d.definition;
 
         out << EndMap;
         return out;
@@ -414,21 +403,6 @@ namespace Everest {
     YAML::Emitter& operator<<(YAML::Emitter& out, const springJoint2d_c& spr){
         using namespace YAML;
         out << Key << "springJoint2d_c";
-        out << BeginMap;
-
-        out << Key << "anchor" << Value << spr.anchor;
-        out << Key << "offset" << Value << spr.offset;
-        out << Key << "springConstant" << Value << spr.springConstant;
-        out << Key << "damping" << Value << spr.damping;
-        out << Key << "restLength" << Value << spr.restLength;
-
-        out << EndMap;
-        return out;
-    }
-
-    YAML::Emitter& operator<<(YAML::Emitter& out, const springJoint_c& spr){
-        using namespace YAML;
-        out << Key << "springJoint_c";
         out << BeginMap;
 
         out << Key << "anchor" << Value << spr.anchor;
@@ -466,4 +440,35 @@ namespace Everest {
         out << EndMap;
         return out;
     }
+#ifndef __NO_3D__
+    YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody_c& rb){
+        using namespace YAML;
+        out << Key << "rigidbody_c";
+        out << BeginMap;
+
+        out << Key << "inverseMass" << Value << rb.inverseMass;
+        out << Key << "drag" << Value << rb.drag;
+        out << Key << "velocity" << Value << rb.velocity;
+        out << Key << "angularVelocity" << Value << rb.angularVelocity;
+        out << Key << "useGravity" << Value << rb.useGravity;
+
+        out << EndMap;
+        return out;
+    }
+
+    YAML::Emitter& operator<<(YAML::Emitter& out, const springJoint_c& spr){
+        using namespace YAML;
+        out << Key << "springJoint_c";
+        out << BeginMap;
+
+        out << Key << "anchor" << Value << spr.anchor;
+        out << Key << "offset" << Value << spr.offset;
+        out << Key << "springConstant" << Value << spr.springConstant;
+        out << Key << "damping" << Value << spr.damping;
+        out << Key << "restLength" << Value << spr.restLength;
+
+        out << EndMap;
+        return out;
+    }
+#endif
 }

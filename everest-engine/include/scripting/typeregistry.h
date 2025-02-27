@@ -30,6 +30,7 @@ namespace Scripting {
     void reg_boxCollider2d(luastate_t& lua);
     void reg_collision(luastate_t& lua);
     void reg_camera(luastate_t& lua);
+    void reg_input(luastate_t& lua);
 
     
 
@@ -54,6 +55,7 @@ namespace Scripting {
         reg_entity,
 
         // engine extensions
+        reg_input,
     };
     
 

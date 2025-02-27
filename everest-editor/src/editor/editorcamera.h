@@ -24,8 +24,8 @@ namespace Everest {
 
             void lookAt(vec3 point);
 
-            vec3 screenToWorldPos(vec2 position);
-            vec3 screenPointToDir(vec2 position);
+            vec3 screenToWorldPos(vec2 screenPos);
+            vec3 screenPointToDir(vec2 screenPos);
 
             inline mat4 getView(){return glm::inverse((mat4)transform);}
             inline mat4 getVPmat(){return camera.getProjection() *

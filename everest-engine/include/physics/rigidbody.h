@@ -2,14 +2,22 @@
 
 #include "math/types.h"
 #include "yaml-cpp/emitter.h"
+#include "phyconfig.h"
+
 
 namespace Everest {
     struct transform_c;
+
+    enum BodyDefBits {
+        UseGravity = 1 << 0,
+        Static = 1 << 1,
+    };
 
     enum class ForceMode {
         Force = 0, Acceleration, Impulse, VelocityChange
     };
 
+#ifndef __NO_3D__
     struct rigidbody_c {
         vec3 velocity = vec3(0.f);
         vec3 angularVelocity = vec3(0.f);
@@ -34,7 +42,7 @@ namespace Everest {
         friend class PhysicsHandler;
         friend YAML::Emitter& operator<<(YAML::Emitter&, const rigidbody_c&);
     };
-
+#endif
 
     struct rigidbody2d_c {
         vec2 velocity = vec2(0.f);
@@ -42,7 +50,7 @@ namespace Everest {
         f32 drag = 1.f;
         f32 inverseMass = 1.f;
         f32 inverseInertia = 1.f;
-        bool useGravity = true;
+        int definition = BodyDefBits::UseGravity;
 
         void addForce(const vec2 force, const ForceMode mode = ForceMode::Force);
         void addForceAtOffset(const vec2 force, const vec2 offset);
@@ -56,7 +64,7 @@ namespace Everest {
         vec2 _impulse = vec2(0.f);
         vec2 _acceleration = vec2(0.f);
 
-        void integrate(transform_c& transform, const f32 timeStep);
+        void integrate(transform_c& transform, f32 timeStep);
         friend class PhysicsHandler;
         friend YAML::Emitter& operator<<(YAML::Emitter&, const rigidbody2d_c&);
     };

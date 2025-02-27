@@ -8,16 +8,14 @@ end
 OnUpdate = function(dt)
     TotalTime = TotalTime + dt
 
-    if(rigidbody ~= nil) then
-        rigidbody:addForce(vec2.new(0, 2), ForceMode.Force)
-    end
-
     if spr ~= nil then
         spr.color = vec4.new(math.abs(math.sin(TotalTime)), 0, 0, 1)
     end
-end
 
+    if rigidbody == nil then return end
 
-OnCollision = function(data)
-    print("OnCollision called " .. data.penetration)
+    local force = Input.getAxis()
+    force:smul(100)
+
+    rigidbody:addForce(force, ForceMode.Force)
 end

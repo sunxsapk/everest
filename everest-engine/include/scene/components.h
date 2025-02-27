@@ -67,8 +67,11 @@ namespace Everest {
     using BoxCollider2d = boxCollider2d_c;
     using CircleCollider2d = circleCollider2d_c;
     using EvScript = Scripting::evscript_c;
-    // using Rigidbody = rigidbody_c;
-    // using SpringJoint = springJoint_c;
+
+#ifndef __NO_3D__
+    using Rigidbody = rigidbody_c;
+    using SpringJoint = springJoint_c;
+#endif
 
     using Collider2D = collider2d_c;
 }

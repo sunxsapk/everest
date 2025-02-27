@@ -24,21 +24,15 @@ will proceed in following sequence :-
 - Make a game run inside editor completely
 - Standalone game running
 
-=============== Current Activity =============
+=============== Bugs =============
 
-- Also, the logging system has its faults due to it been using c's printf for
-    for writing on console. So, develop a new logging system for cpp, so that
-    user can effectively use overridden '<<' operator for logging the objects too.
+1. Just found out that, at some point, when two objects are colliding at high speed, some value turns
+out to be infinity or nan, so all the objects vanish. So, check the vulnerable point and abort
+before such behaviour is encountered
+
+2. Input.getKeyDown should only return true if the key is pressed for the first time
 
 =============== Milestones ===================
-
-Now, let's talk about the current milestones of the project:
-
-- Develop Physics system for 2D setup and pave a way for 3D physics too
-    - Static and Dynamic Rigidbodies
-    + Colliders
-    + Gravity
-    ; Target: Make a simple game like space invader or tetris
 
 - Scripting
 
@@ -48,14 +42,14 @@ Now, let's talk about the current milestones of the project:
 
 
 =============== TODO ============
-[ ] rigidbodies types
-[ ] ray cast api
 [ ] write a rough lua-scripting api for entity
-    - camera component
     - serialize serializable fields
     - update api docs
-[ ] scripting api for input fields
+[ ] scripting api for time
 [ ] scripting api for component add and remove
 [ ] scripting api for entity create and destroy
 [ ] scripting api for scene props [main-cam, load-new]
+[ ] scene screen to world position
+[ ] scene world to screen  position
+[ ] fix bugs... duh!!
 

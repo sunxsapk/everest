@@ -3,7 +3,9 @@
         "vec2",
         "ForceMode",
         "entity",
-        "vec4"
+        "vec4",
+        "Input",
+        "Keycode"
     ],
     "diagnostics.disable": [
         "lowercase-global"

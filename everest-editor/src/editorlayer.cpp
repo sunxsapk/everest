@@ -118,7 +118,7 @@ namespace Everest {
     }
 
     bool EditorLayer::onMouseButtonDown(MouseButtonDownEvent& event){
-        if(event.getButton() == MouseButton_0){
+        if(event.getButton() == M_0){
             _framebuffer->bind();
             ScenePanel::mousePickCheck(_framebuffer);
             _framebuffer->unbind();

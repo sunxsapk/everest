@@ -16,7 +16,7 @@ entities:
       drag: 1
       velocity: [4.2, 0]
       angularVelocity: 0
-      useGravity: true
+      definition: 1
     boxCollider2d_c:
       offset: [0, 0]
       halfExtents: [0.5, 0.5]
@@ -37,7 +37,7 @@ entities:
       drag: 1
       velocity: [0, 0]
       angularVelocity: 0
-      useGravity: true
+      definition: 1
     boxCollider2d_c:
       offset: [0, 0]
       halfExtents: [0.5, 0.5]
@@ -73,7 +73,7 @@ entities:
       drag: 1
       velocity: [7.9, 0]
       angularVelocity: 0
-      useGravity: true
+      definition: 1
     boxCollider2d_c:
       offset: [0, 0]
       halfExtents: [0.5, 0.5]
@@ -109,7 +109,7 @@ entities:
       drag: 1
       velocity: [7.1, 0]
       angularVelocity: 0
-      useGravity: true
+      definition: 1
     circleCollider2d_c:
       offset: [0, 0]
       radius: 0.5
