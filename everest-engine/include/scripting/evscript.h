@@ -29,7 +29,7 @@ namespace Scripting {
 
         void init();
         void update(double deltaTime);
-        void collisionCallback(Collision2D& data);
+        void collisionCallback(collision2d_t& data);
 
         inline void setScriptPath(std::filesystem::path path){
             if(scriptpath == path) return;
@@ -52,7 +52,7 @@ namespace Scripting {
 
         std::function<void()> onCreate;
         std::function<void(double)> onUpdate;
-        std::function<void(Collision2D)> onCollision;
+        std::function<void(collision2d_t)> onCollision;
 
         friend class Scene;
     };

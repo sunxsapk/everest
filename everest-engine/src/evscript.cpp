@@ -70,7 +70,7 @@ namespace Scripting {
         }
     }
 
-    void evscript_c::collisionCallback(Collision2D& data){
+    void evscript_c::collisionCallback(collision2d_t& data){
         if(onCollision){
             onCollision(data);
         }

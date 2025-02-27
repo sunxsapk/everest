@@ -88,17 +88,11 @@ entities:
     camera_c:
       fixedAspect: false
       isPrimary: true
-      type: 0
-      perspective_d:
-        fov: 60
-        aspect: 1.8
-        near: 0.01
-        far: 1000
-      orthographic_d:
-        size: 8.5
-        aspect: 1.8
-        near: -100
-        far: 100
+      is2d: true
+      u_size_fov: 8.5
+      aspect: 1.8
+      near: -100
+      far: 100
   - entity: 15452834553509920419
     tag_c:
       tag: Circle

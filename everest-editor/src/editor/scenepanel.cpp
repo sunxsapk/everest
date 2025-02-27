@@ -2,6 +2,7 @@
 #include "scenepanel.h"
 #include "gizmos.h"
 #include "sceneheirarchy.h"
+#include "propspanel.h"
 
 
 namespace Everest {
@@ -114,11 +115,11 @@ namespace Everest {
         );
         ImGui::Spacing();
 
-        bool is2D = cam.getType() == CameraType::Orthographic;
-        if(ImGui::RadioButton("2D", is2D)){
-            sceneCamera.setType(is2D?Perspective:Orthographic);
+        if(ImGui::RadioButton("2D", cam.is2d())){
+            if(cam.is2d()) cam.set3d();
+            else cam.set2d();
         }
-        if(is2D) ImGui::SetItemDefaultFocus();
+        if(cam.is2d()) ImGui::SetItemDefaultFocus();
 
         ImGui::SameLine();
         if(ImGui::Button("Cam Settings")){
@@ -126,28 +127,19 @@ namespace Everest {
         }
 
         if(ImGui::BeginPopup("__cam_settings__")){
-            f32 sz, nr, fr;
-            switch(cam.getType()){
-                case CameraType::Orthographic:
-                    sz = cam.getOrtho_size(), nr = cam.getOrtho_near(), fr = cam.getOrtho_far();
-                    if(ImGui::DragFloat("Ortho Size", &sz, 0.05f)) 
-                        cam.setOrtho_size(glm::max(0.f, sz));
-                    if(ImGui::DragFloat("Near", &nr, 0.1f)) 
-                        cam.setOrtho_near(nr);
-                    if(ImGui::DragFloat("Far", &fr, 0.5f)) 
-                        cam.setOrtho_far(fr);
-                    break;
+            f32 sz = cam.get_lenssize(),
+                asp = cam.get_aspect(),
+                nr = cam.get_near(),
+                fr = cam.get_far();
+            if(PropertiesPanel::_f32dragui(cam.is2d()? "Lens Size" : "FOV", sz, 0.05f, "##size"))
+                cam.set_lenssize(glm::max(0.f, sz));
+            if(PropertiesPanel::_f32dragui("Aspect Ratio", asp, 0.05f, "##aspect")) 
+                cam.set_aspect(glm::max(0.f, asp));
+            if(PropertiesPanel::_f32dragui("Near", nr, 0.1f, "##near")) 
+                cam.set_near(nr);
+            if(PropertiesPanel::_f32dragui("Far", fr, 0.5f, "##far")) 
+                cam.set_far(fr);
 
-                case CameraType::Perspective:
-                    sz = cam.getPersp_fov(), nr = cam.getPersp_near(), fr = cam.getPersp_far(); 
-                    if(ImGui::SliderFloat("FOV", &sz, 0.01f, 180.f)) 
-                        cam.setPersp_fov(glm::max(0.f, sz));
-                    if(ImGui::DragFloat("Near", &nr, 0.05f)) 
-                        cam.setPersp_near(nr);
-                    if(ImGui::DragFloat("Far", &fr, 1.f)) 
-                        cam.setPersp_far(fr);
-                    break;
-            }
             ImGui::Separator();
             ImGui::SliderFloat("Speed", &sceneCamera.speed, 0.1f, 100.f, "");
             ImGui::SliderFloat("Mouse Sensitivity", &sceneCamera.mouseSensitivity, 0.01f, 1.f, "");
@@ -162,7 +154,7 @@ namespace Everest {
 
         ImGui::SameLine();
         if(ImGui::Button("Reset")) {
-            if(sceneCamera.camera.getType() == Orthographic){
+            if(sceneCamera.camera.is2d()){
                 sceneCamera.transform.position.x = 0.f;
                 sceneCamera.transform.position.y = 0.f;
             } else sceneCamera.lookAt(vec3(0.f));

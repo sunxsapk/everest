@@ -174,26 +174,23 @@ namespace Everest {
                         });
                     cam.isPrimary = camera["isPrimary"]?camera["isPrimary"].as<bool>() : false;
                     cam.fixedAspect = camera["fixedAspect"].as<bool>();
-                    
-                    auto ortho = camera["orthographic_d"];
-                    OrthographicData odat{
-                        .orthoSize = ortho["size"].as<f32>(),
-                        .aspect = ortho["aspect"].as<f32>(),
-                        .near = ortho["near"].as<f32>(),
-                        .far = ortho["far"].as<f32>(),
-                    };
-                    cam.setOrthographicData(odat);
 
-                    auto persp = camera["perspective_d"];
-                    PerspectiveData pdat{
-                        .fov = persp["fov"].as<f32>(),
-                        .aspect = persp["aspect"].as<f32>(),
-                        .near = persp["near"].as<f32>(),
-                        .far = persp["far"].as<f32>(),
-                    };
-                    cam.setPerspectiveData(pdat);
-
-                    cam.setType((CameraType)camera["type"].as<u32>());
+                    if(camera["u_size_fov"]){
+                        cam.set_lenssize(camera["u_size_fov"].as<f32>());
+                    }
+                    if(camera["aspect"]){
+                        cam.set_aspect(camera["aspect"].as<f32>());
+                    }
+                    if(camera["near"]){
+                        cam.set_near(camera["near"].as<f32>());
+                    }
+                    if(camera["far"]){
+                        cam.set_far(camera["far"].as<f32>());
+                    }
+                    if(camera["is2d"]){
+                        if(camera["is2d"].as<bool>()) cam.set2d();
+                        else cam.set3d();
+                    }
                 }
             }
 
@@ -344,23 +341,12 @@ namespace Everest {
 
         out << Key << "fixedAspect" << Value << camera.fixedAspect;
         out << Key << "isPrimary" << Value << camera.isPrimary;
-        out << Key << "type" << Value << (u32)camera.getType();
+        out << Key << "is2d" << Value << camera.is2d();
 
-        out << Key << "perspective_d";
-        out << BeginMap;
-        out << Key << "fov" << Value << camera.getPersp_fov();
-        out << Key << "aspect" << Value << camera.getPersp_aspect();
-        out << Key << "near" << Value << camera.getPersp_near();
-        out << Key << "far" << Value << camera.getPersp_far();
-        out << EndMap;
-
-        out << Key << "orthographic_d";
-        out << BeginMap;
-        out << Key << "size" << Value << camera.getOrtho_size();
-        out << Key << "aspect" << Value << camera.getOrtho_aspect();
-        out << Key << "near" << Value << camera.getOrtho_near();
-        out << Key << "far" << Value << camera.getOrtho_far();
-        out << EndMap;
+        out << Key << "u_size_fov" << Value << camera.get_lenssize();
+        out << Key << "aspect" << Value << camera.get_aspect();
+        out << Key << "near" << Value << camera.get_near();
+        out << Key << "far" << Value << camera.get_far();
 
         out << EndMap;
         return out;

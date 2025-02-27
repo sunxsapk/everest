@@ -36,8 +36,7 @@ namespace Everest {
                 camera_c& cam = ent.tryAdd<camera_c>();
                 vec2 viewportSize = ScenePanel::getSceneViewportSize();
                 f32 aspect = (float)viewportSize.x / viewportSize.y;
-                cam.setOrtho_aspect(aspect);
-                cam.setPersp_aspect(aspect);
+                cam.set_aspect(aspect);
             }
             if(ImGui::MenuItem("Sprite Renderer")) ent.tryAdd<spriteRenderer_c>();
             if(ImGui::MenuItem("Circle Renderer")) ent.tryAdd<circleRenderer_c>();
@@ -89,19 +88,16 @@ namespace Everest {
 
         if(ent.has<camera_c>()) _componentUI<camera_c>(ent, "camera_c",
         [](camera_c& cam) {
-            CameraType type =  cam.getType();
             {
                 const char* projTypes[] = {"Orthographic", "Perspective"};
-                const char* curType = projTypes[type];
+                const char* curType = projTypes[cam.is3d()];
                 if(ImGui::BeginCombo("##proj", curType)){
-                    for(i32 i=0; i<2; i++){
-                        bool isSel = i == type;
-                        if(ImGui::Selectable(projTypes[i], isSel)){
-                            curType =  projTypes[i];
-                            cam.setType((CameraType)i);
-                        }
-                        if(isSel) ImGui::SetItemDefaultFocus();
-                    }
+                    if(ImGui::Selectable(projTypes[0], cam.is2d())) cam.set2d();
+                    if(cam.is2d()) ImGui::SetItemDefaultFocus();
+
+                    if(ImGui::Selectable(projTypes[1], cam.is3d())) cam.set3d();
+                    if(cam.is3d()) ImGui::SetItemDefaultFocus();
+
                     ImGui::EndCombo();
                 }
 
@@ -110,38 +106,21 @@ namespace Everest {
 
             ImGui::Separator();
 
-            f32 sz, asp, nr, fr;
-            switch(type){
-                case CameraType::Orthographic:
-                    sz = cam.getOrtho_size(), asp = cam.getOrtho_aspect();
-                    nr = cam.getOrtho_near(), fr = cam.getOrtho_far();
-                    if(_f32dragui("Ortho Size", sz, 0.05f, "##os"))
-                        cam.setOrtho_size(glm::max(0.f, sz));
-                    if(_f32dragui("Aspect Ratio", asp, 0.05f, "##oar")) 
-                        cam.setOrtho_aspect(glm::max(0.f, asp));
-                    ImGui::SameLine();
-                    ImGui::Checkbox("Fixed", &cam.fixedAspect);
-                    if(_f32dragui("Near", nr, 0.1f, "##on")) 
-                        cam.setOrtho_near(nr);
-                    if(_f32dragui("Far", fr, 0.5f, "##of")) 
-                        cam.setOrtho_far(fr);
-                    break;
+            f32 sz = cam.get_lenssize(),
+                asp = cam.get_aspect(),
+                nr = cam.get_near(),
+                fr = cam.get_far();
 
-                case CameraType::Perspective:
-                    sz = cam.getPersp_fov(), asp = cam.getPersp_aspect();
-                    nr = cam.getPersp_near(), fr = cam.getPersp_far(); 
-                    if(_f32sliderui("FOV", sz, "##pv", 0.01f, 180.f)) 
-                        cam.setPersp_fov(glm::max(0.f, sz));
-                    if(_f32dragui("Aspect Ratio", asp, 0.05f, "##par")) 
-                        cam.setPersp_aspect(glm::max(0.f, asp));
-                    ImGui::SameLine();
-                    ImGui::Checkbox("Fixed", &cam.fixedAspect);
-                    if(_f32dragui("Near", nr, 0.05f, "##pn")) 
-                        cam.setPersp_near(nr);
-                    if(_f32dragui("Far", fr, 1.f, "##pf")) 
-                        cam.setPersp_far(fr);
-                    break;
-            }
+            if(_f32dragui(cam.is2d()? "Lens Size" : "FOV", sz, 0.05f, "##size"))
+                cam.set_lenssize(glm::max(0.f, sz));
+            if(_f32dragui("Aspect Ratio", asp, 0.05f, "##aspect")) 
+                cam.set_aspect(glm::max(0.f, asp));
+            ImGui::SameLine();
+            ImGui::Checkbox("Fixed", &cam.fixedAspect);
+            if(_f32dragui("Near", nr, 0.1f, "##near")) 
+                cam.set_near(nr);
+            if(_f32dragui("Far", fr, 0.5f, "##far")) 
+                cam.set_far(fr);
         });
 
         if(ent.has<spriteRenderer_c>()) _componentUI<spriteRenderer_c>(ent, "Sprite Renderer",

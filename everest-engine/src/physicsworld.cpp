@@ -120,7 +120,7 @@ namespace Everest {
                     if(col){
                         body_contact2d_t& cd = contacts2d.back();
 
-                        Collision2D col{
+                        collision2d_t col{
                             .contact = cd.relativeContactPointA + vec2{cd.transformA->position},
                             .normal = cd.contactNormal,
                             .penetration = cd.penetration

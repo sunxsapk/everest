@@ -8,26 +8,33 @@ namespace Scripting {
 
     void reg_vecx(luastate_t& lua){
         lua.new_usertype<vec2>("vec2",
-                sol::constructors<vec2(f32, f32), vec2(f32), vec2()>(),
+                sol::constructors<vec2(f32, f32), vec2(vec2), vec2(f32), vec2()>(),
                 "x", &vec2::x,
                 "y", &vec2::y,
                 "add", [](vec2& a, vec2 b){a += b;},
                 "mul", [](vec2& a, vec2 b){a *= b;},
                 "div", [](vec2& a, vec2 b){a /= b;},
-                "sub", [](vec2& a, vec2 b){a -= b;}
+                "smul", [](vec2& a, f32 b){a *= b;},
+                "sdiv", [](vec2& a, f32 b){a /= b;},
+                "sub", [](vec2& a, vec2 b){a -= b;},
+                "dot", [](vec2& a, vec2 b){return glm::dot(a, b);}
                 );
         lua.new_usertype<vec3>("vec3",
-                sol::constructors<vec3(f32, f32, f32), vec3(f32), vec3()>(),
+                sol::constructors<vec3(f32, f32, f32), vec3(vec3), vec3(f32), vec3()>(),
                 "x", &vec3::x,
                 "y", &vec3::y,
                 "z", &vec3::z,
                 "add", [](vec3& a, vec3 b){a += b;},
                 "mul", [](vec3& a, vec3 b){a *= b;},
                 "div", [](vec3& a, vec3 b){a /= b;},
-                "sub", [](vec3& a, vec3 b){a -= b;}
+                "smul", [](vec3& a, f32 b){a *= b;},
+                "sdiv", [](vec3& a, f32 b){a /= b;},
+                "sub", [](vec3& a, vec3 b){a -= b;},
+                "dot", [](vec3& a, vec3 b){return glm::dot(a, b);},
+                "cross", [](vec3& a, vec3 b){return glm::cross(a, b);}
                 );
         lua.new_usertype<vec4>("vec4",
-                sol::constructors<vec4(f32, f32, f32, f32), vec4(f32), vec4()>(),
+                sol::constructors<vec4(f32, f32, f32, f32), vec4(vec4), vec4(f32), vec4()>(),
                 "x", &vec4::x,
                 "y", &vec4::y,
                 "z", &vec4::z,
@@ -35,7 +42,20 @@ namespace Scripting {
                 "add", [](vec4& a, vec4 b){a += b;},
                 "mul", [](vec4& a, vec4 b){a *= b;},
                 "div", [](vec4& a, vec4 b){a /= b;},
-                "sub", [](vec4& a, vec4 b){a -= b;}
+                "smul", [](vec4& a, f32 b){a *= b;},
+                "sdiv", [](vec4& a, f32 b){a /= b;},
+                "sub", [](vec4& a, vec4 b){a -= b;},
+                "dot", [](vec4& a, vec4 b){return glm::dot(a, b);}
+                );
+    }
+
+    void reg_matx(luastate_t& lua){
+        lua.new_usertype<glm::mat4>("mat4",
+                sol::constructors<mat4(), mat4(f32)>(),
+                "add", [](mat4& a, mat4& b){a += b;},
+                "sub", [](mat4& a, mat4& b){a -= b;},
+                "mul", [](mat4& a, mat4& b){a *= b;},
+                "smul", [](mat4& a, f32 b){a *= b;}
                 );
     }
 
@@ -130,12 +150,38 @@ namespace Scripting {
     }
 
     void reg_collision(luastate_t& lua){
-        lua.new_usertype<Collision2D>("Collision2D",
-                "other", &Collision2D::other,
-                "contact", &Collision2D::contact,
-                "normal", &Collision2D::normal,
-                "penetration", &Collision2D::penetration
+        lua.new_usertype<collision2d_t>("collision2d_t",
+                "other", &collision2d_t::other,
+                "contact", &collision2d_t::contact,
+                "normal", &collision2d_t::normal,
+                "penetration", &collision2d_t::penetration
                 );
+    }
+
+    void reg_camera(luastate_t& lua){
+
+        lua.new_usertype<camera_c>("camera_c",
+                "fixedAspect", &camera_c::fixedAspect,
+
+                "get_projection", &camera_c::getProjection,
+                "get_lenssize", &camera_c::get_lenssize,
+                "get_fov", &camera_c::get_fov,
+                "get_aspect", &camera_c::get_aspect,
+                "get_near", &camera_c::get_near,
+                "get_far", &camera_c::get_far,
+
+                "set_lenssize", &camera_c::set_lenssize,
+                "set_fov", &camera_c::set_fov,
+                "set_aspect", &camera_c::set_aspect,
+                "set_near", &camera_c::set_near,
+                "set_far", &camera_c::set_far,
+
+                "is2d", &camera_c::is2d,
+                "is3d", &camera_c::is3d,
+                "set2d", &camera_c::set2d,
+                "set3d", &camera_c::set3d
+                );
+
     }
 
     template<typename T>

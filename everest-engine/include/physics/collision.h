@@ -6,7 +6,7 @@
 
 namespace Everest {
 
-    struct Collision2D {
+    struct collision2d_t {
         Entity other;
         vec2 contact, normal;
         f32 penetration;

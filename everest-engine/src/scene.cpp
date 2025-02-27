@@ -99,8 +99,8 @@ namespace Everest {
     }
 
     void drawCameraGizmo(transform_c& tfr, camera_c& cam, u32 id){
-        if(cam.getType() == CameraType::Perspective){
-            vec3 scale(cam.getPersp_aspect(), 1.f, 1.f);
+        if(cam.is3d()){
+            vec3 scale(cam.get_aspect(), 1.f, 1.f);
             transform_c btfr{tfr.position, tfr.rotation, scale*.2f};
             Renderer2D::drawRect(btfr);
             transform_c ftfr{tfr.position + Math::getCameraForward(tfr)*.1f, tfr.rotation, scale * 0.3f};
@@ -112,9 +112,9 @@ namespace Everest {
 #endif
                     );
         } else {
-            f32 sz = cam.getOrtho_size() * 2;
+            f32 sz = cam.get_lenssize() * 2;
             Renderer2D::drawRect(tfr.position, tfr.rotation.z,
-                    vec2(sz * cam.getOrtho_aspect(), sz));
+                    vec2(sz * cam.get_aspect(), sz));
         }
     }
 
@@ -229,8 +229,7 @@ namespace Everest {
         for(auto ent : cams){
             auto& cam = cams->get(ent);
             if(!cam.fixedAspect){
-                cam.setOrtho_aspect(aspect);
-                cam.setPersp_aspect(aspect);
+                cam.set_aspect(aspect);
             }
         }
     }
