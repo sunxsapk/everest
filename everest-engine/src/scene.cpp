@@ -36,7 +36,8 @@ namespace Everest {
     void Scene::destroyEntity(Entity& entity){
         EV_profile_function();
         
-        _registry.destroy(entity);
+        if(!entity.isValid()) return;
+        _registry.destroy(entity._id);
         entity._id = entt::null;
     } 
 

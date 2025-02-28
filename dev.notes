@@ -45,9 +45,7 @@ before such behaviour is encountered
 [ ] write a rough lua-scripting api for entity
     - serialize serializable fields
     - update api docs
-[ ] scripting api for time
-[ ] scripting api for component add and remove
-[ ] scripting api for entity create and destroy
+[ ] editor runtime scene should be handled by scenemanager
 [ ] scripting api for scene props [main-cam, load-new]
 [ ] scene screen to world position
 [ ] scene world to screen  position

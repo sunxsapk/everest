@@ -5,7 +5,8 @@
         "entity",
         "vec4",
         "Input",
-        "Keycode"
+        "Keycode",
+        "destroyEntity"
     ],
     "diagnostics.disable": [
         "lowercase-global"

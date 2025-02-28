@@ -249,6 +249,6 @@ namespace Everest {
 #endif
 
         results.push_back(bodycontact);
-        return false;
+        return true;
     }
 }

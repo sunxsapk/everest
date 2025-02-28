@@ -31,6 +31,8 @@ namespace Scripting {
     void reg_collision(luastate_t& lua);
     void reg_camera(luastate_t& lua);
     void reg_input(luastate_t& lua);
+    void reg_time(luastate_t& lua);
+    void reg_scene(luastate_t& lua);
 
     
 
@@ -56,6 +58,8 @@ namespace Scripting {
 
         // engine extensions
         reg_input,
+        reg_time,
+        reg_scene,
     };
     
 

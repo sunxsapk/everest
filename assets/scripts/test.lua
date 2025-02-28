@@ -19,3 +19,10 @@ OnUpdate = function(dt)
 
     rigidbody:addForce(force, ForceMode.Force)
 end
+
+OnCollision = function(data)
+    -- entity:remove_rigidbody2d()
+    -- pBeginrint(entity:get_tag().tag, data.other:get_tag().tag)
+    print("Collision")
+    data.other:destroy()
+end

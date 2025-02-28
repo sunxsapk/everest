@@ -17,7 +17,7 @@ namespace Everest {
 
         heirarchyPopup();
         if(_scene != nullptr){
-            for(auto entity: _scene->_registry.view<tag_c>()){
+            for(auto entity: _scene->_registry.view<id_c>()){
                 drawEntityNode({entity, _scene});
             }
         }
@@ -28,6 +28,11 @@ namespace Everest {
     }
 
     void SceneHeirarchyUI::drawEntityNode(Entity entity){
+        if(!entity.isValid()) {
+            EVLog_Wrn("Invalid Entity");
+            return;
+        }
+
         auto& tag = entity.get<tag_c>().tag;
 
         ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow 

@@ -28,11 +28,12 @@ namespace Everest {
             static void simulate(Scene& scene, f64 timeStep);
 
         private:
-            static u32 _simulationSteps;
-            static vec3 _gravity;
-            static std::vector<body_contact2d_t> contacts2d;
             static contact2d_resolver_t _contactResolver2d;
             static aabb2d_tree_t<collider2d_c> tree2d;
+            static std::vector<body_contact2d_t> contacts2d;
+            static std::vector<collision2d_t> collision2dResults;
+            static u32 _simulationSteps;
+            static vec3 _gravity;
 
             static void simulate2d(Scene& scene, f64 timeStep);
             static void generateContacts2d(Scene& scene, f64 timeStep);

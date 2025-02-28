@@ -14,8 +14,9 @@ namespace Everest {
     u32 PhysicsHandler::_simulationSteps = 4;
     vec3 PhysicsHandler::_gravity = vec3(0.f, -9.8f, 0.f);
     contact2d_resolver_t PhysicsHandler::_contactResolver2d;
-    std::vector<body_contact2d_t> PhysicsHandler::contacts2d(16);
     aabb2d_tree_t<collider2d_c> PhysicsHandler::tree2d;
+    std::vector<body_contact2d_t> PhysicsHandler::contacts2d(16);
+    std::vector<collision2d_t> PhysicsHandler::collision2dResults(16);
 
 #ifndef __NO_3D__
     contact_resolver_t PhysicsHandler::_contactResolver3d;
@@ -109,7 +110,7 @@ namespace Everest {
         }
 
         for(auto bounds : collider2dBounds){
-            static std::vector<ref<collider2d_c>> candidates(4);
+            static std::vector<ref<collider2d_c>> candidates(16);
             candidates.clear();
 
             tree2d.query(bounds, candidates);
@@ -121,21 +122,14 @@ namespace Everest {
                         body_contact2d_t& cd = contacts2d.back();
 
                         collision2d_t col{
+                            .self = candidates[i]->entity,
+                            .other = candidates[j]->entity,
                             .contact = cd.relativeContactPointA + vec2{cd.transformA->position},
                             .normal = cd.contactNormal,
                             .penetration = cd.penetration
                         };
 
-                        if(candidates[i]->entity.has<EvScript>()){
-                            col.other = candidates[j]->entity;
-                            candidates[i]->entity.get<EvScript>().collisionCallback(col);
-                        }
-
-                        if(candidates[j]->entity.has<EvScript>()){
-                            col.other = candidates[i]->entity;
-                            candidates[j]->entity.get<EvScript>().collisionCallback(col);
-                        }
-
+                        collision2dResults.push_back(col);
                         if( (cd.rigidbody2dA == nullptr || cd.rigidbody2dA->definition & BodyDefBits::Static) &&
                             (cd.rigidbody2dB == nullptr || cd.rigidbody2dB->definition & BodyDefBits::Static) )
                             contacts2d.pop_back();
@@ -162,7 +156,19 @@ namespace Everest {
             rb2d.integrate(tfr, timeStep);
         }
 
+        collision2dResults.clear();
         generateContacts2d(scene, timeStep);
         _contactResolver2d.resolveContacts(contacts2d);
+
+        for(auto& res : collision2dResults){
+            if(res.self.isValid() && res.self.has<EvScript>()){
+                res.self.get<EvScript>().collisionCallback(res);
+            }
+
+            if(res.other.isValid() && res.other.has<EvScript>()){
+                std::swap(res.self, res.other);
+                res.self.get<EvScript>().collisionCallback(res);
+            }
+        }
     }
 }

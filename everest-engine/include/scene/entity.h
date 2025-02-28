@@ -51,6 +51,14 @@ namespace Everest {
             _scene->_registry.remove<component_t>(_id);
         }
 
+        inline void destroy(){
+            if(!isValid()){
+                return;
+            }
+            _scene->_registry.destroy(_id);
+            _id = entt::null;
+        }
+
         private:
         entt::entity _id{entt::null};
         Scene* _scene = nullptr;

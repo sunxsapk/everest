@@ -1,8 +1,10 @@
 #include "scripting/typeregistry.h"
 #include "core/input.h"
+#include "core/time.h"
 #include "math/types.h"
 #include "scene/components.h"
 #include "scene/entity.h"
+#include "scene/scenemanager.h"
 
 namespace Everest {
 namespace Scripting {
@@ -349,13 +351,59 @@ namespace Scripting {
                 );
     }
 
+    void reg_time(luastate_t& lua){
+        sol::table tt = lua.create_table();
+
+        tt["getDeltatime"] = Time::getDeltatime;
+        tt["getUnscaledDeltatime"] = Time::getUnscaledDeltatime;
+        tt["getTime"] = Time::getTime;
+        tt["getUnscaledTime"] = Time::getUnscaledTime;
+        tt["getScale"] = Time::getScale;
+        tt["setScale"] = Time::setScale;
+        tt["getFrameRate"] = Time::getFrameRate;
+        tt["getFrameCount"] = Time::getFrameCount;
+
+        lua["Time"]  = tt;
+    }
+
+    void reg_scene(luastate_t& lua){
+        lua["createEntity"] = [](const char* name, vec3 position){
+            return SceneManager::getActiveScene()->createEntity(name);
+        };
+        lua["destroyEntity"] =  [](Entity& entity){
+            entity.destroy();
+        };
+    }
+
     template<typename T>
     T* _getc(Entity& ent){
-        return ent.has<T>()?&ent.get<T>():nullptr;
+        return ent.isValid() && ent.has<T>()?&ent.get<T>():nullptr;
+    }
+
+    template<typename T>
+    bool _hasc(Entity& ent){
+        return ent.isValid() && ent.has<T>();
+    }
+
+    template<typename T>
+    T* _addc(Entity& ent){
+        return ent.isValid()?&ent.add<T>() : nullptr;
+    }
+
+    template<typename T>
+    T* _tryAddc(Entity& ent){
+        return ent.isValid() ? &ent.tryAdd<T>() : nullptr;
+    }
+
+    template<typename T>
+    void _removec(Entity& ent){
+        if(ent.isValid()) ent.remove<T>();
     }
 
     void reg_entity(luastate_t& lua){
         lua.new_usertype<Entity>("Entity_t",
+                "destroy", &Entity::destroy,
+
                 "get_tag", _getc<tag_c>,
                 "get_transform", _getc<transform_c>,
                 "get_rigidbody2d", _getc<rigidbody2d_c>,
@@ -363,7 +411,43 @@ namespace Scripting {
                 "get_circleRenderer", _getc<circleRenderer_c>,
                 "get_springJoint2d", _getc<springJoint2d_c>,
                 "get_circleCollider2d", _getc<circleCollider2d_c>,
-                "get_boxCollider2d", _getc<boxCollider2d_c>
+                "get_boxCollider2d", _getc<boxCollider2d_c>,
+
+                "add_tag", _addc<tag_c>,
+                "add_transform", _addc<transform_c>,
+                "add_rigidbody2d", _addc<rigidbody2d_c>,
+                "add_spriteRenderer", _addc<spriteRenderer_c>,
+                "add_circleRenderer", _addc<circleRenderer_c>,
+                "add_springJoint2d", _addc<springJoint2d_c>,
+                "add_circleCollider2d", _addc<circleCollider2d_c>,
+                "add_boxCollider2d", _addc<boxCollider2d_c>,
+
+                "has_tag", _hasc<tag_c>,
+                "has_transform", _hasc<transform_c>,
+                "has_rigidbody2d", _hasc<rigidbody2d_c>,
+                "has_spriteRenderer", _hasc<spriteRenderer_c>,
+                "has_circleRenderer", _hasc<circleRenderer_c>,
+                "has_springJoint2d", _hasc<springJoint2d_c>,
+                "has_circleCollider2d", _hasc<circleCollider2d_c>,
+                "has_boxCollider2d", _hasc<boxCollider2d_c>,
+
+                "remove_tag", _removec<tag_c>,
+                "remove_transform", _removec<transform_c>,
+                "remove_rigidbody2d", _removec<rigidbody2d_c>,
+                "remove_spriteRenderer", _removec<spriteRenderer_c>,
+                "remove_circleRenderer", _removec<circleRenderer_c>,
+                "remove_springJoint2d", _removec<springJoint2d_c>,
+                "remove_circleCollider2d", _removec<circleCollider2d_c>,
+                "remove_boxCollider2d", _removec<boxCollider2d_c>,
+
+                "tryAdd_tag", _tryAddc<tag_c>,
+                "tryAdd_transform", _tryAddc<transform_c>,
+                "tryAdd_rigidbody2d", _tryAddc<rigidbody2d_c>,
+                "tryAdd_spriteRenderer", _tryAddc<spriteRenderer_c>,
+                "tryAdd_circleRenderer", _tryAddc<circleRenderer_c>,
+                "tryAdd_springJoint2d", _tryAddc<springJoint2d_c>,
+                "tryAdd_circleCollider2d", _tryAddc<circleCollider2d_c>,
+                "tryAdd_boxCollider2d", _tryAddc<boxCollider2d_c>
                 );
     }
 
