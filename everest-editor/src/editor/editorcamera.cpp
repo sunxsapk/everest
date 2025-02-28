@@ -11,6 +11,7 @@ namespace Everest {
     }
 
     void EditorCamera::onUpdate(bool focused) {
+        if(ScenePanel::getSceneState() == SceneState::PLAY && ScenePanel::gameView) return;
         if(!focused){
             _mouseLastPos = Input::mousePosition();
         }

@@ -172,8 +172,7 @@ namespace Everest {
             {
                 auto camera = entity["camera_c"];
                 if(camera){
-                    auto& cam = n_ent.add<camera_c>(camera_c{
-                        });
+                    auto& cam = n_ent.add<camera_c>();
                     cam.isPrimary = camera["isPrimary"]?camera["isPrimary"].as<bool>() : false;
                     cam.fixedAspect = camera["fixedAspect"].as<bool>();
 

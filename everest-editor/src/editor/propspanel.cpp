@@ -117,9 +117,9 @@ namespace Everest {
                 cam.set_aspect(glm::max(0.f, asp));
             ImGui::SameLine();
             ImGui::Checkbox("Fixed", &cam.fixedAspect);
-            if(_f32dragui("Near", nr, 0.1f, "##near")) 
+            if(_f32dragui("Near", nr, 0.1f, "##near", -std::numeric_limits<f32>::max(), fr))
                 cam.set_near(nr);
-            if(_f32dragui("Far", fr, 0.5f, "##far")) 
+            if(_f32dragui("Far", fr, 0.5f, "##far", nr, std::numeric_limits<f32>::max())) 
                 cam.set_far(fr);
         });
 

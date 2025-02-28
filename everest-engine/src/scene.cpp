@@ -37,6 +37,8 @@ namespace Everest {
         EV_profile_function();
         
         if(!entity.isValid()) return;
+
+        onDestroyEntity(entity);
         _registry.destroy(entity._id);
         entity._id = entt::null;
     } 
@@ -53,6 +55,39 @@ namespace Everest {
         _registry.clear();
     }
 
+    void Scene::onDestroyEntity(Entity& ent){
+        EV_profile_function();
+        if(ent == mainCamera.entity){
+            mainCamera.entity = entt::null;
+            mainCamera.transform = nullptr;
+            mainCamera.camera = nullptr;
+        }
+    }
+
+    void Scene::onComponentRemoved(Entity& entity, camera_c& component){
+        EV_profile_function();
+        if(entity == mainCamera.entity){
+            mainCamera.entity = entt::null;
+            mainCamera.transform = nullptr;
+            mainCamera.camera = nullptr;
+        }
+    }
+
+    Entity Scene::getMainCameraEntity(){
+        return {mainCamera.entity, this};
+    }
+
+    camera_c* Scene::setMainCamera(Entity& entity){
+        EV_profile_function();
+
+        if(!entity.isValid() || !entity.has<camera_c>()) return nullptr;
+
+        mainCamera.camera = &entity.get<camera_c>();
+        mainCamera.transform = &entity.get<transform_c>();
+        mainCamera.entity = entity;
+        return mainCamera.camera;
+    }
+
     void Scene::fetchTargetCamera(){
         EV_profile_function();
 
@@ -62,6 +97,7 @@ namespace Everest {
             if(cam.isPrimary){
                 mainCamera.camera = &cam;
                 mainCamera.transform = &tfr;
+                mainCamera.entity = ent;
                 break;
             }
         }

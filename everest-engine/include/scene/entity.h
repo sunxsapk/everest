@@ -31,13 +31,15 @@ namespace Everest {
         template<typename component_t, typename... args_t>
         inline component_t& add(args_t&&... args){
             ASSERT(!has<component_t>(), "Entity already has the component");
-            return _scene->_registry.emplace<component_t>(_id, std::forward<args_t>(args)...);
+            component_t& comp = _scene->_registry.emplace<component_t>(_id, std::forward<args_t>(args)...);
+            _scene->onComponentAdded(*this, comp);
+            return comp;
         }
 
         template<typename component_t, typename... args_t>
         inline component_t& tryAdd(args_t&&... args){
             if(has<component_t>()) return get<component_t>();
-            return _scene->_registry.emplace<component_t>(_id, std::forward<args_t>(args)...);
+            return add<component_t>(std::forward<args_t>(args)...);
         }
 
         template<typename component_t>
@@ -48,15 +50,17 @@ namespace Everest {
 
         template<typename component_t>
         inline void remove(){
+            _scene->onComponentRemoved(*this, get<component_t>());
             _scene->_registry.remove<component_t>(_id);
         }
 
+        template<typename component_t>
+        inline void tryRemove(){
+            if(has<component_t>()) remove<component_t>();
+        }
+
         inline void destroy(){
-            if(!isValid()){
-                return;
-            }
-            _scene->_registry.destroy(_id);
-            _id = entt::null;
+            _scene->destroyEntity(*this);
         }
 
         private:

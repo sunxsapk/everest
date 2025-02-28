@@ -23,17 +23,17 @@ namespace Everest {
 
             inline mat4 getProjection(){ return _projection;}
 
-            inline f32 get_lenssize() const {return u_size_fov;}
-            inline f32 get_fov() const {return u_size_fov;}
-            inline f32 get_aspect() const {return aspect;}
-            inline f32 get_near() const {return near;}
-            inline f32 get_far() const {return far;}
+            inline f32 get_lenssize() const {return _u_size_fov;}
+            inline f32 get_fov() const {return _u_size_fov;}
+            inline f32 get_aspect() const {return _aspect;}
+            inline f32 get_near() const {return _near;}
+            inline f32 get_far() const {return _far;}
 
-            inline void set_fov(f32 fov){ u_size_fov = fov; recalc();}
-            inline void set_lenssize(f32 size){ u_size_fov = size; recalc();}
-            inline void set_aspect(f32 aspect_){ aspect = aspect_;recalc(); }
-            inline void set_near(f32 near){ near = near; recalc();}
-            inline void set_far(f32 far){ far = far; recalc();}
+            inline void set_fov(f32 fov){ _u_size_fov = fov; recalc();}
+            inline void set_lenssize(f32 size){ _u_size_fov = size; recalc();}
+            inline void set_aspect(f32 aspect){ _aspect = aspect; recalc();}
+            inline void set_near(f32 near){ _near = near; recalc();}
+            inline void set_far(f32 far){ _far = far; recalc();}
 
             inline bool is2d() const {return _isOrtho;}
             inline bool is3d() const {return !_isOrtho;}
@@ -41,17 +41,17 @@ namespace Everest {
             inline void set3d(){_isOrtho = false;}
 
         protected:
-            f32 u_size_fov = 5.f, aspect = 16.f/9.f, near = 0.01f, far=100.f;
-            bool _isOrtho = true;
             mat4 _projection;
+            f32 _u_size_fov = 5.f, _aspect = 16.f/9.f, _near = 0.01f, _far=100.f;
+            bool _isOrtho = true;
 
         private:
             inline void recalc(){
                 if(_isOrtho){
-                    f32 lw = u_size_fov * aspect;
-                    _projection = glm::ortho(-lw, lw, -u_size_fov, u_size_fov, near, far);
+                    f32 lw = _u_size_fov * _aspect;
+                    _projection = glm::ortho(-lw, lw, -_u_size_fov, _u_size_fov, _near, _far);
                 } else {
-                    _projection = glm::perspective(glm::radians(u_size_fov), aspect, near, far);
+                    _projection = glm::perspective(glm::radians(_u_size_fov), _aspect, _near, _far);
                 }
             }
     };

@@ -15,7 +15,7 @@
 namespace Everest {
 
     struct transform_c;
-    struct Entity;
+    class Entity;
     class Scene {
         public:
             Scene() = default;
@@ -37,6 +37,10 @@ namespace Everest {
             void onUpdate();
             void onViewportResize(uvec2 viewportSize);
 
+            camera_c* setMainCamera(Entity& entity);
+            camera_c* getMainCamera(){ return mainCamera.camera; }
+            Entity getMainCameraEntity();
+
             static ref<Scene> copy(ref<Scene>& other);
 
         private:
@@ -47,9 +51,18 @@ namespace Everest {
             struct RendererCamera {
                 camera_c* camera = nullptr;
                 transform_c* transform = nullptr;
+                entt::entity entity = entt::null;
             } mainCamera;
 
             void fetchTargetCamera();
+            void onDestroyEntity(Entity& ent);
+
+            template<typename T>
+            inline void onComponentAdded(Entity& entity, T& component){}
+
+            template<typename T>
+            inline void onComponentRemoved(Entity& entity, T& component){}
+            void onComponentRemoved(Entity& entity, camera_c& component);
 
             friend class Entity;
             friend class SceneHeirarchyUI;

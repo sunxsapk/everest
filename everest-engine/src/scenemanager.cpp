@@ -31,4 +31,18 @@ namespace Everest {
         SceneSerializer::serialize(filepath);
         setSceneTarget(filepath);
     }
+
+    ref<Scene> SceneManager::onScenePlay(){
+        if(!_instance->activeScene) return nullptr;
+        _instance->runtimeScene = Scene::copy(_instance->activeScene);
+        _instance->runtimeScene->onScenePlay();
+        return _instance->runtimeScene;
+    }
+
+    void SceneManager::onSceneStop(){
+        if(!_instance->runtimeScene) return;
+        _instance->runtimeScene->onSceneStop();
+        _instance->runtimeScene.reset();
+        _instance->runtimeScene = nullptr;
+    }
 }

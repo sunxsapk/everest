@@ -169,18 +169,18 @@ namespace Scripting {
         lua.new_usertype<camera_c>("camera_c",
                 "fixedAspect", &camera_c::fixedAspect,
 
-                "get_projection", &camera_c::getProjection,
-                "get_lenssize", &camera_c::get_lenssize,
-                "get_fov", &camera_c::get_fov,
-                "get_aspect", &camera_c::get_aspect,
-                "get_near", &camera_c::get_near,
-                "get_far", &camera_c::get_far,
+                "getProjection", &camera_c::getProjection,
+                "getLenssize", &camera_c::get_lenssize,
+                "getFov", &camera_c::get_fov,
+                "getAspect", &camera_c::get_aspect,
+                "getNear", &camera_c::get_near,
+                "getFar", &camera_c::get_far,
 
-                "set_lenssize", &camera_c::set_lenssize,
-                "set_fov", &camera_c::set_fov,
-                "set_aspect", &camera_c::set_aspect,
-                "set_near", &camera_c::set_near,
-                "set_far", &camera_c::set_far,
+                "setLenssize", &camera_c::set_lenssize,
+                "setFov", &camera_c::set_fov,
+                "setAspect", &camera_c::set_aspect,
+                "setNear", &camera_c::set_near,
+                "setFar", &camera_c::set_far,
 
                 "is2d", &camera_c::is2d,
                 "is3d", &camera_c::is3d,
@@ -329,7 +329,7 @@ namespace Scripting {
 
         lua.new_usertype<Input>("Input",
                 "setStickyKeys", Input::setStickyKeys,
-                "getKeyRepeat", Input::getKeyRepeat,
+                "getKey", Input::getKey,
                 "getKeyUp", Input::getKeyUp,
                 "getKeyDown", Input::getKeyDown,
 
@@ -367,12 +367,29 @@ namespace Scripting {
     }
 
     void reg_scene(luastate_t& lua){
-        lua["createEntity"] = [](const char* name, vec3 position){
-            return SceneManager::getActiveScene()->createEntity(name);
+        sol::table st = lua.create_table();
+
+        st["createEntity"] = [](const char* name)->Entity{
+            return SceneManager::getRuntimeScene()->createEntity(name);
         };
-        lua["destroyEntity"] =  [](Entity& entity){
+        st["destroyEntity"] =  [](Entity entity){
             entity.destroy();
         };
+        st["getMainCameraEntity"] = []()->Entity{
+            auto& sc = SceneManager::getRuntimeScene();
+            if(sc == nullptr) return Entity(entt::null, sc.get());
+            return sc->getMainCameraEntity();
+        };
+        st["getMainCamera"] = []()->camera_c*{
+            auto& sc = SceneManager::getRuntimeScene();
+            if(sc == nullptr) return nullptr;
+            return sc->getMainCamera();
+        };
+        st["setMainCamera"] = [](Entity entity)->camera_c*{
+            return SceneManager::getRuntimeScene()->setMainCamera(entity);
+        };
+
+        lua["Scene"]  = st;
     }
 
     template<typename T>
@@ -387,17 +404,12 @@ namespace Scripting {
 
     template<typename T>
     T* _addc(Entity& ent){
-        return ent.isValid()?&ent.add<T>() : nullptr;
-    }
-
-    template<typename T>
-    T* _tryAddc(Entity& ent){
         return ent.isValid() ? &ent.tryAdd<T>() : nullptr;
     }
 
     template<typename T>
     void _removec(Entity& ent){
-        if(ent.isValid()) ent.remove<T>();
+        if(ent.isValid()) ent.tryRemove<T>();
     }
 
     void reg_entity(luastate_t& lua){
@@ -406,48 +418,39 @@ namespace Scripting {
 
                 "get_tag", _getc<tag_c>,
                 "get_transform", _getc<transform_c>,
+
                 "get_rigidbody2d", _getc<rigidbody2d_c>,
                 "get_spriteRenderer", _getc<spriteRenderer_c>,
                 "get_circleRenderer", _getc<circleRenderer_c>,
                 "get_springJoint2d", _getc<springJoint2d_c>,
+                "get_camera", _getc<camera_c>,
                 "get_circleCollider2d", _getc<circleCollider2d_c>,
                 "get_boxCollider2d", _getc<boxCollider2d_c>,
 
-                "add_tag", _addc<tag_c>,
-                "add_transform", _addc<transform_c>,
                 "add_rigidbody2d", _addc<rigidbody2d_c>,
                 "add_spriteRenderer", _addc<spriteRenderer_c>,
                 "add_circleRenderer", _addc<circleRenderer_c>,
                 "add_springJoint2d", _addc<springJoint2d_c>,
+                "add_camera", _addc<camera_c>,
                 "add_circleCollider2d", _addc<circleCollider2d_c>,
                 "add_boxCollider2d", _addc<boxCollider2d_c>,
 
-                "has_tag", _hasc<tag_c>,
-                "has_transform", _hasc<transform_c>,
                 "has_rigidbody2d", _hasc<rigidbody2d_c>,
                 "has_spriteRenderer", _hasc<spriteRenderer_c>,
                 "has_circleRenderer", _hasc<circleRenderer_c>,
                 "has_springJoint2d", _hasc<springJoint2d_c>,
+                "has_camera", _hasc<camera_c>,
                 "has_circleCollider2d", _hasc<circleCollider2d_c>,
                 "has_boxCollider2d", _hasc<boxCollider2d_c>,
 
-                "remove_tag", _removec<tag_c>,
-                "remove_transform", _removec<transform_c>,
                 "remove_rigidbody2d", _removec<rigidbody2d_c>,
                 "remove_spriteRenderer", _removec<spriteRenderer_c>,
                 "remove_circleRenderer", _removec<circleRenderer_c>,
                 "remove_springJoint2d", _removec<springJoint2d_c>,
+                "remove_camera", _removec<camera_c>,
                 "remove_circleCollider2d", _removec<circleCollider2d_c>,
-                "remove_boxCollider2d", _removec<boxCollider2d_c>,
+                "remove_boxCollider2d", _removec<boxCollider2d_c>
 
-                "tryAdd_tag", _tryAddc<tag_c>,
-                "tryAdd_transform", _tryAddc<transform_c>,
-                "tryAdd_rigidbody2d", _tryAddc<rigidbody2d_c>,
-                "tryAdd_spriteRenderer", _tryAddc<spriteRenderer_c>,
-                "tryAdd_circleRenderer", _tryAddc<circleRenderer_c>,
-                "tryAdd_springJoint2d", _tryAddc<springJoint2d_c>,
-                "tryAdd_circleCollider2d", _tryAddc<circleCollider2d_c>,
-                "tryAdd_boxCollider2d", _tryAddc<boxCollider2d_c>
                 );
     }
 

@@ -12,7 +12,6 @@ namespace Everest {
     bool ScenePanel::_focused = false;
     vec4 ScenePanel::sceneBackgroundColor = {.2f, .2f, .2f, 1.f};
     SceneState ScenePanel::_sceneState = SceneState::EDIT;
-    ref<Scene> ScenePanel::_runtimeScene = nullptr;
     bool ScenePanel::gameView = true;
 
     void ScenePanel::onGUIrender(ref<Framebuffer>& sceneRender, EditorCamera& sceneCamera){
@@ -223,20 +222,13 @@ namespace Everest {
 
     void ScenePanel::onSceneStop(){
         _sceneState = SceneState::EDIT;
-        _runtimeScene->onSceneStop();
-        _runtimeScene.reset();
-        _runtimeScene = nullptr;
-        SceneHeirarchyUI::setScene(getScene());
+        SceneManager::onSceneStop();
+        SceneHeirarchyUI::setScene(SceneManager::getActiveScene());
     }
 
     void ScenePanel::onScenePlay(){
         _sceneState = SceneState::PLAY;
-        ref<Scene> rsc = SceneManager::getActiveScene();
-        if(rsc){
-            ref<Scene> cp = Scene::copy(rsc);
-            _runtimeScene = cp;
-            SceneHeirarchyUI::setScene(_runtimeScene);
-            _runtimeScene->onScenePlay();
-        }
+        ref<Scene> rsc = SceneManager::onScenePlay();
+        SceneHeirarchyUI::setScene(rsc);
     }
 }

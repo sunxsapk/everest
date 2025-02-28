@@ -44,27 +44,30 @@ namespace Everest {
         Renderer::issue_clear();
 
         _framebuffer->clearAttachment(1, -1);
-        auto _activeScene = ScenePanel::getScene();
-        if(_activeScene){
-            switch(ScenePanel::getSceneState()){
-                case SceneState::EDIT:
-                    editorView(_activeScene);
-                    break;
-                case SceneState::PLAY:
+        switch(ScenePanel::getSceneState()){
+            case SceneState::EDIT:
+                editorView(SceneManager::getActiveScene());
+                break;
+            case SceneState::PLAY:
+                {
+                    auto& _activeScene = SceneManager::getRuntimeScene();
+                    if(!_activeScene) break;
                     if(ScenePanel::gameView){
                         _activeScene->onUpdate();
                         _activeScene->onRender();
                     } else {
                         editorView(_activeScene, true);
                     }
-                    break;
-            }
+                }
+                break;
         }
 
         _framebuffer->unbind();
     }
 
     void EditorLayer::editorView(ref<Scene>& _activeScene, bool update){
+        if(!_activeScene) return;
+
         _activeScene->onEditorBeginRender(_camera.camera, _camera.transform);
         _activeScene->onEditorRender(Gizmos::showPhysicsShapes);
 

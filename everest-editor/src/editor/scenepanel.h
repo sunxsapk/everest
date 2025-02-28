@@ -37,8 +37,6 @@ namespace Everest {
             static inline vec2 getSceneViewportSize(){return _sceneViewPortSize;}
 
             static inline SceneState getSceneState(){ return _sceneState;}
-            static inline ref<Scene> getScene(){return _sceneState == SceneState::EDIT?
-                SceneManager::getActiveScene() : _runtimeScene;}
 
             static inline void onSceneStateToggle(){
                 if(_sceneState == SceneState::EDIT) onScenePlay();
@@ -55,7 +53,6 @@ namespace Everest {
             static void onScenePlay();
             friend class ContentBrowser;
         private:
-            static ref<Scene> _runtimeScene;
             static SceneState _sceneState;
             static vec2 _sceneOffset;
             static uvec2 _sceneViewPortSize;
