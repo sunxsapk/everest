@@ -1,5 +1,4 @@
 OnCreate = function()
-    -- pos = entity:get_transform().position
     rigidbody = entity:get_rigidbody2d()
     position = entity:get_transform().position
     spr = entity:get_spriteRenderer()
@@ -14,10 +13,9 @@ OnUpdate = function(_)
 
     local mp = Input.getMousePosition()
     mp = Scene.screenToWorld(mp)
+    print(mp.x, mp.y)
 
-    local pos = Scene.screenToWorld(Scene.worldToScreen(position))
-
-    local vel = vec2.new(mp.x - pos.x, mp.y - pos.y)
+    local vel = vec2.new(mp.x - position.x, mp.y - position.y)
     rigidbody:addForce(vel:smul(10), ForceMode.Force)
 
     if Input.getKeyDown(Keycode.K_space) then

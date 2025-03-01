@@ -272,6 +272,7 @@ namespace Everest {
     }
 
     vec2 Scene::worldToScreen(vec3 worldPos){
+        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) fetchTargetCamera();
         if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) return {};
 
         mat4 vpm = mainCamera.camera->getProjection() * glm::inverse((mat4)*mainCamera.transform);
@@ -283,6 +284,7 @@ namespace Everest {
     }
 
     vec3 Scene::screenToWorld(vec2 screenPos){
+        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) fetchTargetCamera();
         if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) return {};
 
         screenPos -= _viewportOffset;
@@ -295,6 +297,7 @@ namespace Everest {
     }
 
     vec3 Scene::screenToWorldDir(vec2 screenPos){
+        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) fetchTargetCamera();
         if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) return {};
 
         screenPos -= _viewportOffset;
@@ -314,19 +317,20 @@ namespace Everest {
         dc = sc;
     }
 
-    void copyScript(entt::registry& src, entt::entity srcID, entt::registry& dest, Entity destID){
-        if(!src.all_of<EvScript>(srcID)) return;
-        EvScript& sc = src.get<EvScript>(srcID);
-        EvScript& dc = dest.all_of<EvScript>(destID) ?
-            dest.get<EvScript>(destID) : dest.emplace<EvScript>(destID, sc);
+    void copyScript(entt::registry& src, entt::entity sEntity, entt::registry& dest, Entity dEntity){
+        if(!src.all_of<EvScript>(sEntity)) return;
+        EvScript& sc = src.get<EvScript>(sEntity);
+        EvScript& dc = dest.all_of<EvScript>(dEntity) ?
+            dest.get<EvScript>(dEntity) : dest.emplace<EvScript>(dEntity, sc);
         dc = sc;
-        dc._entity = destID;
+        dc.entity = dEntity;
         dc.init();
     }
 
     ref<Scene> Scene::copy(ref<Scene>& other){
         ref<Scene> newScene = createRef<Scene>(other->_name);
         newScene->_viewportSize = other->_viewportSize;
+        newScene->_viewportOffset = other->_viewportOffset;
         // main camera shifting
 
         entt::registry& srcReg = other->_registry;

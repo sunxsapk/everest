@@ -18,41 +18,43 @@
 namespace Everest {
 namespace Scripting {
 
-    struct evscript_c {
+    struct scriptHandler_t {
         std::filesystem::path scriptpath;
-        Entity _entity;
+        luastate_t state;
 
-        evscript_c();
-        evscript_c(Entity entity);
+        std::function<void()> onCreate;
+        std::function<void(double)> onUpdate;
+        std::function<void(collision2d_t)> onCollision;
+
+        bool _initialized = false;
+
+        template<typename Alloc>
+        scriptHandler_t(Alloc& alloc){ }
+        scriptHandler_t(){};
+        scriptHandler_t(const scriptHandler_t& other);
+        scriptHandler_t& operator=(const scriptHandler_t& other);
+
+        void init(Entity entity);
+        void update(double deltaTime);
+        void collisionCallback(collision2d_t& data);
+
+        void setScriptPath(std::filesystem::path path, Entity ent);
+        const char* getScriptName();
+    };
+
+    struct evscript_c {
+        Entity entity;
+        std::vector<scriptHandler_t> scripts;
+
+        template<typename Alloc>
+        evscript_c(Alloc& alloc){ init();}
+        evscript_c(Entity entity_):entity(entity_){ }
         evscript_c(const evscript_c& other);
         evscript_c& operator=(const evscript_c& other);
 
         void init();
         void update(double deltaTime);
         void collisionCallback(collision2d_t& data);
-
-        inline void setScriptPath(std::filesystem::path path){
-            if(scriptpath == path) return;
-            scriptpath = path;
-            init();
-        }
-
-        inline const char* getScriptName(){
-            return scriptpath.stem().c_str();
-        }
-
-        template<typename Alloc>
-        evscript_c(Alloc& alloc){
-            init();
-        }
-
-        private:
-        luastate_t state;
-        bool _initialized = false;
-
-        std::function<void()> onCreate;
-        std::function<void(double)> onUpdate;
-        std::function<void(collision2d_t)> onCollision;
 
         friend class Scene;
     };

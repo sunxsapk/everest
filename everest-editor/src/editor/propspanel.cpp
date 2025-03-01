@@ -83,6 +83,59 @@ namespace Everest {
         if(c_remove) ent.remove<comp_t>();
     }
 
+    bool _scriptHandler(Scripting::scriptHandler_t& script, Entity ent){
+        const char* sn = script.scriptpath.empty()? "None" : script.scriptpath.c_str();
+        auto style = ImGui::GetStyle();
+        f32 height = UIFontManager::getDefaultBold()->FontSize;
+        f32 width = ImGui::GetContentRegionAvail().x;
+        float lineh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
+        ImVec2 beg = ImGui::GetCursorScreenPos();
+        ImGui::GetWindowDrawList()->AddRectFilled(beg, {beg.x + width, beg.y + height + 2 * style.FramePadding.y},
+                ImColor(.4f, .4f, .4f, .5f));
+
+        beg.x += style.FramePadding.x;
+        beg.y += style.FramePadding.y;
+        ImGui::SetCursorScreenPos(beg);
+        ImGui::InvisibleButton("##dndtrg", {width - style.WindowPadding.x - lineh * 3, height});
+
+        ImGui::SetItemAllowOverlap();
+
+        if(ImGui::BeginDragDropTarget()){
+            const ImGuiPayload* data = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
+            if(data && data->Data){
+                const char* path_str = (const char*) data->Data;
+                EVLog_Msg("Drag n Drop Item %s", path_str);
+                if(AssetsManager::getAssetsType(path_str) == AssetsType::SCRIPT){
+                    try {
+                        script.setScriptPath(std::filesystem::path(path_str), ent);
+                    } catch(std::exception exc){
+                        // TODO: make this into a popup
+                        EVLog_Err("Error on loading Script: %s", exc.what());
+                    }
+                }
+            }
+
+            ImGui::EndDragDropTarget();
+        }
+
+        ImGui::SetCursorScreenPos(beg);
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 1.f, 1.f, 1.f));
+
+        ImGui::Text("[ %s ] >> %s", script.scriptpath.empty() ? "--" : script.getScriptName(), sn);
+
+        beg.x += width - lineh * 3 - style.FramePadding.x;
+        beg.y -= style.FramePadding.y;
+        ImGui::SetCursorScreenPos(beg);
+        bool clearReq = ImGui::Button("x", ImVec2{lineh, lineh});
+        ImGui::SameLine();
+        if(ImGui::Button("r", ImVec2{lineh, lineh})){
+            script.init(ent);
+        }
+
+        ImGui::PopStyleColor();
+        return clearReq;
+    }
+
     void PropertiesPanel::drawComponents(Entity& ent){
         if(ent.has<transform_c>()) _transform(ent);
 
@@ -147,6 +200,9 @@ namespace Everest {
                 }
                 
                 ImGui::EndDragDropTarget();
+            }
+            if(ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered()){
+                spr.texture = nullptr;
             }
             ImGui::PopStyleColor();
         });
@@ -230,46 +286,21 @@ namespace Everest {
         if(ent.has<EvScript>()) _componentUI<EvScript>(ent, "Everest Script",
         [](EvScript& comp){
             ImGui::PushFont(UIFontManager::getDefaultBold());
-
-            const char* sn = comp.scriptpath.empty()? "None" : comp.scriptpath.c_str();
-            auto style = ImGui::GetStyle();
-            f32 height = UIFontManager::getDefaultBold()->FontSize;
-            f32 width = ImGui::GetContentRegionAvail().x;
-            ImVec2 beg = ImGui::GetCursorScreenPos();
-            ImGui::GetWindowDrawList()->AddRectFilled(beg, {beg.x + width, beg.y + height + 2 * style.FramePadding.y},
-                    ImColor(.4f, .4f, .4f, .5f));
-
-            beg.x += style.FramePadding.x;
-            beg.y += style.FramePadding.y;
-            ImGui::SetCursorScreenPos(beg);
-            ImGui::InvisibleButton("##dndtrg", {width - style.WindowPadding.x, height});
-
-            ImGui::SetItemAllowOverlap();
-
-            if(ImGui::BeginDragDropTarget()){
-                const ImGuiPayload* data = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
-                if(data && data->Data){
-                    const char* path_str = (const char*) data->Data;
-                    EVLog_Msg("Drag n Drop Item %s", path_str);
-                    if(AssetsManager::getAssetsType(path_str) == AssetsType::SCRIPT){
-                        try {
-                            comp.setScriptPath(std::filesystem::path(path_str));
-                        } catch(std::exception exc){
-                            // TODO: make this into a popup
-                            EVLog_Err("Error on loading Script: %s", exc.what());
-                        }
-                    }
-                }
-                
-                ImGui::EndDragDropTarget();
+            int remove = -1;
+            for(int i=0; i<comp.scripts.size(); i++){
+                ImGui::PushID(i);
+                if(_scriptHandler(comp.scripts[i], comp.entity)) remove = i;
+                ImGui::PopID();
             }
 
-            ImGui::SetCursorScreenPos(beg);
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 1.f, 1.f, 1.f));
+            if(remove >=0){
+                comp.scripts.erase(comp.scripts.begin() + remove);
+            }
 
-            ImGui::Text("[ %s ] >> %s", comp.scriptpath.empty() ? "--" : comp.getScriptName(), sn);
+            if(ImGui::Button("Add Script")){
+                comp.scripts.push_back(Scripting::scriptHandler_t());
+            }
 
-            ImGui::PopStyleColor();
             ImGui::PopFont();
         });
 
