@@ -43,8 +43,5 @@ before such behaviour is encountered
 [ ] write a rough lua-scripting api for entity
     - serialize serializable fields
     - update api docs
-[ ] scripting api for scene props [load-new]
-[ ] scene screen to world position
-[ ] scene world to screen  position
 [ ] fix bugs... duh!!
 

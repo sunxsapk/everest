@@ -8,7 +8,7 @@
 namespace Everest {
 
     vec2 ScenePanel::_sceneOffset(0);
-    uvec2 ScenePanel::_sceneViewPortSize = {1280, 720};
+    uvec2 ScenePanel::_sceneViewPortSize = {128, 128};
     bool ScenePanel::_focused = false;
     vec4 ScenePanel::sceneBackgroundColor = {.2f, .2f, .2f, 1.f};
     SceneState ScenePanel::_sceneState = SceneState::EDIT;
@@ -23,7 +23,7 @@ namespace Everest {
             sceneRender->resize(_sceneViewPortSize);
             sceneCamera.onViewportResize(_sceneViewPortSize);
             auto _activeScene = SceneManager::getActiveScene();
-            if(_activeScene) _activeScene->onViewportResize(_sceneViewPortSize);
+            if(_activeScene) _activeScene->onViewportResize(_sceneOffset, _sceneViewPortSize);
         }
         if(!gameView || _sceneState == SceneState::EDIT) Gizmos::renderTransformationGizmo(sceneCamera);
 
@@ -36,11 +36,8 @@ namespace Everest {
         const ImVec2 uv0{0.f, 1.f}, uv1{1.f, 0.f};
         ImVec2 _svps_i = ImGui::GetContentRegionAvail();
         uvec2 _svps{_svps_i.x, _svps_i.y};
-        bool needResize = false;
-        if(_svps != _sceneViewPortSize){
-            _sceneViewPortSize = _svps;
-            needResize = true;
-        }
+        bool needResize = _svps != _sceneViewPortSize && _svps.x > 0 && _svps.y > 0;
+        if(needResize) _sceneViewPortSize = _svps;
 
         ImGui::Image(sceneRender->getColorAttachment(0),
                 ImVec2(_sceneViewPortSize.x, _sceneViewPortSize.y), uv0, uv1);

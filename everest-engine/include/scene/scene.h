@@ -35,17 +35,21 @@ namespace Everest {
             void onScenePlay();
             void onSceneStop();
             void onUpdate();
-            void onViewportResize(uvec2 viewportSize);
+            void onViewportResize(uvec2 viewportOffset, uvec2 viewportSize);
 
             camera_c* setMainCamera(Entity& entity);
             camera_c* getMainCamera(){ return mainCamera.camera; }
             Entity getMainCameraEntity();
 
+            vec2 worldToScreen(vec3 worldPos);
+            vec3 screenToWorld(vec2 screenPos);
+            vec3 screenToWorldDir(vec2 screenPos);
+
             static ref<Scene> copy(ref<Scene>& other);
 
         private:
             entt::registry _registry;
-            uvec2 _viewportSize;
+            uvec2 _viewportOffset, _viewportSize; // TODO: add event listener for viewport resize during runtime
             std::string _name;
         private:
             struct RendererCamera {

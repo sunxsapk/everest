@@ -255,10 +255,10 @@ namespace Everest {
         PhysicsHandler::simulate(*this, dt);
     }
 
-    void Scene::onViewportResize(uvec2 viewportSize){
+    void Scene::onViewportResize(uvec2 viewportOffset, uvec2 viewportSize){
         EV_profile_function();
 
-
+        _viewportOffset = viewportOffset;
         _viewportSize = viewportSize;
         f32 aspect = (float)viewportSize.x / viewportSize.y;
 
@@ -269,6 +269,40 @@ namespace Everest {
                 cam.set_aspect(aspect);
             }
         }
+    }
+
+    vec2 Scene::worldToScreen(vec3 worldPos){
+        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) return {};
+
+        mat4 vpm = mainCamera.camera->getProjection() * glm::inverse((mat4)*mainCamera.transform);
+        vec4 clipc = vpm * vec4(worldPos, 1.f);
+        clipc /= clipc.w;
+        clipc = (clipc + 1.f) / 2.f;
+        return vec2(clipc.x * _viewportSize.x + _viewportOffset.x, 
+                (1.f - clipc.y) * _viewportSize.y + _viewportOffset.y);
+    }
+
+    vec3 Scene::screenToWorld(vec2 screenPos){
+        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) return {};
+
+        screenPos -= _viewportOffset;
+        vec3 clipc(screenPos.x/_viewportSize.x*2-1.f, 1.f-screenPos.y/_viewportSize.y*2, 
+                mainCamera.camera->is2d()? -1.f : mainCamera.camera->get_near());
+        mat4 vpmat = mainCamera.camera->getProjection() * glm::inverse((mat4)*mainCamera.transform);
+        vec4 pp = glm::inverse(vpmat) * vec4(clipc, 1.f);
+        pp /= pp.w;
+        return pp;
+    }
+
+    vec3 Scene::screenToWorldDir(vec2 screenPos){
+        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) return {};
+
+        screenPos -= _viewportOffset;
+        vec4 ndc(screenPos.x/_viewportSize.x*2-1.f, 1.f-screenPos.y/_viewportSize.y*2, 1.f, 1.f);
+        vec4 ax = glm::inverse(mainCamera.camera->getProjection()) * ndc;
+        ax /= ax.w;
+        ax.w = 0.f;
+        return glm::normalize((mat4)*mainCamera.transform * ax);
     }
 
     template<typename Comp>
@@ -293,6 +327,7 @@ namespace Everest {
     ref<Scene> Scene::copy(ref<Scene>& other){
         ref<Scene> newScene = createRef<Scene>(other->_name);
         newScene->_viewportSize = other->_viewportSize;
+        // main camera shifting
 
         entt::registry& srcReg = other->_registry;
         entt::registry& desReg = newScene->_registry;
@@ -312,6 +347,12 @@ namespace Everest {
             copyComponent<circleCollider2d_c>(srcReg, e, desReg, _ent);
 
             copyScript(srcReg, e, desReg, _ent);
+
+            if(e == other->mainCamera.entity){
+                newScene->mainCamera.camera = &desReg.get<camera_c>(_ent);
+                newScene->mainCamera.transform = &desReg.get<transform_c>(_ent);
+                newScene->mainCamera.entity = _ent;
+            }
 
 #ifndef __NO_3D__
             copyComponent<rigidbody_c>(srcReg, e, desReg, _ent);

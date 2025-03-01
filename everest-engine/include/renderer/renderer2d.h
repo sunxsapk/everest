@@ -9,11 +9,11 @@
 
 #pragma once
 
+#include "renderer/spriteRenderer.h"
 #include "vao.h"
 #include "shader.h"
 #include "scene/camera.h"
 #include "texture.h"
-#include "sprite.h"
 #include "renderer/renderAPI.h"
 
 #ifdef APPLE

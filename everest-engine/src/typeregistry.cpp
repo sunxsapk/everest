@@ -14,12 +14,12 @@ namespace Scripting {
                 sol::constructors<vec2(f32, f32), vec2(vec2), vec2(f32), vec2()>(),
                 "x", &vec2::x,
                 "y", &vec2::y,
-                "add", [](vec2& a, vec2 b){a += b;},
-                "mul", [](vec2& a, vec2 b){a *= b;},
-                "div", [](vec2& a, vec2 b){a /= b;},
-                "smul", [](vec2& a, f32 b){a *= b;},
-                "sdiv", [](vec2& a, f32 b){a /= b;},
-                "sub", [](vec2& a, vec2 b){a -= b;},
+                "add", [](vec2& a, vec2 b){return a += b;},
+                "mul", [](vec2& a, vec2 b){return a *= b;},
+                "div", [](vec2& a, vec2 b){return a /= b;},
+                "smul", [](vec2& a, f32 b){return a *= b;},
+                "sdiv", [](vec2& a, f32 b){return a /= b;},
+                "sub", [](vec2& a, vec2 b){return a -= b;},
                 "dot", [](vec2& a, vec2 b){return glm::dot(a, b);}
                 );
         lua.new_usertype<vec3>("vec3",
@@ -27,12 +27,12 @@ namespace Scripting {
                 "x", &vec3::x,
                 "y", &vec3::y,
                 "z", &vec3::z,
-                "add", [](vec3& a, vec3 b){a += b;},
-                "mul", [](vec3& a, vec3 b){a *= b;},
-                "div", [](vec3& a, vec3 b){a /= b;},
-                "smul", [](vec3& a, f32 b){a *= b;},
-                "sdiv", [](vec3& a, f32 b){a /= b;},
-                "sub", [](vec3& a, vec3 b){a -= b;},
+                "add", [](vec3& a, vec3 b){return a += b;},
+                "mul", [](vec3& a, vec3 b){return a *= b;},
+                "div", [](vec3& a, vec3 b){return a /= b;},
+                "smul", [](vec3& a, f32 b){return a *= b;},
+                "sdiv", [](vec3& a, f32 b){return a /= b;},
+                "sub", [](vec3& a, vec3 b){return a -= b;},
                 "dot", [](vec3& a, vec3 b){return glm::dot(a, b);},
                 "cross", [](vec3& a, vec3 b){return glm::cross(a, b);}
                 );
@@ -42,12 +42,12 @@ namespace Scripting {
                 "y", &vec4::y,
                 "z", &vec4::z,
                 "w", &vec4::w,
-                "add", [](vec4& a, vec4 b){a += b;},
-                "mul", [](vec4& a, vec4 b){a *= b;},
-                "div", [](vec4& a, vec4 b){a /= b;},
-                "smul", [](vec4& a, f32 b){a *= b;},
-                "sdiv", [](vec4& a, f32 b){a /= b;},
-                "sub", [](vec4& a, vec4 b){a -= b;},
+                "add", [](vec4& a, vec4 b){return a += b;},
+                "mul", [](vec4& a, vec4 b){return a *= b;},
+                "div", [](vec4& a, vec4 b){return a /= b;},
+                "smul", [](vec4& a, f32 b){return a *= b;},
+                "sdiv", [](vec4& a, f32 b){return a /= b;},
+                "sub", [](vec4& a, vec4 b){return a -= b;},
                 "dot", [](vec4& a, vec4 b){return glm::dot(a, b);}
                 );
     }
@@ -55,10 +55,10 @@ namespace Scripting {
     void reg_matx(luastate_t& lua){
         lua.new_usertype<glm::mat4>("mat4",
                 sol::constructors<mat4(), mat4(f32)>(),
-                "add", [](mat4& a, mat4& b){a += b;},
-                "sub", [](mat4& a, mat4& b){a -= b;},
-                "mul", [](mat4& a, mat4& b){a *= b;},
-                "smul", [](mat4& a, f32 b){a *= b;}
+                "add", [](mat4& a, mat4& b){return a += b;},
+                "sub", [](mat4& a, mat4& b){return a -= b;},
+                "mul", [](mat4& a, mat4& b){return a *= b;},
+                "smul", [](mat4& a, f32 b) {return a *= b;}
                 );
     }
 
@@ -311,7 +311,7 @@ namespace Scripting {
                 "K_right_super", K_right_super,
                 "K_menu", K_menu,
                 "K_last", K_last
-                );
+                    );
 
         lua.new_enum("MouseButton",
                 "M_0", M_0,
@@ -327,28 +327,29 @@ namespace Scripting {
                 "M_7", M_7
                 );
 
-        lua.new_usertype<Input>("Input",
-                "setStickyKeys", Input::setStickyKeys,
-                "getKey", Input::getKey,
-                "getKeyUp", Input::getKeyUp,
-                "getKeyDown", Input::getKeyDown,
+        sol::table it = lua.create_table();
 
-                "getAxis", Input::getAxis,
-                "getHorizontal", Input::getHorizontal,
-                "getVertical", Input::getVertical,
+        it["setStickyKeys"] = Input::setStickyKeys;
+        it["getKey"] = Input::getKey;
+        it["getKeyUp"] = Input::getKeyUp;
+        it["getKeyDown"] = Input::getKeyDown;
 
-                "mouseButtonDown", Input::mouseButtonDown,
-                "mouseButtonUp", Input::mouseButtonUp,
+        it["getAxis"] = Input::getAxis;
+        it["getHorizontal"] = Input::getHorizontal;
+        it["getVertical"] = Input::getVertical;
 
-                "mousePosition", Input::mousePosition,
-                "mousePositionX", Input::mousePositionX,
-                "mousePositionY", Input::mousePositionY,
+        it["getMouseButtonDown"] = Input::mouseButtonDown;
+        it["getMouseButtonUp"] = Input::mouseButtonUp;
 
-                "mouseScroll", Input::mouseScroll,
-                "mouseScrollX", Input::mouseScrollX,
-                "mouseScrollY", Input::mouseScrollY
+        it["getMousePosition"] = Input::mousePosition;
+        it["getMousePositionX"] = Input::mousePositionX;
+        it["getMousePositionY"] = Input::mousePositionY;
 
-                );
+        it["getMouseScroll"] = Input::mouseScroll;
+        it["getMouseScrollX"] = Input::mouseScrollX;
+        it["getMouseScrollY"] = Input::mouseScrollY;
+
+        lua["Input"] = it;
     }
 
     void reg_time(luastate_t& lua){
@@ -370,23 +371,32 @@ namespace Scripting {
         sol::table st = lua.create_table();
 
         st["createEntity"] = [](const char* name)->Entity{
-            return SceneManager::getRuntimeScene()->createEntity(name);
+            return SceneManager::getActiveScene()->createEntity(name);
         };
         st["destroyEntity"] =  [](Entity entity){
             entity.destroy();
         };
         st["getMainCameraEntity"] = []()->Entity{
-            auto& sc = SceneManager::getRuntimeScene();
+            auto& sc = SceneManager::getActiveScene();
             if(sc == nullptr) return Entity(entt::null, sc.get());
             return sc->getMainCameraEntity();
         };
         st["getMainCamera"] = []()->camera_c*{
-            auto& sc = SceneManager::getRuntimeScene();
+            auto& sc = SceneManager::getActiveScene();
             if(sc == nullptr) return nullptr;
             return sc->getMainCamera();
         };
         st["setMainCamera"] = [](Entity entity)->camera_c*{
-            return SceneManager::getRuntimeScene()->setMainCamera(entity);
+            return SceneManager::getActiveScene()->setMainCamera(entity);
+        };
+        st["worldToScreen"] = [](vec3 worldPos)->vec2{
+            return SceneManager::getActiveScene()->worldToScreen(worldPos);
+        };
+        st["screenToWorld"] = [](vec2 screenPos)->vec3{
+            return SceneManager::getActiveScene()->screenToWorld(screenPos);
+        };
+        st["screenToWorldDir"] = [](vec2 screenPos)->vec3{
+            return SceneManager::getActiveScene()->screenToWorldDir(screenPos);
         };
 
         lua["Scene"]  = st;

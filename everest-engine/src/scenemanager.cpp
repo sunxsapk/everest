@@ -34,15 +34,16 @@ namespace Everest {
 
     ref<Scene> SceneManager::onScenePlay(){
         if(!_instance->activeScene) return nullptr;
-        _instance->runtimeScene = Scene::copy(_instance->activeScene);
-        _instance->runtimeScene->onScenePlay();
-        return _instance->runtimeScene;
+        _instance->savedActiveScene = Scene::copy(_instance->activeScene);
+        _instance->activeScene->onScenePlay();
+        return _instance->activeScene;
     }
 
     void SceneManager::onSceneStop(){
-        if(!_instance->runtimeScene) return;
-        _instance->runtimeScene->onSceneStop();
-        _instance->runtimeScene.reset();
-        _instance->runtimeScene = nullptr;
+        if(_instance->activeScene){
+            _instance->activeScene->onSceneStop(); // stop
+            _instance->activeScene.reset(); // destroy
+        }
+        _instance->activeScene = _instance->savedActiveScene; // restore
     }
 }

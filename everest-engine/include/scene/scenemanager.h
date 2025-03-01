@@ -37,7 +37,6 @@ namespace Everest {
                 return _instance->activeScene;}
 
             static inline ref<Scene>& getActiveScene(){return _instance->activeScene;}
-            static inline ref<Scene>& getRuntimeScene(){return _instance->runtimeScene;}
 
             static ref<Scene> onScenePlay();
             static void onSceneStop();
@@ -52,7 +51,7 @@ namespace Everest {
             static const char* getSceneTargetPath(){return _instance->scenePath.c_str();}
 
         private:
-            ref<Scene> activeScene, runtimeScene;
+            ref<Scene> activeScene, savedActiveScene;
             std::string scenePath = "";
             sceneChangeCallback_t sceneChangecb = nullptr;
 
