@@ -9,6 +9,20 @@
 namespace Everest {
 namespace Scripting {
 
+    void reg_types(luastate_t& lua){
+        lua.new_enum("Types",
+                "nil", Types::Nil,
+                "int", Types::Int,
+                "float", Types::Float,
+                "string", Types::String,
+                "vec2", Types::Vec2,
+                "vec3", Types::Vec3,
+                "vec4", Types::Vec4,
+                "color", Types::Color,
+                "Entity", Types::Entity
+                );
+    }
+
     void reg_vecx(luastate_t& lua){
         lua.new_usertype<vec2>("vec2",
                 sol::constructors<vec2(f32, f32), vec2(vec2), vec2(f32), vec2()>(),
@@ -423,7 +437,7 @@ namespace Scripting {
     }
 
     void reg_entity(luastate_t& lua){
-        lua.new_usertype<Entity>("Entity_t",
+        lua.new_usertype<Entity>("Entity",
                 "destroy", &Entity::destroy,
 
                 "get_tag", _getc<tag_c>,

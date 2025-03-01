@@ -12,11 +12,24 @@
 
 namespace Everest {
 namespace Scripting {
+
+    enum class Types {
+        Nil = 0,
+        Int,
+        Float,
+        String,
+        Vec2,
+        Vec3,
+        Vec4,
+        Color,
+        Entity,
+    };
     
     using luastate_t = sol::state;
     using lualibs = sol::lib;
     struct evscript_c;
 
+    void reg_types(luastate_t& lua);
     void reg_vecx(luastate_t& lua);
     void reg_matx(luastate_t& lua);
     void reg_entity(luastate_t& lua);
@@ -38,6 +51,7 @@ namespace Scripting {
 
     static const std::vector<std::function<void(luastate_t&)>> Registry{
         // types
+        reg_types,
         reg_vecx,
         reg_matx,
         reg_collision,

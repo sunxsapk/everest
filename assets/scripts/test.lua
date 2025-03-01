@@ -1,3 +1,9 @@
+__serialize = {
+    speed = Types.float,
+}
+
+speed = 10
+
 OnCreate = function()
     rigidbody = entity:get_rigidbody2d()
     position = entity:get_transform().position
@@ -6,21 +12,16 @@ end
 
 OnUpdate = function(_)
     if spr ~= nil then
-        spr.color = vec4.new(math.abs(math.sin(Time.getTime())), 0, 0, 1)
+        spr.color = vec4.new(math.abs(math.sin(Time.getTime())), math.abs(math.cos(Time.getTime())), 0, 1)
     end
 
     if rigidbody == nil then return end
 
     local mp = Input.getMousePosition()
     mp = Scene.screenToWorld(mp)
-    print(mp.x, mp.y)
 
     local vel = vec2.new(mp.x - position.x, mp.y - position.y)
-    rigidbody:addForce(vel:smul(10), ForceMode.Force)
-
-    if Input.getKeyDown(Keycode.K_space) then
-        rigidbody:addForce(vec2.new(0, 400), ForceMode.Force)
-    end
+    rigidbody:addForce(vel:smul(speed), ForceMode.Force)
 end
 
 OnCollision = function(data)

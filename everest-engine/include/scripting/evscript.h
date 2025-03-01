@@ -38,6 +38,14 @@ namespace Scripting {
         void update(double deltaTime);
         void collisionCallback(collision2d_t& data);
 
+        inline bool getSerializedFields(sol::table& resultTable){
+            if(state["__serialize"].valid()){
+                resultTable = state["__serialize"];
+                return true;
+            }
+            return false;
+        }
+
         void setScriptPath(std::filesystem::path path, Entity ent);
         const char* getScriptName();
     };

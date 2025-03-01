@@ -42,6 +42,7 @@ before such behaviour is encountered
 =============== TODO ============
 [ ] write a rough lua-scripting api for entity
     - serialize serializable fields
+    - serialize the script component
     - update api docs
 [ ] fix bugs... duh!!
 

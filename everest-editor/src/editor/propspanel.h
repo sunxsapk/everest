@@ -26,6 +26,9 @@ namespace Everest {
             static void _vec2ui(const char* label, vec2& value, f32 resetvalue, f32 min = 0.f, f32 max = 0.f);
             static void _colorui(const char* label, vec4& value, const char* id = "");
 
+            static void _serializeFields(Scripting::scriptHandler_t& script);
+            static bool _scriptHandler(Scripting::scriptHandler_t& script, Entity ent);
+
             friend class ScenePanel;
 
         private:

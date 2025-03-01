@@ -6,6 +6,7 @@ namespace Everest {
 
     Scene* SceneHeirarchyUI::_scene = nullptr;
     Entity SceneHeirarchyUI::_selectedEntity;
+    bool SceneHeirarchyUI::_focused = false;
 
     void SceneHeirarchyUI::setScene(const ref<Scene>& scene){
         _scene = scene.get();
@@ -23,6 +24,7 @@ namespace Everest {
         }
 
         if(ImGui::IsWindowHovered() && ImGui::IsMouseDown(0)) _selectedEntity = {};
+        _focused = ImGui::IsWindowHovered();
 
         ImGui::End();
     }
@@ -69,6 +71,7 @@ namespace Everest {
     }
 
     bool SceneHeirarchyUI::onKeyShortcuts(KeyDownEvent& event){
+        if(!_focused) return false;
         if(ScenePanel::getSceneState() != SceneState::EDIT) return false;
         if(!_selectedEntity.isValid()) return false;
 

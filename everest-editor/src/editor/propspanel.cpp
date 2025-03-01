@@ -83,14 +83,73 @@ namespace Everest {
         if(c_remove) ent.remove<comp_t>();
     }
 
-    bool _scriptHandler(Scripting::scriptHandler_t& script, Entity ent){
+    void PropertiesPanel::_serializeFields(Scripting::scriptHandler_t& script){
+        using namespace Scripting;
+
+        sol::table fields;
+        if(!script.getSerializedFields(fields)) return;
+
+        for(auto& [k, v] : fields){
+            const char* key = k.as<const char*>();
+            if(!script.state[key].valid()) continue;
+
+            Types type = v.as<Types>();
+
+            switch(type){ // TODO: better ui
+                case Types::Int: {
+                    int val = script.state[key];
+                    if(ImGui::InputInt(key, &val)) script.state[key] = val;
+                    break;
+                }
+                case Types::Float: {
+                    f32 val = script.state[key];
+                    if(_f32dragui(key, val, 0.05f, key)) script.state[key] = val;
+                    break;
+                }
+                case Types::String: {
+                    std::string val = script.state[key];
+                    static char buffer[1<<8];
+                    memset(buffer, 0, sizeof(buffer));
+                    strcpy(buffer, val.c_str());
+                    if(ImGui::InputText(key, buffer, 256)) script.state[key] = std::string(buffer);
+                    break;
+                }
+                case Types::Vec2: {
+                    vec2& val = script.state[key];
+                    _vec2ui(key, val, 0.f);
+                    break;
+                }
+                case Types::Vec3: {
+                    vec3& val = script.state[key];
+                    _vec3ui(key, val, 0.f);
+                    break;
+                }
+                case Types::Vec4: {
+                    // TODO: implement vec4 ui
+                    vec3& val = script.state[key];
+                    _vec3ui(key, val, 0.f);
+                    break;
+                }
+                case Types::Color: {
+                    vec4& val = script.state[key];
+                    _colorui(key, val);
+                    break;
+                }
+                default:
+                    ImGui::TextColored(ImVec4(.8f, 0.f, 0.f, 1.f), "Unsupported Type");
+                    break;
+            }
+        }
+    }
+
+    bool PropertiesPanel::_scriptHandler(Scripting::scriptHandler_t& script, Entity ent){
         const char* sn = script.scriptpath.empty()? "None" : script.scriptpath.c_str();
         auto style = ImGui::GetStyle();
         f32 height = UIFontManager::getDefaultBold()->FontSize;
         f32 width = ImGui::GetContentRegionAvail().x;
         float lineh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
         ImVec2 beg = ImGui::GetCursorScreenPos();
-        ImGui::GetWindowDrawList()->AddRectFilled(beg, {beg.x + width, beg.y + height + 2 * style.FramePadding.y},
+        ImGui::GetWindowDrawList()->AddRectFilled(beg, {beg.x + width - style.WindowPadding.x, beg.y + height + 2 * style.FramePadding.y},
                 ImColor(.4f, .4f, .4f, .5f));
 
         beg.x += style.FramePadding.x;
@@ -133,6 +192,9 @@ namespace Everest {
         }
 
         ImGui::PopStyleColor();
+
+        _serializeFields(script);
+
         return clearReq;
     }
 
