@@ -12,14 +12,15 @@ namespace Scripting {
     void reg_types(luastate_t& lua){
         lua.new_enum("Types",
                 "nil", Types::Nil,
+                "bool", Types::Bool,
                 "int", Types::Int,
                 "float", Types::Float,
                 "string", Types::String,
                 "vec2", Types::Vec2,
                 "vec3", Types::Vec3,
                 "vec4", Types::Vec4,
-                "color", Types::Color,
-                "Entity", Types::Entity
+                //"Entity", Types::Entity,
+                "color", Types::Color
                 );
     }
 

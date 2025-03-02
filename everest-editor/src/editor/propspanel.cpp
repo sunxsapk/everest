@@ -183,25 +183,31 @@ namespace Everest {
             Types type = v.as<Types>();
 
             switch(type){ // TODO: better ui
+                case Types::Bool: {
+                    bool val = scrstate[key];
+                    if(_boolui(key, val, key)) scrstate[key] = val;
+                    break;
+                }
+
                 case Types::Int: {
                     int val = scrstate[key];
                     if(_i32ui(key, val)) scrstate[key] = val;
                     break;
                 }
+
                 case Types::Float: {
                     f32 val = scrstate[key];
                     if(_f32dragui(key, val, 0.05f, key)) scrstate[key] = val;
                     break;
                 }
+
                 case Types::String: {
                     std::string val = scrstate[key];
                     static char buffer[1<<8];
                     memset(buffer, 0, sizeof(buffer));
                     strcpy(buffer, val.c_str());
-
                     ImGui::Columns(2);
                     ImGui::SetColumnWidth(0, colwidth);
-
                     ImGui::AlignTextToFramePadding();
                     ImGui::Text("%s", key);
                     ImGui::NextColumn();
@@ -211,26 +217,48 @@ namespace Everest {
                     ImGui::Columns(1);
                     break;
                 }
+
                 case Types::Vec2: {
                     vec2& val = scrstate[key];
                     _vec2ui(key, val, 0.f);
                     break;
                 }
+
                 case Types::Vec3: {
                     vec3& val = scrstate[key];
                     _vec3ui(key, val, 0.f);
                     break;
                 }
+
                 case Types::Vec4: {
                     vec4& val = scrstate[key];
                     _vec4ui(key, val, 0.f);
                     break;
                 }
+
                 case Types::Color: {
                     vec4& val = scrstate[key];
                     _colorui(key, val);
                     break;
                 }
+
+                /*case Types::Entity: {
+                    Entity _e = scrstate[key];
+
+                    ImGui::Columns(2);
+                    ImGui::SetColumnWidth(0, colwidth);
+
+                    ImGui::AlignTextToFramePadding();
+                    ImGui::Text("%s", key);
+
+                    ImGui::NextColumn();
+
+                    ImGui::Button(_e.isValid()? _e.get<tag_c>().tag.c_str() : "None");
+                    ImGui::Columns(1);
+                    ImGui::TextColored(ImVec4(.8f, 0.f, 0.f, 1.f), "Unsupported Type");
+                    break;
+                }*/
+
                 default:
                     ImGui::TextColored(ImVec4(.8f, 0.f, 0.f, 1.f), "Unsupported Type");
                     break;
@@ -420,6 +448,22 @@ namespace Everest {
         }
         ImGui::Spacing();
         ImGui::Separator();
+    }
+
+    bool PropertiesPanel::_boolui(const char* label, bool& value, const char* id){
+        ImGui::PushID(id);
+        ImGui::Columns(2);
+        ImGui::SetColumnWidth(0, colwidth);
+
+        ImGui::AlignTextToFramePadding();
+        ImGui::Text("%s", label);
+
+        ImGui::NextColumn();
+
+        bool x = ImGui::Checkbox("", &value);
+        ImGui::Columns(1);
+        ImGui::PopID();
+        return x;
     }
 
     bool PropertiesPanel::_i32ui(const char* label, i32& value, const char* id){

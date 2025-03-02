@@ -20,7 +20,7 @@ namespace Scripting {
 
     struct scriptHandler_t {
         std::filesystem::path scriptpath;
-        luastate_t* state = nullptr;
+        ref<luastate_t> state = nullptr;
 
         std::function<void()> onCreate;
         std::function<void(double)> onUpdate;
@@ -35,7 +35,6 @@ namespace Scripting {
         scriptHandler_t(const scriptHandler_t& other);
         scriptHandler_t& operator=(const scriptHandler_t& other);
 
-        void copy(const scriptHandler_t& other);
         void init(Entity entity);
         void update(double deltaTime);
         void collisionCallback(collision2d_t& data);

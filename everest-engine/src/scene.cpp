@@ -22,6 +22,10 @@ namespace Everest {
         return createEntityUUID(UUID(), name);
     }
 
+    Entity Scene::getEntityFromId(UUID id){
+        if(entityDB.find(id) == entityDB.end()) return {};
+        return {entityDB[id], this};
+    }
 
     Entity Scene::createEntityUUID(UUID id, const char * name){
         EV_profile_function();
@@ -30,6 +34,7 @@ namespace Everest {
         _en.add<transform_c>();
         _en.add<id_c>(id);
         _en.add<tag_c>(name);
+        entityDB.emplace(id, _en._id);
         return _en;
     }
 
@@ -38,9 +43,11 @@ namespace Everest {
         
         if(!entity.isValid()) return;
 
+        UUID id = entity.get<id_c>().id;
         onDestroyEntity(entity);
         _registry.destroy(entity._id);
         entity._id = entt::null;
+        entityDB.erase(id);
     } 
 
     Scene::~Scene(){
@@ -329,15 +336,22 @@ namespace Everest {
         ref<Scene> newScene = createRef<Scene>(other->_name);
         newScene->_viewportSize = other->_viewportSize;
         newScene->_viewportOffset = other->_viewportOffset;
-        // main camera shifting
 
         entt::registry& srcReg = other->_registry;
         entt::registry& desReg = newScene->_registry;
 
-        auto idv = srcReg.view<id_c>();
-        for(auto it = idv.rbegin(); it != idv.rend(); ++it){
+        // creating and copying is done in separate steps to allow reference passing
+        auto idgrp = srcReg.group<id_c>(entt::get<tag_c>);
+        for(auto it = idgrp.rbegin(); it != idgrp.rend(); ++it){
             entt::entity e = *it;
-            Entity _ent = newScene->createEntityUUID(srcReg.get<id_c>(e).id, srcReg.get<tag_c>(e).tag.c_str());
+            const auto& [id, tag] = idgrp.get(e);
+            Entity _ent = newScene->createEntityUUID(id.id, tag.tag.c_str());
+        }
+
+        for(auto it = idgrp.rbegin(); it != idgrp.rend(); ++it){
+            entt::entity e = *it;
+            const auto& [id, tag] = idgrp.get(e);
+            Entity _ent = newScene->getEntityFromId(id.id);
             // TODO: copy each components into the entity in new Scene
             copyComponent<transform_c>(srcReg, e, desReg, _ent);
             copyComponent<spriteRenderer_c>(srcReg, e, desReg, _ent);
@@ -348,8 +362,10 @@ namespace Everest {
             copyComponent<boxCollider2d_c>(srcReg, e, desReg, _ent);
             copyComponent<circleCollider2d_c>(srcReg, e, desReg, _ent);
 
+            // TODO: copy entities's reference
             copyScript(srcReg, e, desReg, _ent);
 
+            // main camera shifting
             if(e == other->mainCamera.entity){
                 newScene->mainCamera.camera = &desReg.get<camera_c>(_ent);
                 newScene->mainCamera.transform = &desReg.get<transform_c>(_ent);

@@ -45,18 +45,20 @@ namespace Everest {
             vec3 screenToWorld(vec2 screenPos);
             vec3 screenToWorldDir(vec2 screenPos);
 
+            Entity getEntityFromId(UUID id);
+
             static ref<Scene> copy(ref<Scene>& other);
 
-        private:
-            entt::registry _registry;
-            uvec2 _viewportOffset, _viewportSize; // TODO: add event listener for viewport resize during runtime
-            std::string _name;
         private:
             struct RendererCamera {
                 camera_c* camera = nullptr;
                 transform_c* transform = nullptr;
                 entt::entity entity = entt::null;
             } mainCamera;
+            std::map<UUID, entt::entity> entityDB;
+            entt::registry _registry;
+            uvec2 _viewportOffset, _viewportSize; // TODO: add event listener for viewport resize during runtime
+            std::string _name;
 
             void fetchTargetCamera();
             void onDestroyEntity(Entity& ent);

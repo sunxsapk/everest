@@ -24,19 +24,13 @@ namespace Scripting {
         return *this;
     }
 
-    void scriptHandler_t::copy(const scriptHandler_t& other){
-        if(this == &other) return;
-        scriptpath = other.scriptpath;
-        _initialized = false;
-    }
-
     void scriptHandler_t::init(Entity entity){
         if(!entity.isValid()) return;
         if( !scriptpath.has_extension() ||
             AssetsManager::getAssetsType(scriptpath) != AssetsType::SCRIPT
         ) return;
 
-        state = new luastate_t();
+        state = createRef<luastate_t>();
         auto& __state = *state;
         __state.open_libraries(lualibs::base, lualibs::math);
         registerTypes(__state);
@@ -112,9 +106,19 @@ namespace Scripting {
         this->scripts.clear();
         for(auto& script : other.scripts){
             this->scripts.push_back(scriptHandler_t());
-            this->scripts.back().copy(script);
+            auto& lastScript = this->scripts.back();
+            lastScript.scriptpath = script.scriptpath;
+            lastScript.init(entity);
+
+            auto& _sstate = *script.state;
+            auto& _lstate = *lastScript.state;
+            if(!_sstate["__serialize"].valid()) continue;
+            sol::table st = _sstate["__serialize"];
+            for(auto& [k, v] : st){
+                if(!_sstate[k].valid() || !_lstate[k].valid()) continue;
+                _lstate[k] = _sstate[k];
+            }
         }
-        init();
     }
 
     void evscript_c::init() {

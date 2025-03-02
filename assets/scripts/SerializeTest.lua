@@ -5,9 +5,11 @@ __serialize = {
     box = Types.vec2,
     pos = Types.vec3,
     cvec4 = Types.vec4,
-    color = Types.color
+    color = Types.color,
+    useGravity = Types.bool,
 }
 
+useGravity = true
 speed = 10
 name = "boo"
 num = 10

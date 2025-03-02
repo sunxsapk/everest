@@ -16,13 +16,14 @@ namespace Scripting {
     enum class Types {
         Nil = 0,
         Int,
+        Bool,
         Float,
         String,
         Vec2,
         Vec3,
         Vec4,
         Color,
-        Entity,
+        // Entity,
     };
     
     using luastate_t = sol::state;

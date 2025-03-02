@@ -41,7 +41,8 @@ before such behaviour is encountered
 
 =============== TODO ============
 [ ] write a rough lua-scripting api for entity
-    - serialize serializable fields
+    - scene: get entity using id : base for reference passing
+    - get script api for entity
     - serialize the script component
     - update api docs
 [ ] fix bugs... duh!!

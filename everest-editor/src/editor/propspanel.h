@@ -21,6 +21,7 @@ namespace Everest {
             static void _tag(Entity& ent);
             static void _transform(Entity& ent);
 
+            static bool _boolui(const char* label, bool& value, const char* id);
             static bool _i32ui(const char* label, i32& value, const char* id = "##0");
             static bool _f32dragui(const char* label, f32& value, f32 speed = .1f, const char* id = "##0", f32 min = 0.f, f32 max = 0.f);
             static bool _f32sliderui(const char* label, f32& value, const char* id, f32 min_ = 0.f, f32 max_ = 1.f);

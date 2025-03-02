@@ -26,5 +26,5 @@ end
 
 OnCollision = function(data)
     -- data.other:remove_rigidbody2d()
-    print(entity:get_tag().tag, data.other:get_tag().tag)
+    -- print(entity:get_tag().tag, data.other:get_tag().tag)
 end
