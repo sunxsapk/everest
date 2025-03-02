@@ -8,14 +8,26 @@ namespace Scripting {
         *this = other;
     }
 
+    scriptHandler_t::scriptHandler_t(Entity ent, std::filesystem::path path)
+    :scriptpath(path){
+        init(ent);
+    }
+
     scriptHandler_t& scriptHandler_t::operator=(const scriptHandler_t& other){
         if(this == &other) return *this;
         scriptpath = other.scriptpath;
-        onUpdate = nullptr;
-        onCreate = nullptr;
-        onCollision = nullptr;
+        state = other.state;
+        onCreate = other.onCreate;
+        onUpdate = other.onUpdate;
+        onCollision = other.onCollision;
         _initialized = false;
         return *this;
+    }
+
+    void scriptHandler_t::copy(const scriptHandler_t& other){
+        if(this == &other) return;
+        scriptpath = other.scriptpath;
+        _initialized = false;
     }
 
     void scriptHandler_t::init(Entity entity){
@@ -24,29 +36,34 @@ namespace Scripting {
             AssetsManager::getAssetsType(scriptpath) != AssetsType::SCRIPT
         ) return;
 
-        state = luastate_t();
-        state.open_libraries(lualibs::base, lualibs::math);
-        registerTypes(state);
-        auto lres = state.load_file(scriptpath.c_str());
+        state = new luastate_t();
+        auto& __state = *state;
+        __state.open_libraries(lualibs::base, lualibs::math);
+        registerTypes(__state);
+        auto lres = __state.load_file(scriptpath.c_str());
         if(!lres.valid()){
-            return;
-            // throw std::invalid_argument("Unable to load lua script");
+            throw std::invalid_argument("Unable to load lua script");
         }
         lres();
-        state["entity"] = entity;
-        if(state["OnCreate"].valid()) {
-            onCreate = state["OnCreate"];
+        __state["entity"] = entity;
+        if(__state["OnCreate"].valid()) {
+            onCreate = __state["OnCreate"];
         }
-        EVLog_Msg("ch1");
-        if(state["OnUpdate"].valid()){
-            onUpdate = state["OnUpdate"];
+        if(__state["OnUpdate"].valid()){
+            onUpdate = __state["OnUpdate"];
         }
-        EVLog_Msg("ch1");
-        if(state["OnCollision"].valid()){
-            onCollision = state["OnCollision"];
+        if(__state["OnCollision"].valid()){
+            onCollision = __state["OnCollision"];
         }
-        EVLog_Msg("ch1");
-        EVLog_Msg("Parsed script");
+        EVLog_Msg("Parsed script %s with serialization validity(%d)", scriptpath.c_str(), __state["__serialize"].valid());
+    }
+
+    bool scriptHandler_t::getSerializedFields(sol::table& resultTable) {
+        if(state == nullptr || (*state)["__serialize"].valid()){
+            resultTable = (*state)["__serialize"];
+            return true;
+        }
+        return false;
     }
 
     void scriptHandler_t::update(double deltaTime){
@@ -85,12 +102,19 @@ namespace Scripting {
 
     evscript_c& evscript_c::operator=(const evscript_c& other){
         if(this == &other) return *this;
+        entity = other.entity;
+        scripts = other.scripts;
+        return *this;
+    }
+
+    void evscript_c::makeCopyUsing(const evscript_c& other, Entity entity_){
+        entity = entity_;
         this->scripts.clear();
         for(auto& script : other.scripts){
-            auto nscr = script;
-            this->scripts.push_back(nscr);
+            this->scripts.push_back(scriptHandler_t());
+            this->scripts.back().copy(script);
         }
-        return *this;
+        init();
     }
 
     void evscript_c::init() {
@@ -109,6 +133,13 @@ namespace Scripting {
         for(auto& script : scripts){
             script.collisionCallback(data);
         }
+    }
+
+    void evscript_c::addScript(const std::filesystem::path& path){
+        for(auto& script : scripts){
+            if(script.scriptpath == path) return;
+        }
+        scripts.push_back(scriptHandler_t(entity, path));
     }
 
 }

@@ -2,7 +2,7 @@ __serialize = {
     speed = Types.float,
 }
 
-speed = 10
+speed = 13
 
 OnCreate = function()
     rigidbody = entity:get_rigidbody2d()

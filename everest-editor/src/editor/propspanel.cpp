@@ -19,7 +19,34 @@ namespace Everest {
         if(ent.has<tag_c>()) _tag(ent);
         addComponentUI(ent);
         drawComponents(ent);
+        drawScripts(ent);
+        scriptDropper(ent);
+
         ImGui::End();
+    }
+
+    void PropertiesPanel::scriptDropper(Entity& ent){
+        ImVec2 region = ImGui::GetContentRegionAvail();
+
+        ImGui::Button("Drop your script here", ImVec2(region.x, 150));
+
+        if(ImGui::BeginDragDropTarget()){
+            const ImGuiPayload* data = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
+            if(data && data->Data){
+                const char* path_str = (const char*) data->Data;
+                EVLog_Msg("Drag n Drop Item %s", path_str);
+                if(AssetsManager::getAssetsType(path_str) == AssetsType::SCRIPT){
+                    try {
+                        auto& scr = ent.tryAdd<EvScript>(ent);
+                        scr.addScript(path_str);
+                    } catch(std::exception exc){
+                        // TODO: make this into a popup
+                        EVLog_Err("Error on loading Script: %s", exc.what());
+                    }
+                }
+            }
+            ImGui::EndDragDropTarget();
+        }
     }
 
     void PropertiesPanel::addComponentUI(Entity& ent){
@@ -40,16 +67,73 @@ namespace Everest {
             }
             if(ImGui::MenuItem("Sprite Renderer")) ent.tryAdd<spriteRenderer_c>();
             if(ImGui::MenuItem("Circle Renderer")) ent.tryAdd<circleRenderer_c>();
-            //if(ImGui::MenuItem("Rigidbody")) ent.tryAdd<rigidbody_c>();
             if(ImGui::MenuItem("Rigidbody 2D")) ent.tryAdd<rigidbody2d_c>();
-            //if(ImGui::MenuItem("Spring Joint")) ent.tryAdd<springJoint_c>();
+#ifndef __NO_3D__
+            if(ImGui::MenuItem("Rigidbody")) ent.tryAdd<rigidbody_c>();
+            if(ImGui::MenuItem("Spring Joint")) ent.tryAdd<springJoint_c>();
+#endif
             if(ImGui::MenuItem("Spring Joint 2D")) ent.tryAdd<springJoint2d_c>();
             if(ImGui::MenuItem("Box Collider 2D")) ent.tryAdd<boxCollider2d_c>();
             if(ImGui::MenuItem("Circle Collider 2D")) ent.tryAdd<circleCollider2d_c>();
-            if(ImGui::MenuItem("Everest Script")) ent.tryAdd<EvScript>(ent);
+            // if(ImGui::MenuItem("Everest Script")) ent.tryAdd<EvScript>(ent); // Not needed for now
 
             ImGui::EndPopup();
         }
+    }
+
+    bool PropertiesPanel::_scriptWrapper(Scripting::scriptHandler_t& script, Entity ent){
+        ImGui::PushID(&script);
+        ImVec2 craw = ImGui::GetContentRegionAvail();
+
+        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{4,4});
+        float lineh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
+
+        bool c_open = ImGui::TreeNodeEx("##_scr__", _compFlags,
+                "%s", script.scriptpath.empty() ? "-- None --" : script.getScriptName()
+            );
+        ImGui::PopStyleVar();
+        ImGui::SameLine(craw.x - lineh * 0.5f);
+
+        ImGui::PushFont(UIFontManager::getDefaultBold());
+        if(ImGui::Button("+", ImVec2{lineh, lineh})) ImGui::OpenPopup("__scr_st__");
+        ImGui::PopFont();
+
+        bool removeReq = false;
+        if(ImGui::BeginPopup("__scr_st__")){
+            removeReq = ImGui::MenuItem("Remove");
+
+            if(ImGui::MenuItem("Reload")){
+                try {
+                    script.init(ent);
+                } catch(std::exception exc){
+                    EVLog_Err("Error on reloading Script: %s", exc.what());
+                }
+            }
+            ImGui::EndPopup();
+        }
+
+        if(c_open){
+            _serializeFields(script);
+            ImGui::TreePop();
+        }
+        ImGui::Spacing();
+        ImGui::Separator();
+        ImGui::PopID();
+        return removeReq;
+    }
+
+    void PropertiesPanel::drawScripts(Entity& ent){
+        if(!ent.has<EvScript>()) return;
+        auto& script = ent.get<EvScript>();
+
+        int remove = -1;
+        for(int i = 0; i < script.scripts.size(); i++){
+            auto& scr = script.scripts[i];
+            if(_scriptWrapper(scr, ent)){
+                remove = i;
+            }
+        }
+        if(remove >= 0) script.scripts.erase(script.scripts.begin() + remove);
     }
 
     template<typename comp_t, typename uiDrawCallback>
@@ -58,7 +142,6 @@ namespace Everest {
 
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{4,4});
         float lineh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
-        ImGui::Separator();
 
         bool c_remove = false;
         bool c_open = ImGui::TreeNodeEx(label, _compFlags);
@@ -80,6 +163,7 @@ namespace Everest {
             ImGui::TreePop();
         }
         ImGui::Spacing();
+        ImGui::Separator();
         if(c_remove) ent.remove<comp_t>();
     }
 
@@ -91,47 +175,59 @@ namespace Everest {
 
         for(auto& [k, v] : fields){
             const char* key = k.as<const char*>();
-            if(!script.state[key].valid()) continue;
+            auto& scrstate = *script.state;
+            if(!scrstate[key].valid()) continue;
+
+            ImGui::PushID(key);
 
             Types type = v.as<Types>();
 
             switch(type){ // TODO: better ui
                 case Types::Int: {
-                    int val = script.state[key];
-                    if(ImGui::InputInt(key, &val)) script.state[key] = val;
+                    int val = scrstate[key];
+                    if(_i32ui(key, val)) scrstate[key] = val;
                     break;
                 }
                 case Types::Float: {
-                    f32 val = script.state[key];
-                    if(_f32dragui(key, val, 0.05f, key)) script.state[key] = val;
+                    f32 val = scrstate[key];
+                    if(_f32dragui(key, val, 0.05f, key)) scrstate[key] = val;
                     break;
                 }
                 case Types::String: {
-                    std::string val = script.state[key];
+                    std::string val = scrstate[key];
                     static char buffer[1<<8];
                     memset(buffer, 0, sizeof(buffer));
                     strcpy(buffer, val.c_str());
-                    if(ImGui::InputText(key, buffer, 256)) script.state[key] = std::string(buffer);
+
+                    ImGui::Columns(2);
+                    ImGui::SetColumnWidth(0, colwidth);
+
+                    ImGui::AlignTextToFramePadding();
+                    ImGui::Text("%s", key);
+                    ImGui::NextColumn();
+                    if(ImGui::InputText("##xx", buffer, sizeof(buffer))){
+                        scrstate[key] = std::string(buffer);
+                    }
+                    ImGui::Columns(1);
                     break;
                 }
                 case Types::Vec2: {
-                    vec2& val = script.state[key];
+                    vec2& val = scrstate[key];
                     _vec2ui(key, val, 0.f);
                     break;
                 }
                 case Types::Vec3: {
-                    vec3& val = script.state[key];
+                    vec3& val = scrstate[key];
                     _vec3ui(key, val, 0.f);
                     break;
                 }
                 case Types::Vec4: {
-                    // TODO: implement vec4 ui
-                    vec3& val = script.state[key];
-                    _vec3ui(key, val, 0.f);
+                    vec4& val = scrstate[key];
+                    _vec4ui(key, val, 0.f);
                     break;
                 }
                 case Types::Color: {
-                    vec4& val = script.state[key];
+                    vec4& val = scrstate[key];
                     _colorui(key, val);
                     break;
                 }
@@ -139,63 +235,8 @@ namespace Everest {
                     ImGui::TextColored(ImVec4(.8f, 0.f, 0.f, 1.f), "Unsupported Type");
                     break;
             }
+            ImGui::PopID();
         }
-    }
-
-    bool PropertiesPanel::_scriptHandler(Scripting::scriptHandler_t& script, Entity ent){
-        const char* sn = script.scriptpath.empty()? "None" : script.scriptpath.c_str();
-        auto style = ImGui::GetStyle();
-        f32 height = UIFontManager::getDefaultBold()->FontSize;
-        f32 width = ImGui::GetContentRegionAvail().x;
-        float lineh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
-        ImVec2 beg = ImGui::GetCursorScreenPos();
-        ImGui::GetWindowDrawList()->AddRectFilled(beg, {beg.x + width - style.WindowPadding.x, beg.y + height + 2 * style.FramePadding.y},
-                ImColor(.4f, .4f, .4f, .5f));
-
-        beg.x += style.FramePadding.x;
-        beg.y += style.FramePadding.y;
-        ImGui::SetCursorScreenPos(beg);
-        ImGui::InvisibleButton("##dndtrg", {width - style.WindowPadding.x - lineh * 3, height});
-
-        ImGui::SetItemAllowOverlap();
-
-        if(ImGui::BeginDragDropTarget()){
-            const ImGuiPayload* data = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
-            if(data && data->Data){
-                const char* path_str = (const char*) data->Data;
-                EVLog_Msg("Drag n Drop Item %s", path_str);
-                if(AssetsManager::getAssetsType(path_str) == AssetsType::SCRIPT){
-                    try {
-                        script.setScriptPath(std::filesystem::path(path_str), ent);
-                    } catch(std::exception exc){
-                        // TODO: make this into a popup
-                        EVLog_Err("Error on loading Script: %s", exc.what());
-                    }
-                }
-            }
-
-            ImGui::EndDragDropTarget();
-        }
-
-        ImGui::SetCursorScreenPos(beg);
-        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 1.f, 1.f, 1.f));
-
-        ImGui::Text("[ %s ] >> %s", script.scriptpath.empty() ? "--" : script.getScriptName(), sn);
-
-        beg.x += width - lineh * 3 - style.FramePadding.x;
-        beg.y -= style.FramePadding.y;
-        ImGui::SetCursorScreenPos(beg);
-        bool clearReq = ImGui::Button("x", ImVec2{lineh, lineh});
-        ImGui::SameLine();
-        if(ImGui::Button("r", ImVec2{lineh, lineh})){
-            script.init(ent);
-        }
-
-        ImGui::PopStyleColor();
-
-        _serializeFields(script);
-
-        return clearReq;
     }
 
     void PropertiesPanel::drawComponents(Entity& ent){
@@ -345,27 +386,6 @@ namespace Everest {
             _f32sliderui("Restitution", comp.restitution, "##crst");
         });
 
-        if(ent.has<EvScript>()) _componentUI<EvScript>(ent, "Everest Script",
-        [](EvScript& comp){
-            ImGui::PushFont(UIFontManager::getDefaultBold());
-            int remove = -1;
-            for(int i=0; i<comp.scripts.size(); i++){
-                ImGui::PushID(i);
-                if(_scriptHandler(comp.scripts[i], comp.entity)) remove = i;
-                ImGui::PopID();
-            }
-
-            if(remove >=0){
-                comp.scripts.erase(comp.scripts.begin() + remove);
-            }
-
-            if(ImGui::Button("Add Script")){
-                comp.scripts.push_back(Scripting::scriptHandler_t());
-            }
-
-            ImGui::PopFont();
-        });
-
 #if 0
         if(ent.has<nativeScript_c>()) _componentUI<nativeScript_c>(ent, "Native Script",
         [](nativeScript_c& comp){
@@ -399,11 +419,26 @@ namespace Everest {
             ImGui::TreePop();
         }
         ImGui::Spacing();
+        ImGui::Separator();
+    }
+
+    bool PropertiesPanel::_i32ui(const char* label, i32& value, const char* id){
+        ImGui::PushID(id);
+        ImGui::Columns(2);
+        ImGui::SetColumnWidth(0, colwidth);
+
+        ImGui::AlignTextToFramePadding();
+        ImGui::Text("%s", label);
+
+        ImGui::NextColumn();
+
+        bool x = ImGui::DragInt("", &value);
+        ImGui::Columns(1);
+        ImGui::PopID();
+        return x;
     }
 
     bool PropertiesPanel::_f32dragui(const char* label, f32& value, f32 speed, const char* id, f32 min, f32 max){
-        const f32 colwidth = 100.f;
-
         ImGui::PushID(id);
         ImGui::Columns(2);
         ImGui::SetColumnWidth(0, colwidth);
@@ -420,8 +455,6 @@ namespace Everest {
     }
 
     bool PropertiesPanel::_f32sliderui(const char* label, f32& value, const char* id, f32 min_, f32 max_){
-        const f32 colwidth = 100.f;
-
         ImGui::PushID(id);
         ImGui::Columns(2);
         ImGui::SetColumnWidth(0, colwidth);
@@ -436,7 +469,7 @@ namespace Everest {
     }
 
 
-    void _vec3f32(const char* label, f32 &value, f32 speed, const char* id, f32 min = 0.f, f32 max = 0.f){
+    void _vecxf32ui(const char* label, f32 &value, f32 speed, const char* id, f32 min = 0.f, f32 max = 0.f){
         ImGui::PushFont(UIFontManager::getDefaultBold());
         ImGui::AlignTextToFramePadding();
         ImGui::Text("%s", label);
@@ -446,8 +479,6 @@ namespace Everest {
     }
 
     void PropertiesPanel::_vec2ui(const char* label, vec2& value, f32 resetvalue, f32 min, f32 max){
-        const f32 colwidth = 100.f;
-
         ImGui::PushID(label);
         ImGui::Columns(2);
 
@@ -462,10 +493,10 @@ namespace Everest {
         f32 lh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
         ImVec2 btnsz = {lh + 3.f, lh};
 
-        _vec3f32("x", value.x, .1f, "##1", min, max);
+        _vecxf32ui("x", value.x, .1f, "##1", min, max);
         ImGui::PopItemWidth();
         ImGui::SameLine(0.f, 4.f);
-        _vec3f32("y", value.y, .1f, "##2", min, max);
+        _vecxf32ui("y", value.y, .1f, "##2", min, max);
         ImGui::PopItemWidth();
 
         ImGui::PopStyleVar();
@@ -475,8 +506,6 @@ namespace Everest {
     }
 
     void PropertiesPanel::_vec3ui(const char* label, vec3& value, f32 resetvalue, f32 min, f32 max){
-        const f32 colwidth = 100.f;
-
         ImGui::PushID(label);
         ImGui::Columns(2);
 
@@ -491,13 +520,46 @@ namespace Everest {
         f32 lh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
         ImVec2 btnsz = {lh + 3.f, lh};
 
-        _vec3f32("x", value.x, .1f, "##1", min, max);
+        _vecxf32ui("x", value.x, .1f, "##1", min, max);
         ImGui::PopItemWidth();
         ImGui::SameLine(0.f, 4.f);
-        _vec3f32("y", value.y, .1f, "##2", min, max);
+        _vecxf32ui("y", value.y, .1f, "##2", min, max);
         ImGui::PopItemWidth();
         ImGui::SameLine(0.f, 4.f);
-        _vec3f32("z", value.z, .1f, "##3", min, max);
+        _vecxf32ui("z", value.z, .1f, "##3", min, max);
+        ImGui::PopItemWidth();
+
+        ImGui::PopStyleVar();
+        ImGui::Columns(1);
+
+        ImGui::PopID();
+    }
+
+    void PropertiesPanel::_vec4ui(const char* label, vec4& value, f32 resetvalue, f32 min, f32 max){
+        ImGui::PushID(label);
+        ImGui::Columns(2);
+
+        ImGui::AlignTextToFramePadding();
+        ImGui::SetColumnWidth(0, colwidth);
+        ImGui::Text("%s", label);
+        ImGui::NextColumn();
+
+        ImGui::PushMultiItemsWidths(4, ImGui::CalcItemWidth());
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2{0,0});
+
+        f32 lh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
+        ImVec2 btnsz = {lh + 3.f, lh};
+
+        _vecxf32ui("x", value.x, .1f, "##1", min, max);
+        ImGui::PopItemWidth();
+        ImGui::SameLine(0.f, 4.f);
+        _vecxf32ui("y", value.y, .1f, "##2", min, max);
+        ImGui::PopItemWidth();
+        ImGui::SameLine(0.f, 4.f);
+        _vecxf32ui("z", value.z, .1f, "##3", min, max);
+        ImGui::PopItemWidth();
+        ImGui::SameLine(0.f, 4.f);
+        _vecxf32ui("w", value.w, .1f, "##4", min, max);
         ImGui::PopItemWidth();
 
         ImGui::PopStyleVar();
@@ -507,8 +569,6 @@ namespace Everest {
     }
 
     void PropertiesPanel::_colorui(const char* label, vec4& value, const char* id){
-        const f32 colwidth = 100.f;
-
         ImGui::PushID(id ? id : label);
         ImGui::Columns(2);
         ImGui::SetColumnWidth(0, colwidth);
@@ -519,5 +579,65 @@ namespace Everest {
         ImGui::Columns(1);
         ImGui::PopID();
     }
+
+
+
+#if 0
+    bool PropertiesPanel::_scriptHandler(Scripting::scriptHandler_t& script, Entity ent){
+        const char* sn = script.scriptpath.empty()? "None" : script.scriptpath.c_str();
+        auto style = ImGui::GetStyle();
+        f32 height = UIFontManager::getDefaultBold()->FontSize;
+        f32 width = ImGui::GetContentRegionAvail().x;
+        float lineh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
+        ImVec2 beg = ImGui::GetCursorScreenPos();
+        ImGui::GetWindowDrawList()->AddRectFilled(beg, {beg.x + width - style.WindowPadding.x, beg.y + height + 2 * style.FramePadding.y},
+                ImColor(.4f, .4f, .4f, .5f));
+
+        beg.x += style.FramePadding.x;
+        beg.y += style.FramePadding.y;
+        ImGui::SetCursorScreenPos(beg);
+        ImGui::InvisibleButton("##dndtrg", {width - style.WindowPadding.x - lineh * 3, height});
+
+        ImGui::SetItemAllowOverlap();
+
+        if(ImGui::BeginDragDropTarget()){
+            const ImGuiPayload* data = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
+            if(data && data->Data){
+                const char* path_str = (const char*) data->Data;
+                EVLog_Msg("Drag n Drop Item %s", path_str);
+                if(AssetsManager::getAssetsType(path_str) == AssetsType::SCRIPT){
+                    try {
+                        script.setScriptPath(std::filesystem::path(path_str), ent);
+                    } catch(std::exception exc){
+                        // TODO: make this into a popup
+                        EVLog_Err("Error on loading Script: %s", exc.what());
+                    }
+                }
+            }
+
+            ImGui::EndDragDropTarget();
+        }
+
+        ImGui::SetCursorScreenPos(beg);
+        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 1.f, 1.f, 1.f));
+
+        ImGui::Text("[ %s ] >> %s", script.scriptpath.empty() ? "--" : script.getScriptName(), sn);
+
+        beg.x += width - lineh * 3 - style.FramePadding.x;
+        beg.y -= style.FramePadding.y;
+        ImGui::SetCursorScreenPos(beg);
+        bool clearReq = ImGui::Button("x", ImVec2{lineh, lineh});
+        ImGui::SameLine();
+        if(ImGui::Button("r", ImVec2{lineh, lineh})){
+            script.init(ent);
+        }
+
+        ImGui::PopStyleColor();
+
+        _serializeFields(script);
+
+        return clearReq;
+    }
+#endif
 
 }

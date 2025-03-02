@@ -322,9 +322,7 @@ namespace Everest {
         EvScript& sc = src.get<EvScript>(sEntity);
         EvScript& dc = dest.all_of<EvScript>(dEntity) ?
             dest.get<EvScript>(dEntity) : dest.emplace<EvScript>(dEntity, sc);
-        dc = sc;
-        dc.entity = dEntity;
-        dc.init();
+        dc.makeCopyUsing(sc, dEntity);
     }
 
     ref<Scene> Scene::copy(ref<Scene>& other){

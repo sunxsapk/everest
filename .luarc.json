@@ -9,7 +9,8 @@
         "destroyEntity",
         "Time",
         "Scene",
-        "Types"
+        "Types",
+        "vec3"
     ],
     "diagnostics.disable": [
         "lowercase-global"

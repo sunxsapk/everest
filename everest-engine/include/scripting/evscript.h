@@ -20,7 +20,7 @@ namespace Scripting {
 
     struct scriptHandler_t {
         std::filesystem::path scriptpath;
-        luastate_t state;
+        luastate_t* state = nullptr;
 
         std::function<void()> onCreate;
         std::function<void(double)> onUpdate;
@@ -31,20 +31,16 @@ namespace Scripting {
         template<typename Alloc>
         scriptHandler_t(Alloc& alloc){ }
         scriptHandler_t(){};
+        scriptHandler_t(Entity ent, std::filesystem::path path);
         scriptHandler_t(const scriptHandler_t& other);
         scriptHandler_t& operator=(const scriptHandler_t& other);
 
+        void copy(const scriptHandler_t& other);
         void init(Entity entity);
         void update(double deltaTime);
         void collisionCallback(collision2d_t& data);
 
-        inline bool getSerializedFields(sol::table& resultTable){
-            if(state["__serialize"].valid()){
-                resultTable = state["__serialize"];
-                return true;
-            }
-            return false;
-        }
+        bool getSerializedFields(sol::table& resultTable);
 
         void setScriptPath(std::filesystem::path path, Entity ent);
         const char* getScriptName();
@@ -55,14 +51,18 @@ namespace Scripting {
         std::vector<scriptHandler_t> scripts;
 
         template<typename Alloc>
-        evscript_c(Alloc& alloc){ init();}
+        evscript_c(Alloc& alloc){}
+        evscript_c(){ }
         evscript_c(Entity entity_):entity(entity_){ }
         evscript_c(const evscript_c& other);
         evscript_c& operator=(const evscript_c& other);
 
+        void makeCopyUsing(const evscript_c& other, Entity entity);
         void init();
         void update(double deltaTime);
         void collisionCallback(collision2d_t& data);
+
+        void addScript(const std::filesystem::path& path);
 
         friend class Scene;
     };
