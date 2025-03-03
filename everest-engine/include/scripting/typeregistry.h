@@ -14,7 +14,6 @@ namespace Everest {
 namespace Scripting {
 
     enum class Types {
-        Nil = 0,
         Int,
         Bool,
         Float,
@@ -23,7 +22,7 @@ namespace Scripting {
         Vec3,
         Vec4,
         Color,
-        // Entity,
+        Entity,
     };
     
     using luastate_t = sol::state;

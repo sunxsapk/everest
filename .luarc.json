@@ -10,7 +10,8 @@
         "Time",
         "Scene",
         "Types",
-        "vec3"
+        "vec3",
+        "Entity"
     ],
     "diagnostics.disable": [
         "lowercase-global"

@@ -11,7 +11,6 @@ namespace Scripting {
 
     void reg_types(luastate_t& lua){
         lua.new_enum("Types",
-                "nil", Types::Nil,
                 "bool", Types::Bool,
                 "int", Types::Int,
                 "float", Types::Float,
@@ -19,7 +18,7 @@ namespace Scripting {
                 "vec2", Types::Vec2,
                 "vec3", Types::Vec3,
                 "vec4", Types::Vec4,
-                //"Entity", Types::Entity,
+                "Entity", Types::Entity,
                 "color", Types::Color
                 );
     }
@@ -439,6 +438,7 @@ namespace Scripting {
 
     void reg_entity(luastate_t& lua){
         lua.new_usertype<Entity>("Entity",
+                sol::constructors<Entity()>(),
                 "destroy", &Entity::destroy,
 
                 "get_tag", _getc<tag_c>,

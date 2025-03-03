@@ -176,11 +176,12 @@ namespace Everest {
         for(auto& [k, v] : fields){
             const char* key = k.as<const char*>();
             auto& scrstate = *script.state;
-            if(!scrstate[key].valid()) continue;
+            Types type = v.as<Types>();
+
+            if(type != Types::Entity && !scrstate[key].valid()) continue;
 
             ImGui::PushID(key);
 
-            Types type = v.as<Types>();
 
             switch(type){ // TODO: better ui
                 case Types::Bool: {
@@ -242,22 +243,14 @@ namespace Everest {
                     break;
                 }
 
-                /*case Types::Entity: {
-                    Entity _e = scrstate[key];
-
-                    ImGui::Columns(2);
-                    ImGui::SetColumnWidth(0, colwidth);
-
-                    ImGui::AlignTextToFramePadding();
-                    ImGui::Text("%s", key);
-
-                    ImGui::NextColumn();
-
-                    ImGui::Button(_e.isValid()? _e.get<tag_c>().tag.c_str() : "None");
-                    ImGui::Columns(1);
-                    ImGui::TextColored(ImVec4(.8f, 0.f, 0.f, 1.f), "Unsupported Type");
+                case Types::Entity: {
+                    Entity _e;
+                    if(scrstate[key].valid()) _e = scrstate[key];
+                    if(_entity(key, _e)){
+                        scrstate[key] = _e;
+                    }
                     break;
-                }*/
+                }
 
                 default:
                     ImGui::TextColored(ImVec4(.8f, 0.f, 0.f, 1.f), "Unsupported Type");
@@ -265,6 +258,29 @@ namespace Everest {
             }
             ImGui::PopID();
         }
+    }
+
+    bool PropertiesPanel::_entity(const char* label, Entity& entity){
+        bool used = false;
+        ImGui::Columns(2);
+        ImGui::SetColumnWidth(0, colwidth);
+        ImGui::AlignTextToFramePadding();
+        ImGui::TextUnformatted(label);
+        ImGui::NextColumn();
+        ImGui::Button(entity.isValid()? entity.get<tag_c>().tag.c_str() : "-- None --");
+
+        if(ImGui::BeginDragDropTarget()){
+            const ImGuiPayload* data = ImGui::AcceptDragDropPayload("ENTITY_PAYLOAD");
+            if(data && data->Data){
+                entity = *(Entity*)data->Data;
+                used = true;
+            }
+
+            ImGui::EndDragDropTarget();
+        }
+
+        ImGui::Columns(1);
+        return used;
     }
 
     void PropertiesPanel::drawComponents(Entity& ent){

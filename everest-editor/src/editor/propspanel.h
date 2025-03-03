@@ -18,6 +18,8 @@ namespace Everest {
             template<typename comp_t, typename uiDrawCallback>
             static void _componentUI(Entity& ent, const char* label, uiDrawCallback callback);
 
+            static bool _entity(const char* label, Entity& entity);
+
             static void _tag(Entity& ent);
             static void _transform(Entity& ent);
 

@@ -63,6 +63,10 @@ namespace Everest {
             _scene->destroyEntity(*this);
         }
 
+        inline Scene* getScene(){
+            return _scene;
+        }
+
         private:
         entt::entity _id{entt::null};
         Scene* _scene = nullptr;

@@ -1,4 +1,5 @@
 #include "scripting/evscript.h"
+#include "scene/components.h"
 #include "utils/assetsManager.h"
 
 namespace Everest {
@@ -105,6 +106,9 @@ namespace Scripting {
         entity = entity_;
         this->scripts.clear();
         for(auto& script : other.scripts){
+
+            EVLog_Msg("Copying script %s", script.scriptpath.c_str());
+
             this->scripts.push_back(scriptHandler_t());
             auto& lastScript = this->scripts.back();
             lastScript.scriptpath = script.scriptpath;
@@ -115,8 +119,76 @@ namespace Scripting {
             if(!_sstate["__serialize"].valid()) continue;
             sol::table st = _sstate["__serialize"];
             for(auto& [k, v] : st){
-                if(!_sstate[k].valid() || !_lstate[k].valid()) continue;
-                _lstate[k] = _sstate[k];
+
+                const char* key = k.as<const char*>();
+
+                EVLog_Msg("%s %i", k.as<const char*>(), v.as<Types>());
+
+                if(!v.valid()) continue;
+                if(!_sstate[key].valid()) continue;
+                // if(!_lstate[key].valid()) continue;
+
+                switch(v.as<Types>()){
+                    case Types::Int: 
+                        {
+                            int v = _sstate[key];
+                            _lstate[key] = v;
+                            break;
+                        }
+                    case Types::Bool:
+                        {
+                            bool v = _sstate[key];
+                            _lstate[key] = v;
+                            break;
+                        }
+                    case Types::Float:
+                        {
+                            float v = _sstate[key];
+                            _lstate[key] = v;
+                            break;
+                        }
+                    case Types::String:
+                        {
+                            std::string v = _sstate[key];
+                            _lstate[key] = v;
+                            break;
+                        }
+                    case Types::Vec2:
+                        {
+                            vec2 v = _sstate[key];
+                            _lstate[key] = v;
+                            break;
+                        }
+                    case Types::Vec3: 
+                        {
+                            vec3 v = _sstate[key];
+                            _lstate[key] = v;
+                            break;
+                        }
+                    case Types::Vec4: 
+                        {
+                            vec4 v = _sstate[key];
+                            _lstate[key] = v;
+                            break;
+                        }
+                    case Types::Color: 
+                        {
+                            vec4 v = _sstate[key];
+                            _lstate[key] = v;
+                            break;
+                        }
+                    case Types::Entity:
+                        {
+                            Entity se = _sstate[key];
+                            if(!se.isValid()) continue;
+                            _lstate[key] = entity.getScene()->getEntityFromId(se.get<id_c>().id);
+                            break;
+                        }
+                    default:
+                        EVLog_Wrn("unsupported type");
+                        break;
+                }
+
             }
         }
     }

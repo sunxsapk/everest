@@ -22,7 +22,7 @@ namespace Everest {
         return createEntityUUID(UUID(), name);
     }
 
-    Entity Scene::getEntityFromId(UUID id){
+    Entity Scene::getEntityFromId(UUID id){ 
         if(entityDB.find(id) == entityDB.end()) return {};
         return {entityDB[id], this};
     }
@@ -348,8 +348,7 @@ namespace Everest {
             Entity _ent = newScene->createEntityUUID(id.id, tag.tag.c_str());
         }
 
-        for(auto it = idgrp.rbegin(); it != idgrp.rend(); ++it){
-            entt::entity e = *it;
+        for(auto& e : idgrp){
             const auto& [id, tag] = idgrp.get(e);
             Entity _ent = newScene->getEntityFromId(id.id);
             // TODO: copy each components into the entity in new Scene

@@ -23,7 +23,7 @@ namespace Everest {
             }
         }
 
-        if(ImGui::IsWindowHovered() && ImGui::IsMouseDown(0)) _selectedEntity = {};
+        if(ImGui::IsWindowHovered() && ImGui::IsMouseDoubleClicked(0)) _selectedEntity = {};
         _focused = ImGui::IsWindowHovered();
 
         ImGui::End();
@@ -35,13 +35,19 @@ namespace Everest {
             return;
         }
 
-        auto& tag = entity.get<tag_c>().tag;
+        ImGui::PushID((u32)entity);
 
-        ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow 
-            | ImGuiTreeNodeFlags_SpanAvailWidth
-            | (_selectedEntity == entity ? ImGuiTreeNodeFlags_Selected : 0);
-        bool opened = ImGui::TreeNodeEx((void*)(u64)(u32)entity, flags, "%s", tag.c_str());
-        if(ImGui::IsItemClicked()) _selectedEntity = entity;
+        auto& tag = entity.get<tag_c>().tag;
+        bool selectAttempt = ImGui::Selectable(tag.c_str(), _selectedEntity == entity);
+
+        bool dragged = false;
+        if (ImGui::BeginDragDropSource()) {
+            ImGui::SetDragDropPayload("ENTITY_PAYLOAD", &entity, sizeof(entity));
+            ImGui::EndDragDropSource();
+            dragged = true; 
+        }
+
+        if(!dragged && selectAttempt) _selectedEntity = entity;
 
         bool deleteEntity = false;
         if(ImGui::BeginPopupContextItem()){
@@ -52,13 +58,11 @@ namespace Everest {
             ImGui::EndPopup();
         }
 
-        if(opened){
-            ImGui::TreePop();
-        }
-
         if(deleteEntity) {
             _scene->destroyEntity(entity);
         }
+
+        ImGui::PopID();
     }
 
     void SceneHeirarchyUI::heirarchyPopup(){
