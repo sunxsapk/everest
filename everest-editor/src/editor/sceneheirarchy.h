@@ -23,6 +23,7 @@ namespace Everest {
         private:
             static Scene* _scene;
             static Entity _selectedEntity;
+            static bool _focused;
             friend class PropertiesPanel;
             friend class ScenePanel;
     };

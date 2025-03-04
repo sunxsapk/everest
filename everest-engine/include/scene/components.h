@@ -13,6 +13,7 @@
 #include "renderer/circleRenderer.h"
 #include "physics/rigidbody.h"
 #include "physics/springJoint.h"
+#include "scripting/evscript.h"
 
 namespace Everest {
 
@@ -24,6 +25,8 @@ namespace Everest {
 
     struct tag_c {
         std::string tag;
+
+        tag_c(const char* tag_ = "Entity"):tag(tag_){}
     };
     
     struct transform_c {
@@ -59,10 +62,16 @@ namespace Everest {
     using Camera = camera_c;
     using SpriteRenderer = spriteRenderer_c;
     using CircleRenderer = circleRenderer_c;
-    using Rigidbody = rigidbody_c;
     using Rigidbody2d = rigidbody2d_c;
-    using SpringJoint = springJoint_c;
+    using SpringJoint2d = springJoint2d_c;
     using BoxCollider2d = boxCollider2d_c;
     using CircleCollider2d = circleCollider2d_c;
+    using EvScript = Scripting::evscript_c;
+
+#ifndef __NO_3D__
+    using Rigidbody = rigidbody_c;
+    using SpringJoint = springJoint_c;
+#endif
+
     using Collider2D = collider2d_c;
 }

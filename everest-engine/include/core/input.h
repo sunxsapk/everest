@@ -13,7 +13,7 @@
 
 namespace Everest {
     struct InputAxisKeys {
-        static  Keycode horizontal_p, horizontal_n;
+        static Keycode horizontal_p, horizontal_n;
         static Keycode vertical_p, vertical_n;
 
         static Keycode horizontal_ap, horizontal_an;
@@ -22,41 +22,21 @@ namespace Everest {
 
     class Input {
         public:
-            /*-------NOT TO BE USED OUTSIDE ENGINE--------
-             * initializes and binds input system with current window*/
-            static void init(){
-                s_window = Application::getAppWindow().getWindow();
-                ASSERT(s_window != NULL, "No window set for input");
-                setStickyKeys(false);
-            }
-
-            static inline void update(){
-                //s_scroll = {0,0};
-                dvec2 mp;
-                glfwGetCursorPos(s_window, &mp.x, &mp.y);
-                s_mousePosition = glm::round(mp);
-
-                s_axis.x = (getKeyDown(InputAxisKeys::horizontal_p) | getKeyDown(InputAxisKeys::horizontal_ap))
-                    - (getKeyDown(InputAxisKeys::horizontal_n) | getKeyDown(InputAxisKeys::horizontal_an));
-                s_axis.y = (getKeyDown(InputAxisKeys::vertical_p) | getKeyDown(InputAxisKeys::vertical_ap))
-                    - (getKeyDown(InputAxisKeys::vertical_n) | getKeyDown(InputAxisKeys::vertical_an));
-            }
-
-            static inline void clearScrollPoll(){
-                s_scroll = {0,0};}
-
             /*sets key-input mode to sticky*/
             static inline void setStickyKeys(bool mode){
                 glfwSetInputMode(s_window, GLFW_STICKY_KEYS, mode); }
             /*returns true if the key is currently pressed down*/
             static inline bool getKeyDown(Keycode keycode){
-                return glfwGetKey(s_window, keycode) == GLFW_PRESS;}
+                bool s = !s_keyStates.contains(keycode) && glfwGetKey(s_window, keycode) == GLFW_PRESS;
+                if(s) s_keyStates.insert(keycode);
+                return s;
+            }
             /*returns true if the pressed key is released*/
             static inline bool getKeyUp(Keycode keycode){
                 return glfwGetKey(s_window, keycode) == GLFW_RELEASE;}
             /*returns true if the key is held down*/
-            static inline bool getKeyRepeat(Keycode keycode){
-                return glfwGetKey(s_window, keycode) == GLFW_REPEAT;}
+            static inline bool getKey(Keycode keycode){
+                return glfwGetKey(s_window, keycode) == GLFW_PRESS;}
             
             /*returns the input axis values*/
             static inline vec2 getAxis(){return s_axis;}
@@ -86,12 +66,31 @@ namespace Everest {
             /*returns the mouse scroll direction in y-axis*/
             static inline f32 mouseScrollY(){return s_scroll.y;}
 
-            static bool _scrollPoll(MouseScrolledEvent& event);
         private:
+            static std::set<Keycode> s_keyStates, s_tempKeyStates;
             static GLFWwindow* s_window;
             static vec2 s_axis;
             static vec2 s_mousePosition;
             static vec2 s_scroll;
+
+            /*-------NOT TO BE USED OUTSIDE ENGINE--------
+             * initializes and binds input system with current window*/
+            static inline void init(){
+                s_window = Application::getAppWindow().getWindow();
+                ASSERT(s_window != NULL, "No window set for input");
+                setStickyKeys(false);
+            }
+
+            static void update();
+
+            static inline void clearScrollPoll(){ s_scroll = {0,0};}
+            static inline bool _scrollPoll(MouseScrolledEvent& event){
+                s_scroll += event.getDel();
+                return false;
+            }
+
+            friend class Application;
+            friend class Core;
     };
 }
 

@@ -1,0 +1,19 @@
+{
+    "diagnostics.globals": [
+        "vec2",
+        "ForceMode",
+        "entity",
+        "vec4",
+        "Input",
+        "Keycode",
+        "destroyEntity",
+        "Time",
+        "Scene",
+        "Types",
+        "vec3",
+        "Entity"
+    ],
+    "diagnostics.disable": [
+        "lowercase-global"
+    ]
+}

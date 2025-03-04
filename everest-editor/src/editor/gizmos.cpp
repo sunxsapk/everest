@@ -40,7 +40,7 @@ namespace Everest {
     void Gizmos::renderGrid(EditorCamera& camera, vec2 size){
         if(!showGizmos) return;
 
-        bool is2D = camera.is2D();
+        bool is2D = camera.camera.is2d();
         vec3 _sz = is2D? vec3(size.x, size.y, 0.f) : vec3(size.x, 0.f, size.y);
         _sz /= 2.f;
         vec3 gridVertices[4]{
@@ -54,7 +54,7 @@ namespace Everest {
         _instance->gridShader->bind();
         _instance->gridShader->setUniform_Mat4("u_vpmat", camera.getVPmat());
         _instance->gridShader->setUniform_vec4("u_camera", vec4(camera.transform.position,
-                    camera.camera.getOrtho_size()));
+                    camera.camera.get_lenssize()));
         _instance->gridShader->setUniform_i32("u_is2D", is2D);
         RenderAPI::drawIndexed(_instance->gridVertexArray, 6);
     }
@@ -63,7 +63,7 @@ namespace Everest {
         if(!showGizmos) return;
         Entity ent = SceneHeirarchyUI::getSelectedEntity();
         if(!ent.isValid()) return;
-        ImGuizmo::SetOrthographic(cam.is2D());
+        ImGuizmo::SetOrthographic(cam.camera.is2d());
         ImGuizmo::SetDrawlist();
         ImVec2 pos = ImGui::GetItemRectMin();
         ImVec2 end = ImGui::GetItemRectMax();
@@ -81,7 +81,7 @@ namespace Everest {
 
         if(ImGuizmo::IsUsing()){
             Math::decomposeTransform(transform, tmat);
-        } else if(ScenePanel::isFocused() && Input::mouseButtonUp(MouseButton_1)) {
+        } else if(ScenePanel::isFocused() && Input::mouseButtonUp(M_1)) {
             if(Input::getKeyDown(K_w)){
                 Gizmos::operation = ImGuizmo::TRANSLATE;
             } else if(Input::getKeyDown(K_e)){

@@ -24,65 +24,24 @@ will proceed in following sequence :-
 - Make a game run inside editor completely
 - Standalone game running
 
-=============== Current Activity =============
+=============== Bugs =============
 
-- Also, the logging system has its faults due to it been using c's printf for
-    for writing on console. So, develop a new logging system for cpp, so that
-    user can effectively use overridden '<<' operator for logging the objects too.
+1. Just found out that, at some point, when two objects are colliding at high speed, some value turns
+out to be infinity or nan, so all the objects vanish. So, check the vulnerable point and abort
+before such behaviour is encountered
 
 =============== Milestones ===================
 
-Now, let's talk about the current milestones of the project:
-
-+ First target is making a Event-System which will be used by the GLFW window,
-    to dispatch some events to the Application layers.
-    ; Components: Debug-Logger, Key-Events, Mouse-Events, Window-Events,
-                Window, Application, Layer
-    ; Target: Log each events on the console with detail info
-
-+ Establish  a rendering system with movable camera system, that can draw basic
-    shapes on the window.
-    ; Components: Camera(Main-Camera), Renderer
-    ; Target: Move a object(Shape) around screen, using key-inputs, mouse-inputs
-        and if possible with window-move events too.
-
-+ Before starting to work on a major bulk of a engine, we need a system for
-    profiling the engine, so do something about that. Make a memory monitoring
-    system, resources monitor, etc.
-
-- Make a fully functioning 2D renderer, with scene submission and whatnot. Research
-    some more on this topic and try to go towards the path of optimized renderering
-    systems like instanced rendering and batched rendering. Add supports for multiple
-    textures, sprites, etc. Also, make the orthographic camera not effect the shape
-    of the sprites when resizing the screen. It is okay, if size differs but not
-    the shapes. Also add support for texture/sprite atlas.
-    ; Components: Orthographic camera, Renderer, Textures, Shaders, Sprite atlas,etc
-
-+ Develop an Entity Component System before actually going on with scene setup
-    ; Components: ECS, <Components : Transform, Sprite>
-
-+ Make a scene editor layout and add a simple 2d scene editing and saving mechanism.
-    Add gizmo to the scene for ease of editing and some mouse related functionalities
-    for moving and selecting things. Make everything ready for big things to come next.
-    Also experiment with the instanced renderer2d.
-    ; Components: Scene editor, Scene loader & serializer, IMGUI docked layout and Menu, Mouse, 
-        position: world space & screen space, Gizmo, UI
-    ; Target: Edit and setup a scene for simple 2d game(maybe copy of Predcave)
-
-+ Play, Pause and Stop scenes, Reset scenes
-
-- Develop Physics system for 2D setup and pave a way for 3D physics too
-    - Static and Dynamic Rigidbodies
-    + Colliders
-    + Gravity
-    ; Target: Make a simple game like space invader or tetris
-
 - Scripting
+
+- Sprite atlas UI (texture load settings)
 
 - Develop 3D rendering system (mesh load and rendering, materials and shaders)
 
 
 =============== TODO ============
-[+] no collision if no rigidbody attached to any collider
-[+] multi-stage contact resolver: prepare -> separate -> physics
-[+] contact_data_t should be made more memory efficient
+[ ] write a rough lua-scripting api for entity
+    - make a simple demo game scene
+    - update api docs
+[ ] fix bugs... duh!!
+

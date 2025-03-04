@@ -3,6 +3,7 @@
 
 namespace Everest {
 
+#ifndef __NO_3D__
     void rigidbody_c::addForce(const vec3 value, const ForceMode mode){
         switch(mode){
             case ForceMode::Force:
@@ -45,6 +46,7 @@ namespace Everest {
         _torqueAccumulator = vec3(0.f);
         _impulse = vec3(0.f);
     }
+#endif
 
 
     void rigidbody2d_c::addForce(const vec2 value, const ForceMode mode){
@@ -64,9 +66,6 @@ namespace Everest {
     }
 
     void rigidbody2d_c::addForceAtOffset(const vec2 force, const vec2 offset){
-        // we only need z component of torque for 2d world
-        // TODO: optimizable
-        //_torqueAccumulator += glm::cross(vec3(offset, 0), vec3(force, 0)).z;
         _torqueAccumulator += (offset.x * force.y - offset.y * force.x);
         _forceAccumulator += force;
     }
@@ -76,18 +75,19 @@ namespace Everest {
         inverseMass = 1.f / value;
     }
 
-    void rigidbody2d_c::integrate(transform_c& transform, const f32 timeStep){
-        ASSERT(timeStep >= 0.f, "Timestep for simulation cannot be negative");
+    void rigidbody2d_c::integrate(transform_c& transform, f32 timeStep){
+        timeStep = std::max(0.00001f, timeStep);
+        if((definition & BodyDefBits::Static) == 0){
+            transform.position += vec3(velocity * timeStep, 0.f);
+            transform.rotation.z += glm::degrees(angularVelocity * timeStep);
 
-        transform.position += vec3(velocity * timeStep, 0.f);
-        transform.rotation.z += glm::degrees(angularVelocity * timeStep);
+            _acceleration = (_forceAccumulator - drag * velocity) * inverseMass;
+            vec2 iidv = _impulse * inverseMass;
+            velocity += _acceleration * timeStep + iidv;
+            _acceleration += iidv / timeStep;
 
-        _acceleration = (_forceAccumulator - drag * velocity) * inverseMass;
-        vec2 iidv = _impulse * inverseMass;
-        velocity += _acceleration * timeStep + iidv;
-        _acceleration += iidv / timeStep;
-
-        angularVelocity += (_torqueAccumulator - drag * angularVelocity) * inverseInertia * timeStep;
+            angularVelocity += (_torqueAccumulator - drag * angularVelocity) * inverseInertia * timeStep;
+        }
 
         _forceAccumulator = vec2(0.f);
         _torqueAccumulator = 0.f;

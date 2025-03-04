@@ -11,6 +11,10 @@ namespace Everest {
         return abs(point.x) <= halfExtents.x && abs(point.y) <= halfExtents.y;
     }
 
+    bool circleprops_t::contains(vec2 point){
+        return glm::length(point - offset) <= radius;
+    }
+
     collider2d_c::collider2d_c(collider2d_type_t type_)
     : type(type_) {
 

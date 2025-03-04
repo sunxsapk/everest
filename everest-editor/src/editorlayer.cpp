@@ -44,18 +44,22 @@ namespace Everest {
         Renderer::issue_clear();
 
         _framebuffer->clearAttachment(1, -1);
-        auto _activeScene = ScenePanel::getScene();
+
+        auto& _activeScene = SceneManager::getActiveScene();
         if(_activeScene){
             switch(ScenePanel::getSceneState()){
                 case SceneState::EDIT:
                     editorView(_activeScene);
                     break;
                 case SceneState::PLAY:
-                    if(ScenePanel::gameView){
-                        _activeScene->onUpdate();
-                        _activeScene->onRender();
-                    } else {
-                        editorView(_activeScene, true);
+                    {
+                        if(!_activeScene) break;
+                        if(ScenePanel::gameView){
+                            _activeScene->onUpdate();
+                            _activeScene->onRender();
+                        } else {
+                            editorView(_activeScene, true);
+                        }
                     }
                     break;
             }
@@ -65,6 +69,8 @@ namespace Everest {
     }
 
     void EditorLayer::editorView(ref<Scene>& _activeScene, bool update){
+        if(!_activeScene) return;
+
         _activeScene->onEditorBeginRender(_camera.camera, _camera.transform);
         _activeScene->onEditorRender(Gizmos::showPhysicsShapes);
 
@@ -118,7 +124,7 @@ namespace Everest {
     }
 
     bool EditorLayer::onMouseButtonDown(MouseButtonDownEvent& event){
-        if(event.getButton() == MouseButton_0){
+        if(event.getButton() == M_0){
             _framebuffer->bind();
             ScenePanel::mousePickCheck(_framebuffer);
             _framebuffer->unbind();

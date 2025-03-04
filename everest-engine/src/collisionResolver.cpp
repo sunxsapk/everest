@@ -4,6 +4,7 @@
 namespace Everest {
 
 
+#ifndef __NO_3D__
     void body_contact_t::prepareContacts(){
     }
 
@@ -24,6 +25,7 @@ namespace Everest {
         }
         return relv;
     }
+#endif
 
 
     void body_contact2d_t::prepareContacts(){
@@ -36,9 +38,9 @@ namespace Everest {
         ASSERT(rigidbody2dA != nullptr, "No rigidbodies for contact resolution");
 
         f32 raxn = Math::cross(relativeContactPointA, contactNormal);
-        angularInertiaA = rigidbody2dA->inverseInertia * raxn * raxn;
+        angularInertiaA = !(rigidbody2dA->definition&Static) ? rigidbody2dA->inverseInertia * raxn * raxn : 0;
 
-        if(rigidbody2dB){
+        if(rigidbody2dB && !(rigidbody2dB->definition&Static)){
             f32 rbxn = Math::cross(relativeContactPointB, contactNormal);
             angularInertiaB = rigidbody2dB->inverseInertia * rbxn * rbxn;
         }
@@ -49,17 +51,22 @@ namespace Everest {
         f32 svel = glm::dot(relv, contactNormal);
         if(svel >= 0.1f) return;
 
-        f32 totalInertia = rigidbody2dA->inverseMass + angularInertiaA;
-        if(rigidbody2dB) totalInertia += rigidbody2dB->inverseMass + angularInertiaB;
+        bool adynamic = !(rigidbody2dA->definition&Static);
+        bool bdynamic = rigidbody2dB && !(rigidbody2dB->definition&Static);
+
+        f32 totalInertia = adynamic?rigidbody2dA->inverseMass + angularInertiaA:0;
+        if(bdynamic) totalInertia += rigidbody2dB->inverseMass + angularInertiaB;
         if(totalInertia <= 0.f) return;
 
         f32 jlen = -(1+restitution) * svel / totalInertia;
         vec2 j = jlen * contactNormal;
 
-        rigidbody2dA->velocity += j * rigidbody2dA->inverseMass;
-        rigidbody2dA->angularVelocity += Math::cross(relativeContactPointA, j) * rigidbody2dA->inverseInertia;
+        if(adynamic){
+            rigidbody2dA->velocity += j * rigidbody2dA->inverseMass;
+            rigidbody2dA->angularVelocity += Math::cross(relativeContactPointA, j) * rigidbody2dA->inverseInertia;
+        }
 
-        if(rigidbody2dB){
+        if(bdynamic){
             rigidbody2dB->velocity -= j * rigidbody2dB->inverseMass;
             rigidbody2dB->angularVelocity -= Math::cross(relativeContactPointB, j) * rigidbody2dB->inverseInertia;
         }
@@ -73,10 +80,12 @@ namespace Everest {
         jtlen = glm::clamp(jtlen, -maxFriction, maxFriction);
         vec2 jt = jtlen * vt;
 
-        rigidbody2dA->velocity += jt * rigidbody2dA->inverseMass;
-        rigidbody2dA->angularVelocity += Math::cross(relativeContactPointA, jt) * rigidbody2dA->inverseInertia;
+        if(adynamic){
+            rigidbody2dA->velocity += jt * rigidbody2dA->inverseMass;
+            rigidbody2dA->angularVelocity += Math::cross(relativeContactPointA, jt) * rigidbody2dA->inverseInertia;
+        }
 
-        if(rigidbody2dB){
+        if(bdynamic){
             rigidbody2dB->velocity -= jt * rigidbody2dB->inverseMass;
             rigidbody2dB->angularVelocity -= Math::cross(relativeContactPointB, jt) * rigidbody2dB->inverseInertia;
         }
@@ -86,21 +95,25 @@ namespace Everest {
     void body_contact2d_t::resolvePenetration(){
         if(penetration <= 0) return;
 
-        f32 totalInertia = rigidbody2dA->inverseMass + angularInertiaA;
-        if(rigidbody2dB) totalInertia += rigidbody2dB->inverseMass + angularInertiaB;
+        bool adynamic = !(rigidbody2dA->definition&Static);
+        bool bdynamic = rigidbody2dB && !(rigidbody2dB->definition&Static);
+
+        f32 totalInertia = adynamic?rigidbody2dA->inverseMass:0 + angularInertiaA;
+        if(bdynamic) totalInertia += rigidbody2dB->inverseMass + angularInertiaB;
         if(totalInertia <= 0.f) return;
 
         const f32 PEN_BIAS = 0.1f;
         f32 dp = penetration / totalInertia * PEN_BIAS;
         vec2 mvPerMass = contactNormal * dp;
 
-        transformA->position += vec3(mvPerMass * rigidbody2dA->inverseMass, 0);
-        transformA->rotation.z += dp * angularInertiaA;
-        if(rigidbody2dB){
+        if(adynamic) {
+            transformA->position += vec3(mvPerMass * rigidbody2dA->inverseMass, 0);
+            transformA->rotation.z += dp * angularInertiaA;
+        }
+        if(bdynamic){
             transformB->position -= vec3(mvPerMass * rigidbody2dB->inverseMass, 0);
             transformB->rotation.z -= dp * angularInertiaB;
         }
-        penetration = -std::numeric_limits<f32>::epsilon();
     }
 
     f32 body_contact2d_t::getSeparationVelocity() const {
@@ -110,16 +123,19 @@ namespace Everest {
     vec2 body_contact2d_t::getRelativeVelocity() const {
         vec2 relv(0.f);
 
-        relv.x += rigidbody2dA->velocity.x - rigidbody2dA->angularVelocity * relativeContactPointA.y;
-        relv.y += rigidbody2dA->velocity.y + rigidbody2dA->angularVelocity * relativeContactPointA.x;
+        if(!(rigidbody2dA->definition&Static)){
+            relv.x += rigidbody2dA->velocity.x - rigidbody2dA->angularVelocity * relativeContactPointA.y;
+            relv.y += rigidbody2dA->velocity.y + rigidbody2dA->angularVelocity * relativeContactPointA.x;
+        }
 
-        if(rigidbody2dB){
+        if(rigidbody2dB && !(rigidbody2dB->definition&Static)){
             relv.x -= rigidbody2dB->velocity.x - rigidbody2dB->angularVelocity * relativeContactPointB.y;
             relv.y -= rigidbody2dB->velocity.y + rigidbody2dB->angularVelocity * relativeContactPointB.x;
         }
         return relv;
     }
 
+#ifndef __NO_3D__
     void contact_resolver_t::resolvePenetration(std::vector<body_contact_t>& contactRegistry){
         EV_profile_function();
         for(auto& contact : contactRegistry){
@@ -150,19 +166,20 @@ namespace Everest {
         resolvePenetration(contactRegistry);
         resolveVelocities(contactRegistry);
     }
+#endif
 
-
-    void contact2d_resolver_t::resolvePenetration(std::vector<body_contact2d_t>& contactRegistry){
-        EV_profile_function();
-        for(auto& contact : contactRegistry){
-            contact.resolvePenetration();
-        }
-    }
 
     void contact2d_resolver_t::prepareContacts(std::vector<body_contact2d_t>& contactRegistry){
         EV_profile_function();
         for(auto& contact : contactRegistry){
             contact.prepareContacts();
+        }
+    }
+
+    void contact2d_resolver_t::resolvePenetration(std::vector<body_contact2d_t>& contactRegistry){
+        EV_profile_function();
+        for(auto& contact : contactRegistry){
+            contact.resolvePenetration();
         }
     }
 

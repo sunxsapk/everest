@@ -17,6 +17,7 @@ namespace Everest {
         TEXTURE,
         SHADER,
         SCENE,
+        SCRIPT
     };
 
 
@@ -46,6 +47,7 @@ namespace Everest {
         private:
             static AssetsManager* _instance;
             static const char* scene_ext;
+            static const char* script_ext;
             static const char* shader_ext;
             static std::vector<std::string> texture_exts;
 

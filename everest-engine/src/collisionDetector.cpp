@@ -1,6 +1,5 @@
 #include "physics/collisionDetector.h"
 #include "math/utils.h"
-#include "renderer/renderer2d.h"
 
 
 namespace Everest {
@@ -250,6 +249,6 @@ namespace Everest {
 #endif
 
         results.push_back(bodycontact);
-        return false;
+        return true;
     }
 }

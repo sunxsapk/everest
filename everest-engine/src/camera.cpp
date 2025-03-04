@@ -2,19 +2,8 @@
 
 namespace Everest {
 
-    camera_c::camera_c()
-    :_type(Orthographic){
-        recalc();
-    }
-
-
-    camera_c::camera_c(OrthographicData data)
-    :_orthoData(data), _type(Orthographic){
-        recalc();
-    }
-
-    camera_c::camera_c(PerspectiveData data)
-    :_perspData(data), _type(Perspective){
+    camera_c::camera_c(bool is2d){
+        _isOrtho = is2d;
         recalc();
     }
 }

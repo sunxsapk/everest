@@ -34,7 +34,7 @@ namespace YAML {
             rhs.x = node[0].as<f32>();
             rhs.y = node[1].as<f32>();
             rhs.z = node[2].as<f32>();
-             return true;
+            return true;
         }
     };
 
@@ -93,17 +93,19 @@ namespace Everest {
             out << entity.get<rigidbody2d_c>();
         }
 
-        if(entity.has<rigidbody_c>()){
-            out << entity.get<rigidbody_c>();
-        }
-
         if(entity.has<springJoint2d_c>()){
             out << entity.get<springJoint2d_c>();
+        }
+
+#ifndef __NO_3D__
+        if(entity.has<rigidbody_c>()){
+            out << entity.get<rigidbody_c>();
         }
 
         if(entity.has<springJoint_c>()){
             out << entity.get<springJoint_c>();
         }
+#endif
 
         if(entity.has<boxCollider2d_c>()){
             out << entity.get<boxCollider2d_c>();
@@ -111,6 +113,10 @@ namespace Everest {
 
         if(entity.has<circleCollider2d_c>()){
             out << entity.get<circleCollider2d_c>();
+        }
+
+        if(entity.has<EvScript>()){
+            out << entity.get<EvScript>();
         }
 
 
@@ -123,13 +129,14 @@ namespace Everest {
         Emitter out;
         out << BeginMap;
         out << Key << "scene" << Value << _scene->_name.c_str();
-        out << Key << "entities" << Value << BeginSeq;
+        out << Key << "entities" << Value;
 
+        out << BeginSeq;
         for(auto entity: _scene->_registry.view<tag_c>()){
             serializeEntity({entity, _scene}, out);
         }
-
         out << EndSeq;
+
         out << EndMap;
 
         std::ofstream fout(filepath);
@@ -156,6 +163,11 @@ namespace Everest {
             if(tag) name = tag["tag"].as<std::string>();
 
             Entity n_ent = _scene->createEntityUUID(uuid, name.c_str());
+        }
+
+        for(auto entity : entities){
+            u64 uuid = entity["entity"].as<u64>();
+            Entity n_ent = _scene->getEntityFromId(uuid);
 
             {
                 auto transform = entity["transform_c"];
@@ -170,30 +182,26 @@ namespace Everest {
             {
                 auto camera = entity["camera_c"];
                 if(camera){
-                    auto& cam = n_ent.add<camera_c>(camera_c{
-                        });
+                    auto& cam = n_ent.add<camera_c>();
                     cam.isPrimary = camera["isPrimary"]?camera["isPrimary"].as<bool>() : false;
                     cam.fixedAspect = camera["fixedAspect"].as<bool>();
-                    
-                    auto ortho = camera["orthographic_d"];
-                    OrthographicData odat{
-                        .orthoSize = ortho["size"].as<f32>(),
-                        .aspect = ortho["aspect"].as<f32>(),
-                        .near = ortho["near"].as<f32>(),
-                        .far = ortho["far"].as<f32>(),
-                    };
-                    cam.setOrthographicData(odat);
 
-                    auto persp = camera["perspective_d"];
-                    PerspectiveData pdat{
-                        .fov = persp["fov"].as<f32>(),
-                        .aspect = persp["aspect"].as<f32>(),
-                        .near = persp["near"].as<f32>(),
-                        .far = persp["far"].as<f32>(),
-                    };
-                    cam.setPerspectiveData(pdat);
-
-                    cam.setType((CameraType)camera["type"].as<u32>());
+                    if(camera["u_size_fov"]){
+                        cam.set_lenssize(camera["u_size_fov"].as<f32>());
+                    }
+                    if(camera["aspect"]){
+                        cam.set_aspect(camera["aspect"].as<f32>());
+                    }
+                    if(camera["near"]){
+                        cam.set_near(camera["near"].as<f32>());
+                    }
+                    if(camera["far"]){
+                        cam.set_far(camera["far"].as<f32>());
+                    }
+                    if(camera["is2d"]){
+                        if(camera["is2d"].as<bool>()) cam.set2d();
+                        else cam.set3d();
+                    }
                 }
             }
 
@@ -230,20 +238,8 @@ namespace Everest {
                     rb2d.velocity = rigidbody2d["velocity"].as<vec2>();
                     rb2d.angularVelocity = rigidbody2d["angularVelocity"].as<f32>();
                     rb2d.drag = rigidbody2d["drag"].as<f32>();
-                    rb2d.useGravity = rigidbody2d["useGravity"].as<bool>();
+                    rb2d.definition = rigidbody2d["definition"].as<int>();
                     rb2d.inverseMass = rigidbody2d["inverseMass"].as<f32>();
-                }
-            }
-
-            {
-                auto rigidbody = entity["rigidbody_c"];
-                if(rigidbody){
-                    auto& rb = n_ent.add<rigidbody_c>();
-                    rb.velocity = rigidbody["velocity"].as<vec3>();
-                    rb.angularVelocity = rigidbody["angularVelocity"].as<vec3>();
-                    rb.drag = rigidbody["drag"].as<f32>();
-                    rb.useGravity = rigidbody["useGravity"].as<bool>();
-                    rb.inverseMass = rigidbody["inverseMass"].as<f32>();
                 }
             }
 
@@ -259,6 +255,19 @@ namespace Everest {
                 }
             }
 
+#ifndef __NO_3D__
+            {
+                auto rigidbody = entity["rigidbody_c"];
+                if(rigidbody){
+                    auto& rb = n_ent.add<rigidbody_c>();
+                    rb.velocity = rigidbody["velocity"].as<vec3>();
+                    rb.angularVelocity = rigidbody["angularVelocity"].as<vec3>();
+                    rb.drag = rigidbody["drag"].as<f32>();
+                    rb.useGravity = rigidbody["useGravity"].as<bool>();
+                    rb.inverseMass = rigidbody["inverseMass"].as<f32>();
+                }
+            }
+
             {
                 auto springJoint = entity["springJoint_c"];
                 if(springJoint){
@@ -270,6 +279,7 @@ namespace Everest {
                     spr.restLength = springJoint["restLength"].as<f32>();
                 }
             }
+#endif
 
             {
                 auto boxCollider2d = entity["boxCollider2d_c"];
@@ -288,6 +298,62 @@ namespace Everest {
                     cc2d.circle.offset = circleCollider2d["offset"].as<vec2>();
                     cc2d.circle.radius = circleCollider2d["radius"].as<f32>();
                     cc2d.restitution = circleCollider2d["restitution"].as<f32>();
+                }
+            }
+
+            {
+                using namespace Scripting;
+                auto evscripts = entity["evscript_c"];
+                if(evscripts){
+                    EvScript& scr = n_ent.add<EvScript>(n_ent);
+                    for(auto script : evscripts){
+                        std::string path = script["path"].as<std::string>();
+                        scriptHandler_t& sh = scr.addScript(path);
+
+                        auto ser = script["SERIALIZE"];
+                        if(!ser.IsSequence()){
+                            EVLog_Err("SERIALIZE must be a sequence");
+                            continue;
+                        }
+
+                        luastate_t& stt = *sh.state;
+                        for(const auto& entry : ser){
+                            std::string key = entry["name"].as<std::string>();
+                            Types t = (Types)entry["type"].as<u32>();
+
+                            switch(t){
+                                case Types::Int:
+                                    stt[key] = entry["value"].as<i32>();
+                                    break;
+                                case Types::Bool:
+                                    stt[key] = entry["value"].as<bool>();
+                                    break;
+                                case Types::Float:
+                                    stt[key] = entry["value"].as<f64>();
+                                    break;
+                                case Types::String:
+                                    stt[key] = entry["value"].as<std::string>();
+                                    break;
+                                case Types::Vec2:
+                                    stt[key] = entry["value"].as<vec2>();
+                                    break;
+                                case Types::Vec3:
+                                    stt[key] = entry["value"].as<vec3>();
+                                    break;
+                                case Types::Vec4:
+                                case Types::Color:
+                                    stt[key] = entry["value"].as<vec4>();
+                                    break;
+                                case Types::Entity:{
+                                    Entity ent = _scene->getEntityFromId((UUID)entry["value"].as<u64>());
+                                    stt[key] = ent;
+                                    EVLog_Wrn("Entity get by id : %u", (u32)ent);
+                                    break;
+                               }
+                            }
+                        }
+
+                    }
                 }
             }
         }
@@ -344,23 +410,12 @@ namespace Everest {
 
         out << Key << "fixedAspect" << Value << camera.fixedAspect;
         out << Key << "isPrimary" << Value << camera.isPrimary;
-        out << Key << "type" << Value << (u32)camera.getType();
+        out << Key << "is2d" << Value << camera.is2d();
 
-        out << Key << "perspective_d";
-        out << BeginMap;
-        out << Key << "fov" << Value << camera.getPersp_fov();
-        out << Key << "aspect" << Value << camera.getPersp_aspect();
-        out << Key << "near" << Value << camera.getPersp_near();
-        out << Key << "far" << Value << camera.getPersp_far();
-        out << EndMap;
-
-        out << Key << "orthographic_d";
-        out << BeginMap;
-        out << Key << "size" << Value << camera.getOrtho_size();
-        out << Key << "aspect" << Value << camera.getOrtho_aspect();
-        out << Key << "near" << Value << camera.getOrtho_near();
-        out << Key << "far" << Value << camera.getOrtho_far();
-        out << EndMap;
+        out << Key << "u_size_fov" << Value << camera.get_lenssize();
+        out << Key << "aspect" << Value << camera.get_aspect();
+        out << Key << "near" << Value << camera.get_near();
+        out << Key << "far" << Value << camera.get_far();
 
         out << EndMap;
         return out;
@@ -404,22 +459,7 @@ namespace Everest {
         out << Key << "drag" << Value << rb2d.drag;
         out << Key << "velocity" << Value << rb2d.velocity;
         out << Key << "angularVelocity" << Value << rb2d.angularVelocity;
-        out << Key << "useGravity" << Value << rb2d.useGravity;
-
-        out << EndMap;
-        return out;
-    }
-
-    YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody_c& rb){
-        using namespace YAML;
-        out << Key << "rigidbody_c";
-        out << BeginMap;
-
-        out << Key << "inverseMass" << Value << rb.inverseMass;
-        out << Key << "drag" << Value << rb.drag;
-        out << Key << "velocity" << Value << rb.velocity;
-        out << Key << "angularVelocity" << Value << rb.angularVelocity;
-        out << Key << "useGravity" << Value << rb.useGravity;
+        out << Key << "definition" << Value << rb2d.definition;
 
         out << EndMap;
         return out;
@@ -428,21 +468,6 @@ namespace Everest {
     YAML::Emitter& operator<<(YAML::Emitter& out, const springJoint2d_c& spr){
         using namespace YAML;
         out << Key << "springJoint2d_c";
-        out << BeginMap;
-
-        out << Key << "anchor" << Value << spr.anchor;
-        out << Key << "offset" << Value << spr.offset;
-        out << Key << "springConstant" << Value << spr.springConstant;
-        out << Key << "damping" << Value << spr.damping;
-        out << Key << "restLength" << Value << spr.restLength;
-
-        out << EndMap;
-        return out;
-    }
-
-    YAML::Emitter& operator<<(YAML::Emitter& out, const springJoint_c& spr){
-        using namespace YAML;
-        out << Key << "springJoint_c";
         out << BeginMap;
 
         out << Key << "anchor" << Value << spr.anchor;
@@ -480,4 +505,100 @@ namespace Everest {
         out << EndMap;
         return out;
     }
+
+    YAML::Emitter& operator<<(YAML::Emitter& out, const EvScript& script){
+        using namespace YAML;
+        using namespace Scripting;
+        if(!script.scripts.size()) return out;
+
+        out << Key << "evscript_c";
+        out << BeginSeq;
+        for(auto& sh : script.scripts){
+            out << BeginMap;
+            out << Key << "path" << Value << sh.scriptpath.c_str();
+
+            luastate_t& st = *sh.state;
+            sol::table ser;
+            if(sh.getSerializedFields(ser)) {
+                out << Key << "SERIALIZE";
+                out << BeginSeq;
+                for(auto& [key, type] : ser){
+                    if(!key.valid() || !type.valid()) continue;
+                    auto val = st[key.as<std::string>()];
+                    if(!val.valid()) continue;
+
+                    out << BeginMap;
+                    out << Key << "name" << Value << key.as<std::string>();
+                    out << Key << "type" << Value << (u32)type.as<Types>();
+                    out << Key << "value" << Value;
+
+                    switch(type.as<Types>()){
+                        case Types::Int:
+                            out << (i32)val;
+                            break;
+                        case Types::Bool:
+                            out << (bool)val;
+                            break;
+                        case Types::Float:
+                            out << (f64)val;
+                            break;
+                        case Types::String:
+                            out << (std::string)val;
+                            break;
+                        case Types::Vec2:
+                            out << (vec2&)val;
+                            break;
+                        case Types::Vec3:
+                            out << (vec3&)val;
+                            break;
+                        case Types::Vec4:
+                        case Types::Color:
+                            out << (vec4&)val;
+                            break;
+                        case Types::Entity:
+                            out << (u64)((Entity&)val).get<id_c>().id;
+                            break;
+                    }
+                    out << EndMap;
+                }
+                out << EndSeq;
+            }
+
+            out << EndMap;
+        }
+        out << EndSeq;
+        return out;
+    }
+
+#ifndef __NO_3D__
+    YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody_c& rb){
+        using namespace YAML;
+        out << Key << "rigidbody_c";
+        out << BeginMap;
+
+        out << Key << "inverseMass" << Value << rb.inverseMass;
+        out << Key << "drag" << Value << rb.drag;
+        out << Key << "velocity" << Value << rb.velocity;
+        out << Key << "angularVelocity" << Value << rb.angularVelocity;
+        out << Key << "useGravity" << Value << rb.useGravity;
+
+        out << EndMap;
+        return out;
+    }
+
+    YAML::Emitter& operator<<(YAML::Emitter& out, const springJoint_c& spr){
+        using namespace YAML;
+        out << Key << "springJoint_c";
+        out << BeginMap;
+
+        out << Key << "anchor" << Value << spr.anchor;
+        out << Key << "offset" << Value << spr.offset;
+        out << Key << "springConstant" << Value << spr.springConstant;
+        out << Key << "damping" << Value << spr.damping;
+        out << Key << "restLength" << Value << spr.restLength;
+
+        out << EndMap;
+        return out;
+    }
+#endif
 }

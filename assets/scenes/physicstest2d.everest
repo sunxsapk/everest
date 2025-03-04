@@ -23,7 +23,7 @@ entities:
       rotation: [0, -0, 0]
       scale: [1, 1, 1]
     circleRenderer_c:
-      color: [0.24116145, 0.049351055, 0.26582277, 1]
+      color: [0.70244336, 0.55407786, 0.721519, 1]
       thickness: 1
       fade: 0
     rigidbody2d_c:
@@ -31,7 +31,7 @@ entities:
       drag: 1
       velocity: [7.1, 0]
       angularVelocity: 0
-      useGravity: true
+      definition: 1
     circleCollider2d_c:
       offset: [0, 0]
       radius: 0.5
@@ -46,17 +46,11 @@ entities:
     camera_c:
       fixedAspect: false
       isPrimary: true
-      type: 0
-      perspective_d:
-        fov: 60
-        aspect: 1.8
-        near: 0.01
-        far: 1000
-      orthographic_d:
-        size: 8.5
-        aspect: 1.8
-        near: -100
-        far: 100
+      is2d: true
+      u_size_fov: 8.5
+      aspect: 1.9238938
+      near: -100
+      far: 100
   - entity: 11766484628824807666
     tag_c:
       tag: Box
@@ -73,7 +67,7 @@ entities:
       drag: 1
       velocity: [7.9, 0]
       angularVelocity: 0
-      useGravity: true
+      definition: 1
     boxCollider2d_c:
       offset: [0, 0]
       halfExtents: [0.5, 0.5]
@@ -109,7 +103,7 @@ entities:
       drag: 1
       velocity: [0, 0]
       angularVelocity: 0
-      useGravity: true
+      definition: 1
     boxCollider2d_c:
       offset: [0, 0]
       halfExtents: [0.5, 0.5]
@@ -130,8 +124,14 @@ entities:
       drag: 1
       velocity: [4.2, 0]
       angularVelocity: 0
-      useGravity: true
+      definition: 1
     boxCollider2d_c:
       offset: [0, 0]
       halfExtents: [0.5, 0.5]
       restitution: 0.5
+    evscript_c:
+      - path: assets/scripts/test.lua
+        SERIALIZE:
+          - name: speed
+            type: 2
+            value: 9.350000381469727

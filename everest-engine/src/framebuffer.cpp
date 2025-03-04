@@ -76,6 +76,8 @@ namespace Everest {
             EVLog_Wrn("Invalid framebuffer size");
             return;
         }
+        if(size.x == _specs.width && size.y == _specs.height) return;
+
         _specs.width = size.x;
         _specs.height = size.y;
         

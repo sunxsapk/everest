@@ -22,6 +22,10 @@ namespace Everest {
         return createEntityUUID(UUID(), name);
     }
 
+    Entity Scene::getEntityFromId(UUID id){ 
+        if(entityDB.find(id) == entityDB.end()) return {};
+        return {entityDB[id], this};
+    }
 
     Entity Scene::createEntityUUID(UUID id, const char * name){
         EV_profile_function();
@@ -30,14 +34,20 @@ namespace Everest {
         _en.add<transform_c>();
         _en.add<id_c>(id);
         _en.add<tag_c>(name);
+        entityDB.emplace(id, _en._id);
         return _en;
     }
 
     void Scene::destroyEntity(Entity& entity){
         EV_profile_function();
         
-        _registry.destroy(entity);
+        if(!entity.isValid()) return;
+
+        UUID id = entity.get<id_c>().id;
+        onDestroyEntity(entity);
+        _registry.destroy(entity._id);
         entity._id = entt::null;
+        entityDB.erase(id);
     } 
 
     Scene::~Scene(){
@@ -52,6 +62,39 @@ namespace Everest {
         _registry.clear();
     }
 
+    void Scene::onDestroyEntity(Entity& ent){
+        EV_profile_function();
+        if(ent == mainCamera.entity){
+            mainCamera.entity = entt::null;
+            mainCamera.transform = nullptr;
+            mainCamera.camera = nullptr;
+        }
+    }
+
+    void Scene::onComponentRemoved(Entity& entity, camera_c& component){
+        EV_profile_function();
+        if(entity == mainCamera.entity){
+            mainCamera.entity = entt::null;
+            mainCamera.transform = nullptr;
+            mainCamera.camera = nullptr;
+        }
+    }
+
+    Entity Scene::getMainCameraEntity(){
+        return {mainCamera.entity, this};
+    }
+
+    camera_c* Scene::setMainCamera(Entity& entity){
+        EV_profile_function();
+
+        if(!entity.isValid() || !entity.has<camera_c>()) return nullptr;
+
+        mainCamera.camera = &entity.get<camera_c>();
+        mainCamera.transform = &entity.get<transform_c>();
+        mainCamera.entity = entity;
+        return mainCamera.camera;
+    }
+
     void Scene::fetchTargetCamera(){
         EV_profile_function();
 
@@ -61,6 +104,7 @@ namespace Everest {
             if(cam.isPrimary){
                 mainCamera.camera = &cam;
                 mainCamera.transform = &tfr;
+                mainCamera.entity = ent;
                 break;
             }
         }
@@ -99,8 +143,8 @@ namespace Everest {
     }
 
     void drawCameraGizmo(transform_c& tfr, camera_c& cam, u32 id){
-        if(cam.getType() == CameraType::Perspective){
-            vec3 scale(cam.getPersp_aspect(), 1.f, 1.f);
+        if(cam.is3d()){
+            vec3 scale(cam.get_aspect(), 1.f, 1.f);
             transform_c btfr{tfr.position, tfr.rotation, scale*.2f};
             Renderer2D::drawRect(btfr);
             transform_c ftfr{tfr.position + Math::getCameraForward(tfr)*.1f, tfr.rotation, scale * 0.3f};
@@ -112,9 +156,9 @@ namespace Everest {
 #endif
                     );
         } else {
-            f32 sz = cam.getOrtho_size() * 2;
+            f32 sz = cam.get_lenssize() * 2;
             Renderer2D::drawRect(tfr.position, tfr.rotation.z,
-                    vec2(sz * cam.getOrtho_aspect(), sz));
+                    vec2(sz * cam.get_aspect(), sz));
         }
     }
 
@@ -199,22 +243,29 @@ namespace Everest {
     void Scene::onUpdate(){ 
         EV_profile_function();
 
-        _registry.view<nativeScript_c>().each([=](auto ent, nativeScript_c& nscript){
+        double dt = Time::getDeltatime();
+        _registry.view<nativeScript_c>().each([this, dt](auto ent, nativeScript_c& nscript){
                 if(!nscript._instance){
                     nscript._instance = nscript.create();
                     nscript._instance->_entity = {ent, this};
                     nscript._instance->onCreate();
                 }
-                nscript._instance->onUpdate();
+                nscript._instance->onUpdate(dt);
             });
 
-        PhysicsHandler::simulate(*this, Time::getDeltatime());
+        using namespace Scripting;
+        auto scripts = _registry.view<evscript_c>();
+        scripts.each([this, dt](auto ent, evscript_c& nscript){
+                nscript.update(dt);
+            });
+
+        PhysicsHandler::simulate(*this, dt);
     }
 
-    void Scene::onViewportResize(uvec2 viewportSize){
+    void Scene::onViewportResize(uvec2 viewportOffset, uvec2 viewportSize){
         EV_profile_function();
 
-
+        _viewportOffset = viewportOffset;
         _viewportSize = viewportSize;
         f32 aspect = (float)viewportSize.x / viewportSize.y;
 
@@ -222,10 +273,46 @@ namespace Everest {
         for(auto ent : cams){
             auto& cam = cams->get(ent);
             if(!cam.fixedAspect){
-                cam.setOrtho_aspect(aspect);
-                cam.setPersp_aspect(aspect);
+                cam.set_aspect(aspect);
             }
         }
+    }
+
+    vec2 Scene::worldToScreen(vec3 worldPos){
+        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) fetchTargetCamera();
+        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) return {};
+
+        mat4 vpm = mainCamera.camera->getProjection() * glm::inverse((mat4)*mainCamera.transform);
+        vec4 clipc = vpm * vec4(worldPos, 1.f);
+        clipc /= clipc.w;
+        clipc = (clipc + 1.f) / 2.f;
+        return vec2(clipc.x * _viewportSize.x + _viewportOffset.x, 
+                (1.f - clipc.y) * _viewportSize.y + _viewportOffset.y);
+    }
+
+    vec3 Scene::screenToWorld(vec2 screenPos){
+        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) fetchTargetCamera();
+        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) return {};
+
+        screenPos -= _viewportOffset;
+        vec3 clipc(screenPos.x/_viewportSize.x*2-1.f, 1.f-screenPos.y/_viewportSize.y*2, 
+                mainCamera.camera->is2d()? -1.f : mainCamera.camera->get_near());
+        mat4 vpmat = mainCamera.camera->getProjection() * glm::inverse((mat4)*mainCamera.transform);
+        vec4 pp = glm::inverse(vpmat) * vec4(clipc, 1.f);
+        pp /= pp.w;
+        return pp;
+    }
+
+    vec3 Scene::screenToWorldDir(vec2 screenPos){
+        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) fetchTargetCamera();
+        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) return {};
+
+        screenPos -= _viewportOffset;
+        vec4 ndc(screenPos.x/_viewportSize.x*2-1.f, 1.f-screenPos.y/_viewportSize.y*2, 1.f, 1.f);
+        vec4 ax = glm::inverse(mainCamera.camera->getProjection()) * ndc;
+        ax /= ax.w;
+        ax.w = 0.f;
+        return glm::normalize((mat4)*mainCamera.transform * ax);
     }
 
     template<typename Comp>
@@ -237,28 +324,57 @@ namespace Everest {
         dc = sc;
     }
 
+    void copyScript(entt::registry& src, entt::entity sEntity, entt::registry& dest, Entity dEntity){
+        if(!src.all_of<EvScript>(sEntity)) return;
+        EvScript& sc = src.get<EvScript>(sEntity);
+        EvScript& dc = dest.all_of<EvScript>(dEntity) ?
+            dest.get<EvScript>(dEntity) : dest.emplace<EvScript>(dEntity, sc);
+        dc.makeCopyUsing(sc, dEntity);
+    }
+
     ref<Scene> Scene::copy(ref<Scene>& other){
         ref<Scene> newScene = createRef<Scene>(other->_name);
         newScene->_viewportSize = other->_viewportSize;
+        newScene->_viewportOffset = other->_viewportOffset;
 
         entt::registry& srcReg = other->_registry;
         entt::registry& desReg = newScene->_registry;
 
-        auto idv = srcReg.view<id_c>();
-        for(auto it = idv.rbegin(); it != idv.rend(); ++it){
+        // creating and copying is done in separate steps to allow reference passing
+        auto idgrp = srcReg.group<id_c>(entt::get<tag_c>);
+        for(auto it = idgrp.rbegin(); it != idgrp.rend(); ++it){
             entt::entity e = *it;
-            entt::entity id = newScene->createEntityUUID(srcReg.get<id_c>(e).id, srcReg.get<tag_c>(e).tag.c_str());
+            const auto& [id, tag] = idgrp.get(e);
+            Entity _ent = newScene->createEntityUUID(id.id, tag.tag.c_str());
+        }
+
+        for(auto& e : idgrp){
+            const auto& [id, tag] = idgrp.get(e);
+            Entity _ent = newScene->getEntityFromId(id.id);
             // TODO: copy each components into the entity in new Scene
-            copyComponent<transform_c>(srcReg, e, desReg, id);
-            copyComponent<spriteRenderer_c>(srcReg, e, desReg, id);
-            copyComponent<circleRenderer_c>(srcReg, e, desReg, id);
-            copyComponent<camera_c>(srcReg, e, desReg, id);
-            copyComponent<rigidbody2d_c>(srcReg, e, desReg, id);
-            copyComponent<rigidbody_c>(srcReg, e, desReg, id);
-            copyComponent<springJoint_c>(srcReg, e, desReg, id);
-            copyComponent<springJoint2d_c>(srcReg, e, desReg, id);
-            copyComponent<boxCollider2d_c>(srcReg, e, desReg, id);
-            copyComponent<circleCollider2d_c>(srcReg, e, desReg, id);
+            copyComponent<transform_c>(srcReg, e, desReg, _ent);
+            copyComponent<spriteRenderer_c>(srcReg, e, desReg, _ent);
+            copyComponent<circleRenderer_c>(srcReg, e, desReg, _ent);
+            copyComponent<camera_c>(srcReg, e, desReg, _ent);
+            copyComponent<rigidbody2d_c>(srcReg, e, desReg, _ent);
+            copyComponent<springJoint2d_c>(srcReg, e, desReg, _ent);
+            copyComponent<boxCollider2d_c>(srcReg, e, desReg, _ent);
+            copyComponent<circleCollider2d_c>(srcReg, e, desReg, _ent);
+
+            // TODO: copy entities's reference
+            copyScript(srcReg, e, desReg, _ent);
+
+            // main camera shifting
+            if(e == other->mainCamera.entity){
+                newScene->mainCamera.camera = &desReg.get<camera_c>(_ent);
+                newScene->mainCamera.transform = &desReg.get<transform_c>(_ent);
+                newScene->mainCamera.entity = _ent;
+            }
+
+#ifndef __NO_3D__
+            copyComponent<rigidbody_c>(srcReg, e, desReg, _ent);
+            copyComponent<springJoint_c>(srcReg, e, desReg, _ent);
+#endif
         }
 
         return newScene;
@@ -284,12 +400,14 @@ namespace Everest {
         duplicateComponent<circleRenderer_c>(entity, ent);
         duplicateComponent<camera_c>(entity, ent);
         duplicateComponent<rigidbody2d_c>(entity, ent);
-        duplicateComponent<rigidbody_c>(entity, ent);
-        duplicateComponent<springJoint_c>(entity, ent);
         duplicateComponent<springJoint2d_c>(entity, ent);
         duplicateComponent<boxCollider2d_c>(entity, ent);
         duplicateComponent<circleCollider2d_c>(entity, ent);
 
+#ifndef __NO_3D__
+        duplicateComponent<rigidbody_c>(entity, ent);
+        duplicateComponent<springJoint_c>(entity, ent);
+#endif
         return ent;
     }
 }

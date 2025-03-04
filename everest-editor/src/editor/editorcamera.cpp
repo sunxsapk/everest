@@ -6,15 +6,17 @@
 namespace Everest {
 
     EditorCamera::EditorCamera()
-    :camera(PerspectiveData()){
+    :camera(){
         transform.position = vec3(0.f, 1.f, 4.f);
     }
 
     void EditorCamera::onUpdate(bool focused) {
+        if(ScenePanel::getSceneState() == SceneState::PLAY && ScenePanel::gameView) return;
+        if(!ScenePanel::isFocused()) return;
         if(!focused){
             _mouseLastPos = Input::mousePosition();
         }
-        if(camera.getType() ==  Orthographic) cam2d_ctrls();
+        if(camera.is2d()) cam2d_ctrls();
         else cam3d_ctrls();
     }
 
@@ -49,7 +51,7 @@ namespace Everest {
     vec3 EditorCamera::screenToWorldPos(vec2 position){
         vec2 sz = ScenePanel::getSceneViewportSize();
         vec3 clipc(position.x/sz.x*2-1.f, 1.f-position.y/sz.y*2, 
-                is2D()? -1.f : camera.getPersp_near());
+                camera.is2d()? -1.f : camera.get_near());
         vec4 pp = glm::inverse(getVPmat()) * vec4(clipc, 1.f);
         pp /= pp.w;
         return pp;
@@ -63,15 +65,6 @@ namespace Everest {
         transform.rotation.x = glm::degrees(alpha);
     }
 
-    void EditorCamera::setType(CameraType type){
-        camera.setType(type);
-        if(type == Orthographic){
-            camera.setOrtho_aspect(camera.getPersp_aspect());
-            transform.position = vec3(0, 0, 10);
-            transform.rotation = vec3(0);
-        }
-    }
-
     void EditorCamera::keyControls_2d(){
         f32 disp = speed * Time::getDeltatime();
         transform.position.x += Input::getHorizontal() * disp;
@@ -83,7 +76,7 @@ namespace Everest {
 
         if(Input::mouseScrollY()){
             f32 mulfct = Input::mouseScrollY() * scrollSensitivity * Time::getUnscaledDeltatime();
-            camera.setOrtho_size(camera.getOrtho_size() * (1.f - mulfct));
+            camera.set_lenssize(camera.get_lenssize() * (1.f - mulfct));
         }
 
         if(_mouseHeld){
@@ -91,19 +84,19 @@ namespace Everest {
             mdel.y = Input::mousePositionY() - _mouseLastPos.y;
 
             _mouseLastPos = Input::mousePosition();
-            if(Input::mouseButtonUp(MouseButton_1)) _mouseHeld = false;
-        } else if(Input::mouseButtonDown(MouseButton_1)) {
+            if(Input::mouseButtonUp(M_1)) _mouseHeld = false;
+        } else if(Input::mouseButtonDown(M_1)) {
             _mouseHeld = true;
             _mouseLastPos = Input::mousePosition(); 
         } else return;
 
-        mdel *= camera.getOrtho_size() * mouseSensitivity * Time::getUnscaledDeltatime();
+        mdel *= camera.get_lenssize() * mouseSensitivity * Time::getUnscaledDeltatime();
         transform.position += mdel;
     }
 
     void EditorCamera::cam2d_ctrls(){
         mouseControls_2d();
-        if(Input::mouseButtonDown(MouseButton_1)) keyControls_2d();
+        if(Input::mouseButtonDown(M_1)) keyControls_2d();
     }
 
 
@@ -127,8 +120,8 @@ namespace Everest {
             mdel.y = Input::mousePositionY() - _mouseLastPos.y;
 
             _mouseLastPos = Input::mousePosition();
-            if(Input::mouseButtonUp(MouseButton_1)) _mouseHeld = false;
-        } else if(Input::mouseButtonDown(MouseButton_1)) {
+            if(Input::mouseButtonUp(M_1)) _mouseHeld = false;
+        } else if(Input::mouseButtonDown(M_1)) {
             _mouseHeld = true;
             _mouseLastPos = Input::mousePosition(); 
         } else return;
@@ -141,14 +134,12 @@ namespace Everest {
 
     void EditorCamera::cam3d_ctrls(){
         mouseControls_3d();
-        if(Input::mouseButtonDown(MouseButton_1)) keyControls_3d();
+        if(Input::mouseButtonDown(M_1)) keyControls_3d();
     }
 
     void EditorCamera::onViewportResize(uvec2 viewportSize){
         f32 aspect = (float)viewportSize.x / viewportSize.y;
-
-        if(camera.getType() == Orthographic) camera.setOrtho_aspect(aspect);
-        else camera.setPersp_aspect(aspect);
+        camera.set_aspect(aspect);
     }
 
 }
