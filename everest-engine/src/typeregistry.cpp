@@ -170,6 +170,16 @@ namespace Scripting {
                 );
     }
 
+    void reg_script(luastate_t& lua){
+        lua.new_usertype<scriptHandler_t>("scriptHandler_t",
+                "call", &scriptHandler_t::call
+                );
+        lua.new_usertype<evscript_c>("evscript_c",
+                "get", &evscript_c::tryGetScriptHandler,
+                "entity", &evscript_c::entity
+                );
+    }
+
     void reg_collision(luastate_t& lua){
         lua.new_usertype<collision2d_t>("collision2d_t",
                 "other", &collision2d_t::other,
@@ -436,11 +446,14 @@ namespace Scripting {
         if(ent.isValid()) ent.tryRemove<T>();
     }
 
+    
+
     void reg_entity(luastate_t& lua){
         lua.new_usertype<Entity>("Entity",
                 sol::constructors<Entity()>(),
                 "destroy", &Entity::destroy,
 
+                "get_scripts", _getc<evscript_c>,
                 "get_tag", _getc<tag_c>,
                 "get_transform", _getc<transform_c>,
 

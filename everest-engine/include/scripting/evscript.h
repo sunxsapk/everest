@@ -39,10 +39,12 @@ namespace Scripting {
         void update(double deltaTime);
         void collisionCallback(collision2d_t& data);
 
-        bool getSerializedFields(sol::table& resultTable);
+        bool getSerializedFields(sol::table& resultTable) const;
 
         void setScriptPath(std::filesystem::path path, Entity ent);
         const char* getScriptName();
+
+        sol::table call(std::string func_name, sol::table inp_args);
     };
 
     struct evscript_c {
@@ -50,9 +52,9 @@ namespace Scripting {
         std::vector<scriptHandler_t> scripts;
 
         template<typename Alloc>
-        evscript_c(Alloc& alloc){}
-        evscript_c(){ }
-        evscript_c(Entity entity_):entity(entity_){ }
+        evscript_c(Alloc& alloc){scripts.reserve(8);} //make way for 8 scripts by default
+        evscript_c(){ scripts.reserve(8);}
+        evscript_c(Entity entity_):entity(entity_){ scripts.reserve(8);}
         evscript_c(const evscript_c& other);
         evscript_c& operator=(const evscript_c& other);
 
@@ -61,7 +63,9 @@ namespace Scripting {
         void update(double deltaTime);
         void collisionCallback(collision2d_t& data);
 
-        void addScript(const std::filesystem::path& path);
+        scriptHandler_t& addScript(const std::filesystem::path& path);
+
+        scriptHandler_t* tryGetScriptHandler(std::string name);
 
         friend class Scene;
     };

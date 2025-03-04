@@ -34,6 +34,7 @@ namespace Scripting {
     void reg_matx(luastate_t& lua);
     void reg_entity(luastate_t& lua);
     void reg_tag(luastate_t& lua);
+    void reg_script(luastate_t& lua);
     void reg_transform(luastate_t& lua);
     void reg_rigidbody2d(luastate_t& lua);
     void reg_spriteRenderer(luastate_t& lua);
@@ -59,6 +60,7 @@ namespace Scripting {
         // components
         reg_transform,
         reg_tag,
+        reg_script,
         reg_rigidbody2d,
         reg_spriteRenderer,
         reg_circleRenderer,

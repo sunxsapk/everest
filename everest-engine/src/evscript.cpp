@@ -50,12 +50,12 @@ namespace Scripting {
         if(__state["OnCollision"].valid()){
             onCollision = __state["OnCollision"];
         }
-        EVLog_Msg("Parsed script %s with serialization validity(%d)", scriptpath.c_str(), __state["__serialize"].valid());
+        EVLog_Msg("Parsed script %s with serialization validity(%d)", scriptpath.c_str(), __state["SERIALIZE"].valid());
     }
 
-    bool scriptHandler_t::getSerializedFields(sol::table& resultTable) {
-        if(state == nullptr || (*state)["__serialize"].valid()){
-            resultTable = (*state)["__serialize"];
+    bool scriptHandler_t::getSerializedFields(sol::table& resultTable) const {
+        if(state == nullptr || (*state)["SERIALIZE"].valid()){
+            resultTable = (*state)["SERIALIZE"];
             return true;
         }
         return false;
@@ -64,7 +64,6 @@ namespace Scripting {
     void scriptHandler_t::update(double deltaTime){
         if(!_initialized){
             _initialized = true;
-            EVLog_Msg("Initialized script %s", scriptpath.c_str());
             if(onCreate) {
                 onCreate();
             }
@@ -91,6 +90,30 @@ namespace Scripting {
         return scriptpath.stem().c_str();
     }
 
+    sol::table scriptHandler_t::call(std::string func_name, sol::table inp_args) {
+        if(!state) return {};
+        sol::protected_function func = (*state)[func_name];
+        if(!func.valid()) return {};
+
+        try {
+            sol::table iargs = state->create_table();
+            for(auto& [k, v] : inp_args){
+                if(v.get_type() == sol::type::userdata){
+                    EVLog_Err("Unsupported action: Passing userdata as arguments across scripts.");
+                    iargs[k.as<const char*>()] = nullptr; // nil
+                } else {
+                    iargs[k.as<const char*>()] = v;
+                }
+            }
+            return func(iargs);
+        } catch(std::exception exc) {
+            EVLog_Err("Exception occured while calling function %s in script %s: %s",
+                    func_name.c_str(), getScriptName(), exc.what());
+        }
+
+        return {};
+    }
+
     evscript_c::evscript_c(const evscript_c& other){
         *this = other;
     }
@@ -107,8 +130,6 @@ namespace Scripting {
         this->scripts.clear();
         for(auto& script : other.scripts){
 
-            EVLog_Msg("Copying script %s", script.scriptpath.c_str());
-
             this->scripts.push_back(scriptHandler_t());
             auto& lastScript = this->scripts.back();
             lastScript.scriptpath = script.scriptpath;
@@ -116,13 +137,11 @@ namespace Scripting {
 
             auto& _sstate = *script.state;
             auto& _lstate = *lastScript.state;
-            if(!_sstate["__serialize"].valid()) continue;
-            sol::table st = _sstate["__serialize"];
+            if(!_sstate["SERIALIZE"].valid()) continue;
+            sol::table st = _sstate["SERIALIZE"];
             for(auto& [k, v] : st){
 
                 const char* key = k.as<const char*>();
-
-                EVLog_Msg("%s %i", k.as<const char*>(), v.as<Types>());
 
                 if(!v.valid()) continue;
                 if(!_sstate[key].valid()) continue;
@@ -211,12 +230,22 @@ namespace Scripting {
         }
     }
 
-    void evscript_c::addScript(const std::filesystem::path& path){
+    scriptHandler_t& evscript_c::addScript(const std::filesystem::path& path){
         for(auto& script : scripts){
-            if(script.scriptpath == path) return;
+            if(script.scriptpath == path) return script;
         }
         scripts.push_back(scriptHandler_t(entity, path));
+        return scripts.back();
     }
 
+    scriptHandler_t* evscript_c::tryGetScriptHandler(std::string name){
+        for(auto& script : scripts){
+            if(!name.compare(script.getScriptName())){
+                EVLog_Msg("Found the script");
+                return &script;
+            }
+        }
+        return nullptr;
+    }
 }
 }

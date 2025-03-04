@@ -34,7 +34,7 @@ namespace YAML {
             rhs.x = node[0].as<f32>();
             rhs.y = node[1].as<f32>();
             rhs.z = node[2].as<f32>();
-             return true;
+            return true;
         }
     };
 
@@ -115,6 +115,10 @@ namespace Everest {
             out << entity.get<circleCollider2d_c>();
         }
 
+        if(entity.has<EvScript>()){
+            out << entity.get<EvScript>();
+        }
+
 
 
         out << EndMap;
@@ -125,13 +129,14 @@ namespace Everest {
         Emitter out;
         out << BeginMap;
         out << Key << "scene" << Value << _scene->_name.c_str();
-        out << Key << "entities" << Value << BeginSeq;
+        out << Key << "entities" << Value;
 
+        out << BeginSeq;
         for(auto entity: _scene->_registry.view<tag_c>()){
             serializeEntity({entity, _scene}, out);
         }
-
         out << EndSeq;
+
         out << EndMap;
 
         std::ofstream fout(filepath);
@@ -158,6 +163,11 @@ namespace Everest {
             if(tag) name = tag["tag"].as<std::string>();
 
             Entity n_ent = _scene->createEntityUUID(uuid, name.c_str());
+        }
+
+        for(auto entity : entities){
+            u64 uuid = entity["entity"].as<u64>();
+            Entity n_ent = _scene->getEntityFromId(uuid);
 
             {
                 auto transform = entity["transform_c"];
@@ -288,6 +298,62 @@ namespace Everest {
                     cc2d.circle.offset = circleCollider2d["offset"].as<vec2>();
                     cc2d.circle.radius = circleCollider2d["radius"].as<f32>();
                     cc2d.restitution = circleCollider2d["restitution"].as<f32>();
+                }
+            }
+
+            {
+                using namespace Scripting;
+                auto evscripts = entity["evscript_c"];
+                if(evscripts){
+                    EvScript& scr = n_ent.add<EvScript>(n_ent);
+                    for(auto script : evscripts){
+                        std::string path = script["path"].as<std::string>();
+                        scriptHandler_t& sh = scr.addScript(path);
+
+                        auto ser = script["SERIALIZE"];
+                        if(!ser.IsSequence()){
+                            EVLog_Err("SERIALIZE must be a sequence");
+                            continue;
+                        }
+
+                        luastate_t& stt = *sh.state;
+                        for(const auto& entry : ser){
+                            std::string key = entry["name"].as<std::string>();
+                            Types t = (Types)entry["type"].as<u32>();
+
+                            switch(t){
+                                case Types::Int:
+                                    stt[key] = entry["value"].as<i32>();
+                                    break;
+                                case Types::Bool:
+                                    stt[key] = entry["value"].as<bool>();
+                                    break;
+                                case Types::Float:
+                                    stt[key] = entry["value"].as<f64>();
+                                    break;
+                                case Types::String:
+                                    stt[key] = entry["value"].as<std::string>();
+                                    break;
+                                case Types::Vec2:
+                                    stt[key] = entry["value"].as<vec2>();
+                                    break;
+                                case Types::Vec3:
+                                    stt[key] = entry["value"].as<vec3>();
+                                    break;
+                                case Types::Vec4:
+                                case Types::Color:
+                                    stt[key] = entry["value"].as<vec4>();
+                                    break;
+                                case Types::Entity:{
+                                    Entity ent = _scene->getEntityFromId((UUID)entry["value"].as<u64>());
+                                    stt[key] = ent;
+                                    EVLog_Wrn("Entity get by id : %u", (u32)ent);
+                                    break;
+                               }
+                            }
+                        }
+
+                    }
                 }
             }
         }
@@ -439,6 +505,71 @@ namespace Everest {
         out << EndMap;
         return out;
     }
+
+    YAML::Emitter& operator<<(YAML::Emitter& out, const EvScript& script){
+        using namespace YAML;
+        using namespace Scripting;
+        if(!script.scripts.size()) return out;
+
+        out << Key << "evscript_c";
+        out << BeginSeq;
+        for(auto& sh : script.scripts){
+            out << BeginMap;
+            out << Key << "path" << Value << sh.scriptpath.c_str();
+
+            luastate_t& st = *sh.state;
+            sol::table ser;
+            if(sh.getSerializedFields(ser)) {
+                out << Key << "SERIALIZE";
+                out << BeginSeq;
+                for(auto& [key, type] : ser){
+                    if(!key.valid() || !type.valid()) continue;
+                    auto val = st[key.as<std::string>()];
+                    if(!val.valid()) continue;
+
+                    out << BeginMap;
+                    out << Key << "name" << Value << key.as<std::string>();
+                    out << Key << "type" << Value << (u32)type.as<Types>();
+                    out << Key << "value" << Value;
+
+                    switch(type.as<Types>()){
+                        case Types::Int:
+                            out << (i32)val;
+                            break;
+                        case Types::Bool:
+                            out << (bool)val;
+                            break;
+                        case Types::Float:
+                            out << (f64)val;
+                            break;
+                        case Types::String:
+                            out << (std::string)val;
+                            break;
+                        case Types::Vec2:
+                            out << (vec2&)val;
+                            break;
+                        case Types::Vec3:
+                            out << (vec3&)val;
+                            break;
+                        case Types::Vec4:
+                        case Types::Color:
+                            out << (vec4&)val;
+                            break;
+                        case Types::Entity:
+                            out << (u64)((Entity&)val).get<id_c>().id;
+                            break;
+                    }
+                    out << EndMap;
+                }
+                out << EndSeq;
+            }
+
+            out << EndMap;
+        }
+        out << EndSeq;
+        return out;
+    }
+
 #ifndef __NO_3D__
     YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody_c& rb){
         using namespace YAML;

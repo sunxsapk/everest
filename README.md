@@ -47,6 +47,7 @@ Hand-Building the project:
 - Build the project using `cmake --build build/`
 - Run editor using `./build/bin/everest-editor/everest-editor`
 
+__As of now, Game is unbuildable. Out-of-editor building of game will be made available soon. So, checkout editor only..__
 - For setting up Game as build target   : run `cmake -B build -DBuild=Dist -DTarget=Game`
 - Build the project using `cmake --build build/`
 - Run game using `./build/bin/tower-defense/tower-defense`

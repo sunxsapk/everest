@@ -1,4 +1,4 @@
-__serialize = {
+SERIALIZE = {
     speed = Types.float,
 }
 

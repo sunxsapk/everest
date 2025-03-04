@@ -41,9 +41,7 @@ before such behaviour is encountered
 
 =============== TODO ============
 [ ] write a rough lua-scripting api for entity
-    - scene: get entity using id : base for reference passing
-    - get script api for entity
-    - serialize the script component
+    - make a simple demo game scene
     - update api docs
 [ ] fix bugs... duh!!
 
