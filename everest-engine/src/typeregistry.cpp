@@ -439,6 +439,13 @@ namespace Scripting {
         st["screenToWorldDir"] = [](vec2 screenPos)->vec3{
             return SceneManager::getActiveScene()->screenToWorldDir(screenPos);
         };
+        st["load"] = [](int ind)->bool {
+            return SceneManager::loadScene(ind);
+        };
+        st["loadNext"] = SceneManager::loadNext;
+        st["getCurrentSceneIndex"] = []()->int{
+            return SceneManager::getCurrentSceneIndex();
+        };
 
         lua["Scene"]  = st;
     }

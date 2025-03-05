@@ -11,6 +11,7 @@
 #include "core/utils.h"
 #include "core/dbghelper.h"
 #include "scene.h"
+#include <filesystem>
 
 namespace Everest {
 
@@ -50,10 +51,17 @@ namespace Everest {
             static bool hasSaveTarget(){ return _instance->scenePath != ""; }
             static const char* getSceneTargetPath(){return _instance->scenePath.c_str();}
 
+
+            static bool loadScene(size_t sceneIndex = 0);
+            static inline bool loadNext(){return loadScene(_instance->currentSceneIndex+1);}
+            static inline size_t getCurrentSceneIndex(){return _instance->currentSceneIndex;}
+
         private:
+            sceneChangeCallback_t sceneChangecb = nullptr;
+            std::vector<std::filesystem::path> sceneSequence;
             ref<Scene> activeScene, savedActiveScene;
             std::string scenePath = "";
-            sceneChangeCallback_t sceneChangecb = nullptr;
+            size_t currentSceneIndex = 0;
 
             static inline void setSceneTarget(std::string path){
                 _instance->scenePath = path;}
