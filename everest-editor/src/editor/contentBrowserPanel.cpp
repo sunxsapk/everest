@@ -77,7 +77,9 @@ namespace Everest {
         std::filesystem::path path = entry.path();
         if(path.extension() == AssetsManager::getScene_ext()) return EditorAssets::getIcon(IconType::SCENE);
         if(AssetsManager::getAssetsType(path) == AssetsType::TEXTURE){
-            return {AssetsManager::loadTexture(path)};
+            spriteRenderer_c spr;
+            spr.texture = AssetsManager::loadTexture(path);
+            return spr;
         }
         return EditorAssets::getIcon(IconType::FILE);
     }

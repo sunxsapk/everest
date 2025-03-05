@@ -10,6 +10,7 @@
 
 #include "math/types.h"
 #include "aabbtree2d.h"
+#include "scene/component_type.h"
 #include "scene/entity.h"
 
 namespace Everest {
@@ -34,19 +35,35 @@ namespace Everest {
         bool contains(vec2 point);
     };
 
-    struct boxCollider2d_c {
+    struct boxCollider2d_c : public component_t {
         box2dprops_t box;
 
+        boxCollider2d_c() = default;
+        boxCollider2d_c(Entity ent) : component_t(ent) {}
+        void makeCopyUsing(const boxCollider2d_c& other, Entity ent){
+            *this = other;
+            entity = ent;
+            active = other.active;
+        }
+
         f32 restitution = 0.5f;
     };
 
-    struct circleCollider2d_c {
+    struct circleCollider2d_c : public component_t {
         circleprops_t circle;
 
+        circleCollider2d_c() = default;
+        circleCollider2d_c(Entity ent) : component_t(ent) {}
+        void makeCopyUsing(const circleCollider2d_c& other, Entity ent){
+            *this = other;
+            entity = ent;
+            active = other.active;
+        }
+
         f32 restitution = 0.5f;
     };
 
-    struct collider2d_c {
+    struct collider2d_t {
         Entity entity;
         collider2d_type_t type;
         f32 restitution = 1.f;
@@ -58,9 +75,9 @@ namespace Everest {
             constexpr Props() : box{}{}
         } props;
 
-        collider2d_c(collider2d_type_t type);
-        collider2d_c(const boxCollider2d_c& boxCollider, Entity entity);
-        collider2d_c(const circleCollider2d_c& circleCollider, Entity entity);
+        collider2d_t(collider2d_type_t type);
+        collider2d_t(const boxCollider2d_c& boxCollider, Entity entity);
+        collider2d_t(const circleCollider2d_c& circleCollider, Entity entity);
         aabb2d_t getBounds();
     };
 

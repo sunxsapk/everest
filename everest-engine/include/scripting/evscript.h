@@ -10,6 +10,7 @@
 #pragma once
 
 #include "physics/collision.h"
+#include "scene/component_type.h"
 #include "scene/entity.h"
 #include "scripting/typeregistry.h"
 #include <filesystem>
@@ -47,14 +48,13 @@ namespace Scripting {
         sol::table call(std::string func_name, sol::table inp_args);
     };
 
-    struct evscript_c {
-        Entity entity;
+    struct evscript_c : public component_t {
         std::vector<scriptHandler_t> scripts;
 
+        evscript_c() = default;
         template<typename Alloc>
-        evscript_c(Alloc& alloc){scripts.reserve(8);} //make way for 8 scripts by default
-        evscript_c(){ scripts.reserve(8);}
-        evscript_c(Entity entity_):entity(entity_){ scripts.reserve(8);}
+        evscript_c(Alloc& alloc) {scripts.reserve(8);} //make way for 8 scripts by default
+        evscript_c(Entity entity_):component_t(entity_){ scripts.reserve(8);}
         evscript_c(const evscript_c& other);
         evscript_c& operator=(const evscript_c& other);
 

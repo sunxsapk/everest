@@ -4,10 +4,10 @@
 
 namespace Everest {
 
-    bool CollisionDetector2D::checkForContacts(ref<collider2d_c>& body1, ref<collider2d_c>& body2,
+    bool CollisionDetector2D::checkForContacts(ref<collider2d_t>& body1, ref<collider2d_t>& body2,
             result_t& results){
         using collisionPair_t = std::pair<collider2d_type_t, collider2d_type_t>;
-        using collisionDetector_t = std::function<bool(collider2d_c&, collider2d_c&, result_t&)>;
+        using collisionDetector_t = std::function<bool(collider2d_t&, collider2d_t&, result_t&)>;
         static const std::map<collisionPair_t, collisionDetector_t> detectors{
             {
                 {collider2d_type_t::Box, collider2d_type_t::Box}, box_box
@@ -33,7 +33,7 @@ namespace Everest {
     }
 
 
-    bool CollisionDetector2D::circle_circle(collider2d_c& body1, collider2d_c& body2, result_t& results){
+    bool CollisionDetector2D::circle_circle(collider2d_t& body1, collider2d_t& body2, result_t& results){
         EVLog_Msg("circle_circle");
         circleprops_t c1 = body1.props.circle;
         transform_c& t1 = body1.entity.get<transform_c>();
@@ -76,7 +76,7 @@ namespace Everest {
         return true;
     }
 
-    bool CollisionDetector2D::box_circle(collider2d_c& body1, collider2d_c& body2, result_t& results){
+    bool CollisionDetector2D::box_circle(collider2d_t& body1, collider2d_t& body2, result_t& results){
         box2dprops_t b1 = body1.props.box;
         transform_c& t1 = body1.entity.get<transform_c>();
         b1.offset += vec2(t1.position.x, t1.position.y);
@@ -183,7 +183,7 @@ namespace Everest {
         }
     }
 
-    bool CollisionDetector2D::box_box(collider2d_c& body1, collider2d_c& body2, result_t& results){
+    bool CollisionDetector2D::box_box(collider2d_t& body1, collider2d_t& body2, result_t& results){
         box2dprops_t b1 = body1.props.box;
         transform_c* t1 = &body1.entity.get<transform_c>();
         b1.halfExtents *= vec2(t1->scale.x, t1->scale.y);

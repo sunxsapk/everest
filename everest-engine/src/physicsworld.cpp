@@ -14,7 +14,7 @@ namespace Everest {
     u32 PhysicsHandler::_simulationSteps = 4;
     vec3 PhysicsHandler::_gravity = vec3(0.f, -9.8f, 0.f);
     contact2d_resolver_t PhysicsHandler::_contactResolver2d;
-    aabb2d_tree_t<collider2d_c> PhysicsHandler::tree2d;
+    aabb2d_tree_t<collider2d_t> PhysicsHandler::tree2d;
     std::vector<body_contact2d_t> PhysicsHandler::contacts2d(16);
     std::vector<collision2d_t> PhysicsHandler::collision2dResults(16);
 
@@ -95,7 +95,7 @@ namespace Everest {
 
         for(entt::entity ent : bc2d){
             boxCollider2d_c& comp = bc2d->get(ent);
-            ref<collider2d_c> cld = createRef<collider2d_c>(comp, Entity{ent, &scene});
+            ref<collider2d_t> cld = createRef<collider2d_t>(comp, Entity{ent, &scene});
             collider2dBounds.push_back(cld->getBounds());
 
             auto bb = collider2dBounds.back(); 
@@ -104,13 +104,13 @@ namespace Everest {
 
         for(entt::entity ent : cc2d){
             circleCollider2d_c& comp = cc2d->get(ent);
-            ref<collider2d_c> cld = createRef<collider2d_c>(comp, Entity{ent, &scene});
+            ref<collider2d_t> cld = createRef<collider2d_t>(comp, Entity{ent, &scene});
             collider2dBounds.push_back(cld->getBounds());
             tree2d.insert(cld, collider2dBounds.back());
         }
 
         for(auto bounds : collider2dBounds){
-            static std::vector<ref<collider2d_c>> candidates(16);
+            static std::vector<ref<collider2d_t>> candidates(16);
             candidates.clear();
 
             tree2d.query(bounds, candidates);

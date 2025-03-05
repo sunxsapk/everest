@@ -16,6 +16,19 @@ namespace Everest {
     void SceneHeirarchyUI::onGUIrender(){
         ImGui::Begin("Scene Hierarchy");
 
+        if(_scene != nullptr) {
+            static char buf[1<<8];
+            memset(buf, 0, sizeof(buf));
+            strcpy(buf, _scene->_name.c_str());
+
+            ImGui::AlignTextToFramePadding();
+            if(ImGui::InputText("##__scene__", buf, sizeof(buf))){
+                _scene->_name = std::string(buf);
+            }
+
+            ImGui::Separator();
+        }
+
         heirarchyPopup();
         if(_scene != nullptr){
             for(auto entity: _scene->_registry.view<id_c>()){

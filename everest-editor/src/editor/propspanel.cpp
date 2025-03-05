@@ -37,7 +37,7 @@ namespace Everest {
                 EVLog_Msg("Drag n Drop Item %s", path_str);
                 if(AssetsManager::getAssetsType(path_str) == AssetsType::SCRIPT){
                     try {
-                        auto& scr = ent.tryAdd<EvScript>(ent);
+                        auto& scr = ent.tryAdd<EvScript>();
                         scr.addScript(path_str);
                     } catch(std::exception exc){
                         // TODO: make this into a popup

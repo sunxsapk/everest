@@ -16,15 +16,15 @@ namespace Everest {
         using result_t = std::vector<body_contact2d_t>;
         public:
 
-            static bool checkForContacts(ref<collider2d_c>& body1, ref<collider2d_c>& body2, result_t& results);
+            static bool checkForContacts(ref<collider2d_t>& body1, ref<collider2d_t>& body2, result_t& results);
 
         private:
 
-            static bool circle_circle(collider2d_c& body1, collider2d_c& body2, result_t& results);
-            static bool box_circle(collider2d_c& body1, collider2d_c& body2, result_t& results);
-            static bool box_box(collider2d_c& body1, collider2d_c& body2, result_t& results);
+            static bool circle_circle(collider2d_t& body1, collider2d_t& body2, result_t& results);
+            static bool box_circle(collider2d_t& body1, collider2d_t& body2, result_t& results);
+            static bool box_box(collider2d_t& body1, collider2d_t& body2, result_t& results);
 
-            static inline bool circle_box(collider2d_c& body1, collider2d_c& body2, result_t& results){
+            static inline bool circle_box(collider2d_t& body1, collider2d_t& body2, result_t& results){
                 return box_circle(body2, body1, results);
             }
     };

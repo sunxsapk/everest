@@ -24,7 +24,7 @@ namespace Everest {
 
     Entity Scene::getEntityFromId(UUID id){ 
         if(entityDB.find(id) == entityDB.end()) return {};
-        return {entityDB[id], this};
+        return Entity(entityDB[id], this);
     }
 
     Entity Scene::createEntityUUID(UUID id, const char * name){
@@ -64,24 +64,20 @@ namespace Everest {
 
     void Scene::onDestroyEntity(Entity& ent){
         EV_profile_function();
-        if(ent == mainCamera.entity){
-            mainCamera.entity = entt::null;
-            mainCamera.transform = nullptr;
-            mainCamera.camera = nullptr;
+        if(ent == mainCamera){
+            mainCamera = {};
         }
     }
 
     void Scene::onComponentRemoved(Entity& entity, camera_c& component){
         EV_profile_function();
-        if(entity == mainCamera.entity){
-            mainCamera.entity = entt::null;
-            mainCamera.transform = nullptr;
-            mainCamera.camera = nullptr;
+        if(entity == mainCamera){
+            mainCamera = {};
         }
     }
 
     Entity Scene::getMainCameraEntity(){
-        return {mainCamera.entity, this};
+        return {mainCamera, this};
     }
 
     camera_c* Scene::setMainCamera(Entity& entity){
@@ -89,10 +85,14 @@ namespace Everest {
 
         if(!entity.isValid() || !entity.has<camera_c>()) return nullptr;
 
-        mainCamera.camera = &entity.get<camera_c>();
-        mainCamera.transform = &entity.get<transform_c>();
-        mainCamera.entity = entity;
-        return mainCamera.camera;
+        mainCamera = entity;
+        return &entity.get<camera_c>();
+    }
+
+    camera_c* Scene::getMainCamera() {
+        Entity e = {mainCamera, this};
+        return e.isValid() && e.has<camera_c>() ?
+                &e.get<camera_c>() : nullptr;
     }
 
     void Scene::fetchTargetCamera(){
@@ -100,11 +100,9 @@ namespace Everest {
 
         auto camgrp = _registry.group<camera_c>(entt::get<transform_c>);
         for (auto ent: camgrp){
-            const auto& [cam, tfr] = camgrp.get(ent);
-            if(cam.isPrimary){
-                mainCamera.camera = &cam;
-                mainCamera.transform = &tfr;
-                mainCamera.entity = ent;
+            const auto& [cam_ent, tfr] = camgrp.get(ent);
+            if(cam_ent.isPrimary){
+                mainCamera = ent;
                 break;
             }
         }
@@ -114,14 +112,19 @@ namespace Everest {
     void Scene::onRender(){ 
         EV_profile_function();
 
-        if(mainCamera.camera == nullptr) fetchTargetCamera();
-        if(mainCamera.camera == nullptr) return;
+        Entity camm = {mainCamera, this};
+        if(!camm.has<camera_c>()) fetchTargetCamera();
+        if(!camm.has<camera_c>()) return;
 
-        Renderer2D::beginScene(*mainCamera.camera, *mainCamera.transform);
+        auto& camera = camm.get<camera_c>();
+        if(!camera.active) return;
+
+        Renderer2D::beginScene(camera, camm.get<transform_c>());
 
         auto sprgrp = _registry.group<spriteRenderer_c>(entt::get<transform_c>);
         for(auto ent : sprgrp){
             const auto& [spr, tfr] = sprgrp.get(ent);
+            if(!spr.active) continue;;
             Renderer2D::drawSprite(tfr, spr
 #ifdef EDITOR_BUILD
                     , (u32)ent
@@ -132,6 +135,7 @@ namespace Everest {
         auto cirgrp = _registry.group<circleRenderer_c>(entt::get<transform_c>);
         for(auto ent : cirgrp){
             const auto& [cir, tfr] = cirgrp.get(ent);
+            if(!cir.active) continue;;
             Renderer2D::drawCircle(tfr, cir.color, cir.thickness, cir.fade
 #ifdef EDITOR_BUILD
                     , (u32)ent
@@ -142,23 +146,26 @@ namespace Everest {
         Renderer2D::endScene();
     }
 
-    void drawCameraGizmo(transform_c& tfr, camera_c& cam, u32 id){
-        if(cam.is3d()){
-            vec3 scale(cam.get_aspect(), 1.f, 1.f);
-            transform_c btfr{tfr.position, tfr.rotation, scale*.2f};
+    void drawCameraGizmo(transform_c& tfr, camera_c& cam_ent, u32 id){
+        if(cam_ent.is3d()){
+            vec3 scale(cam_ent.get_aspect(), 1.f, 1.f);
+            transform_c btfr = tfr;
+            tfr.scale *= 2.f;
             Renderer2D::drawRect(btfr);
-            transform_c ftfr{tfr.position + Math::getCameraForward(tfr)*.1f, tfr.rotation, scale * 0.3f};
+            transform_c ftfr = tfr;
+            ftfr.position += Math::getCameraForward(tfr)*.1f;
+            ftfr.scale *= 0.3f;
             Renderer2D::drawRect(ftfr);
             Renderer2D::drawLine(btfr.position, ftfr.position);
-            Renderer2D::drawSprite(btfr, {}
+            Renderer2D::drawSprite((mat4)btfr, {}
 #ifdef EDITOR_BUILD
                     , (u32)id
 #endif
                     );
         } else {
-            f32 sz = cam.get_lenssize() * 2;
+            f32 sz = cam_ent.get_lenssize() * 2;
             Renderer2D::drawRect(tfr.position, tfr.rotation.z,
-                    vec2(sz * cam.get_aspect(), sz));
+                    vec2(sz * cam_ent.get_aspect(), sz));
         }
     }
 
@@ -173,8 +180,8 @@ namespace Everest {
 
         auto camgrp = _registry.group<camera_c>(entt::get<transform_c>);
         for(auto ent : camgrp){
-            const auto& [cam, tfr] = camgrp.get(ent);
-            drawCameraGizmo(tfr, cam, (u32)ent);
+            const auto& [cam_ent, tfr] = camgrp.get(ent);
+            if(cam_ent.active) drawCameraGizmo(tfr, cam_ent, (u32)ent);
         }
 
         if(renderPhysicsShapes){
@@ -182,7 +189,7 @@ namespace Everest {
             auto boxClds = _registry.group<boxCollider2d_c>(entt::get<transform_c>);
             for(auto ent : boxClds){
                 const auto& [box, tfr] = boxClds.get(ent);
-                Renderer2D::drawRect(
+                if(box.active) Renderer2D::drawRect(
                         tfr.position + vec3(box.box.offset, 0.001f),
                         glm::radians(tfr.rotation.z),
                         tfr.scale * vec3(box.box.halfExtents*2.f, 1.f),
@@ -193,7 +200,7 @@ namespace Everest {
             auto cirClds = _registry.group<circleCollider2d_c>(entt::get<transform_c>);
             for(auto ent : cirClds){
                 const auto& [cir, tfr] = cirClds.get(ent);
-                Renderer2D::drawCircle(
+                if(cir.active) Renderer2D::drawCircle(
                         tfr.position + vec3(cir.circle.offset, 0.001f),
                         glm::max(tfr.scale.x, tfr.scale.y) * cir.circle.radius * 2.f,
                         _phyColor,
@@ -206,7 +213,7 @@ namespace Everest {
         auto sprgrp = _registry.group<spriteRenderer_c>(entt::get<transform_c>);
         for(auto ent : sprgrp){
             const auto& [spr, tfr] = sprgrp.get(ent);
-            Renderer2D::drawSprite(tfr, spr
+            if(spr.active) Renderer2D::drawSprite(tfr, spr
 #ifdef EDITOR_BUILD
                     , (u32)ent
 #endif
@@ -216,7 +223,7 @@ namespace Everest {
         auto cirgrp = _registry.group<circleRenderer_c>(entt::get<transform_c>);
         for(auto ent : cirgrp){
             const auto& [cir, tfr] = cirgrp.get(ent);
-            Renderer2D::drawCircle(tfr, cir.color, cir.thickness, cir.fade
+            if(cir.active) Renderer2D::drawCircle(tfr, cir.color, cir.thickness, cir.fade
 #ifdef EDITOR_BUILD
                     , (u32)ent
 #endif
@@ -271,18 +278,19 @@ namespace Everest {
 
         auto cams = _registry.view<camera_c>();
         for(auto ent : cams){
-            auto& cam = cams->get(ent);
-            if(!cam.fixedAspect){
-                cam.set_aspect(aspect);
+            auto& cam_ent = cams->get(ent);
+            if(!cam_ent.fixedAspect){
+                cam_ent.set_aspect(aspect);
             }
         }
     }
 
     vec2 Scene::worldToScreen(vec3 worldPos){
-        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) fetchTargetCamera();
-        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) return {};
+        Entity cam_ent = {mainCamera, this};
+        if(!cam_ent.has<camera_c>()) fetchTargetCamera();
+        if(!cam_ent.has<camera_c>()) return {};
 
-        mat4 vpm = mainCamera.camera->getProjection() * glm::inverse((mat4)*mainCamera.transform);
+        mat4 vpm = cam_ent.get<camera_c>().getProjection() * glm::inverse((mat4)cam_ent.get<transform_c>());
         vec4 clipc = vpm * vec4(worldPos, 1.f);
         clipc /= clipc.w;
         clipc = (clipc + 1.f) / 2.f;
@@ -291,44 +299,49 @@ namespace Everest {
     }
 
     vec3 Scene::screenToWorld(vec2 screenPos){
-        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) fetchTargetCamera();
-        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) return {};
+        Entity cam_ent = {mainCamera, this};
+        if(!cam_ent.has<camera_c>()) fetchTargetCamera();
+        if(!cam_ent.has<camera_c>()) return {};
+
+        camera_c& cam = cam_ent.get<camera_c>();
 
         screenPos -= _viewportOffset;
         vec3 clipc(screenPos.x/_viewportSize.x*2-1.f, 1.f-screenPos.y/_viewportSize.y*2, 
-                mainCamera.camera->is2d()? -1.f : mainCamera.camera->get_near());
-        mat4 vpmat = mainCamera.camera->getProjection() * glm::inverse((mat4)*mainCamera.transform);
+                cam.is2d()? -1.f : cam.get_near());
+        mat4 vpmat = cam.getProjection() * glm::inverse((mat4)cam_ent.get<transform_c>());
         vec4 pp = glm::inverse(vpmat) * vec4(clipc, 1.f);
         pp /= pp.w;
         return pp;
     }
 
     vec3 Scene::screenToWorldDir(vec2 screenPos){
-        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) fetchTargetCamera();
-        if(mainCamera.camera == nullptr || mainCamera.transform == nullptr) return {};
+        Entity cam_ent = {mainCamera, this};
+        if(!cam_ent.has<camera_c>()) fetchTargetCamera();
+        if(!cam_ent.has<camera_c>()) return {};
 
         screenPos -= _viewportOffset;
         vec4 ndc(screenPos.x/_viewportSize.x*2-1.f, 1.f-screenPos.y/_viewportSize.y*2, 1.f, 1.f);
-        vec4 ax = glm::inverse(mainCamera.camera->getProjection()) * ndc;
+        vec4 ax = glm::inverse(cam_ent.get<camera_c>().getProjection()) * ndc;
         ax /= ax.w;
         ax.w = 0.f;
-        return glm::normalize((mat4)*mainCamera.transform * ax);
+        return glm::normalize((mat4)cam_ent.get<transform_c>() * ax);
     }
 
     template<typename Comp>
-    void copyComponent(entt::registry& src, entt::entity srcID, entt::registry& dest, entt::entity destID){
+    void copyComponent(entt::registry& src, entt::entity srcID, entt::registry& dest, Entity destID){
         if(!src.all_of<Comp>(srcID)) return;
         Comp& sc = src.get<Comp>(srcID);
         Comp& dc = dest.all_of<Comp>(destID) ?
-            dest.get<Comp>(destID) : dest.emplace<Comp>(destID, sc);
-        dc = sc;
+            dest.get<Comp>(destID) :
+            dest.emplace<Comp>(destID);
+        dc.makeCopyUsing(sc, destID);
     }
 
     void copyScript(entt::registry& src, entt::entity sEntity, entt::registry& dest, Entity dEntity){
         if(!src.all_of<EvScript>(sEntity)) return;
         EvScript& sc = src.get<EvScript>(sEntity);
         EvScript& dc = dest.all_of<EvScript>(dEntity) ?
-            dest.get<EvScript>(dEntity) : dest.emplace<EvScript>(dEntity, sc);
+            dest.get<EvScript>(dEntity) : dest.emplace<EvScript>(dEntity);
         dc.makeCopyUsing(sc, dEntity);
     }
 
@@ -365,10 +378,8 @@ namespace Everest {
             copyScript(srcReg, e, desReg, _ent);
 
             // main camera shifting
-            if(e == other->mainCamera.entity){
-                newScene->mainCamera.camera = &desReg.get<camera_c>(_ent);
-                newScene->mainCamera.transform = &desReg.get<transform_c>(_ent);
-                newScene->mainCamera.entity = _ent;
+            if(e == other->mainCamera){
+                newScene->mainCamera = _ent;
             }
 
 #ifndef __NO_3D__
@@ -384,12 +395,8 @@ namespace Everest {
     void duplicateComponent(Entity& src, Entity& dest){
         if(!src.has<Comp>()) return;
         Comp& sc = src.get<Comp>();
-        if(dest.has<Comp>()){
-            Comp& dc = dest.get<Comp>();
-            dc = sc;
-        } else {
-            dest.add<Comp>(sc);
-        }
+        Comp& dc = dest.tryAdd<Comp>();
+        dc.makeCopyUsing(sc, dest);
     }
 
     Entity Scene::duplicateEntity(Entity& entity){
@@ -403,6 +410,7 @@ namespace Everest {
         duplicateComponent<springJoint2d_c>(entity, ent);
         duplicateComponent<boxCollider2d_c>(entity, ent);
         duplicateComponent<circleCollider2d_c>(entity, ent);
+        duplicateComponent<EvScript>(entity, ent);
 
 #ifndef __NO_3D__
         duplicateComponent<rigidbody_c>(entity, ent);

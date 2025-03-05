@@ -41,6 +41,8 @@ before such behaviour is encountered
 
 =============== TODO ============
 [ ] write a rough lua-scripting api for entity
+    - scene index registering: (SceneManager. loadNext, loadByIndex)
+    - scene index registering ui
     - make a simple demo game scene
     - update api docs
 [ ] fix bugs... duh!!

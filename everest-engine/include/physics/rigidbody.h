@@ -2,7 +2,7 @@
 
 #include "math/types.h"
 #include "yaml-cpp/emitter.h"
-#include "phyconfig.h"
+#include "scene/component_type.h"
 
 
 namespace Everest {
@@ -18,13 +18,15 @@ namespace Everest {
     };
 
 #ifndef __NO_3D__
-    struct rigidbody_c {
+    struct rigidbody_c : public component_t {
         vec3 velocity = vec3(0.f);
         vec3 angularVelocity = vec3(0.f);
         f32 drag = 1.f;
         f32 inverseMass = 1.f;
         f32 inverseInertia = 1.f;
         bool useGravity = true;
+
+        rigidbody_c(Entity ent) : component_t(ent) {}
 
         void addForce(const vec3 force, const ForceMode mode = ForceMode::Force);
         void addForceAtOffset(const vec3 force, const vec3 offset);
@@ -44,13 +46,21 @@ namespace Everest {
     };
 #endif
 
-    struct rigidbody2d_c {
+    struct rigidbody2d_c : public component_t {
         vec2 velocity = vec2(0.f);
         f32 angularVelocity = 0.f;
         f32 drag = 1.f;
         f32 inverseMass = 1.f;
         f32 inverseInertia = 1.f;
         int definition = BodyDefBits::UseGravity;
+
+        rigidbody2d_c() = default;
+        rigidbody2d_c(Entity ent) : component_t(ent) {}
+        void makeCopyUsing(const rigidbody2d_c& other, Entity ent){
+            *this = other;
+            entity = ent;
+            active = other.active;
+        }
 
         void addForce(const vec2 force, const ForceMode mode = ForceMode::Force);
         void addForceAtOffset(const vec2 force, const vec2 offset);

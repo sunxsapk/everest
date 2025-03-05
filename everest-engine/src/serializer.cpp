@@ -185,6 +185,7 @@ namespace Everest {
                     auto& cam = n_ent.add<camera_c>();
                     cam.isPrimary = camera["isPrimary"]?camera["isPrimary"].as<bool>() : false;
                     cam.fixedAspect = camera["fixedAspect"].as<bool>();
+                    cam.active = camera["active"]?camera["active"].as<bool>() : true;
 
                     if(camera["u_size_fov"]){
                         cam.set_lenssize(camera["u_size_fov"].as<f32>());
@@ -209,25 +210,23 @@ namespace Everest {
                 auto spriteRenderer = entity["spriteRenderer_c"];
                 if(spriteRenderer){
                     auto txpath = spriteRenderer["texturePath"];
-                    n_ent.add<spriteRenderer_c>(spriteRenderer_c{
-                            .texture = txpath ?
-                                AssetsManager::loadTexture(txpath.as<std::string>().c_str()) :
-                                nullptr,
-                            .color = spriteRenderer["color"].as<vec4>(),
-                            .startUV = spriteRenderer["startUV"].as<vec2>(),
-                            .sizeUV = spriteRenderer["sizeUV"].as<vec2>(),
-                        });
+                    auto& comp = n_ent.add<spriteRenderer_c>();
+                    comp.active = spriteRenderer["active"]?spriteRenderer["active"].as<bool>() : true;
+                    comp.texture = txpath ? AssetsManager::loadTexture(txpath.as<std::string>().c_str()) : nullptr;
+                    comp.color = spriteRenderer["color"].as<vec4>();
+                    comp.startUV = spriteRenderer["startUV"].as<vec2>();
+                    comp.sizeUV = spriteRenderer["sizeUV"].as<vec2>();
                 }
             }
 
             {
                 auto circleRenderer = entity["circleRenderer_c"];
                 if(circleRenderer){
-                    n_ent.add<circleRenderer_c>(circleRenderer_c{
-                            .color = circleRenderer["color"].as<vec4>(),
-                            .thickness = circleRenderer["thickness"].as<f32>(),
-                            .fade = circleRenderer["fade"].as<f32>(),
-                        });
+                    auto& comp = n_ent.add<circleRenderer_c>();
+                    comp.active = circleRenderer["active"]?circleRenderer["active"].as<bool>() : true;
+                    comp.color = circleRenderer["color"].as<vec4>();
+                    comp.thickness = circleRenderer["thickness"].as<f32>();
+                    comp.fade = circleRenderer["fade"].as<f32>();
                 }
             }
 
@@ -235,6 +234,7 @@ namespace Everest {
                 auto rigidbody2d = entity["rigidbody2d_c"];
                 if(rigidbody2d){
                     auto& rb2d = n_ent.add<rigidbody2d_c>();
+                    rb2d.active = rigidbody2d["active"]?rigidbody2d["active"].as<bool>() : true;
                     rb2d.velocity = rigidbody2d["velocity"].as<vec2>();
                     rb2d.angularVelocity = rigidbody2d["angularVelocity"].as<f32>();
                     rb2d.drag = rigidbody2d["drag"].as<f32>();
@@ -247,7 +247,9 @@ namespace Everest {
                 auto springJoint2d = entity["springJoint2d_c"];
                 if(springJoint2d){
                     auto& spr2d = n_ent.add<springJoint2d_c>();
-                    spr2d.anchor = springJoint2d["anchor"].as<vec2>();
+                    spr2d.active = springJoint2d["active"]?springJoint2d["active"].as<bool>() : true;
+                    u64 val = springJoint2d["anchor"].as<u64>();
+                    spr2d.anchor = val ? _scene->getEntityFromId(val) : Entity();
                     spr2d.offset = springJoint2d["offset"].as<vec2>();
                     spr2d.springConstant = springJoint2d["springConstant"].as<f32>();
                     spr2d.damping = springJoint2d["damping"].as<f32>();
@@ -260,6 +262,7 @@ namespace Everest {
                 auto rigidbody = entity["rigidbody_c"];
                 if(rigidbody){
                     auto& rb = n_ent.add<rigidbody_c>();
+                    rb.active = rigidbody["active"]?rigidbody["active"].as<bool>() : true;
                     rb.velocity = rigidbody["velocity"].as<vec3>();
                     rb.angularVelocity = rigidbody["angularVelocity"].as<vec3>();
                     rb.drag = rigidbody["drag"].as<f32>();
@@ -272,6 +275,7 @@ namespace Everest {
                 auto springJoint = entity["springJoint_c"];
                 if(springJoint){
                     auto& spr = n_ent.add<springJoint_c>();
+                    spr.active = springJoint["active"]?springJoint["active"].as<bool>() : true;
                     spr.anchor = springJoint["anchor"].as<vec3>();
                     spr.offset = springJoint["offset"].as<vec3>();
                     spr.springConstant = springJoint["springConstant"].as<f32>();
@@ -285,6 +289,7 @@ namespace Everest {
                 auto boxCollider2d = entity["boxCollider2d_c"];
                 if(boxCollider2d){
                     auto& bc2d = n_ent.add<boxCollider2d_c>();
+                    bc2d.active = boxCollider2d["active"]?boxCollider2d["active"].as<bool>() : true;
                     bc2d.box.offset = boxCollider2d["offset"].as<vec2>();
                     bc2d.box.halfExtents = boxCollider2d["halfExtents"].as<vec2>();
                     bc2d.restitution = boxCollider2d["restitution"].as<f32>();
@@ -295,6 +300,7 @@ namespace Everest {
                 auto circleCollider2d = entity["circleCollider2d_c"];
                 if(circleCollider2d){
                     auto& cc2d = n_ent.add<circleCollider2d_c>();
+                    cc2d.active = circleCollider2d["active"]?circleCollider2d["active"].as<bool>() : true;
                     cc2d.circle.offset = circleCollider2d["offset"].as<vec2>();
                     cc2d.circle.radius = circleCollider2d["radius"].as<f32>();
                     cc2d.restitution = circleCollider2d["restitution"].as<f32>();
@@ -305,7 +311,7 @@ namespace Everest {
                 using namespace Scripting;
                 auto evscripts = entity["evscript_c"];
                 if(evscripts){
-                    EvScript& scr = n_ent.add<EvScript>(n_ent);
+                    EvScript& scr = n_ent.add<EvScript>();
                     for(auto script : evscripts){
                         std::string path = script["path"].as<std::string>();
                         scriptHandler_t& sh = scr.addScript(path);
@@ -408,6 +414,7 @@ namespace Everest {
         out << Key << "camera_c";
         out << BeginMap;
 
+        out << Key << "active" << Value << camera.active;
         out << Key << "fixedAspect" << Value << camera.fixedAspect;
         out << Key << "isPrimary" << Value << camera.isPrimary;
         out << Key << "is2d" << Value << camera.is2d();
@@ -426,6 +433,7 @@ namespace Everest {
         out << Key << "spriteRenderer_c";
         out << BeginMap;
 
+        out << Key << "active" << Value << spriteRenderer.active;
         out << Key << "color" << Value << spriteRenderer.color;
         out << Key << "startUV" << Value << spriteRenderer.startUV;
         out << Key << "sizeUV" << Value << spriteRenderer.sizeUV;
@@ -441,6 +449,7 @@ namespace Everest {
         out << Key << "circleRenderer_c";
         out << BeginMap;
 
+        out << Key << "active" << Value << circleRenderer.active;
         out << Key << "color" << Value << circleRenderer.color;
         out << Key << "thickness" << Value << circleRenderer.thickness;
         out << Key << "fade" << Value << circleRenderer.fade;
@@ -455,6 +464,7 @@ namespace Everest {
         out << Key << "rigidbody2d_c";
         out << BeginMap;
 
+        out << Key << "active" << Value << rb2d.active;
         out << Key << "inverseMass" << Value << rb2d.inverseMass;
         out << Key << "drag" << Value << rb2d.drag;
         out << Key << "velocity" << Value << rb2d.velocity;
@@ -465,12 +475,13 @@ namespace Everest {
         return out;
     }
 
-    YAML::Emitter& operator<<(YAML::Emitter& out, const springJoint2d_c& spr){
+    YAML::Emitter& operator<<(YAML::Emitter& out, springJoint2d_c& spr){
         using namespace YAML;
         out << Key << "springJoint2d_c";
         out << BeginMap;
 
-        out << Key << "anchor" << Value << spr.anchor;
+        out << Key << "active" << Value << spr.active;
+        out << Key << "anchor" << Value << (spr.anchor.isValid() ? (u64) spr.anchor.get<Everest::id_c>().id : 0);
         out << Key << "offset" << Value << spr.offset;
         out << Key << "springConstant" << Value << spr.springConstant;
         out << Key << "damping" << Value << spr.damping;
@@ -485,6 +496,7 @@ namespace Everest {
         out << Key << "boxCollider2d_c";
         out << BeginMap;
 
+        out << Key << "active" << Value << boxCollider2d.active;
         out << Key << "offset" << Value << boxCollider2d.box.offset;
         out << Key << "halfExtents" << Value << boxCollider2d.box.halfExtents;
         out << Key << "restitution" << Value << boxCollider2d.restitution;
@@ -498,6 +510,7 @@ namespace Everest {
         out << Key << "circleCollider2d_c";
         out << BeginMap;
 
+        out << Key << "active" << Value << circleCollider2d.active;
         out << Key << "offset" << Value << circleCollider2d.circle.offset;
         out << Key << "radius" << Value << circleCollider2d.circle.radius;
         out << Key << "restitution" << Value << circleCollider2d.restitution;
@@ -506,7 +519,7 @@ namespace Everest {
         return out;
     }
 
-    YAML::Emitter& operator<<(YAML::Emitter& out, const EvScript& script){
+    YAML::Emitter& operator<<(YAML::Emitter& out, const EvScript& script){ // TODO: active
         using namespace YAML;
         using namespace Scripting;
         if(!script.scripts.size()) return out;
@@ -576,6 +589,7 @@ namespace Everest {
         out << Key << "rigidbody_c";
         out << BeginMap;
 
+        out << Key << "active" << Value << rb.active;
         out << Key << "inverseMass" << Value << rb.inverseMass;
         out << Key << "drag" << Value << rb.drag;
         out << Key << "velocity" << Value << rb.velocity;
@@ -591,6 +605,7 @@ namespace Everest {
         out << Key << "springJoint_c";
         out << BeginMap;
 
+        out << Key << "active" << Value << spr.active;
         out << Key << "anchor" << Value << spr.anchor;
         out << Key << "offset" << Value << spr.offset;
         out << Key << "springConstant" << Value << spr.springConstant;

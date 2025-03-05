@@ -68,9 +68,9 @@ elseif (APPLE)
 endif()
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
-    $<$<CONFIG:Debug>:DEBUG;ASSERT_ON;EV_PROFILE>
-    $<$<CONFIG:Release>:RELEASE;ASSERT_ON;EV_PROFILE>
-    $<$<CONFIG:Dist>:DIST>
+    $<$<CONFIG:Debug>:DEBUG;ASSERT_ON;EV_PROFILE;__NO_3D__>
+    $<$<CONFIG:Release>:RELEASE;ASSERT_ON;EV_PROFILE;__NO_3D__>
+    $<$<CONFIG:Dist>:DIST;__NO_3D__>
 )
 
 # installation setup

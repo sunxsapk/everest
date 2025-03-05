@@ -112,6 +112,7 @@ namespace Everest {
         ImGui::Spacing();
 
         if(ImGui::RadioButton("2D", cam.is2d())){
+            sceneCamera.transform.rotation = vec3(0.f);
             if(cam.is2d()) cam.set3d();
             else cam.set2d();
         }
@@ -150,10 +151,9 @@ namespace Everest {
 
         ImGui::SameLine();
         if(ImGui::Button("Reset")) {
-            if(sceneCamera.camera.is2d()){
-                sceneCamera.transform.position.x = 0.f;
-                sceneCamera.transform.position.y = 0.f;
-            } else sceneCamera.lookAt(vec3(0.f));
+            sceneCamera.transform.position = vec3(0.f, 0.f, -10.f);
+            sceneCamera.lookAt(vec3(0.f));
+            sceneCamera.transform.rotation = vec3(0.f);
         }
         ImGui::SameLine();
         gizmosSettings();
