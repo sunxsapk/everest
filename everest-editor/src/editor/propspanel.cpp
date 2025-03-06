@@ -37,7 +37,7 @@ namespace Everest {
                 EVLog_Msg("Drag n Drop Item %s", path_str);
                 if(AssetsManager::getAssetsType(path_str) == AssetsType::SCRIPT){
                     try {
-                        auto& scr = ent.tryAdd<EvScript>(ent);
+                        auto& scr = ent.tryAdd<EvScript>();
                         scr.addScript(path_str);
                     } catch(std::exception exc){
                         // TODO: make this into a popup
@@ -139,6 +139,7 @@ namespace Everest {
     template<typename comp_t, typename uiDrawCallback>
     void PropertiesPanel::_componentUI(Entity& ent, const char* label, uiDrawCallback callback){
         ImVec2 craw = ImGui::GetContentRegionAvail();
+        auto& comp = ent.get<comp_t>();
 
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2{4,4});
         float lineh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
@@ -146,9 +147,11 @@ namespace Everest {
         bool c_remove = false;
         bool c_open = ImGui::TreeNodeEx(label, _compFlags);
         ImGui::PopStyleVar();
-        ImGui::SameLine(craw.x - lineh * 0.5f);
+        ImGui::SameLine(craw.x - lineh - GImGui->Style.FramePadding.x * 2.f - GImGui->Style.ItemSpacing.x);
 
         ImGui::PushFont(UIFontManager::getDefaultBold());
+        ImGui::Checkbox("##_a", &comp.active);
+        ImGui::SameLine();
         if(ImGui::Button("+", ImVec2{lineh, lineh})) ImGui::OpenPopup("_comp_settings_");
         ImGui::PopFont();
 
@@ -158,7 +161,6 @@ namespace Everest {
         }
 
         if(c_open){
-            auto& comp = ent.get<comp_t>();
             callback(comp);
             ImGui::TreePop();
         }
@@ -398,7 +400,8 @@ namespace Everest {
 
         if(ent.has<springJoint2d_c>()) _componentUI<springJoint2d_c>(ent, "Spring Joint 2D",
         [](springJoint2d_c& comp){
-            _vec2ui("Anchor", comp.anchor, 0.f);
+            //_vec2ui("Anchor", comp.anchor, 0.f);
+            _entity("Anchor", comp.anchor);
             _vec2ui("Offset", comp.offset, 0.f);
             _f32dragui("Spring Constant", comp.springConstant, 0.01f, "##spk") ;
             _f32dragui("Damping", comp.damping, 0.01f, "##dmp", 0.f, std::numeric_limits<f32>::max());

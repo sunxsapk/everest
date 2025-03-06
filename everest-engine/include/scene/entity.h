@@ -21,17 +21,17 @@ namespace Everest {
         bool operator ==(Entity& other) const {return _id == other._id && _scene == other._scene;}
         bool operator !=(Entity& other) const {return !(*this == other);}
 
-        inline bool isValid(){return _id != entt::null && _scene->_registry.valid(_id);}
+        inline bool isValid() const {return _id != entt::null && _scene->_registry.valid(_id);}
 
         template<typename... component_t>
         inline bool has(){
-            return _scene->_registry.all_of<component_t...>(_id);
+            return _id != entt::null && _scene->_registry.all_of<component_t...>(_id);
         }
 
         template<typename component_t, typename... args_t>
         inline component_t& add(args_t&&... args){
             ASSERT(!has<component_t>(), "Entity already has the component");
-            component_t& comp = _scene->_registry.emplace<component_t>(_id, std::forward<args_t>(args)...);
+            component_t& comp = _scene->_registry.emplace<component_t>(_id, *this, std::forward<args_t>(args)...);
             _scene->onComponentAdded(*this, comp);
             return comp;
         }
@@ -39,7 +39,7 @@ namespace Everest {
         template<typename component_t, typename... args_t>
         inline component_t& tryAdd(args_t&&... args){
             if(has<component_t>()) return get<component_t>();
-            return add<component_t>(std::forward<args_t>(args)...);
+            return add<component_t>(std::forward<args_t>(*this, args)...);
         }
 
         template<typename component_t>

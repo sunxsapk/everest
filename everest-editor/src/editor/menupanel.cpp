@@ -1,5 +1,6 @@
 #include "menupanel.h"
 #include "scenepanel.h"
+#include "sceneSequence.h"
 
 namespace Everest {
 
@@ -13,12 +14,12 @@ namespace Everest {
 
     void MenuPanel::editMenu(){
         if (ImGui::BeginMenu("Edit")) {
-            if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+            if (ImGui::MenuItem("Undo", "CTRL+Z", false, false)) {}
             if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
             ImGui::Separator();
-            if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-            if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-            if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+            if (ImGui::MenuItem("Cut", "CTRL+X", false, false)) {}
+            if (ImGui::MenuItem("Copy", "CTRL+C", false, false)) {}
+            if (ImGui::MenuItem("Paste", "CTRL+V", false, false)) {}
             ImGui::EndMenu();
         }
     }

@@ -15,7 +15,7 @@ namespace Everest {
         return glm::length(point - offset) <= radius;
     }
 
-    collider2d_c::collider2d_c(collider2d_type_t type_)
+    collider2d_t::collider2d_t(collider2d_type_t type_)
     : type(type_) {
 
         switch(type){
@@ -29,14 +29,14 @@ namespace Everest {
         }
     }
 
-    collider2d_c::collider2d_c(const boxCollider2d_c& boxCollider, Entity entity_){
+    collider2d_t::collider2d_t(const boxCollider2d_c& boxCollider, Entity entity_){
         type = collider2d_type_t::Box;
         entity = entity_;
         restitution = boxCollider.restitution;
         props.box = boxCollider.box;
     }
 
-    collider2d_c::collider2d_c(const circleCollider2d_c& circleCollider, Entity entity_){
+    collider2d_t::collider2d_t(const circleCollider2d_c& circleCollider, Entity entity_){
         type = collider2d_type_t::Circle;
         entity = entity_;
         restitution = circleCollider.restitution;
@@ -75,7 +75,7 @@ namespace Everest {
         };
     }
 
-    aabb2d_t collider2d_c::getBounds(){
+    aabb2d_t collider2d_t::getBounds(){
         switch(type){
             case collider2d_type_t::Box:
                 return getBoxAABB2D(entity.get<transform_c>(), props.box);

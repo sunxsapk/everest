@@ -114,7 +114,7 @@ namespace Scripting {
         return {};
     }
 
-    evscript_c::evscript_c(const evscript_c& other){
+    evscript_c::evscript_c(const evscript_c& other) {
         *this = other;
     }
 

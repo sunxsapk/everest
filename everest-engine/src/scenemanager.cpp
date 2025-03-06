@@ -26,6 +26,15 @@ namespace Everest {
         return _success;
     }
 
+    bool SceneManager::loadScene(size_t sceneIndex){
+        if(sceneIndex < 0 || sceneIndex >= _instance->sceneSequence.size()) return false;
+        if(loadScene(_instance->sceneSequence[sceneIndex].c_str())){
+            _instance->currentSceneIndex = sceneIndex;
+            return true;
+        }
+        return false;
+    }
+
     void SceneManager::saveScene(const char* filepath){
         SceneSerializer::setSerializationContext(_instance->activeScene.get());
         SceneSerializer::serialize(filepath);

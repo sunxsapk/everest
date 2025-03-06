@@ -78,6 +78,7 @@ namespace Scripting {
 
     void reg_tag(luastate_t& lua){
         lua.new_usertype<tag_c>("tag_c",
+                "entity", &tag_c::entity,
                 "name", &tag_c::tag,
                 "tag", &tag_c::tag
                 );
@@ -85,6 +86,7 @@ namespace Scripting {
 
     void reg_transform(luastate_t& lua){
         lua.new_usertype<transform_c>("transform_c",
+                "entity", &transform_c::entity,
                 "position", &transform_c::position,
                 "rotation", &transform_c::rotation,
                 "scale", &transform_c::scale,
@@ -108,6 +110,8 @@ namespace Scripting {
                 );
 
         lua.new_usertype<rigidbody2d_c>("rigidbody2d_c",
+                "entity", &rigidbody2d_c::entity,
+                "active", &rigidbody2d_c::active,
                 "velocity", &rigidbody2d_c::velocity,
                 "angularVelocity", &rigidbody2d_c::angularVelocity,
                 "drag", &rigidbody2d_c::drag,
@@ -122,6 +126,8 @@ namespace Scripting {
 
     void reg_spriteRenderer(luastate_t& lua){
         lua.new_usertype<spriteRenderer_c>("spriteRenderer_c",
+                "entity", &spriteRenderer_c::entity,
+                "active", &spriteRenderer_c::active,
                 "color", &spriteRenderer_c::color,
                 "startUV", &spriteRenderer_c::startUV,
                 "sizeUV", &spriteRenderer_c::sizeUV
@@ -130,6 +136,8 @@ namespace Scripting {
 
     void reg_circleRenderer(luastate_t& lua){
         lua.new_usertype<circleRenderer_c>("circleRenderer_c",
+                "entity", &circleRenderer_c::entity,
+                "active", &circleRenderer_c::active,
                 "color", &circleRenderer_c::color,
                 "thickness", &circleRenderer_c::thickness,
                 "fade", &circleRenderer_c::fade
@@ -138,6 +146,8 @@ namespace Scripting {
 
     void reg_springJoint2d(luastate_t& lua){
         lua.new_usertype<springJoint2d_c>("springJoint2d_c",
+                "entity", &springJoint2d_c::entity,
+                "active", &springJoint2d_c::active,
                 "anchor", &springJoint2d_c::anchor,
                 "offset", &springJoint2d_c::offset,
                 "springConstant", &springJoint2d_c::springConstant,
@@ -153,6 +163,8 @@ namespace Scripting {
                 );
 
         lua.new_usertype<circleCollider2d_c>("circleCollider2d_c",
+                "entity", &circleCollider2d_c::entity,
+                "active", &circleCollider2d_c::active,
                 "circle", &circleCollider2d_c::circle,
                 "restitution", &circleCollider2d_c::restitution
                 );
@@ -165,6 +177,8 @@ namespace Scripting {
                 );
 
         lua.new_usertype<boxCollider2d_c>("boxCollider2d_c",
+                "entity", &boxCollider2d_c::entity,
+                "active", &boxCollider2d_c::active,
                 "box", &boxCollider2d_c::box,
                 "restitution", &boxCollider2d_c::restitution
                 );
@@ -176,6 +190,7 @@ namespace Scripting {
                 );
         lua.new_usertype<evscript_c>("evscript_c",
                 "get", &evscript_c::tryGetScriptHandler,
+                "active", &evscript_c::active,
                 "entity", &evscript_c::entity
                 );
     }
@@ -191,6 +206,8 @@ namespace Scripting {
 
     void reg_camera(luastate_t& lua){
         lua.new_usertype<camera_c>("camera_c",
+                "entity", &camera_c::entity,
+                "active", &camera_c::active,
                 "fixedAspect", &camera_c::fixedAspect,
 
                 "getProjection", &camera_c::getProjection,
@@ -422,6 +439,13 @@ namespace Scripting {
         st["screenToWorldDir"] = [](vec2 screenPos)->vec3{
             return SceneManager::getActiveScene()->screenToWorldDir(screenPos);
         };
+        st["load"] = [](int ind)->bool {
+            return SceneManager::loadScene(ind);
+        };
+        st["loadNext"] = SceneManager::loadNext;
+        st["getCurrentSceneIndex"] = []()->int{
+            return SceneManager::getCurrentSceneIndex();
+        };
 
         lua["Scene"]  = st;
     }
@@ -451,6 +475,7 @@ namespace Scripting {
     void reg_entity(luastate_t& lua){
         lua.new_usertype<Entity>("Entity",
                 sol::constructors<Entity()>(),
+
                 "destroy", &Entity::destroy,
 
                 "get_scripts", _getc<evscript_c>,

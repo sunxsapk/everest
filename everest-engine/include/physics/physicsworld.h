@@ -13,8 +13,6 @@
 #include "math/types.h"
 #include "physics/collisionResolver.h"
 
-#include "physics/phyconfig.h"
-
 namespace Everest {
 
     using registry_t = entt::registry;
@@ -29,7 +27,7 @@ namespace Everest {
 
         private:
             static contact2d_resolver_t _contactResolver2d;
-            static aabb2d_tree_t<collider2d_c> tree2d;
+            static aabb2d_tree_t<collider2d_t> tree2d;
             static std::vector<body_contact2d_t> contacts2d;
             static std::vector<collision2d_t> collision2dResults;
             static u32 _simulationSteps;

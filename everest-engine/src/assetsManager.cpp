@@ -44,7 +44,7 @@ namespace Everest {
         ref<Scene> scene = createRef<Scene>();
         SceneSerializer::setSerializationContext(scene.get());
         bool _success = SceneSerializer::deserialize(path.c_str());
-        ASSERT(_success, "Unable to load scene"); // TODO: make an exception instead
+        if(!_success) throw std::invalid_argument("Failed to load scene: Maybe corrupted scene data");
         _instance->scenes[path] = scene;
         SceneManager::setSceneTarget(path);
         return _instance->scenes[path];

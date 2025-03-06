@@ -9,13 +9,13 @@
 #include <entt.hpp>
 #include "core/utils.h"
 #include "math/types.h"
-#include "scene/camera.h"
 #include "utils/uuid.h"
 
 namespace Everest {
 
-    struct transform_c;
+    struct camera_c;
     class Entity;
+
     class Scene {
         public:
             Scene() = default;
@@ -38,7 +38,7 @@ namespace Everest {
             void onViewportResize(uvec2 viewportOffset, uvec2 viewportSize);
 
             camera_c* setMainCamera(Entity& entity);
-            camera_c* getMainCamera(){ return mainCamera.camera; }
+            camera_c* getMainCamera();
             Entity getMainCameraEntity();
 
             vec2 worldToScreen(vec3 worldPos);
@@ -50,11 +50,7 @@ namespace Everest {
             static ref<Scene> copy(ref<Scene>& other);
 
         private:
-            struct RendererCamera {
-                camera_c* camera = nullptr;
-                transform_c* transform = nullptr;
-                entt::entity entity = entt::null;
-            } mainCamera;
+            entt::entity mainCamera;
             std::map<UUID, entt::entity> entityDB;
             entt::registry _registry;
             uvec2 _viewportOffset, _viewportSize; // TODO: add event listener for viewport resize during runtime

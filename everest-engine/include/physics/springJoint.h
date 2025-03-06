@@ -3,12 +3,12 @@
 
 #include "math/types.h"
 #include "physics/rigidbody.h"
-#include "physics/phyconfig.h"
+#include "scene/def_components.h"
 
 namespace Everest {
 
 #ifndef __NO_3D__
-    struct springJoint_c {
+    struct springJoint_c : public component_t {
         // TODO: store entity in runtime, which will be populated during serialization time
         // store reference to anchor *Entity*
         vec3 anchor = vec3(0.f);
@@ -17,16 +17,27 @@ namespace Everest {
         f32 damping = 20.f;
         f32 restLength = 5.f;
 
+        springJoint_c(Entity ent) : component_t(ent) {}
+
         void updateForce(const transform_c& otherTransform, rigidbody_c& otherBody);
     };
 #endif
 
-    struct springJoint2d_c {
-        vec2 anchor = vec2(0.f); // TODO: store reference to anchor *Entity*. DON'T forget to change lua_registry accordingly
+    struct springJoint2d_c : public component_t {
+        Entity anchor;
         vec2 offset = vec2(0.f);
         f32 springConstant = 20.f;
-        f32 damping = 20.f;
+        f32 damping = 1.f;
         f32 restLength = 5.f;
+
+        springJoint2d_c() = default;
+        springJoint2d_c(Entity ent) : component_t(ent) {}
+        void makeCopyUsing(const springJoint2d_c& other, Entity ent){
+            *this = other;
+            entity = ent;
+            active = other.active;
+            anchor = anchor.isValid()? ent.getScene()->getEntityFromId(anchor.get<id_c>().id) : Entity{};
+        }
 
         void updateForce(const transform_c& otherTransform, rigidbody2d_c& otherBody);
     };

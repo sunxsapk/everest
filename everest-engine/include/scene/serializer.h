@@ -40,7 +40,7 @@ namespace Everest {
     YAML::Emitter& operator<<(YAML::Emitter& out, const spriteRenderer_c& spriteRenderer);
     YAML::Emitter& operator<<(YAML::Emitter& out, const circleRenderer_c& circleRenderer);
     YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody2d_c& rigidbody2d);
-    YAML::Emitter& operator<<(YAML::Emitter& out, const springJoint2d_c& springJoint2d);
+    YAML::Emitter& operator<<(YAML::Emitter& out, springJoint2d_c& springJoint2d);
     YAML::Emitter& operator<<(YAML::Emitter& out, const boxCollider2d_c& boxCollider2d);
     YAML::Emitter& operator<<(YAML::Emitter& out, const circleCollider2d_c& circleCollider2d);
     YAML::Emitter& operator<<(YAML::Emitter& out, const EvScript& script);
