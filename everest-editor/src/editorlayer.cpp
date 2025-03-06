@@ -28,8 +28,9 @@ namespace Everest {
         _framebuffer = createRef<Framebuffer>(specs);
         SceneManager::onSceneChanged([](ref<Scene>& scene){
                 SceneHeirarchyUI::setScene(scene);
+                scene->onViewportResize(ScenePanel::getSceneOffset(), ScenePanel::getSceneViewportSize());
         });
-        SceneManager::loadScene("assets/scenes/physicstest2d.everest");
+        SceneManager::loadScene("assets/scenes/pool_game.everest");
         EditorAssets::init();
         Gizmos::init();
     }

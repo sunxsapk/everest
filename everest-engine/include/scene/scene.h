@@ -68,6 +68,7 @@ namespace Everest {
 
             friend class Entity;
             friend class SceneHeirarchyUI;
+            friend class SceneManager;
             friend class SceneSerializer;
             friend class PhysicsHandler;
     };

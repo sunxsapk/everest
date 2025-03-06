@@ -11,7 +11,8 @@
         "Scene",
         "Types",
         "vec3",
-        "Entity"
+        "Entity",
+        "MouseButton"
     ],
     "diagnostics.disable": [
         "lowercase-global"

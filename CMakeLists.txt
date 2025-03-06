@@ -21,8 +21,9 @@ set(ENGINE_BDIR "${OUT_dir}/${Engine}")
 file(MAKE_DIRECTORY ${ENGINE_BDIR})
 if (Target STREQUAL "Editor")
     add_definitions(-DEDITOR_BUILD)
-    add_subdirectory(everest-engine ${ENGINE_BDIR})
 endif()
+
+add_subdirectory(everest-engine ${ENGINE_BDIR})
 
 
 if (Target STREQUAL "Editor")
@@ -33,8 +34,8 @@ if (Target STREQUAL "Editor")
     add_subdirectory(everest-editor ${GAME_BDIR})
 elseif (Target STREQUAL "Game")
 # game project
-    set(tower_defense "tower-defense")
-    set(GAME_BDIR "${OUT_dir}/${tower_defense}")
+    set(examples "examples")
+    set(GAME_BDIR "${OUT_dir}/${examples}")
     file(MAKE_DIRECTORY ${GAME_BDIR})
-    add_subdirectory(tower-defense ${GAME_BDIR})
+    add_subdirectory(examples ${GAME_BDIR})
 endif()

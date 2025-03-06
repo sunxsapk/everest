@@ -34,7 +34,6 @@ namespace Everest {
 
 
     bool CollisionDetector2D::circle_circle(collider2d_t& body1, collider2d_t& body2, result_t& results){
-        EVLog_Msg("circle_circle");
         circleprops_t c1 = body1.props.circle;
         transform_c& t1 = body1.entity.get<transform_c>();
         c1.offset += vec2(t1.position.x, t1.position.y);

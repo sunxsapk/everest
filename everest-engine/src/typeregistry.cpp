@@ -2,7 +2,6 @@
 #include "core/input.h"
 #include "core/time.h"
 #include "math/types.h"
-#include "scene/components.h"
 #include "scene/entity.h"
 #include "scene/scenemanager.h"
 
@@ -28,6 +27,8 @@ namespace Scripting {
                 sol::constructors<vec2(f32, f32), vec2(vec2), vec2(f32), vec2()>(),
                 "x", &vec2::x,
                 "y", &vec2::y,
+                "length", [](vec2& a){return glm::length(a);},
+                "normalized", [](vec2& a){return glm::normalize(a);},
                 "add", [](vec2& a, vec2 b){return a += b;},
                 "mul", [](vec2& a, vec2 b){return a *= b;},
                 "div", [](vec2& a, vec2 b){return a /= b;},
@@ -41,6 +42,8 @@ namespace Scripting {
                 "x", &vec3::x,
                 "y", &vec3::y,
                 "z", &vec3::z,
+                "length", [](vec3& a){return glm::length(a);},
+                "normalized", [](vec3& a){return glm::normalize(a);},
                 "add", [](vec3& a, vec3 b){return a += b;},
                 "mul", [](vec3& a, vec3 b){return a *= b;},
                 "div", [](vec3& a, vec3 b){return a /= b;},
@@ -56,6 +59,8 @@ namespace Scripting {
                 "y", &vec4::y,
                 "z", &vec4::z,
                 "w", &vec4::w,
+                "length", [](vec4& a){return glm::length(a);},
+                "normalized", [](vec4& a){return glm::normalize(a);},
                 "add", [](vec4& a, vec4 b){return a += b;},
                 "mul", [](vec4& a, vec4 b){return a *= b;},
                 "div", [](vec4& a, vec4 b){return a /= b;},
@@ -186,6 +191,14 @@ namespace Scripting {
 
     void reg_script(luastate_t& lua){
         lua.new_usertype<scriptHandler_t>("scriptHandler_t",
+                "get_i", &scriptHandler_t::get<i32>,
+                "get_f", &scriptHandler_t::get<f64>,
+                "get_b", &scriptHandler_t::get<bool>,
+                "get_v2", &scriptHandler_t::get<vec2>,
+                "get_v3", &scriptHandler_t::get<vec3>,
+                "get_v4", &scriptHandler_t::get<vec4>,
+                "get_e", &scriptHandler_t::get<Entity>,
+                "get_s", &scriptHandler_t::get<std::string>,
                 "call", &scriptHandler_t::call
                 );
         lua.new_usertype<evscript_c>("evscript_c",

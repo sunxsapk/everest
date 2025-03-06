@@ -187,6 +187,10 @@ namespace Everest {
                     cam.fixedAspect = camera["fixedAspect"].as<bool>();
                     cam.active = camera["active"]?camera["active"].as<bool>() : true;
 
+                    if(camera["is2d"]){
+                        if(camera["is2d"].as<bool>()) cam.set2d();
+                        else cam.set3d();
+                    }
                     if(camera["u_size_fov"]){
                         cam.set_lenssize(camera["u_size_fov"].as<f32>());
                     }
@@ -198,10 +202,6 @@ namespace Everest {
                     }
                     if(camera["far"]){
                         cam.set_far(camera["far"].as<f32>());
-                    }
-                    if(camera["is2d"]){
-                        if(camera["is2d"].as<bool>()) cam.set2d();
-                        else cam.set3d();
                     }
                 }
             }
@@ -353,7 +353,6 @@ namespace Everest {
                                 case Types::Entity:{
                                     Entity ent = _scene->getEntityFromId((UUID)entry["value"].as<u64>());
                                     stt[key] = ent;
-                                    EVLog_Wrn("Entity get by id : %u", (u32)ent);
                                     break;
                                }
                             }

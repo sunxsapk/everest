@@ -1,0 +1,320 @@
+scene: Pool
+entities:
+  - entity: 500138754567179160
+    tag_c:
+      tag: black
+    transform_c:
+      position: [1.7777451, 0.49280137, 0]
+      rotation: [0, -0, 0]
+      scale: [0.22749999, 0.22749999, 0.90999997]
+    circleRenderer_c:
+      active: true
+      color: [0.07172996, 0.07051933, 0.07051933, 1]
+      thickness: 1
+      fade: 0
+    rigidbody2d_c:
+      active: true
+      inverseMass: 1
+      drag: 0.5
+      velocity: [0, 0]
+      angularVelocity: 0
+      definition: 0
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.912
+  - entity: 16749767741156196446
+    tag_c:
+      tag: red
+    transform_c:
+      position: [2.0057454, 0.605746, 0]
+      rotation: [0, -0, 0]
+      scale: [0.22749999, 0.22749999, 0.90999997]
+    circleRenderer_c:
+      active: true
+      color: [1, 0.12236285, 0.12236285, 1]
+      thickness: 1
+      fade: 0
+    rigidbody2d_c:
+      active: true
+      inverseMass: 1
+      drag: 0.5
+      velocity: [0, 0]
+      angularVelocity: 0
+      definition: 0
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.912
+  - entity: 14332878516966753932
+    tag_c:
+      tag: yellow
+    transform_c:
+      position: [1.9993026, 0.37472284, 0]
+      rotation: [0, -0, 0]
+      scale: [0.22749999, 0.22749999, 0.90999997]
+    circleRenderer_c:
+      active: true
+      color: [1, 0.81012654, 0, 1]
+      thickness: 1
+      fade: 0
+    rigidbody2d_c:
+      active: true
+      inverseMass: 1
+      drag: 0.5
+      velocity: [0, 0]
+      angularVelocity: 0
+      definition: 0
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.912
+  - entity: 12795023651176650655
+    tag_c:
+      tag: white
+    transform_c:
+      position: [-2, 0.5, 0]
+      rotation: [0, -0, 0]
+      scale: [0.25, 0.25, 1]
+    circleRenderer_c:
+      active: true
+      color: [1, 1, 1, 1]
+      thickness: 1
+      fade: 0
+    rigidbody2d_c:
+      active: true
+      inverseMass: 1
+      drag: 0.7
+      velocity: [0, 0]
+      angularVelocity: 0
+      definition: 0
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.912
+    evscript_c:
+      - path: assets/scripts/Player.lua
+        SERIALIZE:
+          - name: power
+            type: 2
+            value: 8
+  - entity: 11793341878473095174
+    tag_c:
+      tag: GameManager
+    transform_c:
+      position: [0, 0, 0]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+  - entity: 8066060086514117681
+    tag_c:
+      tag: Camera
+    transform_c:
+      position: [0, 0.37442213, 1]
+      rotation: [0, -0, 0]
+      scale: [1, 1, 1]
+    camera_c:
+      active: true
+      fixedAspect: false
+      isPrimary: true
+      is2d: true
+      u_size_fov: 2.6
+      aspect: 1.8594024
+      near: -1000
+      far: 1000
+  - entity: 16526877412551151285
+    tag_c:
+      tag: hole
+    transform_c:
+      position: [-3.4688683, -1.4651564, 0]
+      rotation: [0, -0, 0]
+      scale: [0.3, 0.3, 1]
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.5
+    evscript_c:
+      - path: assets/scripts/hole.lua
+        SERIALIZE:
+          - name: GameManager
+            type: 8
+            value: 11793341878473095174
+  - entity: 9919727571131919051
+    tag_c:
+      tag: hole
+    transform_c:
+      position: [3.4530325, -1.4651564, 0]
+      rotation: [0, -0, 0]
+      scale: [0.3, 0.3, 1]
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.5
+    evscript_c:
+      - path: assets/scripts/hole.lua
+        SERIALIZE:
+          - name: GameManager
+            type: 8
+            value: 11793341878473095174
+  - entity: 17046439982751400428
+    tag_c:
+      tag: hole
+    transform_c:
+      position: [0.0048474073, -1.5521623, 0]
+      rotation: [0, -0, 0]
+      scale: [0.3, 0.3, 1]
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.5
+    evscript_c:
+      - path: assets/scripts/hole.lua
+        SERIALIZE:
+          - name: GameManager
+            type: 8
+            value: 11793341878473095174
+  - entity: 16676848188991966378
+    tag_c:
+      tag: hole
+    transform_c:
+      position: [-3.4688683, 2.2210631, 0]
+      rotation: [0, -0, 0]
+      scale: [0.3, 0.3, 1]
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.5
+    evscript_c:
+      - path: assets/scripts/hole.lua
+        SERIALIZE:
+          - name: GameManager
+            type: 8
+            value: 11793341878473095174
+  - entity: 9017507106096398649
+    tag_c:
+      tag: hole
+    transform_c:
+      position: [3.4530325, 2.2035525, 0]
+      rotation: [0, -0, 0]
+      scale: [0.3, 0.3, 1]
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.5
+    evscript_c:
+      - path: assets/scripts/hole.lua
+        SERIALIZE:
+          - name: GameManager
+            type: 8
+            value: 11793341878473095174
+  - entity: 1579248450421406907
+    tag_c:
+      tag: wall
+    transform_c:
+      position: [3.503151, 0.37922215, 0]
+      rotation: [0, -0, 0]
+      scale: [0.3, 3.0439785, 1]
+    boxCollider2d_c:
+      active: true
+      offset: [0, 0]
+      halfExtents: [0.5, 0.5]
+      restitution: 0.75
+  - entity: 11793745267053966279
+    tag_c:
+      tag: wall
+    transform_c:
+      position: [-3.5335534, 0.37922215, 0]
+      rotation: [0, -0, 0]
+      scale: [0.3, 3.0439785, 1]
+    boxCollider2d_c:
+      active: true
+      offset: [0, 0]
+      halfExtents: [0.5, 0.5]
+      restitution: 0.75
+  - entity: 12099561134995915056
+    tag_c:
+      tag: wall
+    transform_c:
+      position: [-1.6791514, -1.5052514, 0]
+      rotation: [0, -0, 0]
+      scale: [2.9423068, 0.3, 1]
+    boxCollider2d_c:
+      active: true
+      offset: [0, 0]
+      halfExtents: [0.5, 0.5]
+      restitution: 0.75
+  - entity: 6744962057834936757
+    tag_c:
+      tag: wall
+    transform_c:
+      position: [1.6687968, -1.5052514, 0]
+      rotation: [0, -0, 0]
+      scale: [2.9423068, 0.3, 1]
+    boxCollider2d_c:
+      active: true
+      offset: [0, 0]
+      halfExtents: [0.5, 0.5]
+      restitution: 0.75
+  - entity: 15249856415312887561
+    tag_c:
+      tag: wall
+    transform_c:
+      position: [1.6687968, 2.2737193, 0]
+      rotation: [0, -0, 0]
+      scale: [2.9423068, 0.3, 1]
+    boxCollider2d_c:
+      active: true
+      offset: [0, 0]
+      halfExtents: [0.5, 0.5]
+      restitution: 0.75
+  - entity: 17080843155176024899
+    tag_c:
+      tag: wall
+    transform_c:
+      position: [-1.6652591, 2.2737193, 0]
+      rotation: [0, -0, 0]
+      scale: [2.9423068, 0.3, 1]
+    boxCollider2d_c:
+      active: true
+      offset: [0, 0]
+      halfExtents: [0.5, 0.5]
+      restitution: 0.75
+  - entity: 803149580362235308
+    tag_c:
+      tag: hole
+    transform_c:
+      position: [0.0048474073, 2.2978892, 0]
+      rotation: [0, -0, 0]
+      scale: [0.3, 0.3, 1]
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.5
+    evscript_c:
+      - path: assets/scripts/hole.lua
+        SERIALIZE:
+          - name: GameManager
+            type: 8
+            value: 11793341878473095174
+  - entity: 8086744052031793697
+    tag_c:
+      tag: Table
+    transform_c:
+      position: [0, 0, -1]
+      rotation: [0, -0, 0]
+      scale: [8, 6, 1]
+    spriteRenderer_c:
+      active: true
+      color: [1, 1, 1, 1]
+      startUV: [0, 0]
+      sizeUV: [1, 1]
+      texturePath: assets/sprites/pool_table.png

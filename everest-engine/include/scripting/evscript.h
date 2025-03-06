@@ -46,6 +46,10 @@ namespace Scripting {
         const char* getScriptName();
 
         sol::table call(std::string func_name, sol::table inp_args);
+        template<typename T>
+        T get(std::string var_name){
+            return (*state)[var_name];
+        }
     };
 
     struct evscript_c : public component_t {

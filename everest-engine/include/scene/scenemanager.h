@@ -10,6 +10,7 @@
 
 #include "core/utils.h"
 #include "core/dbghelper.h"
+#include "core/application.h"
 #include "scene.h"
 #include <filesystem>
 
@@ -29,13 +30,20 @@ namespace Everest {
 
             static inline void activateScene(ref<Scene>& scene){
                 _instance->activeScene = scene;
-                if(_instance->sceneChangecb) _instance->sceneChangecb(_instance->activeScene);}
+                onSceneChanged();}
 
             static inline ref<Scene> createAndActivateScene(const char* name = "Untitled Scene"){
                 _instance->activeScene = createScene(name);
                 setSceneTarget("");
-                if(_instance->sceneChangecb) _instance->sceneChangecb(_instance->activeScene);
+                onSceneChanged();
                 return _instance->activeScene;}
+
+            static inline void onSceneChanged(){
+#ifndef EDITOR_BUILD
+                _instance->activeScene->onViewportResize(vec2(0), Application::getAppWindow().getSize());
+#endif
+                if(_instance->sceneChangecb) _instance->sceneChangecb(_instance->activeScene);
+            }
 
             static inline ref<Scene>& getActiveScene(){return _instance->activeScene;}
 
