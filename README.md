@@ -1,55 +1,25 @@
 # Everest
 
-__Everest__ is an ongoing cross platform game engine project written in C/C++.
+<p align="center">
+    <img src="assets/everest_logo.png" />
+</p>
 
 
-## Setup and Running Project
+## Overview
 
+__Everest__ is an cross platform game engine written in C/C++. As of now, Engine is 3D scene-editor 
+supported but allows build for only 2d games (i.e. 3d camera and view is supported but there is no
+mesh loader and 3d physics added to it as of now). Let's talk brielfly about the core everst-engine and the
+editor that comes with it:
 
-Ensure you've got the dependencies installed.
+Everest Engine is the game engine library built with c/c++, using OpenGL as underlying API for its
+its renderer. It has its own custom physics system, input system, rendering system and runtime scripting
+system. It wraps [entt](https://github.com/skypjack/entt) for its entity component system and 
+[sol2](https://github.com/ThePhD/sol2) for its lua-scripting system. It uses YAML as its scene serialization
+format, and thus uses [yaml-cpp](https://github.com/jbeder/yaml-cpp) for parsing and writing YAML files.
 
-1. Compiler : C/C++ minimum standard required : c++17
+## Documents for you
 
-2. `cmake`  : Project file builder for different editors and platforms
-
-3. `glfw`   : Graphics Library framework for opengl
-    - Linux     : `sudo apt-get install libglfw3 libglfw3-dev`
-    - MacOS     : `brew install glfw`
-    - Windows   : ___Download precompiled binaries or build them yourself. Consider following link: [glfw](https://www.glfw.org/download)___
-
-4. Lua      : Scripting language for engine
-    - Linux     : `sudo apt install lua5.4`
-    - MacOS     : `brew install lua`
-    - Windows   : use vcpkg `vcpkg install lua`
-    - __If any issues: you can always download precompiled binaries or build [lua](https://www.lua.org/download.html) from source code. It is far more easier.__
-
-5. Specific tools and libraries:
-  - Make sure all development tools are installed for your system (try to compile once and you'll get the idea what is missing)
-  - Apple & Linux : make sure `zenity` is in your system (it is in most of distros by default). It is used for file dialogs.
-    - Apple     : `brew install zenity`
-    - Linux     : `sudo apt install zenity`
-    - Windows   : Here, window's API for filesystem interaction is used. ___(Not tested yet)___
-
-Setting up the project
-- clone the repository with submodules `git clone --recurse-submodules https://github.com/therealsunx/everest`
-- go into the project directory `cd everest`
-
-Quick View
-- Run `editor_run.sh` to quickly view the editor
-
-Hand-Building the project:
-- Run `cmake -B build` from root project directory to build the project
-    Setting options : `-D[option]=[value]`
-    - Build modes [Debug, Release, Dist]: Example:- `cmake -B build -DBuild=Debug`
-    - Build Target [Editor, Game]: Example:-  `cmake -B build -DTarget=Editor`
-
-- For setting up Engine as build target : run `cmake -B build -DBuild=Dist -DTarget=Editor`
-- Build the project using `cmake --build build/`
-- Run editor using `./build/bin/everest-editor/everest-editor`
-
-__As of now, Game is unbuildable. Out-of-editor building of game will be made available soon. So, checkout editor only..__
-- For setting up Game as build target   : run `cmake -B build -DBuild=Dist -DTarget=Game`
-- Build the project using `cmake --build build/`
-- Run game using `./build/bin/tower-defense/tower-defense`
-
+1. Project Setup and build is available [here](/docs/Setup.md).
+2. Scripting API in detail in available [here](/docs/ScriptingAPI.md)
 

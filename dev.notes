@@ -13,16 +13,21 @@ will proceed in following sequence :-
 
 =============== Roadmap ======================
 
-- Rendering Texture
++ Rendering Texture
++ Entity Component System
++ Serialization
++ Scene Format
++ Tools (editor & stuff)
++ Physics System
++ Scripting
++ Make a game run inside editor completely
+- Standalone game build & run system
 - Models format, (asset bundles)
-- Entity Component System
-- Serialization
-- Level Format
-- Tools (editor & stuff)
-- Physics System
-- Scripting
-- Make a game run inside editor completely
-- Standalone game running
+
+=============== Milestones to achieve ===================
+
+- Sprite atlas UI (texture load settings)
+- Develop 3D rendering system (mesh load and rendering, materials and shaders)
 
 =============== Bugs =============
 
@@ -30,18 +35,9 @@ will proceed in following sequence :-
 out to be infinity or nan, so all the objects vanish. So, check the vulnerable point and abort
 before such behaviour is encountered
 
-=============== Milestones ===================
-
-- Scripting
-
-- Sprite atlas UI (texture load settings)
-
-- Develop 3D rendering system (mesh load and rendering, materials and shaders)
-
-
 =============== TODO ============
-[ ] write a rough lua-scripting api for entity
-    - make a simple demo game scene
-    - update api docs
-[ ] fix bugs... duh!!
+[ ] update api docs
+[ ] make a simple demo game scene
+[ ] fix bugs...
+[ ] project file format, working directory setup
 
