@@ -65,8 +65,12 @@ namespace Everest {
 
             static inline void setSceneTarget(std::string path){
                 _instance->scenePath = path;}
+
+            static inline std::vector<std::filesystem::path>& getSceneSeq(){
+                return _instance->sceneSequence;}
         private:
             static SceneManager* _instance;
             friend class AssetsManager;
+            friend class SceneSequenceUI;
     };
 }

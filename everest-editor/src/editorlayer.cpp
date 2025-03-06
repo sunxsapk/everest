@@ -8,6 +8,7 @@
 #include "editor/gizmos.h"
 #include "editor/contentBrowserPanel.h"
 #include "editor/editorAssets.h"
+#include "editor/sceneSequence.h"
 
 namespace Everest {
 
@@ -110,7 +111,7 @@ namespace Everest {
 
     void EditorLayer::onGUIrender(){
         EV_profile_function();
-        //ImGui::ShowDemoWindow();
+        // ImGui::ShowDemoWindow();
 
         MenuPanel::onGUIRender();
 
@@ -121,6 +122,7 @@ namespace Everest {
         PropertiesPanel::onGUIrender(SceneHeirarchyUI::getSelectedEntity());
         ScenePanel::onGUIrender(_framebuffer, _camera);
         ContentBrowser::onGUIrender();
+        SceneSequenceUI::onGUIRender();
     }
 
     bool EditorLayer::onMouseButtonDown(MouseButtonDownEvent& event){
