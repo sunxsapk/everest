@@ -3,6 +3,7 @@
 
 #include "math/types.h"
 #include "physics/rigidbody.h"
+#include "scene/def_components.h"
 
 namespace Everest {
 
@@ -26,7 +27,7 @@ namespace Everest {
         Entity anchor;
         vec2 offset = vec2(0.f);
         f32 springConstant = 20.f;
-        f32 damping = 20.f;
+        f32 damping = 1.f;
         f32 restLength = 5.f;
 
         springJoint2d_c() = default;
@@ -35,6 +36,7 @@ namespace Everest {
             *this = other;
             entity = ent;
             active = other.active;
+            anchor = anchor.isValid()? ent.getScene()->getEntityFromId(anchor.get<id_c>().id) : Entity{};
         }
 
         void updateForce(const transform_c& otherTransform, rigidbody2d_c& otherBody);
