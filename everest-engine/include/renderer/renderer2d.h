@@ -9,6 +9,7 @@
 
 #pragma once
 
+#include "renderer/circleRenderer.h"
 #include "renderer/spriteRenderer.h"
 #include "vao.h"
 #include "shader.h"
@@ -24,11 +25,10 @@
 
 namespace Everest {
     struct QuadVertex {
-        vec3 position;
         vec4 color;
+        vec3 position;
         vec2 uv;
         f32 textureIndex;
-        f32 tilingFactor;
 
 #ifdef EDITOR_BUILD
         i32 id;
@@ -36,9 +36,11 @@ namespace Everest {
     };
 
     struct CircleVertex {
-        vec3 position;
         vec4 color;
+        vec3 position;
         vec2 normCoord;
+        vec2 uv;
+        f32 textureIndex;
         f32 thickness;
         f32 fade;
 
@@ -96,9 +98,9 @@ namespace Everest {
             static void endScene();
 
             static void drawQuad(vec3 position, vec2 scale = vec2(1.f), f32 rotation = 0.f,
-                    vec4 color = vec4(1.f), ref<Texture> texture = nullptr, f32 tilingFactor = 1.f);
+                    vec4 color = vec4(1.f), ref<Texture> texture = nullptr);
             static void drawCircle(vec3 position, f32 diameter = 1.f, vec4 color = vec4(1.f),
-                    f32 thickness = 1.f, f32 fade = 0.f);
+                    f32 thickness = 1.f, f32 fade = 0.f, ref<Texture> = nullptr);
             static void drawLine(vec3 point1, vec3 point2, vec4 color = vec4(1.f));
             static void drawRect(mat4 transform, vec4 color = vec4(1.f));
             static void drawRect(vec3 pos, f32 rotation = 0.f, vec2 scale = vec2(1.f), vec4 color = vec4(1.f));
@@ -115,6 +117,12 @@ namespace Everest {
                     , i32 id = 0
 #endif
                     );
+            static void drawCircle(mat4 transform, const circleRenderer_c& circle
+#ifdef EDITOR_BUILD
+                    , i32 id = 0
+#endif
+                    );
+
             static void drawCircle(mat4 transform, vec4 color, f32 thickness, f32 fade
 #ifdef EDITOR_BUILD
                     , i32 id = 0
@@ -127,8 +135,7 @@ namespace Everest {
                 RenderAPI::setLineWidth(width);}
 
         private:
-            static void flushCircles();
-            static void flushQuads();
+            static void flushTextured();
             static void flushLines();
             static void _checkTexture(i32& texIndex, ref<Texture> texture);
         private:

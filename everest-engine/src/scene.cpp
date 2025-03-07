@@ -136,7 +136,7 @@ namespace Everest {
         for(auto ent : cirgrp){
             const auto& [cir, tfr] = cirgrp.get(ent);
             if(!cir.active) continue;;
-            Renderer2D::drawCircle(tfr, cir.color, cir.thickness, cir.fade
+            Renderer2D::drawCircle(tfr, cir
 #ifdef EDITOR_BUILD
                     , (u32)ent
 #endif
@@ -223,7 +223,7 @@ namespace Everest {
         auto cirgrp = _registry.group<circleRenderer_c>(entt::get<transform_c>);
         for(auto ent : cirgrp){
             const auto& [cir, tfr] = cirgrp.get(ent);
-            if(cir.active) Renderer2D::drawCircle(tfr, cir.color, cir.thickness, cir.fade
+            if(cir.active) Renderer2D::drawCircle(tfr, cir
 #ifdef EDITOR_BUILD
                     , (u32)ent
 #endif
@@ -252,18 +252,26 @@ namespace Everest {
 
         double dt = Time::getDeltatime();
         _registry.view<nativeScript_c>().each([this, dt](auto ent, nativeScript_c& nscript){
-                if(!nscript._instance){
-                    nscript._instance = nscript.create();
-                    nscript._instance->_entity = {ent, this};
-                    nscript._instance->onCreate();
+                try {
+                    if(!nscript._instance){
+                        nscript._instance = nscript.create();
+                        nscript._instance->_entity = {ent, this};
+                        nscript._instance->onCreate();
+                    }
+                    nscript._instance->onUpdate(dt);
+                } catch (std::exception e) {
+                    EVLog_Err("Error while executing native script: %s", e.what());
                 }
-                nscript._instance->onUpdate(dt);
             });
 
         using namespace Scripting;
         auto scripts = _registry.view<evscript_c>();
         scripts.each([this, dt](auto ent, evscript_c& nscript){
-                nscript.update(dt);
+                try {
+                    nscript.update(dt);
+                } catch (std::exception exc) {
+                    EVLog_Err("Error while executing lua script: %s", exc.what());
+                }
             });
 
         PhysicsHandler::simulate(*this, dt);

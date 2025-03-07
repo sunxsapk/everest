@@ -162,12 +162,20 @@ namespace Everest {
 
         for(auto& res : collision2dResults){
             if(res.self.isValid() && res.self.has<EvScript>()){
-                res.self.get<EvScript>().collisionCallback(res);
+                try {
+                    res.self.get<EvScript>().collisionCallback(res);
+                } catch (std::exception exc){
+                    EVLog_Err("Error while calling OnCollision callback : %s", exc.what());
+                }
             }
 
             if(res.other.isValid() && res.other.has<EvScript>()){
                 std::swap(res.self, res.other);
-                res.self.get<EvScript>().collisionCallback(res);
+                try {
+                    res.self.get<EvScript>().collisionCallback(res);
+                } catch (std::exception exc){
+                    EVLog_Err("Error while calling OnCollision callback : %s", exc.what());
+                }
             }
         }
     }

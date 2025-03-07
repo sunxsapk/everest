@@ -7,6 +7,8 @@ GameManager = nil
 
 OnCreate = function ()
     local gms = GameManager:get_scripts()
+    if gms == nil then return end
+
     gm = gms:get("GameManager")
 end
 

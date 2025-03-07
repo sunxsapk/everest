@@ -41,7 +41,7 @@ namespace Everest {
         if(!showGizmos) return;
 
         bool is2D = camera.camera.is2d();
-        vec3 _sz = is2D? vec3(size.x, size.y, 0.f) : vec3(size.x, 0.f, size.y);
+        vec3 _sz = is2D? vec3(size.x, size.y, -100.f) : vec3(size.x, 0.f, size.y);
         _sz /= 2.f;
         vec3 gridVertices[4]{
             vec3(-_sz.x, -_sz.y, -_sz.z),
@@ -57,6 +57,17 @@ namespace Everest {
                     camera.camera.get_lenssize()));
         _instance->gridShader->setUniform_i32("u_is2D", is2D);
         RenderAPI::drawIndexed(_instance->gridVertexArray, 6);
+
+        /*float gridSize = 10.0f;
+        float gridSpacing = 1.0f;
+
+        static mat4 im = glm::mat4(1.f);
+        ImGuizmo::DrawGrid(
+                glm::value_ptr(camera.getView()),
+                glm::value_ptr(camera.camera.getProjection()),
+                glm::value_ptr(im),
+                gridSize
+            );*/
     }
 
     void Gizmos::renderTransformationGizmo(EditorCamera& cam){

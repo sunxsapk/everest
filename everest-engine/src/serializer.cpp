@@ -212,8 +212,8 @@ namespace Everest {
                     auto txpath = spriteRenderer["texturePath"];
                     auto& comp = n_ent.add<spriteRenderer_c>();
                     comp.active = spriteRenderer["active"]?spriteRenderer["active"].as<bool>() : true;
-                    comp.texture = txpath ? AssetsManager::loadTexture(txpath.as<std::string>().c_str()) : nullptr;
                     comp.color = spriteRenderer["color"].as<vec4>();
+                    comp.texture = txpath ? AssetsManager::loadTexture(txpath.as<std::string>().c_str()) : nullptr;
                     comp.startUV = spriteRenderer["startUV"].as<vec2>();
                     comp.sizeUV = spriteRenderer["sizeUV"].as<vec2>();
                 }
@@ -227,6 +227,11 @@ namespace Everest {
                     comp.color = circleRenderer["color"].as<vec4>();
                     comp.thickness = circleRenderer["thickness"].as<f32>();
                     comp.fade = circleRenderer["fade"].as<f32>();
+
+                    auto txpath = circleRenderer["texturePath"];
+                    comp.texture = txpath ? AssetsManager::loadTexture(txpath.as<std::string>().c_str()) : nullptr;
+                    comp.startUV = circleRenderer["startUV"] ? circleRenderer["startUV"].as<vec2>() : vec2();
+                    comp.sizeUV = circleRenderer["sizeUV"] ? circleRenderer["sizeUV"].as<vec2>() : vec2();
                 }
             }
 
@@ -436,6 +441,7 @@ namespace Everest {
         out << Key << "color" << Value << spriteRenderer.color;
         out << Key << "startUV" << Value << spriteRenderer.startUV;
         out << Key << "sizeUV" << Value << spriteRenderer.sizeUV;
+
         const ref<Texture>& tx = spriteRenderer.texture;
         if(tx != nullptr) out << Key << "texturePath" << Value << tx->getPath();
 
@@ -450,8 +456,13 @@ namespace Everest {
 
         out << Key << "active" << Value << circleRenderer.active;
         out << Key << "color" << Value << circleRenderer.color;
+        out << Key << "startUV" << Value << circleRenderer.startUV;
+        out << Key << "sizeUV" << Value << circleRenderer.sizeUV;
         out << Key << "thickness" << Value << circleRenderer.thickness;
         out << Key << "fade" << Value << circleRenderer.fade;
+
+        const ref<Texture>& tx = circleRenderer.texture;
+        if(tx != nullptr) out << Key << "texturePath" << Value << tx->getPath();
 
         out << EndMap;
         return out;

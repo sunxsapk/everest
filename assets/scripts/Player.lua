@@ -19,6 +19,8 @@ OnCreate = function()
 end
 
 OnUpdate = function(_)
+    m_spr.active = false
+
     if rigidbody.velocity:length() > 1 then
         return
     end

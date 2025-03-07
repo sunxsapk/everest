@@ -22,6 +22,8 @@ entities:
     circleRenderer_c:
       active: true
       color: [0.07172996, 0.07051933, 0.07051933, 1]
+      startUV: [0, 0]
+      sizeUV: [0, 0]
       thickness: 1
       fade: 0
     rigidbody2d_c:
@@ -46,6 +48,8 @@ entities:
     circleRenderer_c:
       active: true
       color: [1, 0.12236285, 0.12236285, 1]
+      startUV: [0, 0]
+      sizeUV: [0, 0]
       thickness: 1
       fade: 0
     rigidbody2d_c:
@@ -70,6 +74,8 @@ entities:
     circleRenderer_c:
       active: true
       color: [1, 0.81012654, 0, 1]
+      startUV: [0, 0]
+      sizeUV: [0, 0]
       thickness: 1
       fade: 0
     rigidbody2d_c:
@@ -94,6 +100,8 @@ entities:
     circleRenderer_c:
       active: true
       color: [1, 1, 1, 1]
+      startUV: [0, 0]
+      sizeUV: [0, 0]
       thickness: 1
       fade: 0
     rigidbody2d_c:
@@ -111,19 +119,27 @@ entities:
     evscript_c:
       - path: assets/scripts/Player.lua
         SERIALIZE:
-          - name: power
-            type: 2
-            value: 8
           - name: marker
             type: 8
             value: 9876083877691954060
+          - name: power
+            type: 2
+            value: 8
   - entity: 11793341878473095174
     tag_c:
       tag: GameManager
     transform_c:
-      position: [0, 0, 0]
-      rotation: [0, 0, 0]
+      position: [-0.050439835, 0.52947277, -0.9]
+      rotation: [0, -0, 0]
       scale: [1, 1, 1]
+    circleRenderer_c:
+      active: true
+      color: [1, 1, 1, 0.5058824]
+      startUV: [0, 0]
+      sizeUV: [1, 1]
+      thickness: 1
+      fade: 0
+      texturePath: assets/everest_logo.png
   - entity: 8066060086514117681
     tag_c:
       tag: Camera
@@ -343,6 +359,8 @@ entities:
     circleRenderer_c:
       active: true
       color: [1, 0.81012654, 0, 1]
+      startUV: [0, 0]
+      sizeUV: [0, 0]
       thickness: 1
       fade: 0
     rigidbody2d_c:
@@ -367,6 +385,8 @@ entities:
     circleRenderer_c:
       active: true
       color: [1, 0.81012654, 0, 1]
+      startUV: [0, 0]
+      sizeUV: [0, 0]
       thickness: 1
       fade: 0
     rigidbody2d_c:
@@ -391,6 +411,8 @@ entities:
     circleRenderer_c:
       active: true
       color: [1, 0.12236285, 0.12236285, 1]
+      startUV: [0, 0]
+      sizeUV: [0, 0]
       thickness: 1
       fade: 0
     rigidbody2d_c:
@@ -415,6 +437,8 @@ entities:
     circleRenderer_c:
       active: true
       color: [1, 0.12236285, 0.12236285, 1]
+      startUV: [0, 0]
+      sizeUV: [0, 0]
       thickness: 1
       fade: 0
     rigidbody2d_c:
@@ -439,6 +463,8 @@ entities:
     circleRenderer_c:
       active: true
       color: [1, 0.81012654, 0, 1]
+      startUV: [0, 0]
+      sizeUV: [0, 0]
       thickness: 1
       fade: 0
     rigidbody2d_c:
@@ -463,6 +489,8 @@ entities:
     circleRenderer_c:
       active: true
       color: [1, 0.12236285, 0.12236285, 1]
+      startUV: [0, 0]
+      sizeUV: [0, 0]
       thickness: 1
       fade: 0
     rigidbody2d_c:

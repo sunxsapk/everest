@@ -361,9 +361,35 @@ namespace Everest {
             _colorui("Color", comp.color);
             _f32sliderui("Thickness", comp.thickness, "##th", 0.f, 1.f);
             _f32sliderui("Fade", comp.fade, "##fd", 0.f, 1.f);
+
+            constexpr f32 isize = 64.f;
+
+            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
+            ImGui::ImageButton("__texture__", comp.texture? comp.texture->getID() : 1,
+                    ImVec2(isize, isize), {comp.startUV.x, comp.sizeUV.y}, {comp.sizeUV.x, comp.startUV.y});
+            if(ImGui::BeginDragDropTarget()){
+                const ImGuiPayload* data = ImGui::AcceptDragDropPayload("CONTENT_BROWSER_ITEM");
+                if(data && data->Data){
+                    const char* path_str = (const char*) data->Data;
+                    if(AssetsManager::getAssetsType(path_str) == AssetsType::TEXTURE){
+                        try {
+                            comp.texture = AssetsManager::loadTexture(path_str);
+                        } catch(std::exception exc){
+                            // TODO: make this into a popup
+                            EVLog_Err("Error on loading texture: %s", exc.what());
+                        }
+                    }
+                }
+                
+                ImGui::EndDragDropTarget();
+            }
+            if(ImGui::IsMouseDoubleClicked(0) && ImGui::IsItemHovered()){
+                comp.texture = nullptr;
+            }
+            ImGui::PopStyleColor();
         });
 
-#if 0
+#ifndef __NO_3D__
         if(ent.has<rigidbody_c>()) _componentUI<rigidbody_c>(ent, "Rigidbody",
         [](rigidbody_c& comp){
             f32 mass = comp.getMass();
@@ -408,7 +434,7 @@ namespace Everest {
             _f32dragui("Rest Length", comp.restLength, 0.01f, "##rl");
         });
 
-#if 0
+#ifndef __NO_3D__
         if(ent.has<springJoint_c>()) _componentUI<springJoint_c>(ent, "Spring Joint",
         [](springJoint_c& comp){
             _vec3ui("Anchor", comp.anchor, 0.f);

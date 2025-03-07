@@ -139,11 +139,13 @@ namespace Scripting {
                 );
     }
 
-    void reg_circleRenderer(luastate_t& lua){
+    void reg_circleRenderer(luastate_t& lua){ // TODO: marshall texture to lua
         lua.new_usertype<circleRenderer_c>("circleRenderer_c",
                 "entity", &circleRenderer_c::entity,
                 "active", &circleRenderer_c::active,
                 "color", &circleRenderer_c::color,
+                "startUV", &circleRenderer_c::startUV,
+                "sizeUV", &circleRenderer_c::sizeUV,
                 "thickness", &circleRenderer_c::thickness,
                 "fade", &circleRenderer_c::fade
                 );

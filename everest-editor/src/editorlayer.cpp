@@ -30,7 +30,8 @@ namespace Everest {
                 SceneHeirarchyUI::setScene(scene);
                 scene->onViewportResize(ScenePanel::getSceneOffset(), ScenePanel::getSceneViewportSize());
         });
-        SceneManager::loadScene("assets/scenes/pool_game.everest");
+        // SceneManager::loadScene("assets/scenes/pool_game.everest");
+        SceneManager::createAndActivateScene();
         EditorAssets::init();
         Gizmos::init();
     }

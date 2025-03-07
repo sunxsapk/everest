@@ -29,11 +29,10 @@ namespace Everest {
 
         ref<VertexBuffer> qvb = createRef<VertexBuffer>(_data->maxVertices * sizeof(QuadVertex));
         BufferLayout quadDataLayout {
-            {ShaderDataType::T_vec3, "position"},
             {ShaderDataType::T_vec4, "color"},
+            {ShaderDataType::T_vec3, "position"},
             {ShaderDataType::T_vec2, "uv"},
             {ShaderDataType::T_float, "textureIndex"},
-            {ShaderDataType::T_float, "tilingFactor"}, // TODO: enum class ShaderDataType
 #ifdef EDITOR_BUILD
             {ShaderDataType::T_int, "id"},
 #endif
@@ -43,9 +42,11 @@ namespace Everest {
 
         ref<VertexBuffer> cvb = createRef<VertexBuffer>(_data->maxVertices * sizeof(CircleVertex));
         BufferLayout circleDataLayout {
-            {ShaderDataType::T_vec3, "position"},
             {ShaderDataType::T_vec4, "color"},
+            {ShaderDataType::T_vec3, "position"},
             {ShaderDataType::T_vec2, "normCoord"},
+            {ShaderDataType::T_vec2, "uv"},
+            {ShaderDataType::T_float, "textureIndex"},
             {ShaderDataType::T_float, "thickness"},
             {ShaderDataType::T_float, "fade"},
 #ifdef EDITOR_BUILD
@@ -94,6 +95,8 @@ namespace Everest {
         for(i32 i=0; i<_data->maxTexSlots; i++) samplerArr[i] = i;
         _data->quadShader->bind();
         _data->quadShader->setUniform_iarr("u_textures", samplerArr, _data->maxTexSlots);
+        _data->circleShader->bind();
+        _data->circleShader->setUniform_iarr("u_textures", samplerArr, _data->maxTexSlots);
 
         _data->textures[0] = _data->whiteTexture;
         _data->texCount = 1;
@@ -137,12 +140,11 @@ namespace Everest {
     void Renderer2D::endScene(){
         EV_profile_function();
 
-        flushQuads();
-        flushCircles();
+        flushTextured();
         flushLines();
     }
 
-    void Renderer2D::flushQuads(){
+    void Renderer2D::flushTextured(){
         u32 datasize = (u8*)_data->quadVertPtr - (u8*)_data->quadVertBase;
         if(datasize != 0){
             _data->quadVertArray->getVertexBuffer()->setData(_data->quadVertBase, datasize);
@@ -156,9 +158,24 @@ namespace Everest {
             _stats.drawCalls++;
         }
 
+        datasize = (u8*)_data->circleVertPtr - (u8*)_data->circleVertBase;
+        if(datasize != 0){
+            _data->circleVertArray->getVertexBuffer()->setData(_data->circleVertBase, datasize);
+
+            for(u32 i=0; i<_data->texCount; i++){
+                _data->textures[i]->bind(i);
+            }
+
+            _data->circleShader->bind();
+            RenderAPI::drawIndexed(_data->circleVertArray, _data->circleIndexCount);
+            _stats.drawCalls++;
+        }
+
         _data->quadIndexCount = 0;
+        _data->circleIndexCount = 0;
         _data->texCount = 1;
         _data->quadVertPtr = _data->quadVertBase;
+        _data->circleVertPtr = _data->circleVertBase;
     }
 
     void Renderer2D::flushLines(){
@@ -172,19 +189,6 @@ namespace Everest {
 
         _data->lineCount = 0;
         _data->lineVertPtr = _data->lineVertBase;
-    }
-
-    void Renderer2D::flushCircles(){
-        u32 datasize = (u8*)_data->circleVertPtr - (u8*)_data->circleVertBase;
-        if(datasize != 0){
-            _data->circleVertArray->getVertexBuffer()->setData(_data->circleVertBase, datasize);
-            _data->circleShader->bind();
-            RenderAPI::drawIndexed(_data->circleVertArray, _data->circleIndexCount);
-            _stats.drawCalls++;
-        }
-
-        _data->circleIndexCount = 0;
-        _data->circleVertPtr = _data->circleVertBase;
     }
 
     void Renderer2D::drawLine(vec3 point1, vec3 point2, vec4 color){
@@ -232,13 +236,13 @@ namespace Everest {
     }
 
     void Renderer2D::drawQuad(vec3 position, vec2 scale, f32 rotation,
-            vec4 color, ref<Texture> texture, f32 tilingFactor){
+            vec4 color, ref<Texture> texture){
         EV_profile_function();
 
         i32 tind = 0;
         _checkTexture(tind, texture);
 
-        if(_data->quadIndexCount == _data->maxIndices) flushQuads();
+        if(_data->quadIndexCount == _data->maxIndices) flushTextured();
 
         constexpr vec2 uvs[] = {{0.f, 0.f}, {1.f, 0.f}, {1.f, 1.f}, {0.f, 1.f}};
         constexpr u32 quadVertCount = 4;
@@ -250,7 +254,6 @@ namespace Everest {
             _data->quadVertPtr->color = color;
             _data->quadVertPtr->uv = uvs[i];
             _data->quadVertPtr->textureIndex = tind;
-            _data->quadVertPtr->tilingFactor = tilingFactor;
             _data->quadVertPtr++;
         }
         _data->quadIndexCount += 6;
@@ -259,18 +262,24 @@ namespace Everest {
         _stats.vertexCount += 4;
     }
 
-    void Renderer2D::drawCircle(vec3 position, f32 diameter, vec4 color, f32 thickness, f32 fade){
+    void Renderer2D::drawCircle(vec3 position, f32 diameter, vec4 color, f32 thickness, f32 fade, ref<Texture> texture){
         EV_profile_function();
 
-        if(_data->circleIndexCount == _data->maxIndices) flushCircles();
+        i32 tind = 0;
+        _checkTexture(tind, texture);
+
+        if(_data->circleIndexCount == _data->maxIndices) flushTextured();
 
         constexpr u32 quadVertCount = 4;
+        constexpr vec2 uvs[] = {{0.f, 0.f}, {1.f, 0.f}, {1.f, 1.f}, {0.f, 1.f}};
 
         for(int i=0; i<quadVertCount; i++){
             //_data->circleVertPtr->position = transform * _data->quadVertPos[i];
             vec3 qvp = _data->quadVertPos[i];
             _data->circleVertPtr->position = qvp * diameter + position;
             _data->circleVertPtr->color = color;
+            _data->quadVertPtr->uv = uvs[i];
+            _data->quadVertPtr->textureIndex = tind;
             _data->circleVertPtr->normCoord = qvp * 2.f;
             _data->circleVertPtr->thickness = thickness;
             _data->circleVertPtr->fade = fade;
@@ -291,9 +300,8 @@ namespace Everest {
         i32 tind = 0;
         _checkTexture(tind, sprite.texture);
 
-        if(_data->quadIndexCount == _data->maxIndices) flushQuads();
+        if(_data->quadIndexCount == _data->maxIndices) flushTextured();
 
-        constexpr f32 tilingFactor = 1.f;
         constexpr u32 quadVertCount = 4;
         vec2 uvs[] = {sprite.startUV,
             sprite.startUV+vec2(sprite.sizeUV.x, 0.f),
@@ -307,7 +315,6 @@ namespace Everest {
             _data->quadVertPtr->color = sprite.color;
             _data->quadVertPtr->uv = uvs[i];
             _data->quadVertPtr->textureIndex = tind;
-            _data->quadVertPtr->tilingFactor = tilingFactor;
 #ifdef EDITOR_BUILD
             _data->quadVertPtr->id = id;
 #endif
@@ -329,9 +336,8 @@ namespace Everest {
         i32 tind = 0;
         _checkTexture(tind, sprite.texture);
 
-        if(_data->quadIndexCount == _data->maxIndices) flushQuads();
+        if(_data->quadIndexCount == _data->maxIndices) flushTextured();
 
-        constexpr f32 tilingFactor = 1.f;
         constexpr u32 quadVertCount = 4;
         vec2 uvs[] = {sprite.startUV,
             sprite.startUV+vec2(sprite.sizeUV.x, 0.f),
@@ -343,7 +349,6 @@ namespace Everest {
             _data->quadVertPtr->color = sprite.color;
             _data->quadVertPtr->uv = uvs[i];
             _data->quadVertPtr->textureIndex = tind;
-            _data->quadVertPtr->tilingFactor = tilingFactor;
 #ifdef EDITOR_BUILD
             _data->quadVertPtr->id = id;
 #endif
@@ -355,6 +360,44 @@ namespace Everest {
         _stats.vertexCount += 4;
     }
 
+    void Renderer2D::drawCircle(mat4 transform, const circleRenderer_c& circle
+#ifdef EDITOR_BUILD
+            , i32 id
+#endif
+            ){
+        EV_profile_function();
+
+        i32 tind = 0;
+        _checkTexture(tind, circle.texture);
+
+        if(_data->circleIndexCount == _data->maxIndices) flushTextured();
+        constexpr u32 quadVertCount = 4;
+
+        vec2 uvs[] = {circle.startUV,
+            circle.startUV+vec2(circle.sizeUV.x, 0.f),
+            circle.startUV + circle.sizeUV,
+            circle.startUV+vec2(0.f, circle.sizeUV.y)};
+
+
+        for(int i=0; i<quadVertCount; i++){
+            vec4& qvp = _data->quadVertPos[i];
+            _data->circleVertPtr->position = transform * qvp;
+            _data->circleVertPtr->color = circle.color;
+            _data->circleVertPtr->uv = uvs[i];
+            _data->circleVertPtr->textureIndex = tind;
+            _data->circleVertPtr->normCoord = {qvp.x * 2.f, qvp.y * 2.f};
+            _data->circleVertPtr->thickness = circle.thickness;
+            _data->circleVertPtr->fade = circle.fade;
+#ifdef EDITOR_BUILD
+            _data->circleVertPtr->id = id;
+#endif
+            _data->circleVertPtr++;
+        }
+        _data->circleIndexCount += 6;
+        _stats.quadCount++;
+        _stats.vertexCount += 4;
+    }
+
     void Renderer2D::drawCircle(mat4 transform, vec4 color, f32 thickness, f32 fade
 #ifdef EDITOR_BUILD
             , i32 id
@@ -362,7 +405,7 @@ namespace Everest {
             ){
         EV_profile_function();
 
-        if(_data->circleIndexCount == _data->maxIndices) flushCircles();
+        if(_data->circleIndexCount == _data->maxIndices) flushTextured();
         constexpr u32 quadVertCount = 4;
         for(int i=0; i<quadVertCount; i++){
             vec4& qvp = _data->quadVertPos[i];
@@ -391,7 +434,7 @@ namespace Everest {
             }
         }
         if(tind == 0){
-            if(_data->texCount == Renderer2Ddata::maxTexSlots) flushQuads();
+            if(_data->texCount == Renderer2Ddata::maxTexSlots) flushTextured();
             tind = _data->texCount;
             _data->textures[_data->texCount++] = tex;
             _stats.textureCount++;
