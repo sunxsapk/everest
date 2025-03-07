@@ -6,13 +6,80 @@ then build it from source code.
 ___You can also download the precompiled binaries as soon as they are made available. In that case,
 you won't have to follow the steps here.___
 
-___Also, soon enough scripts for automating this process will be made available. In that case, you can
-just run the platform specific script for setting up the project. Take in consideration that the project
-is currently under continous development, so feedback on some bugs found, feature requests, etc are highly
-appreciated.___
+___Take in consideration that the project is currently under continous development, so feedback on
+some bugs found, feature requests, etc are highly appreciated.___
+
+Clone the repository and go into the project directory and then we'll get started on spicy stuffs.
+``` bash
+    git clone --recurse-submodules https://github.com/sunxsapk/everest
+    cd everest
+```
+
+---
+
+## Installing using scripts
+
+There are platform specific scripts provided to you for shedding off the load of installing all of the
+dependencies yourself.
+
+__1. Linux__ : `./scripts/linux/install_dependencies.sh`
+__2. MacOS__ : `./scripts/macos/install_dependencies.sh`
+__3. Windows__ 
+Run the following commands on Window's powershell. This script first installs __chocolatey__(package
+manager for windows) and then install dependencies from there.
+- `Set-ExecutionPolicy Bypass -Scope Process -Force`
+- `./scripts/windows/install_dependencies.ps1`
+
+If Powershell blocks the execution, you may need to allow scripts:
+- `Set-ExecutionPolicy Unrestricted -Scope CurrentUser`
 
 
-## Installing the Dependencies
+___If you want to install dependencies yourself, then visit [Custom Installation](#Custom_Installation)___
+
+---
+
+## Building the engine
+
+__1. Linux__ : `./scripts/linux/build_editor.sh`
+__2. MacOS__ : `./scripts/macos/build_editor.sh`
+__3. Windows__ : `./scripts/windows/build_editor.ps1`
+
+---
+
+## Building the engine
+
+__1. Linux__ : `./scripts/linux/run_editor.sh`
+__2. MacOS__ : `./scripts/macos/run_editor.sh`
+__3. Windows__ : `./scripts/windows/run_editor.ps1`
+
+---
+
+## Customizing the build
+
+Run commands yourself the project after cloning the repo for different build options:
+- Run `cmake -B build` from root project directory to build the project
+    Setting options : `-D[option]=[value]`
+    - Build modes [Debug, Release, Dist]: 
+        Example:- `cmake -B build -DBuild=Debug` ...  `cmake -B build -DBuild=Release`
+    - Build Target [Editor, Game]: Example:-  `cmake -B build -DTarget=Editor` or `cmake -B build -DTarget=Editor`
+
+- For setting up Engine as build target : run `cmake -B build -DBuild=Dist -DTarget=Editor`
+- Build the project using `cmake --build build/`
+- Run editor using `./build/bin/everest-editor/everest-editor`
+
+__As of now, Game is unbuildable from editor. If you want to run a game you've edited then you can do
+so by writing some C++ code for running the saved scenes. Building the game form the editor will be
+made available soon.__
+
+__For an example on how to run a game out of editor, checkout the following example game scene running
+standalone.__
+- For setting up Game as build target   : run `cmake -B build -DBuild=Dist -DTarget=Game`
+- Build the project using `cmake --build build/`
+- Run game using `./build/bin/examples/examples`
+
+
+
+## Custom Installation
 
 You should have the dependencies installed before you can actually build and run the engine. Here is
 the guide on how to install all the dependencies on each machine:
@@ -173,37 +240,3 @@ brew install zenity
   - Extract and follow the build instructions.
 
 ---
-
-## Building the engine
-
-Clone the repository and go into the project directory and run the `editor_run.sh` script for quickly 
-using the engine.
-``` bash
-    git clone --recurse-submodules https://github.com/sunxsapk/everest
-    cd everest
-    ./editor_run.sh
-```
-
-## Customizing the build
-
-Run commands yourself the project after cloning the repo for different build options:
-- Run `cmake -B build` from root project directory to build the project
-    Setting options : `-D[option]=[value]`
-    - Build modes [Debug, Release, Dist]: 
-        Example:- `cmake -B build -DBuild=Debug` ...  `cmake -B build -DBuild=Release`
-    - Build Target [Editor, Game]: Example:-  `cmake -B build -DTarget=Editor` or `cmake -B build -DTarget=Editor`
-
-- For setting up Engine as build target : run `cmake -B build -DBuild=Dist -DTarget=Editor`
-- Build the project using `cmake --build build/`
-- Run editor using `./build/bin/everest-editor/everest-editor`
-
-__As of now, Game is unbuildable from editor. If you want to run a game you've edited then you can do
-so by writing some C++ code for running the saved scenes. Building the game form the editor will be
-made available soon.__
-
-__For an example on how to run a game out of editor, checkout the following example game scene running
-standalone.__
-- For setting up Game as build target   : run `cmake -B build -DBuild=Dist -DTarget=Game`
-- Build the project using `cmake --build build/`
-- Run game using `./build/bin/examples/examples`
-

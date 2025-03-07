@@ -17,7 +17,7 @@ OnCollision = function (data)
         print("Red Ball in hole")
         Scene.destroyEntity(data.other)
     elseif tag == "yellow" then
-        print("Red Ball in hole")
+        print("Yellow Ball in hole")
         Scene.destroyEntity(data.other)
     elseif tag == "black" then
         print("Black Ball in hole")

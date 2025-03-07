@@ -20,80 +20,137 @@ format, and thus uses [yaml-cpp](https://github.com/jbeder/yaml-cpp) for parsing
 And finally, for UI, it uses ImGui because of its excellent and easy to use programming API.
 
 
-__What does Everest engine has that you might be interested in?__
+## Features
 
-- Layered Application Architecture:
-    Engine supports dynamic layered architecture, which allows you to compose your custom application
-    as multiple layers (like debug-layer, scene-layer, etc).
+Everest Engine is desgined to provide a decent game development experience. Here are few things that
+makes this project interesing:
 
-- UI system:
-    Engine provides the support for ImGui-based UI system, which you can use to create all sorts of
-    interactive features.
+### **1. Layered Application Architecture**
+Everest Engine features a dynamic layered architecture, allowing you to structure your application using multiple layers. This approach enables you to separate different functionalities—such as rendering, debugging, scene management, and UI—into distinct layers. This modular system improves code organization, enhances maintainability, and allows for greater flexibility in application design.
 
-- Input Management:
-    Everest engine has a properly managed input system for your game. Various types of input devices
-    like mouse, keyboard, joystick, etc are supported. Also, the event listener and dispatcher are very
-    intutive and hide complexities for programmer excellently.
+For instance, you can have:
 
-- Window Management:
-    Everest engine provides a decent window management system, with intuitive API for handling it.
+- A Debug Layer for real-time debugging tools.
+- A Scene Layer for handling the main game world.
+- A UI Layer for user interface rendering.
 
-- Logging System:
-    A C-style formatted logging system is provided by engine to make your applications easy to debug.
+Each of these layers can be independently added, removed, or modified as needed.
 
-- Instrumentation:
-    Your applications are runtime profilable by using a simple macro inside all the functions or scopes
-    you need to monitor. You can look at the results in your browsers profile-tracer to look at all the
-    functions called along with the time they took.
+---
 
-- Physics System:
-    As of now, Everest has its own 2d physics system. In depth, it uses a lot of optimization techniques for
-    collision approximation, detection and resolution, along with physics simulation. It has provided
-    components like colliders, rigidbodies and springJoints.
+#### **2. UI System**
+Everest Engine integrates an **ImGui-based UI system**, making it simple to create interactive and responsive interfaces. Whether it's debugging overlays, menus, or custom tools, the UI system provides:
+- Predefined widgets for quick development.
+- Customizability to tailor interfaces to your needs.
+- A straightforward API that accelerates development.
 
-- Rendering System:
-    Everest engine's renderer has everything set up for supporting 3d rendering, and has a complete
-    2d renderer. There is no mesh loader provided as of now by engine. So, if you write your own mesh
-    loader you can use engine's renderer to render the mesh easily. Engine's 2d renderer uses batching
-    for improving performance. Instanced renderer will be added after mesh loader. Talking about 2d
-    renderer, there is an intuitive API provided for making development and debugging easier.
+---
 
-- Entity Component System:
-    Engine uses entity component system with following components provided for use:
-    - Transform
-    - Tag
-    - Camera
-    - SpriteRenderer
-    - CircleRenderer
-    - Rigidbody2d
-    - SpringJoint2d
-    - BoxCollider2d
-    - CircleCollider2d
-    - EvScript
+#### **3. Input Management**
+Input handling is intuitive and well-organized in Everest Engine. The input management system:
+- Supports multiple input devices such as keyboards, mice, and joysticks.
+- Provides an **event listener and dispatcher** to streamline input handling.
+- Abstracts complexities, allowing developers to focus on gameplay instead of technical intricacies.
 
-- Runtime lua-scripting
-    Everest engine uses lua as its runtime scripting language due to a primary reason that lua is a
-    very easy to learn and use language, and also due to the fact that Just In Time(JIT) compiler for
-    lua is the fastest one that is available there for scripting. Engine provides a decent scripting
-    API for you to use it. You can use this feature to give custom behaviour to entities in game.
+---
 
-- Native C++ Scripting
-    Everest engine also has support for native (c++) scripting to make your faster game, even faster.
-    You can use core engine API for more advanced scripting in C++.
+#### **4. Window Management**
+Everest Engine offers a **window management system** with a user-friendly API. Developers can easily:
+- Create and manage application windows.
+- Handle window events such as resizing and focus changes.
+This system ensures a smooth user experience and reduces boilerplate code.
 
-- Assets Manager
-    Everest engine has a decent assets management. Managing assets like fonts, scenes, textures, etc.
-    are very sensitive things, when it comes to performance. Everest got you covered.
+---
 
-- Scene Editor
-    Everest editor is the scene editor provided by everest engine for editing your scenes and saving
-    them, testing them. Editor also has some easily overlookable features like rendering stats, timing
-    and frame information, etc which might be vital for development of your game.
+#### **5. Logging System**
+Debugging is made easier with a **C-style formatted logging system**. The logging system:
+- Enables you to log messages and events effectively.
+- Helps track and resolve issues during development by providing clear and concise outputs.
 
-- Other
-    Other important features that engine provides are,
-    - Timing and Clock
-    - Game Mathematics
+---
+
+#### **6. Instrumentation**
+Everest Engine supports **runtime profiling**, allowing developers to analyze the performance of their applications. By using a simple macro, you can:
+- Monitor functions or code scopes at runtime.
+- Visualize profiling data in your browser’s trace viewer.
+This feature makes it easier to identify performance bottlenecks.
+
+---
+
+#### **7. Physics System**
+The engine includes a custom **2D physics system** with advanced features such as:
+- **Collision detection and resolution** using optimized techniques.
+- Physics simulation components like:
+  - Colliders (Box and Circle)
+  - Rigidbodies
+  - Spring Joints
+This robust system provides accurate physics behavior while maintaining performance.
+
+---
+
+#### **8. Rendering System**
+Everest Engine's rendering system is designed for both **2D and 3D rendering**:
+- **2D Renderer**:
+  - Supports batching for improved performance.
+  - Includes an intuitive API for development and debugging.
+- **3D Renderer**:
+  - While 3D rendering is supported, there’s no mesh loader included yet.
+  - Developers can write their own mesh loader and use the engine's renderer seamlessly.
+
+Upcoming features like an **instanced renderer** will further enhance its capabilities.
+
+---
+
+#### **9. Entity Component System (ECS)**
+The engine uses an **Entity Component System (ECS)** for organizing game objects. It provides the following components:
+- **Transform**: For position, rotation, and scaling.
+- **Tag**: For object identification.
+- **Camera**: For view management.
+- **SpriteRenderer** and **CircleRenderer**: For rendering 2D objects.
+- **Rigidbody2D**, **SpringJoint2D**, **BoxCollider2D**, and **CircleCollider2D**: For physics and collision.
+- **EvScript**: A component for attaching Lua scripts to entities.
+
+---
+
+#### **10. Runtime Lua Scripting**
+Everest Engine uses **Lua** as its runtime scripting language, chosen for its:
+- Ease of learning and usage.
+- Speed, thanks to Lua’s JIT compiler.
+The scripting API allows developers to create custom behaviors for entities dynamically, adding flexibility to game development.
+
+---
+
+#### **11. Native C++ Scripting**
+For developers who need high performance, the engine supports **native C++ scripting**. This allows direct access to the core engine API, enabling advanced and optimized gameplay logic.
+
+---
+
+#### **12. Asset Manager**
+Everest Engine includes an **asset management system** for handling critical resources such as:
+- Fonts
+- Textures
+- Scenes
+It ensures efficient loading and management of assets, optimizing performance.
+
+---
+
+#### **13. Scene Editor**
+The **Everest Editor** is a built-in tool for creating and managing scenes. Its features include:
+- Scene editing and saving capabilities.
+- Real-time testing.
+- Tools for monitoring rendering stats, frame rates, and timing.
+
+---
+
+#### **14. Other Features**
+Additional tools and features provided by Everest Engine include:
+- **Timing and Clock**: For accurate time management in games.
+- **Game Mathematics**: A suite of mathematical utilities tailored for game development.
+
+---
+
+Everest Engine is a comprehensive, developer-friendly framework that balances ease of use with powerful features, making it an excellent choice for game creators.
+
 
 ## Documents for you
 

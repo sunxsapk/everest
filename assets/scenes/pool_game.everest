@@ -1,12 +1,24 @@
 scene: Pool
 entities:
+  - entity: 9876083877691954060
+    tag_c:
+      tag: marker
+    transform_c:
+      position: [-1.4916488, 0.49371478, 0]
+      rotation: [0, -0, 0]
+      scale: [1, 0.03, 1]
+    spriteRenderer_c:
+      active: true
+      color: [0.11335207, 0.11296264, 0.11392403, 0.7019608]
+      startUV: [0, 0]
+      sizeUV: [1, 1]
   - entity: 500138754567179160
     tag_c:
       tag: black
     transform_c:
-      position: [1.7777451, 0.49280137, 0]
+      position: [1.8787133, 0.49280137, 0]
       rotation: [0, -0, 0]
-      scale: [0.22749999, 0.22749999, 0.90999997]
+      scale: [0.2, 0.2, 1]
     circleRenderer_c:
       active: true
       color: [0.07172996, 0.07051933, 0.07051933, 1]
@@ -28,9 +40,9 @@ entities:
     tag_c:
       tag: red
     transform_c:
-      position: [2.0057454, 0.605746, 0]
+      position: [2.2572806, 0.47897577, 0]
       rotation: [0, -0, 0]
-      scale: [0.22749999, 0.22749999, 0.90999997]
+      scale: [0.2, 0.2, 1]
     circleRenderer_c:
       active: true
       color: [1, 0.12236285, 0.12236285, 1]
@@ -52,9 +64,9 @@ entities:
     tag_c:
       tag: yellow
     transform_c:
-      position: [1.9993026, 0.37472284, 0]
+      position: [1.5264051, 0.51520336, 0]
       rotation: [0, -0, 0]
-      scale: [0.22749999, 0.22749999, 0.90999997]
+      scale: [0.2, 0.2, 1]
     circleRenderer_c:
       active: true
       color: [1, 0.81012654, 0, 1]
@@ -78,7 +90,7 @@ entities:
     transform_c:
       position: [-2, 0.5, 0]
       rotation: [0, -0, 0]
-      scale: [0.25, 0.25, 1]
+      scale: [0.22, 0.22, 1]
     circleRenderer_c:
       active: true
       color: [1, 1, 1, 1]
@@ -102,6 +114,9 @@ entities:
           - name: power
             type: 2
             value: 8
+          - name: marker
+            type: 8
+            value: 9876083877691954060
   - entity: 11793341878473095174
     tag_c:
       tag: GameManager
@@ -122,7 +137,7 @@ entities:
       isPrimary: true
       is2d: true
       u_size_fov: 2.6
-      aspect: 1.8594024
+      aspect: 1.8033898
       near: -1000
       far: 1000
   - entity: 16526877412551151285
@@ -318,3 +333,147 @@ entities:
       startUV: [0, 0]
       sizeUV: [1, 1]
       texturePath: assets/sprites/pool_table.png
+  - entity: 15081323060661926764
+    tag_c:
+      tag: yellow
+    transform_c:
+      position: [1.7090185, 0.6082121, 0]
+      rotation: [0, -0, 0]
+      scale: [0.2, 0.2, 1]
+    circleRenderer_c:
+      active: true
+      color: [1, 0.81012654, 0, 1]
+      thickness: 1
+      fade: 0
+    rigidbody2d_c:
+      active: true
+      inverseMass: 1
+      drag: 0.5
+      velocity: [0, 0]
+      angularVelocity: 0
+      definition: 0
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.912
+  - entity: 16213921049811409557
+    tag_c:
+      tag: yellow
+    transform_c:
+      position: [2.0750294, 0.37472272, 0]
+      rotation: [0, -0, 0]
+      scale: [0.2, 0.2, 1]
+    circleRenderer_c:
+      active: true
+      color: [1, 0.81012654, 0, 1]
+      thickness: 1
+      fade: 0
+    rigidbody2d_c:
+      active: true
+      inverseMass: 1
+      drag: 0.5
+      velocity: [0, 0]
+      angularVelocity: 0
+      definition: 0
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.912
+  - entity: 16942204935124596141
+    tag_c:
+      tag: red
+    transform_c:
+      position: [1.6965301, 0.3974988, 0]
+      rotation: [0, -0, 0]
+      scale: [0.2, 0.2, 1]
+    circleRenderer_c:
+      active: true
+      color: [1, 0.12236285, 0.12236285, 1]
+      thickness: 1
+      fade: 0
+    rigidbody2d_c:
+      active: true
+      inverseMass: 1
+      drag: 0.5
+      velocity: [0, 0]
+      angularVelocity: 0
+      definition: 0
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.912
+  - entity: 11681223931424589097
+    tag_c:
+      tag: red
+    transform_c:
+      position: [1.892156, 0.70040375, 0]
+      rotation: [0, -0, 0]
+      scale: [0.2, 0.2, 1]
+    circleRenderer_c:
+      active: true
+      color: [1, 0.12236285, 0.12236285, 1]
+      thickness: 1
+      fade: 0
+    rigidbody2d_c:
+      active: true
+      inverseMass: 1
+      drag: 0.5
+      velocity: [0, 0]
+      angularVelocity: 0
+      definition: 0
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.912
+  - entity: 16291080362288117170
+    tag_c:
+      tag: yellow
+    transform_c:
+      position: [1.879403, 0.28322017, 0]
+      rotation: [0, -0, 0]
+      scale: [0.2, 0.2, 1]
+    circleRenderer_c:
+      active: true
+      color: [1, 0.81012654, 0, 1]
+      thickness: 1
+      fade: 0
+    rigidbody2d_c:
+      active: true
+      inverseMass: 1
+      drag: 0.5
+      velocity: [0, 0]
+      angularVelocity: 0
+      definition: 0
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.912
+  - entity: 4753085687514830780
+    tag_c:
+      tag: red
+    transform_c:
+      position: [2.0772252, 0.579472, 0]
+      rotation: [0, -0, 0]
+      scale: [0.2, 0.2, 1]
+    circleRenderer_c:
+      active: true
+      color: [1, 0.12236285, 0.12236285, 1]
+      thickness: 1
+      fade: 0
+    rigidbody2d_c:
+      active: true
+      inverseMass: 1
+      drag: 0.5
+      velocity: [0, 0]
+      angularVelocity: 0
+      definition: 0
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.912
