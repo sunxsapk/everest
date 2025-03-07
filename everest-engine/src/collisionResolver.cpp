@@ -39,11 +39,13 @@ namespace Everest {
 
         f32 raxn = Math::cross(relativeContactPointA, contactNormal);
         angularInertiaA = !(rigidbody2dA->definition&Static) ? rigidbody2dA->inverseInertia * raxn * raxn : 0;
+        if(std::isnan(angularInertiaA)) angularInertiaA = 0;
 
         if(rigidbody2dB && !(rigidbody2dB->definition&Static)){
             f32 rbxn = Math::cross(relativeContactPointB, contactNormal);
             angularInertiaB = rigidbody2dB->inverseInertia * rbxn * rbxn;
-        }
+        } else angularInertiaB = 0;
+        if(std::isnan(angularInertiaB)) angularInertiaB = 0;
     }
 
     void body_contact2d_t::resolveVelocity(){
@@ -61,12 +63,12 @@ namespace Everest {
         f32 jlen = -(1+restitution) * svel / totalInertia;
         vec2 j = jlen * contactNormal;
 
-        if(adynamic){
+        if(adynamic && !std::isnan(jlen)){
             rigidbody2dA->velocity += j * rigidbody2dA->inverseMass;
             rigidbody2dA->angularVelocity += Math::cross(relativeContactPointA, j) * rigidbody2dA->inverseInertia;
         }
 
-        if(bdynamic){
+        if(bdynamic && !std::isnan(jlen)){
             rigidbody2dB->velocity -= j * rigidbody2dB->inverseMass;
             rigidbody2dB->angularVelocity -= Math::cross(relativeContactPointB, j) * rigidbody2dB->inverseInertia;
         }
@@ -80,12 +82,12 @@ namespace Everest {
         jtlen = glm::clamp(jtlen, -maxFriction, maxFriction);
         vec2 jt = jtlen * vt;
 
-        if(adynamic){
+        if(adynamic && !std::isnan(jtlen)){
             rigidbody2dA->velocity += jt * rigidbody2dA->inverseMass;
             rigidbody2dA->angularVelocity += Math::cross(relativeContactPointA, jt) * rigidbody2dA->inverseInertia;
         }
 
-        if(bdynamic){
+        if(bdynamic && !std::isnan(jtlen)){
             rigidbody2dB->velocity -= jt * rigidbody2dB->inverseMass;
             rigidbody2dB->angularVelocity -= Math::cross(relativeContactPointB, jt) * rigidbody2dB->inverseInertia;
         }
@@ -93,24 +95,25 @@ namespace Everest {
     }
 
     void body_contact2d_t::resolvePenetration(){
-        if(penetration <= 0) return;
+        if(penetration <= std::numeric_limits<f32>::epsilon()) return;
+        if(std::isnan(contactNormal.x) || std::isnan(contactNormal.y)) return;
 
         bool adynamic = !(rigidbody2dA->definition&Static);
         bool bdynamic = rigidbody2dB && !(rigidbody2dB->definition&Static);
 
         f32 totalInertia = adynamic?rigidbody2dA->inverseMass:0 + angularInertiaA;
         if(bdynamic) totalInertia += rigidbody2dB->inverseMass + angularInertiaB;
-        if(totalInertia <= 0.f) return;
+        if(totalInertia <= std::numeric_limits<f32>::epsilon()) return;
 
-        const f32 PEN_BIAS = 0.1f;
+        const f32 PEN_BIAS = 0.2f;
         f32 dp = penetration / totalInertia * PEN_BIAS;
         vec2 mvPerMass = contactNormal * dp;
 
-        if(adynamic) {
+        if(adynamic && !std::isnan(dp)) {
             transformA->position += vec3(mvPerMass * rigidbody2dA->inverseMass, 0);
             transformA->rotation.z += dp * angularInertiaA;
         }
-        if(bdynamic){
+        if(bdynamic && !std::isnan(dp)){
             transformB->position -= vec3(mvPerMass * rigidbody2dB->inverseMass, 0);
             transformB->rotation.z -= dp * angularInertiaB;
         }

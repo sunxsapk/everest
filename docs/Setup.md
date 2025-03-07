@@ -34,7 +34,7 @@ If Powershell blocks the execution, you may need to allow scripts:
 - `Set-ExecutionPolicy Unrestricted -Scope CurrentUser`
 
 
-___If you want to install dependencies yourself, then visit [Custom Installation](#Custom_Installation)___
+___If you want to install dependencies yourself, then visit Custom Installation___
 
 ---
 
@@ -78,6 +78,12 @@ standalone.__
 - Run game using `./build/bin/examples/examples`
 
 
+---
+
+__If you've installed dependencies using scripts, then you are good to go. Else you can continue reading
+the guide below.__
+
+---
 
 ## Custom Installation
 
@@ -88,7 +94,7 @@ Here’s a step-by-step guide to installing the required tools on **Windows, Lin
 
 ---
 
-# **Linux Installation Guide (Ubuntu/Debian-based)**
+## **Linux Installation Guide (Ubuntu/Debian-based)**
 
 ### 1. Install **CMake**
 ```sh
@@ -135,7 +141,7 @@ sudo apt install -y zenity
 
 ---
 
-# **macOS Installation Guide**
+## **macOS Installation Guide**
 
 ### 1. Install **Homebrew** (if not installed)
 ```sh
@@ -188,7 +194,7 @@ lua -v
 brew install zenity
 ```
 
-# **Windows Installation Guide (!! UnTested As Of Now !!)**
+## **Windows Installation Guide (!! UnTested As Of Now !!)**
 
 ### 1. Install **CMake**
 - Download the latest **CMake** from: [https://cmake.org/download/](https://cmake.org/download/)

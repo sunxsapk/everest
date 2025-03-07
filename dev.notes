@@ -31,13 +31,9 @@ will proceed in following sequence :-
 
 =============== Bugs =============
 
-1. Just found out that, at some point, when two objects are colliding at high speed, some value turns
-out to be infinity or nan, so all the objects vanish. So, check the vulnerable point and abort
-before such behaviour is encountered
+- Not a bug, but discrete collision detection implemented here is not working fine for high speed collisions
 
 =============== TODO ============
 [ ] update api docs
-[ ] make a simple demo game scene
-[ ] fix bugs...
 [ ] project file format, working directory setup
 

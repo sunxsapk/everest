@@ -24,6 +24,10 @@ OnCollision = function (data)
         Scene.destroyEntity(data.other)
     elseif tag == "white" then
         print("White Ball in hole")
-        Scene.destroyEntity(data.other)
+        data.other:get_transform().position = vec3.new(-2, 0.5, 0)
+        local rb = data.other:get_rigidbody2d()
+        rb.velocity = vec2.new(0)
+        rb.angularVelocity = 0
+        -- Scene.destroyEntity(data.other)
     end
 end
