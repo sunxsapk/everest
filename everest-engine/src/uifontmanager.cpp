@@ -1,4 +1,5 @@
 #include "core/uifontmanager.h"
+#include "core/core.h"
 
 namespace Everest {
     c_str_t UIFontManager::default_regular = "_def_";
@@ -8,8 +9,8 @@ namespace Everest {
 
     void UIFontManager::init(){
         ImGuiIO& io = ImGui::GetIO();
-        io.FontDefault = loadFont(default_regular, "assets/fonts/JetBrainsMono-Regular.ttf", 16.f);
-        loadFont(default_bold, "assets/fonts/JetBrainsMono-Bold.ttf", 16.f);
+        io.FontDefault = loadFont(default_regular, _getEngineAssetsPath("fonts/JetBrainsMono-Regular.ttf"), 16.f);
+        loadFont(default_bold, _getEngineAssetsPath("fonts/JetBrainsMono-Bold.ttf"), 16.f);
     }
 
     void UIFontManager::quit(){

@@ -36,4 +36,6 @@ will proceed in following sequence :-
 =============== TODO ============
 [ ] update api docs
 [ ] project file format, working directory setup
+[ ] use exceptions instead of assertions now
+[ ] default & custom layout specification
 

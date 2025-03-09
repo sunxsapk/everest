@@ -1,4 +1,5 @@
 #include "renderer/renderer2d.h"
+#include "core/core.h"
 #include "math/utils.h"
 
 namespace Everest {
@@ -83,13 +84,13 @@ namespace Everest {
         _data->whiteTexture->setData(&whiteText_data, 4);
 
 #ifdef EDITOR_BUILD
-        _data->quadShader = createRef<Shader>("assets/shaders/editor_quadShader.glsl");
-        _data->circleShader = createRef<Shader>("assets/shaders/editor_circleShader.glsl");
-        _data->lineShader = createRef<Shader>("assets/shaders/lineShader.glsl");
+        _data->quadShader = createRef<Shader>(_getEngineAssetsPath("shaders/editor_quadShader.glsl"));
+        _data->circleShader = createRef<Shader>(_getEngineAssetsPath("shaders/editor_circleShader.glsl"));
+        _data->lineShader = createRef<Shader>(_getEngineAssetsPath("shaders/lineShader.glsl"));
 #else
-        _data->quadShader = createRef<Shader>("assets/shaders/quadShader.glsl");
-        _data->circleShader = createRef<Shader>("assets/shaders/circleShader.glsl");
-        _data->lineShader = createRef<Shader>("assets/shaders/lineShader.glsl");
+        _data->quadShader = createRef<Shader>(_getEngineAssetsPath("shaders/quadShader.glsl"));
+        _data->circleShader = createRef<Shader>(_getEngineAssetsPath("shaders/circleShader.glsl"));
+        _data->lineShader = createRef<Shader>(_getEngineAssetsPath("shaders/lineShader.glsl"));
 #endif
         i32 samplerArr[MAX_TEXTURES];
         for(i32 i=0; i<_data->maxTexSlots; i++) samplerArr[i] = i;

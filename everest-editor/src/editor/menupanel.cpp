@@ -41,8 +41,8 @@ namespace Everest {
 
     inline void openRecentSeq(){
         // TODO: remove or implement it on editor_state_manager type of thing later
-        if(ImGui::MenuItem("Pool Game")) sceneOpen("assets/scenes/pool_game.everest");
-        if(ImGui::MenuItem("Physics Test")) sceneOpen("assets/scenes/physicstest2d.everest");
+        //if(ImGui::MenuItem("Pool Game")) sceneOpen("assets/scenes/pool_game.everest");
+        //if(ImGui::MenuItem("Physics Test")) sceneOpen("assets/scenes/physicstest2d.everest");
         ImGui::EndMenu();
     }
 

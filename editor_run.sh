@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if ! [ -d build/ ]; then
-    cmake -B build -DBuild=Debug -DTarget=Editor
+    cmake -B build -DBuild=Debug
 fi
 
 echo ""

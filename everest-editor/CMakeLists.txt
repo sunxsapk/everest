@@ -36,3 +36,6 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     $<$<CONFIG:Dist>:DIST;__NO_3D__>
 )
 
+install(TARGETS ${PROJECT_NAME}
+    RUNTIME DESTINATION bin
+)

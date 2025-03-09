@@ -13,7 +13,7 @@ namespace Everest {
     bool Gizmos::isLocalTransform = true;
 
     void Gizmos::initGrid(){
-        _instance->gridShader = createRef<Shader>("assets/shaders/gridShader.glsl");
+        _instance->gridShader = createRef<Shader>(_getEngineAssetsPath("shaders/gridShader.glsl"));
         _instance->gridVertexArray = createRef<VAO>();
          
         ref<VertexBuffer> gvb = createRef<VertexBuffer>(4 * sizeof (vec3));

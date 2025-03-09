@@ -5,7 +5,11 @@ namespace Everest {
     :_size(size), _format(format){
         EV_profile_function();
 
-        ASSERT(_format != 0, "Unsupported format detected");
+        // ASSERT(_format != 0, "Unsupported format detected");
+        if(_format == 0){
+            EVLog_Err("Invalid texture format for %s: %d", _path.c_str(), _format);
+            throw std::invalid_argument("Invalid texture format");
+        }
 
         glGenTextures(1, &_id);
         glBindTexture(GL_TEXTURE_2D, _id);
@@ -17,11 +21,13 @@ namespace Everest {
     void Texture::setData(void* data ,u32 size){
         EV_profile_function();
 
-#if ASSERT_ON
         u32 sz = _format==RGBA?4:(_format==RGB?3:1);
         sz *= _size.x * _size.y;
-        ASSERT(size == sz, "Invalid data size");
-#endif
+        // ASSERT(size == sz, "Invalid data size");
+        if(size != sz){
+            EVLog_Err("Invalid texture size set for: %s", _path.c_str());
+            throw std::invalid_argument("Invalid texture size");
+        }
         glBindTexture(GL_TEXTURE_2D, _id);
         glTexImage2D(GL_TEXTURE_2D, 0, _format, _size.x, _size.y, 0,
                 _format, GL_UNSIGNED_BYTE, data);
@@ -42,7 +48,11 @@ namespace Everest {
             EV_profile_scope("Texture image load");
             data = stbi_load(_path.c_str(), &width, &height, &channels, 0);
         }
-        ASSERT(data != NULL, "Failed to load texture");
+        // ASSERT(data != NULL, "Failed to load texture : %s", filepath);
+        if(data == nullptr){
+            EVLog_Err("Invalid texture path : %s", filepath);
+            throw std::invalid_argument("Invalid texture path");
+        }
 
         _size = {width, height};
 
@@ -53,7 +63,11 @@ namespace Everest {
         } else if (channels == 1){
             _format = RED;
         }
-        ASSERT(_format != 0, "Unsupported format detected");
+        // ASSERT(_format != 0, "Unsupported format detected");
+        if(_format == 0){
+            EVLog_Err("Invalid texture format for %s: %d", _path.c_str(), _format);
+            throw std::invalid_argument("Invalid texture format");
+        }
 
         glGenTextures(1, &_id);
         glBindTexture(GL_TEXTURE_2D, _id);

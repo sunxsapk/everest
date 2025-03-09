@@ -4,8 +4,8 @@
 
 namespace Everest {
 
-    std::filesystem::path ContentBrowser::curDir = "assets";
-    std::filesystem::path ContentBrowser::assetsDir = "assets";
+    std::filesystem::path ContentBrowser::curDir = ".";
+    std::filesystem::path ContentBrowser::assetsDir = ".";
 
     void ContentBrowser::onGUIrender(){
         ImGui::Begin("Assets");

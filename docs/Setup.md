@@ -3,9 +3,6 @@
 Setting up everest engine on your machine requires you to first of all, install all the dependencies
 then build it from source code.
 
-___You can also download the precompiled binaries as soon as they are made available. In that case,
-you won't have to follow the steps here.___
-
 ___Take in consideration that the project is currently under continous development, so feedback on
 some bugs found, feature requests, etc are highly appreciated.___
 

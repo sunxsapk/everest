@@ -8,9 +8,16 @@
  */
 
 #pragma once
-#include "math/types.h"
+
+#ifndef ASSETS_BASEP
+    #define ASSETS_BASEP "."
+#endif
+
+#define _getEngineAssetsPath(path) ASSETS_BASEP "/" path
 
 namespace Everest {
+
+
     class Core {
         public:
             static void initDependencies();

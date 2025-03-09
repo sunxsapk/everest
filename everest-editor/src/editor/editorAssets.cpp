@@ -20,7 +20,7 @@ namespace Everest {
     }
     
     EditorAssets::EditorAssets(){
-        ref<Texture> icontex = AssetsManager::loadTexture("assets/sprites/icons.png");
+        ref<Texture> icontex = AssetsManager::loadTexture(_getEngineAssetsPath("images/icons.png"));
         SpriteSheet sheet(icontex, {128, 128});
         icons.push_back(sheet.getSprite({0,7}, {1,1}));
         icons.push_back(sheet.getSprite({1,7}, {1,1}));

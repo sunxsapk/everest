@@ -51,8 +51,7 @@ set_source_files_properties(${EXTERNALS} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 # definitions
 if(WIN32)
     message(STATUS "Configuring project for Windows")
-    message(WARNING "Please install glfw and if installed, update the path below")
-    target_include_directories(${PROJECT_NAME} PUBLIC C:/GLFW/glfw/include)
+    target_include_directories(${PROJECT_NAME} PUBLIC C:/GLFW/glfw/include) # if glfw link issue, then update this path
     target_link_directories(${PROJECT_NAME} PUBLIC C:/GLFW/glfw/lib)
 
     target_compile_definitions(${PROJECT_NAME} PUBLIC WIN32)
@@ -72,6 +71,16 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
     $<$<CONFIG:Release>:RELEASE;ASSERT_ON;EV_PROFILE;__NO_3D__>
     $<$<CONFIG:Dist>:DIST;__NO_3D__>
 )
+
+
+install(TARGETS ${PROJECT_NAME}
+    EXPORT EverestTargets
+    ARCHIVE DESTINATION lib
+    LIBRARY DESTINATION lib
+    RUNTIME DESTINATION bin
+)
+
+install(DIRECTORY include/ DESTINATION include/everest)
 
 # installation setup
 #install(TARGETS ${PROJECT_NAME} DESTINATION lib)

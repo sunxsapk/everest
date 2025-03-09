@@ -1,7 +1,7 @@
 #!/bin/bash
 
-if ! [ -d build/bin/everest-editor ]; then
-    cmake -B build -DBuild=Release -DTarget=Editor
+if ! [ -d build/ ]; then
+    cmake -B build -DBuild=Release
 fi
 
 if cmake --build build/; then
