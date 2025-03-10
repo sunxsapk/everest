@@ -9,11 +9,11 @@
 
 #pragma once
 
-#ifndef ASSETS_BASEP
-    #define ASSETS_BASEP "."
+#ifndef BASE_ASSETS_PATH
+    #define BASE_ASSETS_PATH "assets"
 #endif
 
-#define _getEngineAssetsPath(path) ASSETS_BASEP "/" path
+#define _getEngineAssetsPath(path) BASE_ASSETS_PATH "/" path
 
 namespace Everest {
 

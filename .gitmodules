@@ -4,3 +4,9 @@
 [submodule "everest-engine/externals/ImGuizmo"]
 	path = everest-engine/externals/ImGuizmo
 	url = https://github.com/CedricGuillemet/ImGuizmo
+[submodule "everest-engine/externals/glfw"]
+	path = everest-engine/externals/glfw
+	url = https://github.com/sunxsapk/glfw
+[submodule "everest-engine/externals/lua"]
+	path = everest-engine/externals/lua
+	url = https://github.com/sunxsapk/lua

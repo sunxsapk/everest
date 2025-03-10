@@ -34,8 +34,10 @@ will proceed in following sequence :-
 - Not a bug, but discrete collision detection implemented here is not working fine for high speed collisions
 
 =============== TODO ============
+[ ] better readme
 [ ] update api docs
-[ ] project file format, working directory setup
 [ ] use exceptions instead of assertions now
 [ ] default & custom layout specification
+[ ] project file format, working directory setup
+[ ] project structure generator script
 

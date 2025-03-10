@@ -22,7 +22,10 @@ file(GLOB_RECURSE EXTERNALS
 # submodules
 set(YAML_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+
+add_subdirectory("externals/glfw")
 add_subdirectory("externals/yaml-cpp")
+add_subdirectory("externals/lua")
 
 # adding targets
 add_library(${PROJECT_NAME} STATIC ${SRC_FILES} ${EXTERNALS})
@@ -39,6 +42,8 @@ target_include_directories(${PROJECT_NAME} PUBLIC
     externals/sources/glm
     externals/sources/ImGuizmo
     externals/yaml-cpp/include
+    externals/glfw/include
+    externals/lua/src
 )
 
 # libraries
@@ -51,8 +56,8 @@ set_source_files_properties(${EXTERNALS} PROPERTIES SKIP_PRECOMPILE_HEADERS ON)
 # definitions
 if(WIN32)
     message(STATUS "Configuring project for Windows")
-    target_include_directories(${PROJECT_NAME} PUBLIC C:/GLFW/glfw/include) # if glfw link issue, then update this path
-    target_link_directories(${PROJECT_NAME} PUBLIC C:/GLFW/glfw/lib)
+    # target_include_directories(${PROJECT_NAME} PUBLIC C:/GLFW/glfw/include) # if glfw link issue, then update this path
+    # target_link_directories(${PROJECT_NAME} PUBLIC C:/GLFW/glfw/lib)
 
     target_compile_definitions(${PROJECT_NAME} PUBLIC WIN32)
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -81,12 +86,4 @@ install(TARGETS ${PROJECT_NAME}
 )
 
 install(DIRECTORY include/ DESTINATION include/everest)
-
-# installation setup
-#install(TARGETS ${PROJECT_NAME} DESTINATION lib)
-#install(DIRECTORY ${CMAKE_SOURCE_DIRECTORY}
-#    DESTINATION include
-#    FILES_MATCHING
-#    PATTERN "*.h"
-#)
 

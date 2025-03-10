@@ -15,6 +15,7 @@ namespace Everest {
     class ContentBrowser {
         public:
 
+            static void init();
             static void onGUIrender();
 
         private:
