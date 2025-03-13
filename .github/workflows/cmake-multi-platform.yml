@@ -15,7 +15,7 @@ jobs:
 
       matrix:
         os: [ubuntu-22.04, windows-latest ]  #macos-latest
-        build_type: [Debug] #, Release
+        build_type: [Release] #, Debug
         c_compiler: [gcc, cl] #clang, 
         include:
           - os: windows-latest

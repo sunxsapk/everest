@@ -41,14 +41,8 @@ if(WIN32)
     set(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
     unset(CPACK_PACKAGING_INSTALL_PREFIX)
     
-set(CPACK_BUILD_TYPE ${CMAKE_BUILD_TYPE})
-    if (INSTALL_ASSETS)
-    #set(BASE_ASSETS_PATH "C:/ProgramData/Everest")
-        set(ASSETS_DIR "assets")
-        set(BASE_ASSETS_PATH "C:/Program Files/EverestEngine/${ASSETS_DIR}")
-        add_compile_definitions(BASE_ASSETS_PATH=\"${BASE_ASSETS_PATH}\")
-    endif()
-    install(DIRECTORY assets/ DESTINATION "${ASSETS_DIR}") # only for github workflow
+    # set(CPACK_BUILD_TYPE ${CMAKE_BUILD_TYPE})
+    install(DIRECTORY everest-assets/ DESTINATION ${CMAKE_INSTALL_BINDIR}/everest-assets)
 
 elseif(APPLE)
     set(CPACK_GENERATOR "productbuild")
@@ -59,7 +53,7 @@ elseif(APPLE)
     set(CPACK_PACKAGE_VENDOR "sunxsapk")
 
     if(DEFINED ENV{GITHUB_ACTIONS})
-        set(CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/EverestInstall")
+        set(CPACK_PACKAGING_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/everest")
     else()
         set(CPACK_PACKAGING_INSTALL_PREFIX "/Applications/Everest")
     endif()
@@ -73,13 +67,8 @@ elseif(APPLE)
     set(CPACK_PACKAGING_INSTALL_PREFIX "/Applications/Everest")
     set(CPACK_PKG_INSTALL_PREFIX "/Applications/Everest")
 
-    if (INSTALL_ASSETS)
-        set(BASE_ASSETS_PATH "/Library/Application Support/Everest")
-        add_compile_definitions(BASE_ASSETS_PATH=\"${BASE_ASSETS_PATH}\")
-    endif()
-
-    # install(DIRECTORY assets/ DESTINATION "${CPACK_PACKAGING_INSTALL_PREFIX}/assets")
-    install(DIRECTORY assets/ DESTINATION "${BASE_ASSETS_PATH}")
+    # install(DIRECTORY everest-assets/ DESTINATION "${CPACK_PACKAGING_INSTALL_PREFIX}/everest-assets")
+    install(DIRECTORY everest-assets/ DESTINATION ${CMAKE_INSTALL_BINDIR}/everest-assets)
 else()
 # ======== .deb =============
     set(CPACK_GENERATOR "DEB")
@@ -89,17 +78,12 @@ else()
     set(CPACK_PACKAGE_DESCRIPTION "Everest Engine - A custom C++ Game Engine")
     set(CPACK_PACKAGE_VENDOR "sunxsapk")
     set(CPACK_PACKAGING_INSTALL_PREFIX "/usr/local")
-    
-# install(DIRECTORY assets/ DESTINATION share/everest/)
 
+    install(DIRECTORY everest-assets/ DESTINATION ${CMAKE_INSTALL_BINDIR}/everest-assets)
+
+    
 # ========= .tar.gz ==========
 # set(CPACK_GENERATOR "TGZ")
-
-    if (INSTALL_ASSETS)
-        set(BASE_ASSETS_PATH "/usr/local/share/everest")
-        add_compile_definitions(BASE_ASSETS_PATH=\"${BASE_ASSETS_PATH}\")
-    endif()
-    install(DIRECTORY assets/ DESTINATION "${BASE_ASSETS_PATH}")
 endif()
 
 include(CPack)

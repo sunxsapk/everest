@@ -13,6 +13,10 @@ ___If not, then it is on its way. Don't worry.___
 Select the one for your platform, download it and then run it to install __Everest Engine__ on your
 machine.
 
+### __Considerations__
+
+There are few things to consider.
+
 ---
 
 ## Custom Installation
