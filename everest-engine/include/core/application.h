@@ -13,6 +13,8 @@
 #include "core/guilayer.h"
 
 namespace Everest {
+    using namespace Everest;
+
     class Application {
         public:
             /* initializes everything and creates a application instance*/
@@ -29,7 +31,7 @@ namespace Everest {
             /* closes the application */
             static inline void close(){s_app->_running = false;}
             /* returns the window wrapper used by the application*/
-            static inline Window& getAppWindow(){return *s_app->_window;}
+            static inline Window& getAppWindow(){return *(s_app->_window);}
         protected:
             scope<Window> _window; 
             bool _running = true;
@@ -39,6 +41,7 @@ namespace Everest {
             /*called when the window close event is recieved by the application*/
             bool onWindowClose(WindowCloseEvent& e);
             bool onWindowResize(WindowResizeEvent& e);
+
         private:
             static Application* s_app;
             const char *_name;
