@@ -4,6 +4,7 @@
 #include "math/types.h"
 #include "scene/entity.h"
 #include "scene/scenemanager.h"
+#include "scene/components.h"
 
 namespace Everest {
 namespace Scripting {
