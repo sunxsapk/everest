@@ -14,7 +14,7 @@ namespace Everest {
         CHAR currentDir[256] = { 0 };
         ZeroMemory(&ofn, sizeof(OPENFILENAME));
         ofn.lStructSize = sizeof(OPENFILENAME);
-        ofn.hwndOwner = glfwGetWin32Window(Application::getAppWindow().getWindow());
+        ofn.hwndOwner = glfwGetWin32Window(::Everest::Everest::Application::getAppWindow().getWindow());
         ofn.lpstrFile = szFile;
         ofn.nMaxFile = sizeof(szFile);
         if (GetCurrentDirectoryA(256, currentDir))
