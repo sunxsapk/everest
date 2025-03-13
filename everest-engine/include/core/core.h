@@ -9,11 +9,14 @@
 
 #pragma once
 
-#ifndef BASE_ASSETS_PATH
-    #define BASE_ASSETS_PATH "assets"
-#endif
+// #define _getEngineAssetsPath(path) BASE_ASSETS_PATH "/" path
+#include <filesystem>
 
-#define _getEngineAssetsPath(path) BASE_ASSETS_PATH "/" path
+#ifdef DEBUG
+#define _getEngineAssetsPath(path) ("everest-assets/" path)
+#else
+#define _getEngineAssetsPath(path) Everest::Core::getInstalledAssetsPath(path).string().c_str()
+#endif
 
 namespace Everest {
 
@@ -23,9 +26,25 @@ namespace Everest {
             static void initDependencies();
             static void init();
             static void quit();
+
+            static std::filesystem::path getInstalledAssetsPath(const char* path){
+                return getInstalledAssetsPath(std::filesystem::path(path));
+            }
+            inline static std::filesystem::path getInstalledAssetsPath(std::string path){
+                return getInstalledAssetsPath(std::filesystem::path(path));
+            }
+            static std::filesystem::path getInstalledAssetsPath(std::filesystem::path path);
+
+            inline static std::filesystem::path getExecutablePath(){
+                return _exec_path;
+            }
         private:
 #ifdef DEBUG
             static void onGLFWerror(i32 errcode, const char *err);
 #endif
+
+
+            static std::filesystem::path __getExecDir();
+            static std::filesystem::path _exec_path;
     };
 }

@@ -45,8 +45,8 @@ namespace Everest {
     YAML::Emitter& operator<<(YAML::Emitter& out, const circleCollider2d_c& circleCollider2d);
     YAML::Emitter& operator<<(YAML::Emitter& out, const EvScript& script);
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
     YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody_c& rigidbody);
     YAML::Emitter& operator<<(YAML::Emitter& out, const springJoint_c& springJoint);
-#endif
+#endif*/
 }

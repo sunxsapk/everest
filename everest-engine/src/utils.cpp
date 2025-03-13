@@ -6,6 +6,7 @@ namespace Everest {
 #include <commdlg.h>
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
+#include "core/application.h"
 
     std::string FileDialog::openFile(const char* filters){
         OPENFILENAMEA ofn;

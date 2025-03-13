@@ -6,6 +6,10 @@
 #include "physics/physicsworld.h"
 #include "core/time.h"
 
+
+#undef min
+#undef max
+
 namespace Everest {
 
     Scene::Scene(const char* name): _name(name){
@@ -390,10 +394,10 @@ namespace Everest {
                 newScene->mainCamera = _ent;
             }
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
             copyComponent<rigidbody_c>(srcReg, e, desReg, _ent);
             copyComponent<springJoint_c>(srcReg, e, desReg, _ent);
-#endif
+#endif*/
         }
 
         return newScene;
@@ -420,10 +424,10 @@ namespace Everest {
         duplicateComponent<circleCollider2d_c>(entity, ent);
         duplicateComponent<EvScript>(entity, ent);
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
         duplicateComponent<rigidbody_c>(entity, ent);
         duplicateComponent<springJoint_c>(entity, ent);
-#endif
+#endif*/
         return ent;
     }
 }

@@ -23,8 +23,15 @@ file(GLOB_RECURSE EXTERNALS
 set(YAML_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 
-add_subdirectory("externals/glfw")
 add_subdirectory("externals/yaml-cpp")
+
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE) # Ensure it's a static library
+
+add_subdirectory("externals/glfw")
+
 add_subdirectory("externals/lua")
 
 # adding targets
@@ -60,11 +67,13 @@ if(WIN32)
     # target_link_directories(${PROJECT_NAME} PUBLIC C:/GLFW/glfw/lib)
 
     target_compile_definitions(${PROJECT_NAME} PUBLIC WIN32)
+    target_compile_options(${PROJECT_NAME} PRIVATE /bigobj)
 elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     message(STATUS "Configuring project for Linux")
     target_compile_definitions(${PROJECT_NAME} PUBLIC LINUX)
 elseif (APPLE)
     message(STATUS "Configuring project for MacOS")
+    add_compile_options(-Wno-unknown-warning-option)
     target_compile_definitions(${PROJECT_NAME} PUBLIC APPLE)
     find_library(OPENGL_LIB OpenGL)
     target_link_libraries(${PROJECT_NAME} PRIVATE ${OPENGL_LIB})

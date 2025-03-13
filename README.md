@@ -38,7 +38,7 @@ Each of these layers can be independently added, removed, or modified as needed.
 
 ---
 
-#### **2. UI System**
+### **2. UI System**
 Everest Engine integrates an **ImGui-based UI system**, making it simple to create interactive and responsive interfaces. Whether it's debugging overlays, menus, or custom tools, the UI system provides:
 - Predefined widgets for quick development.
 - Customizability to tailor interfaces to your needs.
@@ -46,7 +46,7 @@ Everest Engine integrates an **ImGui-based UI system**, making it simple to crea
 
 ---
 
-#### **3. Input Management**
+### **3. Input Management**
 Input handling is intuitive and well-organized in Everest Engine. The input management system:
 - Supports multiple input devices such as keyboards, mice, and joysticks.
 - Provides an **event listener and dispatcher** to streamline input handling.
@@ -54,7 +54,7 @@ Input handling is intuitive and well-organized in Everest Engine. The input mana
 
 ---
 
-#### **4. Window Management**
+### **4. Window Management**
 Everest Engine offers a **window management system** with a user-friendly API. Developers can easily:
 - Create and manage application windows.
 - Handle window events such as resizing and focus changes.
@@ -62,14 +62,14 @@ This system ensures a smooth user experience and reduces boilerplate code.
 
 ---
 
-#### **5. Logging System**
+### **5. Logging System**
 Debugging is made easier with a **C-style formatted logging system**. The logging system:
 - Enables you to log messages and events effectively.
 - Helps track and resolve issues during development by providing clear and concise outputs.
 
 ---
 
-#### **6. Instrumentation**
+### **6. Instrumentation**
 Everest Engine supports **runtime profiling**, allowing developers to analyze the performance of their applications. By using a simple macro, you can:
 - Monitor functions or code scopes at runtime.
 - Visualize profiling data in your browser’s trace viewer.
@@ -77,7 +77,7 @@ This feature makes it easier to identify performance bottlenecks.
 
 ---
 
-#### **7. Physics System**
+### **7. Physics System**
 The engine includes a custom **2D physics system** with advanced features such as:
 - **Collision detection and resolution** using optimized techniques.
 - Physics simulation components like:
@@ -88,7 +88,7 @@ This robust system provides accurate physics behavior while maintaining performa
 
 ---
 
-#### **8. Rendering System**
+### **8. Rendering System**
 Everest Engine's rendering system is designed for both **2D and 3D rendering**:
 - **2D Renderer**:
   - Supports batching for improved performance.
@@ -101,7 +101,7 @@ Upcoming features like an **instanced renderer** will further enhance its capabi
 
 ---
 
-#### **9. Entity Component System (ECS)**
+### **9. Entity Component System (ECS)**
 The engine uses an **Entity Component System (ECS)** for organizing game objects. It provides the following components:
 - **Transform**: For position, rotation, and scaling.
 - **Tag**: For object identification.
@@ -112,7 +112,7 @@ The engine uses an **Entity Component System (ECS)** for organizing game objects
 
 ---
 
-#### **10. Runtime Lua Scripting**
+### **10. Runtime Lua Scripting**
 Everest Engine uses **Lua** as its runtime scripting language, chosen for its:
 - Ease of learning and usage.
 - Speed, thanks to Lua’s JIT compiler.
@@ -120,12 +120,12 @@ The scripting API allows developers to create custom behaviors for entities dyna
 
 ---
 
-#### **11. Native C++ Scripting**
+### **11. Native C++ Scripting**
 For developers who need high performance, the engine supports **native C++ scripting**. This allows direct access to the core engine API, enabling advanced and optimized gameplay logic.
 
 ---
 
-#### **12. Asset Manager**
+### **12. Asset Manager**
 Everest Engine includes an **asset management system** for handling critical resources such as:
 - Fonts
 - Textures
@@ -134,7 +134,7 @@ It ensures efficient loading and management of assets, optimizing performance.
 
 ---
 
-#### **13. Scene Editor**
+### **13. Scene Editor**
 The **Everest Editor** is a built-in tool for creating and managing scenes. Its features include:
 - Scene editing and saving capabilities.
 - Real-time testing.
@@ -142,7 +142,7 @@ The **Everest Editor** is a built-in tool for creating and managing scenes. Its 
 
 ---
 
-#### **14. Other Features**
+### **14. Other Features**
 Additional tools and features provided by Everest Engine include:
 - **Timing and Clock**: For accurate time management in games.
 - **Game Mathematics**: A suite of mathematical utilities tailored for game development.
@@ -154,7 +154,8 @@ Everest Engine is a comprehensive, developer-friendly framework that balances ea
 
 ## Documents for you
 
-1. Project Setup and build is available [here](/docs/Setup.md).
-2. Programming API is available [here](/docs/ProgrammingAPI.md)
-3. Lua Scripting API in detail in available [here](/docs/ScriptingAPI.md)
+1. Installation Guide is available [here](/docs/Install.md).
+3. Programming API is available [here](/docs/ProgrammingAPI.md)
+4. Lua Scripting API is available [here](/docs/ScriptingAPI.md)
+2. Project Setup and build is available [here](/docs/Setup.md).
 

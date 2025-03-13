@@ -532,6 +532,33 @@ namespace Scripting {
                 );
     }
 
+    void registerTypes(luastate_t& lua) {
+        // types
+        reg_types(lua);
+        reg_matx(lua);
+        reg_vecx(lua);
+        reg_collision(lua);
+
+        // components
+        reg_transform(lua);
+        reg_tag(lua);
+        reg_script(lua);
+        reg_rigidbody2d(lua);
+        reg_spriteRenderer(lua);
+        reg_circleRenderer(lua);
+        reg_springJoint2d(lua);
+        reg_circleCollider2d(lua);
+        reg_boxCollider2d(lua);
+        reg_camera(lua);
+
+        // entity
+        reg_entity(lua);
+
+        // engine extensions
+        reg_input(lua);
+        reg_time(lua);
+        reg_scene(lua);
+    }
 }
 }
 

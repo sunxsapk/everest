@@ -8,6 +8,10 @@
 #include <random>
 #include "types.h"
 
+#undef min
+#undef max
+
+
 namespace Everest {
     class PRNumGenerator {
         public:

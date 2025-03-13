@@ -41,3 +41,14 @@ will proceed in following sequence :-
 [ ] project file format, working directory setup
 [ ] project structure generator script
 
+
+======== Project structure (ProjectName.evproj) =============
+name: My Game
+assets_dir: assets/
+scenes:
+    - assets/scenes/scene1.everest
+    - assets/scenes/scene2.everest
+current_scene: assets/scenes/scenex.everest
+background: [0.5, 0.4, 0.4, 1.0]
+camera: camera_c component's structure
+

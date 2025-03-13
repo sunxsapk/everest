@@ -36,10 +36,11 @@ namespace Everest {
         inline f32 get_far() const {return _far;}
 
         inline void set_fov(f32 fov){ _u_size_fov = fov; recalc();}
+        inline void set_near(f32 near_) { _near = near_; recalc();}
+        inline void set_far(f32 far_) { _far = far_; recalc(); }
         inline void set_lenssize(f32 size){ _u_size_fov = size; recalc();}
         inline void set_aspect(f32 aspect){ _aspect = aspect; recalc();}
-        inline void set_near(f32 near){ _near = near; recalc();}
-        inline void set_far(f32 far){ _far = far; recalc();}
+        
 
         inline bool is2d() const {return _isOrtho;}
         inline bool is3d() const {return !_isOrtho;}

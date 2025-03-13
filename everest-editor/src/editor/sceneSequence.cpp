@@ -37,7 +37,7 @@ namespace Everest {
             std::filesystem::path path = scenes[n];
             ImGui::Text("%d.", n+1);
             ImGui::SameLine();
-            ImGui::Selectable(path.c_str());
+            ImGui::Selectable(path.string().c_str());
 
             if(ImGui::IsItemActive() && !ImGui::IsItemHovered()){
                 int n_next = n + (ImGui::GetMouseDragDelta(0).y < 0.f ? -1 : 1);

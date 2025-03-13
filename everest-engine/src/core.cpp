@@ -10,6 +10,9 @@
 #include "utils/assetsManager.h"
 
 namespace Everest {
+
+    std::filesystem::path Core::_exec_path = Core::__getExecDir();
+
     void Core::initDependencies(){
         EV_profile_function();
 
@@ -82,4 +85,42 @@ namespace Everest {
         EVLog_Err("Opengl Error (%d): %s", errcode, err);
     }
 #endif
+
+    std::filesystem::path Core::getInstalledAssetsPath(std::filesystem::path path){
+#ifdef WIN32
+        /*
+         * everest-engine
+         *      bin
+         *          - everest-editor.exe
+         *      everest-assets
+         *          - assets
+         */
+        return _exec_path.parent_path() / "everest-assets" / path;
+#else
+        /*
+         * everest-engine
+         *      bin
+         *          everest-assets
+         *              - assets
+         *          - everest-editor.exe
+         */
+        return _exec_path / "everest-assets" / path;
+#endif
+    }
+
+    std::filesystem::path Core::__getExecDir() {
+#ifdef WIN32
+        char result[MAX_PATH];
+        DWORD count = GetModuleFileNameA(NULL, result, MAX_PATH);
+        if(count <= 0) return std::filesystem::path("");
+        std::string rr = std::string(result);
+#else
+        char result[PATH_MAX];
+        ssize_t count = readlink("/proc/self/exe", result, PATH_MAX);
+        if(count == -1) return std::filesystem::path("");
+        std::string rr = std::string(result, count);
+#endif
+        std::filesystem::path pp(rr);
+        return pp.parent_path();
+    }
 }

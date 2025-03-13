@@ -1,5 +1,8 @@
 #include "physics/aabbtree.h"
 
+#undef min
+#undef max
+
 namespace Everest {
     
     bool aabb_t::overlaps(const aabb_t& other) const {

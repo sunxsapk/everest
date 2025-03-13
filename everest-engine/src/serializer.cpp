@@ -97,7 +97,7 @@ namespace Everest {
             out << entity.get<springJoint2d_c>();
         }
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
         if(entity.has<rigidbody_c>()){
             out << entity.get<rigidbody_c>();
         }
@@ -105,7 +105,7 @@ namespace Everest {
         if(entity.has<springJoint_c>()){
             out << entity.get<springJoint_c>();
         }
-#endif
+#endif*/
 
         if(entity.has<boxCollider2d_c>()){
             out << entity.get<boxCollider2d_c>();
@@ -231,7 +231,7 @@ namespace Everest {
                     auto txpath = circleRenderer["texturePath"];
                     comp.texture = txpath ? AssetsManager::loadTexture(txpath.as<std::string>().c_str()) : nullptr;
                     comp.startUV = circleRenderer["startUV"] ? circleRenderer["startUV"].as<vec2>() : vec2();
-                    comp.sizeUV = circleRenderer["sizeUV"] ? circleRenderer["sizeUV"].as<vec2>() : vec2();
+                    comp.sizeUV = circleRenderer["sizeUV"] ? circleRenderer["sizeUV"].as<vec2>() : vec2(1.f);
                 }
             }
 
@@ -262,7 +262,7 @@ namespace Everest {
                 }
             }
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
             {
                 auto rigidbody = entity["rigidbody_c"];
                 if(rigidbody){
@@ -288,7 +288,7 @@ namespace Everest {
                     spr.restLength = springJoint["restLength"].as<f32>();
                 }
             }
-#endif
+#endif*/
 
             {
                 auto boxCollider2d = entity["boxCollider2d_c"];
@@ -565,9 +565,11 @@ namespace Everest {
                         case Types::Float:
                             out << (f64)val;
                             break;
-                        case Types::String:
-                            out << (std::string)val;
+                        case Types::String: {
+                            std::string vstr = val;
+                            out << vstr;
                             break;
+                        }
                         case Types::Vec2:
                             out << (vec2&)val;
                             break;
@@ -593,7 +595,7 @@ namespace Everest {
         return out;
     }
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
     YAML::Emitter& operator<<(YAML::Emitter& out, const rigidbody_c& rb){
         using namespace YAML;
         out << Key << "rigidbody_c";
@@ -625,5 +627,5 @@ namespace Everest {
         out << EndMap;
         return out;
     }
-#endif
+#endif*/
 }

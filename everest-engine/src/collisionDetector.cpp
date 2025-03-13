@@ -1,6 +1,8 @@
 #include "physics/collisionDetector.h"
 #include "math/utils.h"
 
+#undef min
+#undef max
 
 namespace Everest {
 

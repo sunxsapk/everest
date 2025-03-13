@@ -68,10 +68,10 @@ namespace Everest {
             if(ImGui::MenuItem("Sprite Renderer")) ent.tryAdd<spriteRenderer_c>();
             if(ImGui::MenuItem("Circle Renderer")) ent.tryAdd<circleRenderer_c>();
             if(ImGui::MenuItem("Rigidbody 2D")) ent.tryAdd<rigidbody2d_c>();
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
             if(ImGui::MenuItem("Rigidbody")) ent.tryAdd<rigidbody_c>();
             if(ImGui::MenuItem("Spring Joint")) ent.tryAdd<springJoint_c>();
-#endif
+#endif*/
             if(ImGui::MenuItem("Spring Joint 2D")) ent.tryAdd<springJoint2d_c>();
             if(ImGui::MenuItem("Box Collider 2D")) ent.tryAdd<boxCollider2d_c>();
             if(ImGui::MenuItem("Circle Collider 2D")) ent.tryAdd<circleCollider2d_c>();
@@ -389,7 +389,7 @@ namespace Everest {
             ImGui::PopStyleColor();
         });
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
         if(ent.has<rigidbody_c>()) _componentUI<rigidbody_c>(ent, "Rigidbody",
         [](rigidbody_c& comp){
             f32 mass = comp.getMass();
@@ -403,7 +403,7 @@ namespace Everest {
             if(_f32dragui("Drag", drag, 0.01f, "##drag") && drag >= 0.f) comp.drag = drag;
             ImGui::Checkbox("Use Gravity", &comp.useGravity);
         });
-#endif
+#endif*/
 
         if(ent.has<rigidbody2d_c>()) _componentUI<rigidbody2d_c>(ent, "Rigidbody 2D",
         [](rigidbody2d_c& comp){
@@ -434,7 +434,7 @@ namespace Everest {
             _f32dragui("Rest Length", comp.restLength, 0.01f, "##rl");
         });
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
         if(ent.has<springJoint_c>()) _componentUI<springJoint_c>(ent, "Spring Joint",
         [](springJoint_c& comp){
             _vec3ui("Anchor", comp.anchor, 0.f);
@@ -443,7 +443,7 @@ namespace Everest {
             _f32dragui("Damping", comp.damping, 0.01f, "##dmp") ;
             _f32dragui("Rest Length", comp.restLength, 0.01f, "##rl");
         });
-#endif
+#endif*/
 
         if(ent.has<boxCollider2d_c>()) _componentUI<boxCollider2d_c>(ent, "Box Collider 2D",
         [](boxCollider2d_c& comp){
