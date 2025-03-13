@@ -44,6 +44,10 @@ if(WIN32)
     # set(CPACK_BUILD_TYPE ${CMAKE_BUILD_TYPE})
     install(DIRECTORY everest-assets/ DESTINATION ${CMAKE_INSTALL_BINDIR}/everest-assets)
 
+    install(FILES ${CMAKE_BINARY_DIR}/bin/everest-editor.exe DESTINATION bin)
+    install(FILES ${CMAKE_BINARY_DIR}/lib/everest.lib DESTINATION lib)
+    install(FILES ${CMAKE_BINARY_DIR}/externals/glfw/src/Release/glfw3.lib DESTINATION lib)
+
 elseif(APPLE)
     set(CPACK_GENERATOR "productbuild")
     set(CPACK_PACKAGE_NAME "everest-engine")
