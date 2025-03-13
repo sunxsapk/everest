@@ -1,6 +1,7 @@
 #include "scripting/evscript.h"
 #include "scene/components.h"
 #include "utils/assetsManager.h"
+#include "scripting/typeregistry.h"
 
 namespace Everest {
 namespace Scripting {

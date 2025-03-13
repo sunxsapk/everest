@@ -75,7 +75,7 @@ jobs:
         -S ${{ github.workspace }}
 
     - name: Build
-      run: cmake --build build # --config ${{ matrix.build_type }}
+      run: cmake --build build --verbose
 
     - name: Package with CPack (Linux)
       if: matrix.os == 'ubuntu-22.04'

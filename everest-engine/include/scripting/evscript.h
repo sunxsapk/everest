@@ -12,7 +12,7 @@
 #include "physics/collision.h"
 #include "scene/component_type.h"
 #include "scene/entity.h"
-#include "scripting/typeregistry.h"
+#include "extended_types.h"
 #include <filesystem>
 #include <functional>
 
