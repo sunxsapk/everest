@@ -75,13 +75,13 @@ jobs:
         -S ${{ github.workspace }}
 
     - name: Build
-      run: cmake --build build --verbose #--config ${{ matrix.build_type }}
+      run: cmake --build build --verbose --config ${{ matrix.build_type }}
 
     - name: Package with CPack (Linux)
       if: matrix.os == 'ubuntu-22.04'
       run: |
         cd build
-        cpack #-G DEB # Ensure correct packaging format
+        cpack -G DEB # Ensure correct packaging format
 
         #- name: Package with CPack (MacOS)
         #if: matrix.os == 'macos-latest'
@@ -93,7 +93,7 @@ jobs:
       if: matrix.os == 'windows-latest'
       run: |
         cd build
-        cpack #-C ${{ matrix.build_type }}
+        cpack -C ${{ matrix.build_type }}
 
     - name: Rename Installer (Windows)
       if: matrix.os == 'windows-latest'
