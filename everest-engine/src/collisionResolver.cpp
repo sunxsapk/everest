@@ -4,7 +4,7 @@
 namespace Everest {
 
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
     void body_contact_t::prepareContacts(){
     }
 
@@ -25,7 +25,7 @@ namespace Everest {
         }
         return relv;
     }
-#endif
+#endif*/
 
 
     void body_contact2d_t::prepareContacts(){
@@ -138,7 +138,7 @@ namespace Everest {
         return relv;
     }
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
     void contact_resolver_t::resolvePenetration(std::vector<body_contact_t>& contactRegistry){
         EV_profile_function();
         for(auto& contact : contactRegistry){
@@ -169,7 +169,7 @@ namespace Everest {
         resolvePenetration(contactRegistry);
         resolveVelocities(contactRegistry);
     }
-#endif
+#endif*/
 
 
     void contact2d_resolver_t::prepareContacts(std::vector<body_contact2d_t>& contactRegistry){

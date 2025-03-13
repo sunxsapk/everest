@@ -1,9 +1,12 @@
 #include "physics/rigidbody.h"
 #include "scene/components.h"
 
+#undef min
+#undef max
+
 namespace Everest {
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
     void rigidbody_c::addForce(const vec3 value, const ForceMode mode){
         switch(mode){
             case ForceMode::Force:
@@ -46,7 +49,7 @@ namespace Everest {
         _torqueAccumulator = vec3(0.f);
         _impulse = vec3(0.f);
     }
-#endif
+#endif*/
 
 
     void rigidbody2d_c::addForce(const vec2 value, const ForceMode mode){

@@ -1,4 +1,5 @@
 #include "utils/utils.h"
+#include "core/application.h"
 
 namespace Everest {
 

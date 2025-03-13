@@ -7,6 +7,7 @@
 
 #pragma once
 
+#define SOL_ALL_SAFETIES_ON 1
 #include "sol.hpp"
 #include <functional>
 
@@ -48,43 +49,7 @@ namespace Scripting {
     void reg_time(luastate_t& lua);
     void reg_scene(luastate_t& lua);
 
-    
 
-    static const std::vector<std::function<void(luastate_t&)>> Registry{
-        // types
-        reg_types,
-        reg_vecx,
-        reg_matx,
-        reg_collision,
-
-        // components
-        reg_transform,
-        reg_tag,
-        reg_script,
-        reg_rigidbody2d,
-        reg_spriteRenderer,
-        reg_circleRenderer,
-        reg_springJoint2d,
-        reg_circleCollider2d,
-        reg_boxCollider2d,
-        reg_camera,
-
-        // entity
-        reg_entity,
-
-        // engine extensions
-        reg_input,
-        reg_time,
-        reg_scene,
-    };
-    
-
-
-
-    inline void registerTypes(luastate_t& lua){
-        for(auto& regfunc : Registry){
-            regfunc(lua);
-        }
-    }
+    void registerTypes(luastate_t& lua);
 }
 }

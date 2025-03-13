@@ -6,6 +6,11 @@
 
 extern Everest::Application* Everest::createApplication(Everest::CommandLineArgs args);
 
+#ifdef WIN32
+#define popen _popen
+#define pclose _pclose
+#endif
+
 int main(int argc, char** argv){
     FILE* pipe = popen("mkdir -p profile-res", "r");
     pclose(pipe);

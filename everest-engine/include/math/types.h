@@ -9,6 +9,10 @@
 #pragma once
 #include <glm/glm.hpp>
 
+
+#undef min
+#undef max
+
 typedef signed char i8;
 typedef unsigned char u8;
 typedef u8 byte;

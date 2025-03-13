@@ -4,10 +4,10 @@
 #include "scene/components.h"
 #include "physics/collisionDetector.h"
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
 #include "physics/aabbtree.h"
 #include "physics/colliders.h"
-#endif
+#endif*/
 
 namespace Everest {
 
@@ -18,11 +18,11 @@ namespace Everest {
     std::vector<body_contact2d_t> PhysicsHandler::contacts2d(16);
     std::vector<collision2d_t> PhysicsHandler::collision2dResults(16);
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
     contact_resolver_t PhysicsHandler::_contactResolver3d;
     std::vector<body_contact_t> PhysicsHandler::contacts(16);
     aabb_tree_t<collider_c> PhysicsHandler::tree2d;
-#endif
+#endif*/
 
     void PhysicsHandler::init(u32 simulationSteps, vec3 gravity) {
         EV_profile_function();
@@ -37,12 +37,12 @@ namespace Everest {
     void PhysicsHandler::simulate(Scene& scene, f64 timeStep){
         EV_profile_function();
         simulate2d(scene, timeStep);
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
         simulate3d(scene, timeStep);
-#endif
+#endif*/
     }
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
     void PhysicsHandler::generateContacts(Scene& scene, f64 timeStep){
         EV_profile_function();
         static std::vector<aabb_t> colliderBounds(16);
@@ -78,7 +78,7 @@ namespace Everest {
         _contactResolver3d.resolveContacts(contacts);
     }
 
-#endif
+#endif*/
 
     void PhysicsHandler::generateContacts2d(Scene& scene, f64 timeStep){
         EV_profile_function();

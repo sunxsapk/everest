@@ -36,13 +36,13 @@ namespace Everest {
             static void simulate2d(Scene& scene, f64 timeStep);
             static void generateContacts2d(Scene& scene, f64 timeStep);
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
             static std::vector<body_contact_t> contacts;
             static contact_resolver_t _contactResolver3d;
             static aabb_tree_t<collider_c> tree3d;
 
             static void simulate3d(Scene& scene, f64 timeStep);
             static void generateContacts(Scene& scene, f64 timeStep);
-#endif
+#endif*/
     };
 }

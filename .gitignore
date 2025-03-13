@@ -36,6 +36,8 @@ build/
 bin/
 bin-int/
 objs/
+.vs/
+CMakeFiles/
 .cache/
 profile-res/
 personal-notes/

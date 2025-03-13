@@ -10,7 +10,7 @@
 
 namespace Everest {
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
     struct contact_body_t {
         transform_c* transform;
         rigidbody_c* rigidbody;
@@ -47,7 +47,7 @@ namespace Everest {
         private:
         vec3 getRelativeVelocity() const;
     };
-#endif
+#endif*/
 
 
     struct body_contact2d_t {
@@ -76,7 +76,7 @@ namespace Everest {
         vec2 getRelativeVelocity() const;
     };
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
     class contact_resolver_t {
 
         public:
@@ -88,7 +88,7 @@ namespace Everest {
             void resolveVelocities(std::vector<body_contact_t>& contactRegistry);
 
     };
-#endif
+#endif*/
 
 
     class contact2d_resolver_t {

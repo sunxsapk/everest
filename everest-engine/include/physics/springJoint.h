@@ -7,7 +7,7 @@
 
 namespace Everest {
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
     struct springJoint_c : public component_t {
         // TODO: store entity in runtime, which will be populated during serialization time
         // store reference to anchor *Entity*
@@ -21,7 +21,7 @@ namespace Everest {
 
         void updateForce(const transform_c& otherTransform, rigidbody_c& otherBody);
     };
-#endif
+#endif*/
 
     struct springJoint2d_c : public component_t {
         Entity anchor;

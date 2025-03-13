@@ -28,7 +28,7 @@ namespace Everest {
 
     bool SceneManager::loadScene(size_t sceneIndex){
         if(sceneIndex < 0 || sceneIndex >= _instance->sceneSequence.size()) return false;
-        if(loadScene(_instance->sceneSequence[sceneIndex].c_str())){
+        if(loadScene(_instance->sceneSequence[sceneIndex].string().c_str())) {
             _instance->currentSceneIndex = sceneIndex;
             return true;
         }
