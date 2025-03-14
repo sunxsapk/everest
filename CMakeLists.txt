@@ -41,8 +41,6 @@ set(CPACK_PACKAGE_HOMEPAGE_URL "https://sunxsapk.github.io/everest")
 set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/LICENSE")
 set(CPACK_RESOURCE_FILE_README "${CMAKE_SOURCE_DIR}/README.md")
 
-set(CPACK_PACKAGE_DIRECTORY "${CMAKE_BINARY_DIR}/packages")
-
 if(WIN32)
     # nothing here for now
     set(CPACK_GENERATOR "NSIS")
