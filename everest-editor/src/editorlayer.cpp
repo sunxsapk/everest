@@ -31,6 +31,7 @@ namespace Everest {
                 scene->onViewportResize(ScenePanel::getSceneOffset(), ScenePanel::getSceneViewportSize());
         });
         SceneManager::createAndActivateScene();
+        ContentBrowser::init();
         EditorAssets::init();
         Gizmos::init();
     }

@@ -1,0 +1,96 @@
+name: Build installer for Everest Engine
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+
+      matrix:
+        os: [ubuntu-22.04, windows-latest ]  #macos-latest
+        build_type: [Release] #, Debug
+        c_compiler: [gcc, cl] #clang, 
+        include:
+          - os: windows-latest
+            c_compiler: cl
+            cpp_compiler: cl
+          - os: ubuntu-22.04
+            c_compiler: gcc
+            cpp_compiler: g++
+          #- os: macos-latest
+          #c_compiler: gcc
+          #cpp_compiler: g++
+        exclude:
+          - os: windows-latest
+            c_compiler: gcc
+          - os: ubuntu-22.04
+            c_compiler: cl
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+        fetch-depth: 0
+
+    - name: Setup MSVC Environment (Windows)
+      if: matrix.os == 'windows-latest'
+      uses: ilammy/msvc-dev-cmd@v1
+
+    - name: Install Dependencies (Linux)
+      if: matrix.os == 'ubuntu-22.04'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y cmake ninja-build libwayland-dev dpkg-sig libxkbcommon-dev xorg-dev libpthread-stubs0-dev #zenity
+
+        #- name: Install Dependencies (macOS)
+        #  if: matrix.os == 'macos-latest'
+        #  run: brew install cmake ninja #zenity
+
+    - name: Configure CMake
+      run: >
+        cmake -B build
+        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -S ${{ github.workspace }}
+
+    - name: Build
+      run: cmake --build build --verbose --config ${{ matrix.build_type }}
+
+    - name: Package with CPack (Linux)
+      if: matrix.os == 'ubuntu-22.04'
+      run: |
+        cd build
+        cpack -G DEB # Ensure correct packaging format
+        dpkg-sig --sign builder *.deb
+
+    - name: Package with CPack (Windows)
+      if: matrix.os == 'windows-latest'
+      run: |
+        cd build
+        cpack -C ${{ matrix.build_type }}
+        signtool sign /a /t http://timestamp.digicert.com /fd SHA256 *.exe
+
+      #- name: Package with CPack (MacOS)
+      #if: matrix.os == 'macos-latest'
+      #run: |
+      #cd build
+      #cpack #-G productbuild  # Ensure correct packaging format
+      #codesign --deep --force --verbose --sign "Developer ID Application: Everest Engine" *.pkg
+
+    - name: Upload Installer Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: everest-engine-${{ matrix.os }}-${{ matrix.build_type }}
+        path: |
+          build/*.deb
+          build/*.pkg
+          build/*.exe

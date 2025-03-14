@@ -1,8 +1,11 @@
 #include "utils/utils.h"
+#include "core/application.h"
+
 
 namespace Everest {
 
 #ifdef WIN32
+
 #include <commdlg.h>
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <GLFW/glfw3native.h>
@@ -13,7 +16,9 @@ namespace Everest {
         CHAR currentDir[256] = { 0 };
         ZeroMemory(&ofn, sizeof(OPENFILENAME));
         ofn.lStructSize = sizeof(OPENFILENAME);
-        ofn.hwndOwner = glfwGetWin32Window(Application::getAppWindow().getWindow());
+
+        auto win = Everest::Application::getAppWindow().getWindow();
+        ofn.hwndOwner = glfwGetWin32Window(win);
         ofn.lpstrFile = szFile;
         ofn.nMaxFile = sizeof(szFile);
         if (GetCurrentDirectoryA(256, currentDir))
@@ -34,7 +39,8 @@ namespace Everest {
         CHAR currentDir[256] = { 0 };
         ZeroMemory(&ofn, sizeof(OPENFILENAME));
         ofn.lStructSize = sizeof(OPENFILENAME);
-        ofn.hwndOwner = glfwGetWin32Window(Application::getAppWindow().getWindow());
+        auto win = Everest::Application::getAppWindow().getWindow();
+        ofn.hwndOwner = glfwGetWin32Window(win);
         ofn.lpstrFile = szFile;
         ofn.nMaxFile = sizeof(szFile);
         if (GetCurrentDirectoryA(256, currentDir))

@@ -34,8 +34,20 @@ will proceed in following sequence :-
 - Not a bug, but discrete collision detection implemented here is not working fine for high speed collisions
 
 =============== TODO ============
+[ ] better readme
 [ ] update api docs
-[ ] project file format, working directory setup
 [ ] use exceptions instead of assertions now
-[ ] default & custom layout specification
+[ ] project file format, working directory setup
+[ ] project structure generator script
+
+
+======== TODO: Project structure (Everest.evproj) =============
+name: My Game
+assets_dir: assets/
+scenes:
+    - assets/scenes/scene1.everest
+    - assets/scenes/scene2.everest
+current_scene: assets/scenes/scenex.everest
+background: [0.5, 0.4, 0.4, 1.0]
+camera: camera_c component's structure
 

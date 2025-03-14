@@ -23,9 +23,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
 
 # libraries
-target_link_libraries(${PROJECT_NAME}
-    everest
-)
+target_link_libraries(${PROJECT_NAME} PRIVATE everest)
 target_link_directories(${PROJECT_NAME} PUBLIC
     ${ENGINE_BDIR}
 )

@@ -33,7 +33,7 @@ namespace Everest {
     ref<Texture> AssetsManager::loadTexture(std::filesystem::path path){
         if(_instance->textures.find(path) != _instance->textures.end()) return _instance->textures[path];
         try {
-            _instance->textures[path] = createRef<Texture>(path.c_str());
+            _instance->textures[path] = createRef<Texture>(path.string().c_str());
             return _instance->textures[path];
         } catch(std::exception exc) {
             EVLog_Err("Failed to load texture dur to exception: %s", exc.what());
@@ -43,15 +43,15 @@ namespace Everest {
 
     ref<Scene> AssetsManager::loadScene(std::filesystem::path path){
         if(_instance->scenes.find(path) != _instance->scenes.end()){
-            SceneManager::setSceneTarget(path);
+            SceneManager::setSceneTarget(path.string());
             return _instance->scenes[path];
         }
         ref<Scene> scene = createRef<Scene>();
         SceneSerializer::setSerializationContext(scene.get());
-        bool _success = SceneSerializer::deserialize(path.c_str());
+        bool _success = SceneSerializer::deserialize(path.string().c_str());
         if(!_success) throw std::invalid_argument("Failed to load scene: Maybe corrupted scene data");
         _instance->scenes[path] = scene;
-        SceneManager::setSceneTarget(path);
+        SceneManager::setSceneTarget(path.string());
         return _instance->scenes[path];
     }
 

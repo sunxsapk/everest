@@ -7,7 +7,7 @@
  * shadow mapping, etc.
  */
 
-#pragma omce
+#pragma once
 #include "math/types.h"
 #include "pch.h"
 

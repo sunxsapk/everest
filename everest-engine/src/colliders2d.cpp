@@ -2,6 +2,8 @@
 #include "math/utils.h"
 #include "scene/components.h"
 
+#undef max
+#undef min
 
 namespace Everest {
 
@@ -52,14 +54,14 @@ namespace Everest {
         e1 = glm::abs(Math::rotate2d(e1, a));
         e2 = glm::abs(Math::rotate2d(e2, a));
 
-        vec2 nhe {
+        vec2 nhe (
             glm::max(e1.x, e2.x),
-            glm::max(e1.y, e2.y),
-        };
+            glm::max(e1.y, e2.y)
+        );
 
         vec2 np = parentTransform.position;
         np += box.offset;
-        return {
+        return aabb2d_t{
             .min = np - nhe,
             .max = np + nhe,
         };
@@ -69,7 +71,7 @@ namespace Everest {
         vec2 np = parentTransform.position;
         np += circle.offset;
         f32 s = glm::max(parentTransform.scale.x, parentTransform.scale.y) * circle.radius;
-        return {
+        return aabb2d_t{
             .min = np - s,
             .max = np + s
         };

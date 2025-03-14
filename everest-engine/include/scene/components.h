@@ -28,10 +28,10 @@ namespace Everest {
     using CircleCollider2d = circleCollider2d_c;
     using EvScript = Scripting::evscript_c;
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
     using Rigidbody = rigidbody_c;
     using SpringJoint = springJoint_c;
-#endif
+#endif*/
 
     using NativeScript = nativeScript_c;
     using Collider2D = collider2d_t;

@@ -1,6 +1,7 @@
 #include "scripting/evscript.h"
 #include "scene/components.h"
 #include "utils/assetsManager.h"
+#include "scripting/typeregistry.h"
 
 namespace Everest {
 namespace Scripting {
@@ -35,7 +36,7 @@ namespace Scripting {
         auto& __state = *state;
         __state.open_libraries(lualibs::base, lualibs::math);
         registerTypes(__state);
-        auto lres = __state.load_file(scriptpath.c_str());
+        auto lres = __state.load_file(scriptpath.string().c_str());
         if(!lres.valid()){
             throw std::invalid_argument("Unable to load lua script");
         }
@@ -87,7 +88,7 @@ namespace Scripting {
     }
 
     const char* scriptHandler_t::getScriptName(){
-        return scriptpath.stem().c_str();
+        return scriptpath.stem().string().c_str();
     }
 
     sol::table scriptHandler_t::call(std::string func_name, sol::table inp_args) {

@@ -1,5 +1,5 @@
-#include "events/mouseevent.h"
 #include "core/application.h"
+#include "events/mouseevent.h"
 #include "core/core.h"
 #include "core/input.h"
 #include "core/time.h"
@@ -9,7 +9,7 @@ namespace Everest {
 #define DEF_WIN_W 1024
 #define DEF_WIN_H 768
 
-    Application *Application::s_app = NULL;
+    Application* Application::s_app = nullptr;
 
     Application::Application(const char *name){
         EV_profile_function();

@@ -114,6 +114,10 @@ namespace Everest {
     };
 }
 
+#ifdef _MSC_VER
+#define __PRETTY_FUNCTION__ __FUNCSIG__
+#endif
+
 #ifdef EV_PROFILE
 #define EV_profile_begin(name, targetFile) ::Everest::Instrumentor::Get().BeginSession(name, targetFile)
 #define EV_profile_end() ::Everest::Instrumentor::Get().EndSession()

@@ -5,7 +5,7 @@
 
 namespace Everest {
 
-#ifndef __NO_3D__
+/*#ifndef __NO_3D__
     void springJoint_c::updateForce(const transform_c& otherTransform, rigidbody_c& otherBody){
         transform_c tmpt = otherTransform;
         tmpt.position = {};
@@ -17,7 +17,7 @@ namespace Everest {
 
         otherBody.addForceAtOffset(sf + df, noff);
     }
-#endif
+#endif*/
 
     void springJoint2d_c::updateForce(const transform_c& otherTransform, rigidbody2d_c& otherBody){
         if(!anchor.isValid()) return;

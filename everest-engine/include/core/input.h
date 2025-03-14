@@ -10,6 +10,7 @@
 #include "keycode.h"
 #include "events/mouseevent.h"
 #include "core/application.h"
+#include <set>
 
 namespace Everest {
     struct InputAxisKeys {

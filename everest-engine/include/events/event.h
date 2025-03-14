@@ -6,7 +6,6 @@
  */
 #pragma once
 
-#include "math/utils.h"
 #include "core/utils.h"
 
 namespace Everest {
