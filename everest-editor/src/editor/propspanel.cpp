@@ -89,7 +89,7 @@ namespace Everest {
         float lineh = GImGui->Font->FontSize + GImGui->Style.FramePadding.y * 2.f;
 
         bool c_open = ImGui::TreeNodeEx("##_scr__", _compFlags,
-                "%s", script.scriptpath.empty() ? "-- None --" : script.getScriptName()
+                "%s", script.scriptpath.empty() ? "-- None --" : script.getScriptName().c_str()
             );
         ImGui::PopStyleVar();
         ImGui::SameLine(craw.x - lineh * 0.5f);
@@ -710,7 +710,7 @@ namespace Everest {
         ImGui::SetCursorScreenPos(beg);
         ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.5f, 1.f, 1.f, 1.f));
 
-        ImGui::Text("[ %s ] >> %s", script.scriptpath.empty() ? "--" : script.getScriptName(), sn);
+        ImGui::Text("[ %s ] >> %s", script.scriptpath.empty() ? "--" : script.getScriptName().c_str(), sn);
 
         beg.x += width - lineh * 3 - style.FramePadding.x;
         beg.y -= style.FramePadding.y;

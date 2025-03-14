@@ -52,17 +52,21 @@ namespace Everest {
 
             static bool loadScene(const char* filepath);
             static void saveScene(const char* filepath);
+
             static void saveScene(){
                 ASSERT(hasSaveTarget(), "Scene doesnot have a save Target");
                 saveScene(_instance->scenePath.c_str());}
 
             static bool hasSaveTarget(){ return _instance->scenePath != ""; }
-            static const char* getSceneTargetPath(){return _instance->scenePath.c_str();}
+            static std::string getSceneTargetPath(){return _instance->scenePath;}
 
 
             static bool loadScene(size_t sceneIndex = 0);
             static inline bool loadNext(){return loadScene(_instance->currentSceneIndex+1);}
             static inline size_t getCurrentSceneIndex(){return _instance->currentSceneIndex;}
+
+            static inline std::vector<std::filesystem::path>& getSceneSeq(){
+                return _instance->sceneSequence;}
 
         private:
             sceneChangeCallback_t sceneChangecb = nullptr;
@@ -74,11 +78,9 @@ namespace Everest {
             static inline void setSceneTarget(std::string path){
                 _instance->scenePath = path;}
 
-            static inline std::vector<std::filesystem::path>& getSceneSeq(){
-                return _instance->sceneSequence;}
         private:
             static SceneManager* _instance;
             friend class AssetsManager;
-            friend class SceneSequenceUI;
+            friend class EditorLayer;
     };
 }

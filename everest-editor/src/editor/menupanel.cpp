@@ -1,6 +1,5 @@
 #include "menupanel.h"
 #include "scenepanel.h"
-#include "sceneSequence.h"
 
 namespace Everest {
 

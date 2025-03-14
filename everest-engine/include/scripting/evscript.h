@@ -43,7 +43,7 @@ namespace Scripting {
         bool getSerializedFields(sol::table& resultTable) const;
 
         void setScriptPath(std::filesystem::path path, Entity ent);
-        const char* getScriptName();
+        std::string getScriptName();
 
         sol::table call(std::string func_name, sol::table inp_args);
         template<typename T>

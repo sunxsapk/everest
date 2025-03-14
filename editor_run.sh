@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if ! [ -d build/ ]; then
-    cmake -B build -CMAKE_BUILD_TYPE=Release
+    cmake -B build -DCMAKE_BUILD_TYPE=Release
 fi
 
 echo ""

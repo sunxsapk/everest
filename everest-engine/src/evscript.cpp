@@ -1,7 +1,7 @@
 #include "scripting/evscript.h"
-#include "scene/components.h"
 #include "utils/assetsManager.h"
 #include "scripting/typeregistry.h"
+#include "scene/def_components.h"
 
 namespace Everest {
 namespace Scripting {
@@ -28,6 +28,7 @@ namespace Scripting {
 
     void scriptHandler_t::init(Entity entity){
         if(!entity.isValid()) return;
+        if(!std::filesystem::exists(scriptpath)) return;
         if( !scriptpath.has_extension() ||
             AssetsManager::getAssetsType(scriptpath) != AssetsType::SCRIPT
         ) return;
@@ -87,8 +88,8 @@ namespace Scripting {
         init(ent);
     }
 
-    const char* scriptHandler_t::getScriptName(){
-        return scriptpath.stem().string().c_str();
+    std::string scriptHandler_t::getScriptName(){
+        return scriptpath.stem().string();
     }
 
     sol::table scriptHandler_t::call(std::string func_name, sol::table inp_args) {
@@ -109,7 +110,7 @@ namespace Scripting {
             return func(iargs);
         } catch(std::exception exc) {
             EVLog_Err("Exception occured while calling function %s in script %s: %s",
-                    func_name.c_str(), getScriptName(), exc.what());
+                    func_name.c_str(), getScriptName().c_str(), exc.what());
         }
 
         return {};

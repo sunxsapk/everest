@@ -4,9 +4,9 @@
 
 namespace Everest {
 
-    class SceneSequenceUI {
+    class ProjectSettingsUI {
         public:
-            static void onGUIRender();
+            static void onGUIRender(project_def_t& project);
 
         private:
             static void _scenesReorderUI(std::vector<std::filesystem::path> &scenes);

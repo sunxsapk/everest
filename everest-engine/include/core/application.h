@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "math/types.h"
 #include "window.h"
 #include "layerstack.h"
 #include "events/windowevent.h"
@@ -51,7 +52,7 @@ namespace Everest {
              * callbacks*/
             void initWindow();
             /*attaches a application debugger gui*/
-            void attachDebugger();
+            void attachUILayer();
     };
 
     struct CommandLineArgs {

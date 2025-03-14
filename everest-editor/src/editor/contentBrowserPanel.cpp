@@ -4,12 +4,12 @@
 
 namespace Everest {
 
-    std::filesystem::path ContentBrowser::curDir = "assets";
+    std::filesystem::path ContentBrowser::curDir;
     std::filesystem::path ContentBrowser::assetsDir = "assets";
 
     void ContentBrowser::init(){
-        if(!std::filesystem::is_directory(assetsDir)){
-            assetsDir = ".";
+        if(!std::filesystem::exists(assetsDir)){
+            std::filesystem::create_directory(assetsDir);
         }
         curDir = assetsDir;
     }

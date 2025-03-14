@@ -41,3 +41,6 @@ CMakeFiles/
 .cache/
 profile-res/
 personal-notes/
+
+examples/layout.ini
+examples/profile-results

@@ -47,6 +47,10 @@ namespace Everest {
             inline static std::filesystem::path getExecutablePath(){
                 return _exec_path;
             }
+            inline static void setProjectDir(std::filesystem::path dir){
+                _proj_dir = dir;
+            }
+            inline static std::filesystem::path getProjectDir(){ return _proj_dir;}
         private:
 #ifdef DEBUG
             static void onGLFWerror(i32 errcode, const char *err);
@@ -55,5 +59,6 @@ namespace Everest {
 
             static std::filesystem::path __getExecDir();
             static std::filesystem::path _exec_path;
+            static std::filesystem::path _proj_dir;
     };
 }

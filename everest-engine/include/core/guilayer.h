@@ -25,6 +25,5 @@ namespace Everest {
 
         private:
             void setDarkThemeColors();
-            void loadLayout();
     };
 }

@@ -2,16 +2,13 @@
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
 #include <ImGuizmo.h>
-#include <filesystem>
 
 #include "core/guilayer.h"
-#include "core/core.h"
 
 namespace Everest {
     GUILayer::GUILayer(const char *name)
         : Layer(name){
 
-        loadLayout();
         setDarkThemeColors();
     }
 
@@ -89,12 +86,4 @@ namespace Everest {
 		colors[ImGuiCol_TitleBgActive]      = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 		colors[ImGuiCol_TitleBgCollapsed]   = ImVec4{ 0.15f, 0.1505f, 0.151f, 1.0f };
 	}
-
-    void GUILayer::loadLayout(){
-        std::filesystem::path curLayout("layout.ini");
-        if(std::filesystem::exists(curLayout)) return;
-        std::filesystem::path defaultLayout = _getEngineAssetsPath("layouts/default.ini");
-        if(!std::filesystem::exists(defaultLayout)) return;
-        std::filesystem::copy_file(defaultLayout, curLayout);
-    }
 }

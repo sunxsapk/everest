@@ -19,10 +19,18 @@ namespace Everest {
 
             void editorView(ref<Scene>& activeScene, bool update = false);
 
+            void loadLayout();
+            void saveLayout();
+
+            void loadProject();
+            void saveProject();
+
         private:
             ref<Framebuffer> _framebuffer;
         private:
             EditorCamera _camera;
+            std::filesystem::path layoutPath;
+            project_def_t _project;
     };
 
 }

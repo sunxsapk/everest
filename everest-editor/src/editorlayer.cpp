@@ -8,7 +8,7 @@
 #include "editor/gizmos.h"
 #include "editor/contentBrowserPanel.h"
 #include "editor/editorAssets.h"
-#include "editor/sceneSequence.h"
+#include "editor/projectSettings.h"
 
 namespace Everest {
 
@@ -20,6 +20,9 @@ namespace Everest {
     void EditorLayer::onAttach(){
         EV_profile_function();
 
+        loadProject();
+        loadLayout();
+
         FramebufferSpecs specs{
             .width = 1280,
             .height = 720,
@@ -30,7 +33,7 @@ namespace Everest {
                 SceneHeirarchyUI::setScene(scene);
                 scene->onViewportResize(ScenePanel::getSceneOffset(), ScenePanel::getSceneViewportSize());
         });
-        SceneManager::createAndActivateScene();
+        // SceneManager::createAndActivateScene();
         ContentBrowser::init();
         EditorAssets::init();
         Gizmos::init();
@@ -98,6 +101,8 @@ namespace Everest {
     void EditorLayer::onDetach(){
         EV_profile_function();
 
+        saveLayout();
+        saveProject();
         Gizmos::quit();
         EditorAssets::quit();
     }
@@ -124,7 +129,7 @@ namespace Everest {
         PropertiesPanel::onGUIrender(SceneHeirarchyUI::getSelectedEntity());
         ScenePanel::onGUIrender(_framebuffer, _camera);
         ContentBrowser::onGUIrender();
-        SceneSequenceUI::onGUIRender();
+        ProjectSettingsUI::onGUIRender(_project);
     }
 
     bool EditorLayer::onMouseButtonDown(MouseButtonDownEvent& event){
@@ -135,5 +140,44 @@ namespace Everest {
             return true;
         }
         return false;
+    }
+
+    void EditorLayer::loadLayout(){
+        std::filesystem::path layoutPath = "layout.ini";
+        if(!std::filesystem::exists(layoutPath)) {
+            std::filesystem::path defaultLayout = _getEngineAssetsPath("layouts/default.ini");
+            if(!std::filesystem::exists(defaultLayout)) return;
+            std::filesystem::copy_file(defaultLayout, layoutPath);
+        }
+        ImGui::LoadIniSettingsFromDisk(layoutPath.string().c_str());
+    }
+
+    void EditorLayer::saveLayout(){
+        ImGuiIO& io = ImGui::GetIO();
+        if(!io.WantSaveIniSettings) return;
+        if(!std::filesystem::exists(layoutPath)) return;
+        ImGui::SaveIniSettingsToDisk(layoutPath.string().c_str());
+    }
+
+    void EditorLayer::loadProject(){
+        if(!std::filesystem::exists("Everest.project")) return;
+        project_def_t::loadProject("Everest.project", _project);
+        
+        for(auto& scenep : _project.scene_sequence){
+            SceneManager::_instance->sceneSequence = _project.scene_sequence;
+            SceneManager::loadScene(_project.loaded_scene.string().c_str());
+            _camera.camera = _project.editor_camera_comp;
+            _camera.transform = _project.editor_camera_transform;
+            ScenePanel::sceneBackgroundColor = _project.background;
+        }
+    }
+
+    void EditorLayer::saveProject(){
+        _project.scene_sequence = SceneManager::_instance->sceneSequence;
+        _project.loaded_scene = SceneManager::getSceneTargetPath();
+        _project.editor_camera_comp = _camera.camera;
+        _project.editor_camera_transform = _camera.transform;
+        _project.background = ScenePanel::sceneBackgroundColor;
+        project_def_t::saveProject(_project, "Everest.project");
     }
 }

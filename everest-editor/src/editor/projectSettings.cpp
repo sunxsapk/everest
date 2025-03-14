@@ -1,13 +1,26 @@
-#include "sceneSequence.h"
+#include "projectSettings.h"
 
 
 namespace Everest {
 
-    void SceneSequenceUI::onGUIRender(){
+    void ProjectSettingsUI::onGUIRender(project_def_t& project){
         ImGui::Begin("Scene Sequence Editor");
 
         std::vector<std::filesystem::path> &scenes = SceneManager::getSceneSeq();
 
+        static char buf[1<<8];
+        memset(buf, 0, sizeof(buf));
+        strcpy(buf, project.name.c_str());
+
+        ImGui::AlignTextToFramePadding();
+        ImGui::Text("Project Name");
+        ImGui::SameLine();
+        if(ImGui::InputText("##xx", buf, sizeof(buf))){
+            project.name = std::string(buf);
+        }
+
+        ImGui::Separator();
+        ImGui::Spacing();
         _scenesReorderUI(scenes);
         ImGui::Separator();
         ImGui::Spacing();
@@ -16,8 +29,10 @@ namespace Everest {
         ImGui::End();
     }
 
-    void SceneSequenceUI::_scenesReorderUI(std::vector<std::filesystem::path> &scenes){
+    void ProjectSettingsUI::_scenesReorderUI(std::vector<std::filesystem::path> &scenes){
         ImGui::PushFont(UIFontManager::getDefaultBold());
+
+
         ImGui::Text("Scenes");
         ImGui::SameLine();
         ImGui::TextDisabled("(?)");
@@ -52,7 +67,7 @@ namespace Everest {
         ImGui::PopFont();
     }
 
-    void SceneSequenceUI::_sceneDropper(std::vector<std::filesystem::path> &scenes){
+    void ProjectSettingsUI::_sceneDropper(std::vector<std::filesystem::path> &scenes){
 
         ImVec2 region = ImGui::GetContentRegionAvail();
         ImGui::Button("Drop Scenes here to submit", ImVec2(region.x, 150));

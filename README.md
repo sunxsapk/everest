@@ -1,7 +1,7 @@
 # Everest Engine
 
 <p align="center">
-    <img src="everest-assets/everest_logo.png" />
+    <img src="everest-assets/images/everest_logo.png" />
 </p>
 
 ## High performance Cross-Platform Game Engine
@@ -22,7 +22,7 @@ If you want to develop the engine from source code, then it is also viable. Simp
 [here](/docs/Build.md).
 
 
-## Documents for you
+## Documents
 
 1. [Build form Source](/docs/Build.md).
 2. [Lua Scripting API](/docs/ScriptingAPI.md)

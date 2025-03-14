@@ -25,10 +25,10 @@ namespace Everest {
         Core::init();
         atexit(Core::quit);
 
-        this->attachDebugger();
+        this->attachUILayer();
     }
 
-    void Application::attachDebugger(){
+    void Application::attachUILayer(){
         EV_profile_function();
 
 
@@ -46,7 +46,6 @@ namespace Everest {
 
     Application::~Application(){
         EV_profile_function();
-
 
         this->guilayer->onDetach();
         this->_window.reset();

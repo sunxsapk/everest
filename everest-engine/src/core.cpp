@@ -12,6 +12,7 @@
 namespace Everest {
 
     std::filesystem::path Core::_exec_path = Core::__getExecDir();
+    std::filesystem::path Core::_proj_dir = ".";
 
     void Core::initDependencies(){
         EV_profile_function();

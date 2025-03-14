@@ -45,7 +45,9 @@
 #include "scene/scene.h"
 #include "scene/components.h"
 #include "scene/camera.h"
+#include "scene/yaml_extensions.h"
 #include "scene/serializer.h"
+#include "core/project_serializer.h"
 #include "scene/scenemanager.h"
 
 #include "scripting/evscript.h"
