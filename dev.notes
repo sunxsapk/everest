@@ -34,11 +34,9 @@ will proceed in following sequence :-
 - Not a bug, but discrete collision detection implemented here is not working fine for high speed collisions
 
 =============== TODO ============
-[ ] better readme
 [ ] update api docs
 [ ] use exceptions instead of assertions now
-[ ] project file format, working directory setup
-[ ] project structure generator script
+[ ] standalone build c++ template
 
 
 ======== TODO: Project structure (Everest.evproj) =============

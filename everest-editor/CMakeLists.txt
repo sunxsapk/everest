@@ -30,7 +30,7 @@ target_link_directories(${PROJECT_NAME} PUBLIC
 
 target_compile_definitions(${PROJECT_NAME} PRIVATE
     $<$<CONFIG:Debug>:DEBUG;ASSERT_ON;EV_PROFILE;__NO_3D__>
-    $<$<CONFIG:Release>:RELEASE;ASSERT_ON;EV_PROFILE;__NO_3D__>
+    $<$<CONFIG:Release>:RELEASE;__NO_3D__>
     $<$<CONFIG:Dist>:DIST;__NO_3D__>
 )
 
