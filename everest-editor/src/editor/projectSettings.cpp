@@ -4,7 +4,7 @@
 namespace Everest {
 
     void ProjectSettingsUI::onGUIRender(project_def_t& project){
-        ImGui::Begin("Scene Sequence Editor");
+        ImGui::Begin("Project Settings");
 
         std::vector<std::filesystem::path> &scenes = SceneManager::getSceneSeq();
 

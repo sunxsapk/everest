@@ -1,19 +1,19 @@
-name: Example Proj
+name: Default Proj
 scene_sequence:
-  - assets/scenes/pool_game.everest
   - assets/scenes/physicstest2d.everest
-loaded_scene: assets/scenes/physicstest2d.everest
-background: [0.24301596, 0.44751412, 0.5152838, 1]
+  - assets/scenes/pool_game.everest
+loaded_scene: /home/sunilsapkota/Desktop/dev/everest-engine/everest-dev/examples/assets/scenes/scene.everest
+background: [0.22335574, 0.22942853, 0.23144102, 1]
 transform_c:
-  position: [0, 1, 4]
-  rotation: [0, 0, 0]
+  position: [6.223142, 3.1288445, 11.724235]
+  rotation: [-21.700018, 30.400026, 0]
   scale: [1, 1, 1]
 camera_c:
   active: true
   fixedAspect: false
   isPrimary: false
-  is2d: true
-  u_size_fov: 15.119143
+  is2d: false
+  u_size_fov: 60
   aspect: 1.8033898
   near: 0.01
-  far: 100
+  far: 1000

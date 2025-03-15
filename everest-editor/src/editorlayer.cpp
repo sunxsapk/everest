@@ -20,20 +20,24 @@ namespace Everest {
     void EditorLayer::onAttach(){
         EV_profile_function();
 
-        loadProject();
-        loadLayout();
-
-        FramebufferSpecs specs{
-            .width = 1280,
-            .height = 720,
-            .attachments = {FrameBufferTextureFormat::RGBA8, FrameBufferTextureFormat::RED_INT, FrameBufferTextureFormat::DEPTH24STENCIL8},
-        };
-        _framebuffer = createRef<Framebuffer>(specs);
         SceneManager::onSceneChanged([](ref<Scene>& scene){
                 SceneHeirarchyUI::setScene(scene);
                 scene->onViewportResize(ScenePanel::getSceneOffset(), ScenePanel::getSceneViewportSize());
         });
-        // SceneManager::createAndActivateScene();
+
+        loadLayout();
+        loadProject();
+
+        _framebuffer = createRef<Framebuffer>(FramebufferSpecs{
+            .width = 1280,
+            .height = 720,
+            .attachments = {
+                FrameBufferTextureFormat::RGBA8,
+                FrameBufferTextureFormat::RED_INT,
+                FrameBufferTextureFormat::DEPTH24STENCIL8
+            },
+        });
+
         ContentBrowser::init();
         EditorAssets::init();
         Gizmos::init();

@@ -1,0 +1,18 @@
+name: Example Proj
+scene_sequence:
+  - assets/scenes/scene.everest
+loaded_scene: assets/scenes/scene.everest
+background: [0.24301596, 0.44751412, 0.5152838, 1]
+transform_c:
+  position: [0, 1, 4]
+  rotation: [0, 0, 0]
+  scale: [1, 1, 1]
+camera_c:
+  active: true
+  fixedAspect: false
+  isPrimary: false
+  is2d: true
+  u_size_fov: 15.119143
+  aspect: 1.8033898
+  near: 0.01
+  far: 100

@@ -1,0 +1,68 @@
+scene: New Scene
+entities:
+  - entity: 11727571910151627295
+    tag_c:
+      tag: Circle
+    transform_c:
+      position: [0, 0, 0]
+      rotation: [0, 0, 0]
+      scale: [1, 1, 1]
+    circleRenderer_c:
+      active: true
+      color: [0, 0.5691396, 0.6244726, 1]
+      startUV: [0, 0]
+      sizeUV: [1, 1]
+      thickness: 1
+      fade: 0
+    rigidbody2d_c:
+      active: true
+      inverseMass: 1
+      drag: 1
+      velocity: [0, 0]
+      angularVelocity: 0
+      definition: 1
+    circleCollider2d_c:
+      active: true
+      offset: [0, 0]
+      radius: 0.5
+      restitution: 0.5
+  - entity: 13275830732603763358
+    tag_c:
+      tag: Main Camera
+    transform_c:
+      position: [0, 0, 10]
+      rotation: [0, -0, 0]
+      scale: [1, 1, 1]
+    camera_c:
+      active: true
+      fixedAspect: false
+      isPrimary: true
+      is2d: true
+      u_size_fov: 8
+      aspect: 1.8033898
+      near: 0.01
+      far: 100
+  - entity: 13877146626707538014
+    tag_c:
+      tag: Floor
+    transform_c:
+      position: [0, -5.2976265, 0]
+      rotation: [0, -0, 0]
+      scale: [19.772831, 1, 1]
+    spriteRenderer_c:
+      active: true
+      color: [0, 0, 0, 1]
+      startUV: [0, 0]
+      sizeUV: [1, 1]
+    rigidbody2d_c:
+      active: true
+      inverseMass: 1
+      drag: 1
+      velocity: [0, 0]
+      angularVelocity: 0
+      definition: 3
+    boxCollider2d_c:
+      active: true
+      offset: [0, 0]
+      halfExtents: [0.5, 0.5]
+      restitution: 0.5
