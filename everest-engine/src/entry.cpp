@@ -89,7 +89,7 @@ void helpPage(){
             "============ Special Information =============\n\n"
             "Project Repository : https://github.com/sunxsapk/everest\n"
             "Website            : https://sunxsapk.github.io/everest\n"
-            "Guide              : https://github.com/sunxsapk/everest/docs/Guide.md\n\n"
+            "Guide              : https://github.com/sunxsapk/everest/blob/main/docs/Guide.md\n\n"
             ">> Contact\n"
             "   Email       : sunx.sapk@gmail.com\n"
             "   Website     : https://sunxsapk.github.io\n"

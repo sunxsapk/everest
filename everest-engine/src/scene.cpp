@@ -150,22 +150,26 @@ namespace Everest {
         Renderer2D::endScene();
     }
 
-    void drawCameraGizmo(transform_c& tfr, camera_c& cam_ent, u32 id){
+    void drawCameraGizmo(transform_c tfr, camera_c& cam_ent, u32 id){
         if(cam_ent.is3d()){
-            vec3 scale(cam_ent.get_aspect(), 1.f, 1.f);
-            transform_c btfr = tfr;
-            tfr.scale *= 2.f;
-            Renderer2D::drawRect(btfr);
-            transform_c ftfr = tfr;
-            ftfr.position += Math::getCameraForward(tfr)*.1f;
-            ftfr.scale *= 0.3f;
-            Renderer2D::drawRect(ftfr);
-            Renderer2D::drawLine(btfr.position, ftfr.position);
-            Renderer2D::drawSprite((mat4)btfr, {}
+            vec3 fwd = Math::getCameraForward(tfr);
+            vec3 orgpos = tfr.position;
+            static spriteRenderer_c spr;
+            spr.color = vec4(0.f);
+
+            tfr.scale.x = cam_ent.get_aspect();
+            Renderer2D::drawRect(tfr);
+            Renderer2D::drawSprite((mat4)tfr, spr
 #ifdef EDITOR_BUILD
                     , (u32)id
 #endif
                     );
+
+            tfr.position += fwd *1.f;
+            tfr.scale *= 1.5f;
+            Renderer2D::drawRect(tfr);
+            Renderer2D::drawLine(orgpos, tfr.position);
+
         } else {
             f32 sz = cam_ent.get_lenssize() * 2;
             Renderer2D::drawRect(tfr.position, tfr.rotation.z,

@@ -5,8 +5,8 @@ scene_sequence:
 loaded_scene: /home/sunilsapkota/Desktop/dev/everest-engine/everest-dev/examples/assets/scenes/scene.everest
 background: [0.22335574, 0.22942853, 0.23144102, 1]
 transform_c:
-  position: [6.223142, 3.1288445, 11.724235]
-  rotation: [-21.700018, 30.400026, 0]
+  position: [4.9834185, 2.1433678, 18.707243]
+  rotation: [-8.500007, 53.400135, 0]
   scale: [1, 1, 1]
 camera_c:
   active: true

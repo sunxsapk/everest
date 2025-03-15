@@ -17,14 +17,18 @@ Linux) as of now.
 Installers for major platforms are provided [here](https://github.com/sunxsapk/everest/releases), which
 you can download and run to get things up and running on your machine.
 
+__View the [Beginner's Guide](/docs/Guide.md) if you are downloading Everest Engine for the first time.__
+
 ### Building from source
+
 If you want to develop the engine from source code, then it is also viable. Simply follow the instructions
 [here](/docs/Build.md).
 
 
 ## Documents
 
-1. [Build form Source](/docs/Build.md).
+1. [Beginner's Guide](/docs/Guide.md)
 2. [Lua Scripting API](/docs/ScriptingAPI.md)
 3. [Programming API](/docs/ProgrammingAPI.md)
+4. [Build form Source](/docs/Build.md).
 
