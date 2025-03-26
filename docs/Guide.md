@@ -106,4 +106,29 @@ When launching Everest Editor, you will be greeted with a clean and minimal inte
 
 ---
 
-___More documents for your best workflow with Everest Engine are coming soon.___
+### First Steps
+
+Your first steps for making games with Everest Engine begins by creating a new scene. By default a
+default scene is opened, or you can create one from the menu bar. You can add or remove entities from
+the __Scene Hierarchy Panel__ by right clicking on it. In order to add components to the entities, you can
+select the entity and add the components form properties panel as you like. Each components have some
+unique features that they will add to the entity that contains them. Learn more about the components or
+Entity Componenet System (ECS) of Everest Engine [here](/docs/ECS.md).
+
+Let's create a simple physics based scene, by creating few entities, adding renderers to them, then adding
+colliders (box or circle collider) and rigidbody2d components. There are example scenes provided too, you can
+take a look at them.
+
+_In order to simulate the physics, you can click the __run__ icon on __Scene Panel__ or press __f5__ key._
+
+Now, you're gonna want to add custom behaviour to the entities, to make them controllable using user inputs or
+custom update scripts. Everest got you covered as it provides the __Lua Scripting System__ for you to be able to
+write the custom scripts in easy and simple language such as __lua__. You can take a look at 
+[__Scripting API__](/docs/ScriptingAPI.md) for detail information on runtime scripting system.
+
+___You should be now able to make our own game and run it.___
+
+If you are more hardcore programmer and want to build custom C++ applications, games or tools using C++
+programming API, you can take a look at [this](/docs/ProgrammingAPI.md). You can also look the Everest Editor's
+source code to understand how the C++ API is used to make a custom scene editor.
+

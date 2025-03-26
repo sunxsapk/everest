@@ -235,7 +235,7 @@ Represents a 4x4 matrix, typically used for transformations like translations, r
 
 - **Constructors:**
   - `mat4()`: Creates an identity matrix (a 4x4 matrix with 1s on the diagonal and 0s elsewhere).
-  - `mat4(f32)`: Creates a 4x4 matrix where all elements are initialized to the provided scalar value `f32`.
+  - `mat4(f32)`: Creates a 4x4 matrix where diagonal elements are initialized to the provided scalar value `f32`.
 
 - **Methods:**
   - **add**(mat4 b): `mat4`  
